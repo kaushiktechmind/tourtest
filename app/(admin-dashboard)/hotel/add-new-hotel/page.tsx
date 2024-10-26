@@ -421,7 +421,7 @@ const Page = () => {
               <p className="mb-4 text-xl font-medium">Bedrooms:</p>
               <SelectUI
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-                onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
+                // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
               />
               <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
               <SelectUI
@@ -774,7 +774,7 @@ const Page = () => {
                       <li key={item.id} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name}
-                          onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
+                          // onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
                         />
                       </li>
                     ))}
