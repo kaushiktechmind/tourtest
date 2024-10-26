@@ -4,6 +4,7 @@ import {
   InformationCircleIcon,
   EyeIcon,
 } from "@heroicons/react/24/outline";
+import Image from 'next/image';
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useState, useEffect } from "react";
@@ -130,15 +131,17 @@ const Page = () => {
               />
 
               {/* Show the current logo if available */}
-              {amenityData.amenity_logo && (
+              {/* {amenityData.amenity_logo && (
                 <div className="mt-4">
-                  <img
+                  <Image
+                  width={22}
+                  height={22}
                     src={amenityData.amenity_logo}
                     alt="Current Amenity Logo"
                     className="h-20 w-20 object-contain"
                   />
                 </div>
-              )}
+              )} */}
 
               <label
                 htmlFor="icon"
