@@ -45,11 +45,40 @@ interface Field {
   distance: string;
 }
 
+interface HotelFormData {
+  property_id: string;
+  hotel_or_home_stay: string;
+  location_name: string;
+  hotel_name: string;
+  description: string;
+  starting_price: string;
+  highest_price: string;
+  ratings: string;
+  max_adult: string;
+  max_children: string;
+  max_infant: string;
+  no_of_bedrooms: string;
+  no_of_bathrooms: string;
+  no_of_beds: string;
+  room_size: string;
+  company_website: string;
+  email: string;
+  phone: string;
+  zipcode: string;
+  parking: string;
+  [key: string]: any;
+  banner_images: File[]; // Ensure this is defined as an array of File
+  video_link: string;
+  full_address: string;
+  i_frame_link: string;
+}
+
 
 const Page = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<HotelFormData>({
     property_id: "",
     hotel_or_home_stay: "",
+    status: "",
     location_name: "",
     hotel_name: "",
     description: "",
@@ -75,6 +104,8 @@ const Page = () => {
   });
 
   const [imageInput, setImageInput] = useState("");
+  const [homeOrHomeStay, setHomeOrHomeStay] = useState<string>('');
+  const [status, setStatus] = useState<string>('');
 
 
   const [locations, setLocations] = useState<{
@@ -234,6 +265,8 @@ const Page = () => {
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setHomeOrHomeStay(e.target.value);
+    setStatus(e.target.value);
     const { name, value } = e.target;
     setFormData((prevData) => ({
       ...prevData,
@@ -247,10 +280,9 @@ const Page = () => {
     const token = localStorage.getItem("access_token");
     console.log("Form submitted");
     console.log("Token:", token);
-  
+
     const formDataToSend = new FormData();
-  
-    // Append other form fields to formData
+
     for (const key in formData) {
       if (key === 'banner_images') {
         // Append each file individually
@@ -258,10 +290,12 @@ const Page = () => {
           formDataToSend.append('banner_images[]', file);
         });
       } else {
-        formDataToSend.append(key, formData[key]);
+        formDataToSend.append(key, formData[key as keyof HotelFormData]); // Use type assertion
       }
     }
-  
+    formDataToSend.append('home_or_home_stay', homeOrHomeStay);
+    formDataToSend.append('setatus', status);
+
     try {
       const response = await axios.post(
         "https://yrpitsolutions.com/tourism_api/api/admin/hotels",
@@ -285,7 +319,7 @@ const Page = () => {
       }
     }
   };
-  
+
 
 
 
@@ -346,9 +380,11 @@ const Page = () => {
                 <div className="flex space-x-4">
                   <div className="flex items-center">
                     <input
-                      type="text"
+                      type="radio"
+                      id="hotel"
                       name="hotel_or_home_stay"
-                      value={formData.hotel_or_home_stay}
+                      value="hotel"  // Fixed value for the Hotel option
+                      checked={formData.hotel_or_home_stay === "hotel"}  // Check if this option is selected
                       onChange={handleChange}
                       className="mr-2"
                     />
@@ -359,14 +395,14 @@ const Page = () => {
                       type="radio"
                       id="homestay"
                       name="hotel_or_home_stay"
-                      value={formData.hotel_or_home_stay}
+                      value="homestay"  // Fixed value for the Homestay option
+                      checked={formData.hotel_or_home_stay === "homestay"}  // Check if this option is selected
                       onChange={handleChange}
                       className="mr-2"
                     />
                     <label htmlFor="homestay" className="text-base">Homestay</label>
                   </div>
                 </div>
-
 
                 <p className="mt-6 mb-4 text-xl font-medium">Name:</p>
                 <input
@@ -761,9 +797,9 @@ const Page = () => {
                 <div className="flex items-center">
                   <input
                     type="radio"
-                    id="hotel"
-                    name="accommodation"
-                    value="hotel"
+                    id="publish"
+                    name="status"
+                    value="publish"
                     className="mr-2"
                   />
                   <label htmlFor="hotel" className="text-base">Publish</label>
@@ -771,9 +807,9 @@ const Page = () => {
                 <div className="flex items-center">
                   <input
                     type="radio"
-                    id="homestay"
-                    name="accommodation"
-                    value="homestay"
+                    id="draft"
+                    name="status"
+                    value="draft"
                     className="mr-2"
                   />
                   <label htmlFor="homestay" className="text-base">Draft</label>
