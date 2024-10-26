@@ -1,4 +1,4 @@
-"use client"; 
+"use client";
 import {
   CloudArrowUpIcon,
   InformationCircleIcon,
@@ -15,7 +15,7 @@ const Page = () => {
     amenity_logo: "",
   });
   const [iconFile, setIconFile] = useState<File | null>(null); // Allow File or null
-  const [isLoading, setIsLoading] = useState(false); // Loading state
+
   const router = useRouter();
   const searchParams = useSearchParams(); // Using useSearchParams for query params
 
@@ -64,53 +64,40 @@ const Page = () => {
     }
   };
 
+  // Handle form submission to update the amenity
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token");
 
-    if (!token) {
-        alert("Access token is missing!");
-        return;
-    }
-
     const formData = new FormData();
     formData.append("amenity_name", amenityData.amenity_name);
     if (iconFile) {
-        formData.append("amenity_logo", iconFile);
+      formData.append("amenity_logo", iconFile); // Append the new logo file only if updated
     }
 
     try {
-      console.log(amenityId, "jsdhsuifhsuifhs");
-        const response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/admin/update_amenities_by_id/${amenityId}`,
-
-          
-            {
-                method: "PUT",
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-                body: formData,
-            }
-        );
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(`Error: ${errorData.message || 'Failed to update'}`);
+      const response = await fetch(
+        `https://yrpitsolutions.com/tourism_api/api/admin/update_amenities_by_id/${amenityId}`,
+        {
+          method: "PUT", // Try PUT or PATCH here
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
         }
+      );
 
-        const result = await response.json();
-        alert(result.message);
-        setAmenityData({
-            amenity_name: result.data.amenity_name,
-            amenity_logo: result.data.amenity_logo,
-        });
-        router.push("/hotel/attributes");
+      const result = await response.json();
+      if (response.ok) {
+        alert("Amenity updated successfully!");
+      } else {
+        console.error("Error updating amenity:", result);
+        alert("Error updating amenity.");
+      }
     } catch (error) {
-        console.error("Error updating amenity:", error);
-        alert("An error occurred while updating the amenity. Please check the console for more details.");
+      console.error("Error submitting form:", error);
     }
-};
+  };
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -196,10 +183,8 @@ const Page = () => {
               </div>
 
               <div className="mt-[20px] text-center">
-                <button type="submit" className="btn-primary font-semibold" disabled={isLoading}>
-                  <span className="inline-block">
-                    {isLoading ? "Updating..." : "Update"}
-                  </span>
+                <button type="submit" className="btn-primary font-semibold">
+                  <span className="inline-block"> Update </span>
                 </button>
               </div>
             </form>
