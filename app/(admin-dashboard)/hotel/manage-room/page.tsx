@@ -116,13 +116,7 @@ const Page = () => {
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
                     <td className="py-3 lg:py-4 px-2">{agent}</td>
                     <td className="py-3 lg:py-4 px-2">{date}</td>
-                    <td className="py-3 lg:py-4 px-2"><Image
-                        width={40}
-                        height={50}
-                        className="rounded-full"
-                        src={"https://images.unsplash.com/photo-1455587734955-081b22074882?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
-                        alt="user"
-                      /></td>
+                    <td className="py-3 lg:py-4 px-2">Published</td>
 
                     <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                       <Link href="/hotel/edit-hotel-attributes" className="text-primary">

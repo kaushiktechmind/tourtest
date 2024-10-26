@@ -15,6 +15,7 @@ import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
 const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import React, { useState, useEffect, ChangeEvent } from "react";
+import axios, { AxiosError } from "axios";
 
 interface Amenity {
   id: number;
@@ -46,40 +47,35 @@ interface Field {
 
 
 const Page = () => {
-  const [hotelData, setHotelData] = useState({
-    property_id: '',
-    hotel_or_home_stay: '',
-    hotel_name: '',
-    description: '',
-    starting_price: '',
-    highest_price: '',
-    ratings: '',
-    max_adult: '',
-    max_children: '',
-    max_infant: '',
-    no_of_bedrooms: '',
-    no_of_bathrooms: '',
-    no_of_beds: '',
-    room_size: '',
-    parking: '',
-    banner_images: '',
-    video_link: '',
-    full_address: '',
-    i_frame_link: '',
-    // Add more fields as per your requirement
-    zipcode: '',
-    phone: '',
-    email: '',
-    company_website: '',
-    policy_title: '',
-    policy_description: '',
-    status: '',
-    seo_status: '',
-    seo_title: '',
-    seo_description: '',
-    featured_image: '',
-    // Add amenities, education, health, transport fields here
+  const [formData, setFormData] = useState({
+    property_id: "",
+    hotel_or_home_stay: "",
+    location_name: "",
+    hotel_name: "",
+    description: "",
+    starting_price: "",
+    highest_price: "",
+    ratings: "",
+    max_adult: "",
+    max_children: "",
+    max_infant: "",
+    no_of_bedrooms: "",
+    no_of_bathrooms: "",
+    no_of_beds: "",
+    room_size: "",
+    company_website: "",
+    email: "",
+    phone: "",
+    zipcode: "",
+    parking: "",
+    banner_images: [],
+    video_link: "",
+    full_address: "",
+    i_frame_link: ""
   });
+
+  const [imageInput, setImageInput] = useState("");
+
 
   const [locations, setLocations] = useState<{
     location_name: any; name: string
@@ -237,47 +233,74 @@ const Page = () => {
 
 
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHotelData({
-      ...hotelData,
-      [e.target.name]: e.target.value,
-    });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
   };
-
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const token = localStorage.getItem('access-token');
-    if (!token) {
-      console.error('No access token found');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://yrpitsolutions.com/tourism_api/api/admin/hotels', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(hotelData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Hotel added successfully:', result);
-        // Handle success (e.g., show a success message or reset form)
+    const token = localStorage.getItem("access_token");
+    console.log("Form submitted");
+    console.log("Token:", token);
+  
+    const formDataToSend = new FormData();
+  
+    // Append other form fields to formData
+    for (const key in formData) {
+      if (key === 'banner_images') {
+        // Append each file individually
+        formData.banner_images.forEach(file => {
+          formDataToSend.append('banner_images[]', file);
+        });
       } else {
-        console.error('Failed to add hotel:', response.statusText);
-        // Handle error (e.g., show an error message)
+        formDataToSend.append(key, formData[key]);
       }
+    }
+  
+    try {
+      const response = await axios.post(
+        "https://yrpitsolutions.com/tourism_api/api/admin/hotels",
+        formDataToSend,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data", // Use 'multipart/form-data' for file uploads
+          },
+        }
+      );
+      console.log("API Response:", response.data);
     } catch (error) {
-      console.error('Error adding hotel:', error);
+      if (axios.isAxiosError(error)) {
+        console.error("Axios error message:", error.message);
+        console.error("Axios error response:", error.response);
+      } else if (error instanceof Error) {
+        console.error("Error message:", error.message);
+      } else {
+        console.error("Unexpected error", error);
+      }
     }
   };
+  
+
+
+
+
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files; // Get the FileList object
+    if (files) {
+      const fileArray = Array.from(files); // Convert to array
+      setFormData((prevData) => ({
+        ...prevData,
+        banner_images: fileArray, // Update state with the file array
+      }));
+    }
+  };
+
 
 
   return (
@@ -292,7 +315,7 @@ const Page = () => {
 
       </div>
       {/* statisticts */}
-      <form className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+      <form onSubmit={handleSubmit} className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6">
           <Accordion
             buttonContent={(open) => (
@@ -314,7 +337,7 @@ const Page = () => {
                 <input
                   type="text"
                   name="property_id"
-                  value={hotelData.property_id}
+                  value={formData.property_id}
                   onChange={handleChange}
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="Enter ID"
@@ -323,10 +346,9 @@ const Page = () => {
                 <div className="flex space-x-4">
                   <div className="flex items-center">
                     <input
-                      type="radio"
-                      id="hotel"
+                      type="text"
                       name="hotel_or_home_stay"
-                      value="hotel"
+                      value={formData.hotel_or_home_stay}
                       onChange={handleChange}
                       className="mr-2"
                     />
@@ -337,7 +359,7 @@ const Page = () => {
                       type="radio"
                       id="homestay"
                       name="hotel_or_home_stay"
-                      value="homestay"
+                      value={formData.hotel_or_home_stay}
                       onChange={handleChange}
                       className="mr-2"
                     />
@@ -351,46 +373,111 @@ const Page = () => {
                   type="text"
                   id="hotel_name"
                   name="hotel_name"
-                  value={hotelData.hotel_name}
+                  value={formData.hotel_name}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
                 <p className="mt-6 mb-4 text-xl font-medium">Starting Price:</p>
-                <CustomRangeSlider />
+                <input
+                  type="text"
+                  id="starting_price"
+                  name="starting_price"
+                  value={formData.starting_price}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Name of Hotel"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">Starting Price:</p>
+                <input
+                  type="text"
+                  id="highest_price"
+                  name="highest_price"
+                  value={formData.highest_price}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Name of Hotel"
+                />
+                {/* <CustomRangeSlider /> */}
 
 
                 <p className="mt-6 mb-4 text-xl font-medium">People</p>
                 <div className="flex space-x-4">
                   <div className="w-full flex flex-col">
                     <label htmlFor="adults" className="text-base">Max Adults:</label>
-                    <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
+                    <input
+                      type="text"
+                      id="max_adult"
+                      name="max_adult"
+                      value={formData.max_adult}
+                      onChange={handleChange}
+                      className="w-full border p-2 focus:outline-none rounded-md text-base"
+                      placeholder="Name of Hotel"
                     />
+                    {/* <SelectUI
+                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
+                    /> */}
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="children" className="text-base">Max Children:</label>
-                    <SelectUI
+                    <input
+                      type="text"
+                      id="max_children"
+                      name="max_children"
+                      value={formData.max_children}
+                      onChange={handleChange}
+                      className="w-full border p-2 focus:outline-none rounded-md text-base"
+                      placeholder="Name of Hotel"
+                    />
+                    {/* <SelectUI
                       options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    />
+                    /> */}
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="infants" className="text-base">Max Infants:</label>
-                    <SelectUI
+                    <input
+                      type="text"
+                      id="max_infant"
+                      name="max_infant"
+                      value={formData.max_infant}
+                      onChange={handleChange}
+                      className="w-full border p-2 focus:outline-none rounded-md text-base"
+                      placeholder="Name of Hotel"
+                    />
+                    {/* <SelectUI
                       options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    />
+                    /> */}
                   </div>
                 </div>
 
 
                 <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
-                <QuillEditor onChange={setDescription} value={description} />
+                <input
+                  type="text"
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Name of Hotel"
+                />
+                {/* <QuillEditor onChange={setDescription} value={description} /> */}
                 <p className="mt-3 mb-4 text-xl font-medium">
                   Hotel Rating :
                 </p>
-                <SelectUI
+                <input
+                  type="text"
+                  id="ratings"
+                  name="ratings"
+                  value={formData.ratings}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Name of Hotel"
+                />
+
+                {/* <SelectUI
                   options={[
                     { name: "1" },
                     { name: "2" },
@@ -398,7 +485,7 @@ const Page = () => {
                     { name: "4" },
                     { name: "5" },
                   ]}
-                />
+                /> */}
 
               </div>
             </div>
@@ -419,24 +506,42 @@ const Page = () => {
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Bedrooms:</p>
-              <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-                // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
-              />
-              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
-              <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              />
-
-              <p className="mt-6 mb-4 text-xl font-medium">Room Size (sq ft) :</p>
               <input
                 type="text"
-                name="room-size"
-                value={hotelData.room_size}
+                id="no_of_bedrooms"
+                name="no_of_bedrooms"
+                value={formData.no_of_bedrooms}
+                onChange={handleChange}
+                className="w-full border p-2 focus:outline-none rounded-md text-base"
+                placeholder="Name of Hotel"
+              />
+              {/* <SelectUI
+                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
+              // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
+              /> */}
+              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
+              <input
+                type="text"
+                id="no_of_bathrooms"
+                name="no_of_bathrooms"
+                value={formData.no_of_bathrooms}
+                onChange={handleChange}
+                className="w-full border p-2 focus:outline-none rounded-md text-base"
+                placeholder="Name of Hotel"
+              />
+              {/* <SelectUI
+                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
+              /> */}
+
+              <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
+              <input
+                type="text"
+                name="room_size"
                 id="room_size"
+                value={formData.room_size}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder="06"
               />
 
 
@@ -445,7 +550,7 @@ const Page = () => {
                 type="text"
                 name="no_of_beds"
                 id="no_of_beds"
-                value={hotelData.no_of_beds}
+                value={formData.no_of_beds}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="06"
@@ -454,7 +559,7 @@ const Page = () => {
               <input
                 type="text"
                 name="parking"
-                value={hotelData.parking}
+                value={formData.parking}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="3"
@@ -607,7 +712,10 @@ const Page = () => {
               {renderInputRows(educationFields, setEducationFields)}
               {educationFields.length < 5 && (
                 <button
-                  onClick={() => handleAddRow(educationFields, setEducationFields)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(educationFields, setEducationFields)
+                  }}
                   className="text-blue-500 hover:underline"
                 >
                   + Add Item
@@ -619,7 +727,10 @@ const Page = () => {
               {renderInputRows(healthFields, setHealthFields)}
               {healthFields.length < 5 && (
                 <button
-                  onClick={() => handleAddRow(healthFields, setHealthFields)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(healthFields, setHealthFields)
+                  }}
                   className="text-blue-500 hover:underline"
                 >
                   + Add Item
@@ -631,7 +742,10 @@ const Page = () => {
               {renderInputRows(transportationFields, setTransportationFields)}
               {transportationFields.length < 5 && (
                 <button
-                  onClick={() => handleAddRow(transportationFields, setTransportationFields)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(transportationFields, setTransportationFields)
+                  }}
                   className="text-blue-500 hover:underline"
                 >
                   + Add Item
@@ -669,7 +783,7 @@ const Page = () => {
           </div>
 
           <Link href="#" className="btn-primary font-semibold mt-6">
-            <span className="inline-block"> Save & Preview </span>
+            <span className="inline-block" onClick={handleSubmit}> Save & Preview </span>
           </Link>
         </div>
         <div className="col-span-12 lg:col-span-6">
@@ -689,67 +803,84 @@ const Page = () => {
                 <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                   <label
                     htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
+                    className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
+                  >
                     <span className="flex flex-col items-center justify-center py-12">
                       <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                        Drag & Drop
-                      </span>
-                      <span className="block text-center mb-6 clr-neutral-500">
-                        OR
-                      </span>
-                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
-                        Select Files
-                      </span>
+                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
+                      <span className="block text-center mb-6 clr-neutral-500">OR</span>
+                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">Select Files</span>
                       <span className="flex items-center justify-center flex-wrap gap-5">
                         <span className="flex items-center gap-2">
                           <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum allowed file size is 9.00 MB
-                          </span>
+                          <span className="block mb-0 clr-neutral-500">Maximum allowed file size is 9.00 MB</span>
                         </span>
                         <span className="flex items-center gap-2">
                           <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum 10 files are allowed
-                          </span>
+                          <span className="block mb-0 clr-neutral-500">Maximum 10 files are allowed</span>
                         </span>
                       </span>
                     </span>
-                    <input type="file" id="dropzone-file" className="hidden" />
+                    <input
+                      type="file"
+                      id="dropzone-file"
+                      className="hidden"
+                      multiple // Allow multiple file selection
+                      onChange={handleFileChange} // Handle file change
+                    />
                   </label>
                 </div>
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
                   type="text"
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Any type video link"
+                  name="video_link"
+                  value={formData.video_link}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  placeholder="3"
                 />
-                <div className="mt-6">
+                {/* <div className="mt-6">
                   <div className="h-[400px]">
                     <iframe
                       width="100%"
                       height="100%"
                       src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2233.5934788396344!2d89.78232001463437!3d23.836268639364576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1688381345276!5m2!1sen!2sbd"></iframe>
                   </div>
-                </div>
+                </div> */}
                 <p className="mt-6 mb-4 text-xl font-medium">Map Address (Script) :</p>
                 <input
                   type="text"
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Address"
+                  name="i_frame_link"
+                  value={formData.i_frame_link}
+                  onChange={handleChange}
+                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  placeholder="3"
                 />
                 <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
                 <input
                   type="text"
+                  id="full_address"
+                  name="full_address"
+                  value={formData.full_address}
+                  onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Address"
                 />
 
                 <p className="mt-6 mb-4 text-xl font-medium">Location :</p>
-                <SelectUI
-                  options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
+                <input
+                  type="text"
+                  id="location_name"
+                  name="location_name"
+                  value={formData.location_name}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Enter Address"
                 />
+
+                {/* <SelectUI
+                  options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
+                /> */}
               </div>
             </Accordion>
           </div>
@@ -774,7 +905,7 @@ const Page = () => {
                       <li key={item.id} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name}
-                          // onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
+                        // onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
                         />
                       </li>
                     ))}
@@ -801,7 +932,7 @@ const Page = () => {
                   type="text"
                   id="zipcode"
                   name="zipcode"
-                  value={hotelData.zipcode}
+                  value={formData.zipcode}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="4"
@@ -811,7 +942,7 @@ const Page = () => {
                   type="text"
                   id="phone"
                   name="phone"
-                  value={hotelData.phone}
+                  value={formData.phone}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Number"
@@ -821,7 +952,7 @@ const Page = () => {
                   type="text"
                   id="email"
                   name="email"
-                  value={hotelData.email}
+                  value={formData.email}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Email"
@@ -831,7 +962,7 @@ const Page = () => {
                   type="text"
                   id="company_website"
                   name="company_website"
-                  value={hotelData.company_website}
+                  value={formData.company_website}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter website"
