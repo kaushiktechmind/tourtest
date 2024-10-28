@@ -15,9 +15,15 @@ import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
 const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import React, { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 const Page = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hotelId = searchParams.get("hotelId"); // Get FAQ ID from URL params
+
+
   const [description, setDescription] = useState("");
 
   return (
@@ -25,7 +31,7 @@ const Page = () => {
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Hotel</h2>
         <div className="flex space-x-2"> {/* Use flex and space-x-2 for horizontal spacing */}
-          <Link href="/hotel/manage-room" className="btn-primary">
+          <Link  href={`/hotel/manage-room?hotelId=${hotelId}`} className="btn-primary">
             <EyeIcon className="w-5 h-5" /> Manage Room
           </Link>
           <Link href="/hotel/all-hotels" className="btn-primary">
@@ -359,13 +365,13 @@ const Page = () => {
               initialOpen={true}>
               <div className="pt-6">
                 <p className="text-xl font-medium"> Features : </p>
-                <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                {/* <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   {propertyAmenities.map((item) => (
                     <li key={item} className="py-2">
                       <CheckboxCustom label={item} />
                     </li>
                   ))}
-                </ul>
+                </ul> */}
               </div>
             </Accordion>
           </div>

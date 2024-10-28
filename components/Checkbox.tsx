@@ -3,14 +3,23 @@ interface CheckboxCustomProps {
   label: string;
   img?: ReactNode;
 }
-const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img }) => {
+
+interface CheckboxCustomProps {
+  label: string;
+  img?: ReactNode;
+  onChange: () => void; // Add this line
+  checked: boolean; // Add this line
+}
+const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img, onChange, checked }) => {
   return (
     <div className="flex items-center">
       <input
         type="checkbox"
         id={label}
-        name="A3-confirmation"
+        name="amenities"
         value={label}
+        checked={checked} // Set the checked state
+        onChange={onChange} // Set the onChange handler
         className="opacity-0 absolute h-8 w-8"
       />
       <div className="bg-white border border-gray-400 rounded-full w-5 h-5 flex shrink-0 justify-center items-center mr-2 focus-within:border-[var(--primary)]">
@@ -26,9 +35,7 @@ const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img }) => {
           </g>
         </svg>
       </div>
-      <label
-        htmlFor={label}
-        className="select-none flex gap-2 cursor-pointer items-center">
+      <label htmlFor={label} className="select-none flex gap-2 cursor-pointer items-center">
         {img && <span>{img}</span>}
         {label}
       </label>

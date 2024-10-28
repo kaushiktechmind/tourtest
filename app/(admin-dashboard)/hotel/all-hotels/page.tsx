@@ -43,7 +43,7 @@ const Page = () => {
             'Authorization': `Bearer ${token}`, // Add the token to the headers
           },
         });
-        
+
         if (response.ok) {
           // Remove the deleted hotel from the state
           setHostels((prevHostels) => prevHostels.filter((hostel) => hostel.id !== hotelIdToDelete));
@@ -59,24 +59,24 @@ const Page = () => {
     }
   };
 
- // Fetch data from the API
-useEffect(() => {
-  const fetchHostels = async () => {
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/hotels");
-      const data = await response.json();
-      if (data.message === "Hostels retrieved successfully") {
-        setHostels(data.data); // Store the hostels data in state
+  // Fetch data from the API
+  useEffect(() => {
+    const fetchHostels = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/hotels");
+        const data = await response.json();
+        if (data.message === "Hostels retrieved successfully") {
+          setHostels(data.data); // Store the hostels data in state
+        }
+      } catch (error) {
+        console.error("Error fetching hostels:", error);
+      } finally {
+        setLoading(false); // Set loading to false after fetching
       }
-    } catch (error) {
-      console.error("Error fetching hostels:", error);
-    } finally {
-      setLoading(false); // Set loading to false after fetching
-    }
-  };
+    };
 
-  fetchHostels();
-}, []);
+    fetchHostels();
+  }, []);
 
 
   if (loading) {
@@ -117,8 +117,14 @@ useEffect(() => {
                       {hostel.created_at.split("T")[0]}
                     </td>
                     <td className="py-3 lg:py-4 px-2 md:px-5">
-                      {hostel.hotel_name}
+                      <Link
+                          href={`/hotel/edit-hotel?hotelId=${hostel.id}`} // Adjust the URL as needed
+                        className="text-primary" // Add any other classes you want
+                      >
+                        {hostel.hotel_name}
+                      </Link>
                     </td>
+
                     <td className="py-3 lg:py-4 px-2">{hostel.full_address}</td>
                     <td className="py-3 lg:py-4 px-2">
                       <span className="flex gap-1 items-center">

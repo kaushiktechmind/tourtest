@@ -19,20 +19,22 @@ import axios, { AxiosError } from "axios";
 
 interface Amenity {
   id: number;
-  amenity_name: string; // Update the property name to match the API response
+  amenity_name: string; // Ensure this matches your API response
+  amenity_logo: string; // Add this if the API returns a logo
 }
 
-interface Policy {
-  id: number; // Change to the actual type (string or number) based on your API response
+
+interface Policy { 
+  id: number; // Use number if your API returns numeric IDs
   policy_title: string;
-  policy_decription: string; // Assuming the correct spelling is 'policy_description'
+  policy_description: string; // Corrected spelling from 'policy_decription' to 'policy_description'
 }
 
 
 interface FAQ {
-  id: number; // Change to the actual type (string or number) based on your API response
+  id: number; // Change to the actual type based on your API response
   faq_title: string;
-  faq_description: string; // Assuming the correct spelling is 'policy_description'
+  faq_description: string; // Assuming the correct spelling is 'faq_description'
 }
 
 interface Location {
@@ -139,16 +141,40 @@ const Page = () => {
 
   // Handler to update input fields
   const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
     index: number,
-    sectionFields: Field[],
-    setSectionFields: React.Dispatch<React.SetStateAction<Field[]>>
+    fields: Field[],
+    setFields: React.Dispatch<React.SetStateAction<Field[]>>
   ) => {
     const { name, value } = e.target;
-    const updatedFields = [...sectionFields];
-    updatedFields[index][name as keyof Field] = value;
-    setSectionFields(updatedFields);
+    const updatedFields = [...fields];
+    updatedFields[index] = { ...updatedFields[index], [name]: value };
+    setFields(updatedFields);
   };
+  const formatDataForApi = () => {
+    const formattedData: any = {};
+
+    educationFields.forEach((field, index) => {
+      formattedData[`education_name${index + 1}`] = field.name;
+      formattedData[`education_content${index + 1}`] = field.content;
+      formattedData[`education_distance${index + 1}`] = field.distance;
+    });
+
+    healthFields.forEach((field, index) => {
+      formattedData[`health_name${index + 1}`] = field.name;
+      formattedData[`health_content${index + 1}`] = field.content;
+      formattedData[`health_distance${index + 1}`] = field.distance;
+    });
+
+    transportationFields.forEach((field, index) => {
+      formattedData[`transport_name${index + 1}`] = field.name;
+      formattedData[`transport_content${index + 1}`] = field.content;
+      formattedData[`transport_distance${index + 1}`] = field.distance;
+    });
+
+    return formattedData;
+  };
+
 
   // Render input rows
   const renderInputRows = (fields: Field[], setFields: React.Dispatch<React.SetStateAction<Field[]>>) => {
@@ -220,14 +246,14 @@ const Page = () => {
         const jsonResponse = await response.json();
 
         console.log(jsonResponse); // Log the response data
-        // Check if data is present in the response
         if (jsonResponse.data) {
-          setAmenities(jsonResponse.data); // Set the amenities using the correct property
+          setAmenities(jsonResponse.data); // Assuming jsonResponse.data is an array of amenities
         }
       } catch (error) {
         console.error("Error fetching amenities:", error);
       }
     };
+
 
     fetchAmenities();
   }, []);
@@ -236,6 +262,9 @@ const Page = () => {
     const fetchPolicies = async () => {
       try {
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_policy");
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
         const data: Policy[] = await response.json();
         setPolicies(data);
       } catch (error) {
@@ -244,7 +273,6 @@ const Page = () => {
     };
     fetchPolicies();
   }, []);
-
 
 
 
@@ -260,8 +288,7 @@ const Page = () => {
     };
 
     fetchFAQs();
-  }, [])
-
+  }, []);
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -274,15 +301,15 @@ const Page = () => {
     }));
   };
 
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const token = localStorage.getItem("access_token");
     console.log("Form submitted");
     console.log("Token:", token);
-
+  
     const formDataToSend = new FormData();
-
+  
+    // Append existing form data
     for (const key in formData) {
       if (key === 'banner_images') {
         // Append each file individually
@@ -293,9 +320,49 @@ const Page = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData]); // Use type assertion
       }
     }
+  
+    // Append additional fields
     formDataToSend.append('home_or_home_stay', homeOrHomeStay);
     formDataToSend.append('setatus', status);
+  
+    // Append selected amenities
+    selectedAmenities.forEach((amenity, index) => {
+      formDataToSend.append(`amenity${index + 1}`, amenity); // Append each selected amenity
+    });
+  
+    // Append Education Fields
+    educationFields.forEach((field, index) => {
+      formDataToSend.append(`education_name${index + 1}`, field.name);
+      formDataToSend.append(`education_content${index + 1}`, field.content);
+      formDataToSend.append(`education_distance${index + 1}`, field.distance);
+    });
+  
+    // Append Health Fields
+    healthFields.forEach((field, index) => {
+      formDataToSend.append(`health_name${index + 1}`, field.name);
+      formDataToSend.append(`health_content${index + 1}`, field.content);
+      formDataToSend.append(`health_distance${index + 1}`, field.distance);
+    });
+  
+    // Append Transportation Fields
+    transportationFields.forEach((field, index) => {
+      formDataToSend.append(`transport_name${index + 1}`, field.name);
+      formDataToSend.append(`transport_content${index + 1}`, field.content);
+      formDataToSend.append(`transport_distance${index + 1}`, field.distance);
+    });
+  
+    // Append selected policies
+    selectedPolicies.forEach((policy, index) => {
+      formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
+      formDataToSend.append(`policy_description${index + 1}`, policy.policy_description);
+    });
 
+    // Append selected FAQs
+    selectedFAQs.forEach((faq, index) => {
+      formDataToSend.append(`faq_title${index + 1}`, faq.faq_title);
+      formDataToSend.append(`faq_description${index + 1}`, faq.faq_description);
+    });
+  
     try {
       const response = await axios.post(
         "https://yrpitsolutions.com/tourism_api/api/admin/hotels",
@@ -319,7 +386,6 @@ const Page = () => {
       }
     }
   };
-
 
 
 
@@ -606,131 +672,130 @@ const Page = () => {
           </Accordion>
 
           <Accordion
-            buttonContent={(open) => (
-              <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                <h3 className="h3">Hotel Policy</h3>
-                <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {policies.length > 0 ? (
-                <div className="mb-4">
-                  <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">Select a Policy</label>
-                  <select
-                    id="policyDropdown"
-                    className="w-full border p-2 rounded-md"
-                    onChange={(e) => {
-                      const selectedPolicy = policies.find((policy) => policy.id === parseInt(e.target.value));
-                      if (selectedPolicy && !selectedPolicies.some(p => p.id === selectedPolicy.id)) {
-                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>Select a policy...</option>
-                    {policies.map((policy) => (
-                      <option key={policy.id} value={policy.id}>
-                        {policy.policy_title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <p>No policies available</p>
-              )}
-
-              {/* Render input fields for each selected policy */}
-              {selectedPolicies.map((policy) => (
-                <div key={policy.id} className="mb-4">
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_title}
-                      readOnly
-                    />
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_decription}
-                      onChange={(e) => {
-                        const updatedPolicies = selectedPolicies.map((p) =>
-                          p.id === policy.id ? { ...p, policy_decription: e.target.value } : p
-                        );
-                        setSelectedPolicies(updatedPolicies);
-                      }}
-                    />
-                  </div>
-                </div>
+      buttonContent={(open) => (
+        <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+          <h3 className="h3">Hotel Policy</h3>
+          <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
+        </div>
+      )}
+      initialOpen={true}
+    >
+      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+        {policies.length > 0 ? (
+          <div className="mb-4">
+            <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">Select a Policy</label>
+            <select
+              id="policyDropdown"
+              className="w-full border p-2 rounded-md"
+              onChange={(e) => {
+                const selectedPolicy = policies.find((policy) => policy.id === parseInt(e.target.value));
+                if (selectedPolicy && !selectedPolicies.some(p => p.id === selectedPolicy.id)) {
+                  setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                }
+              }}
+            >
+              <option value="" disabled selected>Select a policy...</option>
+              {policies.map((policy) => (
+                <option key={policy.id} value={policy.id}>
+                  {policy.policy_title}
+                </option>
               ))}
-            </div>
-          </Accordion>
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+            </select>
+          </div>
+        ) : (
+          <p>No policies available</p>
+        )}
+
+        {/* Render input fields for each selected policy */}
+        {selectedPolicies.map((policy) => (
+    <div key={policy.id} className="mb-4">
+        <div className="flex gap-4">
+            <input
+                type="text"
+                className="w-1/2 border p-2 rounded-md"
+                value={policy.policy_title}
+                readOnly
+            />
+            <input
+                type="text"
+                className="w-1/2 border p-2 rounded-md"
+                value={policy.policy_description} // Ensure this matches
+                onChange={(e) => {
+                    const updatedPolicies = selectedPolicies.map((p) =>
+                        p.id === policy.id ? { ...p, policy_description: e.target.value } : p // Ensure proper key name here
+                    );
+                    setSelectedPolicies(updatedPolicies);
+                }}
+            />
+        </div>
+    </div>
+))}
+
+      </div>
+    </Accordion>
+
+    <Accordion
+        buttonContent={(open) => (
+          <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+            <h3 className="h3">Hotel FAQ</h3>
+            <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
+          </div>
+        )}
+        initialOpen={true}
+      >
+        <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+          {faqs.length > 0 ? (
+            <div className="mb-4">
+              <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">Select a FAQ</label>
+              <select
+                id="faqDropdown"
+                className="w-full border p-2 rounded-md"
+                onChange={(e) => {
+                  const selectedFAQ = faqs.find((faq) => faq.id === parseInt(e.target.value));
+                  if (selectedFAQ && !selectedFAQs.some(f => f.id === selectedFAQ.id)) {
+                    setSelectedFAQs((prev) => [...prev, selectedFAQ]);
+                  }
+                }}
               >
-                <h3 className="h3">Hotel FAQ</h3>
-                <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                <option value="" disabled selected>Select a FAQ...</option>
+                {faqs.map((faq) => (
+                  <option key={faq.id} value={faq.id}>
+                    {faq.faq_title}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <p>No FAQs available</p>
+          )}
+
+          {/* Render input fields for each selected FAQ */}
+          {selectedFAQs.map((faq) => (
+            <div key={faq.id} className="mb-4">
+              <div className="flex gap-4">
+                <input
+                  type="text"
+                  className="w-1/2 border p-2 rounded-md"
+                  value={faq.faq_title}
+                  readOnly
+                />
+                <input
+                  type="text"
+                  className="w-1/2 border p-2 rounded-md"
+                  value={faq.faq_description}
+                  onChange={(e) => {
+                    const updatedFAQs = selectedFAQs.map((f) =>
+                      f.id === faq.id ? { ...f, faq_description: e.target.value } : f
+                    );
+                    setSelectedFAQs(updatedFAQs);
+                  }}
                 />
               </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {faqs.length > 0 ? (
-                <div className="mb-4">
-                  <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">Select a FAQ</label>
-                  <select
-                    id="faqDropdown"
-                    className="w-full border p-2 rounded-md"
-                    onChange={(e) => {
-                      const selectedFAQ = faqs.find((faq) => faq.id === parseInt(e.target.value));
-                      if (selectedFAQ && !selectedFAQs.some(f => f.id === selectedFAQ.id)) {
-                        setSelectedFAQs((prev) => [...prev, selectedFAQ]);
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>Select a FAQ...</option>
-                    {faqs.map((faq) => (
-                      <option key={faq.id} value={faq.id}>
-                        {faq.faq_title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <p>No FAQs available</p>
-              )}
-
-              {/* Render input fields for each selected FAQ */}
-              {selectedFAQs.map((faq) => (
-                <div key={faq.id} className="mb-4">
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={faq.faq_title}
-                      readOnly
-                    />
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={faq.faq_description}
-                      onChange={(e) => {
-                        const updatedFAQs = selectedFAQs.map((f) =>
-                          f.id === faq.id ? { ...f, faq_description: e.target.value } : f
-                        );
-                        setSelectedFAQs(updatedFAQs);
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
             </div>
-          </Accordion>
+          ))}
+
+        </div>
+      </Accordion>
 
           <Accordion
             buttonContent={(open) => (
@@ -941,11 +1006,15 @@ const Page = () => {
                       <li key={item.id} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name}
-                        // onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
+                          img={item.amenity_logo ? <img src={item.amenity_logo} alt={item.amenity_name} /> : null}
+                          onChange={() => handleCheckboxChange(item.amenity_name)} // Call the handler
+                          checked={selectedAmenities.includes(item.amenity_name)} // Set checked state
                         />
+
                       </li>
                     ))}
                   </ul>
+
                 )}
               </div>
             </Accordion>

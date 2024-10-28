@@ -4,7 +4,7 @@ import {
   InformationCircleIcon,
   EyeIcon,
 } from "@heroicons/react/24/outline";
-import Image from 'next/image';
+import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useState, useEffect } from "react";
@@ -15,12 +15,10 @@ const Page = () => {
     amenity_name: "",
     amenity_logo: "",
   });
-  const [iconFile, setIconFile] = useState<File | null>(null); // Allow File or null
-
+  const [iconFile, setIconFile] = useState<File | null>(null);
+  const [iconImage, setIconImage] = useState<string>('');
   const router = useRouter();
-  const searchParams = useSearchParams(); // Using useSearchParams for query params
-
-  // Getting the query parameter `amenityId` from searchParams
+  const searchParams = useSearchParams();
   const amenityId = searchParams.get("amenityId");
 
   // Fetch the amenity data by ID
@@ -28,6 +26,7 @@ const Page = () => {
     if (amenityId) {
       const fetchData = async () => {
         const token = localStorage.getItem("access_token");
+
         try {
           const response = await fetch(
             `https://yrpitsolutions.com/tourism_api/api/admin/get_amenities_by_id/${amenityId}`,
@@ -41,8 +40,8 @@ const Page = () => {
           const data = await response.json();
           if (data && data.data) {
             setAmenityData({
-              amenity_name: data.data.amenity_name,
-              amenity_logo: data.data.amenity_logo, // Assuming this is the URL of the current logo
+              amenity_name: data.data.amenity_name || "",
+              amenity_logo: data.data.amenity_logo || "",
             });
           }
         } catch (error) {
@@ -53,48 +52,65 @@ const Page = () => {
     }
   }, [amenityId]);
 
-  // Handle form input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
+    console.log(`Input changed: ${id} = ${value}`);
     setAmenityData((prev) => ({ ...prev, [id]: value }));
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setIconFile(e.target.files[0]);
+      const image = URL.createObjectURL(e.target.files[0]);
+      setIconImage(image);
     }
   };
 
-  // Handle form submission to update the amenity
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    if (!amenityData.amenity_name.trim()) {
+      alert("Amenity name is required.");
+      return;
+    }
+
     const token = localStorage.getItem("access_token");
 
-    const formData = new FormData();
-    formData.append("amenity_name", amenityData.amenity_name);
-    if (iconFile) {
-      formData.append("amenity_logo", iconFile); // Append the new logo file only if updated
-    }
+    const payload = {
+      amenity_name: amenityData.amenity_name,
+      amenity_logo: iconFile,
+    };
+    const form = new FormData();
+    form.append('amenity_name', amenityData.amenity_name);
+    form.append('amenity_logo', iconFile) ;
+    form.append('_method', 'PUT');
 
     try {
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_amenities_by_id/${amenityId}`,
         {
-          method: "PUT", // Try PUT or PATCH here
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
+            // "Content-Type": "multipart/form-data",
+            // Accept: "application/json",
           },
-          body: formData,
+          body: form,
         }
       );
 
-      const result = await response.json();
-      if (response.ok) {
-        alert("Amenity updated successfully!");
-      } else {
-        console.error("Error updating amenity:", result);
-        alert("Error updating amenity.");
+      if (!response.ok) {
+        const errorResponse = await response.json();
+        console.error("Response error:", errorResponse);
+        alert(
+          "Error updating amenity: " + (errorResponse.message || "Unknown error")
+        );
+        return;
       }
+
+      const result = await response.json();
+      alert("Amenity updated successfully!");
+      router.push("/hotel/attributes");
     } catch (error) {
       console.error("Error submitting form:", error);
     }
@@ -127,21 +143,22 @@ const Page = () => {
                 value={amenityData.amenity_name}
                 onChange={handleInputChange}
                 placeholder="Attribute name"
-                className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border focus:border-primary outline-1"
+                className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border-primary outline-1"
+                required
               />
 
               {/* Show the current logo if available */}
-              {/* {amenityData.amenity_logo && (
+              {amenityData.amenity_logo && (
                 <div className="mt-4">
                   <Image
-                  width={22}
-                  height={22}
-                    src={amenityData.amenity_logo}
+                    width={22}
+                    height={22}
+                    src={iconFile?iconImage: amenityData.amenity_logo}
                     alt="Current Amenity Logo"
                     className="h-20 w-20 object-contain"
                   />
                 </div>
-              )} */}
+              )}
 
               <label
                 htmlFor="icon"
