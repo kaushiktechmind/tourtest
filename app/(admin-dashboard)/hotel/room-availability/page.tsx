@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -11,20 +11,43 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import SelectUI from "@/components/SelectUI";
 import Link from "next/link";
-import { alltours } from "@/public/data/alltours";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function DemoApp() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const hotelId = searchParams.get("hotelId");
+
   const [isOpen, setIsOpen] = useState(false);
-  const [active, setActive] = useState(1);
+  const [active, setActive] = useState<number | null>(null);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     null,
     null,
   ]);
   const [startDate, endDate] = dateRange;
+  const [roomData, setRoomData] = useState<any[]>([]);
+
+  useEffect(() => {
+    // Fetch data from the API
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms"
+        );
+        const data = await response.json();
+        setRoomData(data.rooms); // assuming data has a rooms array
+      } catch (error) {
+        console.error("Error fetching rooms:", error);
+      }
+    };
+    fetchRooms();
+  }, []);
+
   function handleDateClick(arg: any) {
     console.log("Clicked on date: ", arg.dateStr);
     openModal();
   }
+
   function closeModal() {
     setIsOpen(false);
   }
@@ -32,6 +55,7 @@ export default function DemoApp() {
   function openModal() {
     setIsOpen(true);
   }
+
   function dayRender(dayRenderInfo: any) {
     return (
       <div className="flex flex-col justify-center">
@@ -39,13 +63,13 @@ export default function DemoApp() {
           {dayRenderInfo.dayNumberText}
         </h2>
         <div className="hidden sm:block">
-          <p className="py-1 text-xs md:text-base">Adult: $120</p>
-          <p className="py-1 text-xs md:text-base">Child: $20</p>
-          <p className="py-1 text-xs md:text-base">Max Guest: 8</p>
+          <p className="py-1 text-xs md:text-base">350</p>
+          <p className="py-1 text-xs md:text-base">X 10</p>
         </div>
       </div>
     );
   }
+
   const calendarOptions: any = {
     plugins: [dayGridPlugin, interactionPlugin],
     initialView: "dayGridMonth",
@@ -67,16 +91,17 @@ export default function DemoApp() {
         <div className="grid grid-cols-12 gap-6 mx-3 lg:mx-6">
           <div className="col-span-12 md:col-span-6 lg:col-span-4 xl:col-span-3">
             <div className="rounded-2xl relative z-[1] bg-white p-3 md:p-5 lg:p-8 border">
-              <h3 className="h3 border-b pb-4 mb-4">Availablity</h3>
-              {alltours.map((tour) => (
+              <h3 className="h3 border-b pb-4 mb-4">Availability</h3>
+              {roomData.map((room) => (
                 <button
-                  onClick={() => setActive(tour.id)}
+                  onClick={() => setActive(room.id)}
                   className={`block w-full font-medium text-left rounded-lg p-3 lg:px-6 ${
-                    active === tour.id &&
+                    active === room.id &&
                     "bg-[var(--primary-light)] text-primary"
                   }`}
-                  key={tour.id}>
-                  {tour.name.slice(0, 20)} ...
+                  key={room.id}
+                >
+                  {room.room_name.slice(0, 20)} ...
                 </button>
               ))}
             </div>
@@ -85,10 +110,7 @@ export default function DemoApp() {
             <div className="rounded-2xl relative z-[1] bg-white p-3 md:p-5 lg:p-8 border">
               <FullCalendar {...calendarOptions} dayCellContent={dayRender} />
               <Transition appear show={isOpen} as={Fragment}>
-                <Dialog
-                  as="div"
-                  className="relative z-10 "
-                  onClose={closeModal}>
+                <Dialog as="div" className="relative z-10" onClose={closeModal}>
                   <Transition.Child
                     as={Fragment}
                     enter="ease-out duration-300"
@@ -96,10 +118,10 @@ export default function DemoApp() {
                     enterTo="opacity-100"
                     leave="ease-in duration-200"
                     leaveFrom="opacity-100"
-                    leaveTo="opacity-0">
+                    leaveTo="opacity-0"
+                  >
                     <div className="fixed inset-0 bg-black bg-opacity-25" />
                   </Transition.Child>
-
                   <div className="fixed inset-0 overflow-y-auto">
                     <div className="flex min-h-full items-center justify-center text-center">
                       <Transition.Child
@@ -109,7 +131,8 @@ export default function DemoApp() {
                         enterTo="opacity-100 scale-100"
                         leave="ease-in duration-200"
                         leaveFrom="opacity-100 scale-100"
-                        leaveTo="opacity-0 scale-95">
+                        leaveTo="opacity-0 scale-95"
+                      >
                         <Dialog.Panel className="w-full max-w-md transform overflow-hidden  lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
                           <div className="mt-2 flex justify-between items-center border-b pb-3">
                             <h3 className="h3">Date Information</h3>
@@ -122,10 +145,12 @@ export default function DemoApp() {
                           <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
                             <div
                               className="col-span-2 lg:col-span-1 flex flex-col gap-3"
-                              onClick={(e) => e.stopPropagation()}>
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               <label
                                 className="text-xl font-medium"
-                                htmlFor="date-range">
+                                htmlFor="date-range"
+                              >
                                 Date Ranges :{" "}
                               </label>
                               <DatePicker
@@ -141,79 +166,24 @@ export default function DemoApp() {
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
                               <label
                                 className="text-xl font-medium"
-                                htmlFor="date-range">
+                                htmlFor="date-range"
+                              >
                                 Status :{" "}
                               </label>
                               <CheckboxCustom label="Available for booking?" />
                             </div>
-                            <div className="col-span-2 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Max Guest :{" "}
-                              </label>
-                              <SelectUI
-                                options={[
-                                  { name: "1" },
-                                  { name: "2" },
-                                  { name: "3" },
-                                  { name: "4" },
-                                  { name: "5" },
-                                  { name: "6" },
-                                ]}
-                              />
-                            </div>
+
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
                               <label
                                 className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Adult :{" "}
-                              </label>
-                              <SelectUI
-                                options={[
-                                  { name: "1" },
-                                  { name: "2" },
-                                  { name: "3" },
-                                ]}
-                              />
-                            </div>
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Price :{" "}
+                                htmlFor="date-range"
+                              >
+                                Hotel ID :{" "}
                               </label>
                               <input
                                 type="text"
-                                placeholder="$150"
-                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-                              />
-                            </div>
-                            
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Child :{" "}
-                              </label>
-                              <SelectUI
-                                options={[
-                                  { name: "1" },
-                                  { name: "2" },
-                                  { name: "3" },
-                                ]}
-                              />
-                            </div>
-                            
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Price :{" "}
-                              </label>
-                              <input
-                                type="text"
-                                placeholder="$75"
+                                placeholder=""
+                                value={hotelId}
                                 className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
                               />
                             </div>
@@ -221,27 +191,42 @@ export default function DemoApp() {
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
                               <label
                                 className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Infant :{" "}
-                              </label>
-                              <SelectUI
-                                options={[
-                                  { name: "1" },
-                                  { name: "2" },
-                                  { name: "3" },
-                                ]}
-                              />
-                            </div>
-                            
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range">
-                                Price :{" "}
+                                htmlFor="date-range"
+                              >
+                                Room ID :{" "}
                               </label>
                               <input
                                 type="text"
-                                placeholder="$75"
+                                placeholder=""
+                                value={active || ""}
+                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+                              />
+                            </div>
+
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="date-range"
+                              >
+                                Room Price :{" "}
+                              </label>
+                              <input
+                                type="text"
+                                placeholder=""
+                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+                              />
+                            </div>
+
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="date-range"
+                              >
+                                Number of Rooms :{" "}
+                              </label>
+                              <input
+                                type="text"
+                                placeholder=""
                                 className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
                               />
                             </div>
@@ -262,7 +247,6 @@ export default function DemoApp() {
           </div>
         </div>
       </div>
-
       <Footer />
     </div>
   );
