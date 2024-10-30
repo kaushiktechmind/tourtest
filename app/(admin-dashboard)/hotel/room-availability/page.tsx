@@ -14,9 +14,11 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 export default function DemoApp() {
+  const [roomData, setRoomData] = useState<any[]>([]); // Initialize roomData
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelId = searchParams.get("hotelId");
+  const [status, setStatus] =useState('');
 
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState<number | null>(null);
@@ -25,10 +27,52 @@ export default function DemoApp() {
     null,
   ]);
   const [startDate, endDate] = dateRange;
-  const [roomData, setRoomData] = useState<any[]>([]);
+  const [roomPrice, setRoomPrice] = useState<string>('');
+  const [noOfRooms, setNoOfRooms] = useState<string>('');
+  const [roomDetails, setRoomDetails] = useState<any>(null);
+  
+  const handleUpdateRoomManagement = async () => {
+    if (active === null) return; // Ensure an active room ID exists
+  
+    const payload = {
+      room_id: active,
+      hotel_id: hotelId,
+      start_date: startDate?.toISOString().split('T')[0],
+      end_date: endDate?.toISOString().split('T')[0],
+      room_price: roomPrice,
+      no_of_rooms: noOfRooms,
+      status: status,
+    };
+    console.log("Payload:", payload); // Log the payload
+  
+    try {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_room_management_by_room_id/${active}`, {
+        method: 'PUT', // Change to PUT method
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+      if (response.ok) {
+        alert(data.message);
+        // Optionally, you can refresh or update your room data here
+      } else {
+        alert(`Error: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("Error updating room management:", error);
+      alert("An error occurred while updating room management.");
+    }
+  };
+  
+
+  
 
   useEffect(() => {
-    // Fetch data from the API
+    // Fetch rooms list
     const fetchRooms = async () => {
       try {
         const response = await fetch(
@@ -42,6 +86,27 @@ export default function DemoApp() {
     };
     fetchRooms();
   }, []);
+
+  useEffect(() => {
+    // Fetch specific room management details when 'active' changes
+    const fetchRoomDetails = async () => {
+      if (active) {
+        try {
+          const response = await fetch(
+            `https://yrpitsolutions.com/tourism_api/api/admin/get_room_management_by_room_id/${active}`
+          );
+          const data = await response.json();
+          setRoomDetails({
+            room_price: data.room_price,
+            no_of_rooms: data.no_of_rooms
+          });
+        } catch (error) {
+          console.error("Error fetching room details:", error);
+        }
+      }
+    };
+    fetchRoomDetails();
+  }, [active]);
 
   function handleDateClick(arg: any) {
     console.log("Clicked on date: ", arg.dateStr);
@@ -62,10 +127,12 @@ export default function DemoApp() {
         <h2 className="h2 my-4 text-center leading-tight">
           {dayRenderInfo.dayNumberText}
         </h2>
-        <div className="hidden sm:block">
-          <p className="py-1 text-xs md:text-base">350</p>
-          <p className="py-1 text-xs md:text-base">X 10</p>
-        </div>
+        {roomDetails && (
+          <div className="hidden sm:block">
+            <p className="py-1 text-xs md:text-base">{roomDetails.room_price}</p>
+            <p className="py-1 text-xs md:text-base">X {roomDetails.no_of_rooms}</p>
+          </div>
+        )}
       </div>
     );
   }
@@ -78,6 +145,10 @@ export default function DemoApp() {
     dateClick: handleDateClick,
     dayRender: dayRender,
   };
+
+
+
+  
 
   return (
     <div className="">
@@ -100,7 +171,7 @@ export default function DemoApp() {
                     "bg-[var(--primary-light)] text-primary"
                   }`}
                   key={room.id}
-                >
+                > 
                   {room.room_name.slice(0, 20)} ...
                 </button>
               ))}
@@ -109,7 +180,7 @@ export default function DemoApp() {
           <div className="col-span-12 md:col-span-6 lg:col-span-8 xl:col-span-9">
             <div className="rounded-2xl relative z-[1] bg-white p-3 md:p-5 lg:p-8 border">
               <FullCalendar {...calendarOptions} dayCellContent={dayRender} />
-              <Transition appear show={isOpen} as={Fragment}>
+               <Transition appear show={isOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-10" onClose={closeModal}>
                   <Transition.Child
                     as={Fragment}
@@ -133,116 +204,87 @@ export default function DemoApp() {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                       >
-                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden  lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
-                          <div className="mt-2 flex justify-between items-center border-b pb-3">
-                            <h3 className="h3">Date Information</h3>
-                            <XMarkIcon
-                              onClick={closeModal}
-                              className="w-5 h-5 cursor-pointer"
-                            />
-                          </div>
+                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
+          <div className="mt-2 flex justify-between items-center border-b pb-3">
+            <h3 className="h3">Date Information</h3>
+            <XMarkIcon onClick={closeModal} className="w-5 h-5 cursor-pointer" />
+          </div>
 
-                          <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
-                            <div
-                              className="col-span-2 lg:col-span-1 flex flex-col gap-3"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Date Ranges :{" "}
-                              </label>
-                              <DatePicker
-                                placeholderText="03/08/2023 - 05/08/2023"
-                                selectsRange={true}
-                                startDate={startDate}
-                                dateFormat="dd/MM/yyyy"
-                                endDate={endDate}
-                                onChange={(update) => setDateRange(update)}
-                                className="w-full p-3 border rounded focus:outline-none"
-                              />
-                            </div>
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Status :{" "}
-                              </label>
-                              <CheckboxCustom label="Available for booking?" />
-                            </div>
+          <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="date-range">Date Ranges :</label>
+              <DatePicker
+                placeholderText="03/08/2023 - 05/08/2023"
+                selectsRange={true}
+                startDate={startDate}
+                endDate={endDate}
+                onChange={(update) => setDateRange(update)}
+                className="w-full p-3 border rounded focus:outline-none"
+              />
+            </div>
 
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Hotel ID :{" "}
-                              </label>
-                              <input
-                                type="text"
-                                placeholder=""
-                                value={hotelId}
-                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-                              />
-                            </div>
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="status">Status :</label>
+              <input
+                type="text"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
+                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+              />
+            </div>
 
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Room ID :{" "}
-                              </label>
-                              <input
-                                type="text"
-                                placeholder=""
-                                value={active || ""}
-                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-                              />
-                            </div>
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="hotel-id">Hotel ID :</label>
+              <input
+                type="text"
+                value={hotelId || ""}
+                readOnly
+                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+              />
+            </div>
 
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Room Price :{" "}
-                              </label>
-                              <input
-                                type="text"
-                                placeholder=""
-                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-                              />
-                            </div>
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="room-id">Room ID :</label>
+              <input
+                type="text"
+                value={active || ""}
+                readOnly
+                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+              />
+            </div>
 
-                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label
-                                className="text-xl font-medium"
-                                htmlFor="date-range"
-                              >
-                                Number of Rooms :{" "}
-                              </label>
-                              <input
-                                type="text"
-                                placeholder=""
-                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-                              />
-                            </div>
-                          </div>
-                          <div className="flex gap-3 flex-wrap mt-6 lg:mt-10">
-                            <button className="btn-primary">
-                              Save Changes
-                            </button>
-                            <button className="btn-outline">Cancel</button>
-                          </div>
-                        </Dialog.Panel>
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="room-price">Room Price :</label>
+              <input
+                type="text"
+                value={roomPrice}
+                onChange={(e) => setRoomPrice(e.target.value)}
+                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+              />
+            </div>
+
+            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+              <label className="text-xl font-medium" htmlFor="no-of-rooms">Number of Rooms :</label>
+              <input
+                type="text"
+                value={noOfRooms}
+                onChange={(e) => setNoOfRooms(e.target.value)}
+                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+              />
+            </div>
+          </div>
+          <div className="flex gap-3 flex-wrap mt-6 lg:mt-10">
+            <button className="btn-primary" onClick={handleUpdateRoomManagement}>
+              Save Changes
+            </button>
+            <button className="btn-outline" onClick={closeModal}>Cancel</button>
+          </div>
+        </Dialog.Panel>
                       </Transition.Child>
                     </div>
                   </div>
                 </Dialog>
-              </Transition>
+              </Transition> 
             </div>
           </div>
         </div>

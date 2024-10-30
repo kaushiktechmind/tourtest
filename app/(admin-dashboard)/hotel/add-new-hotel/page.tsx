@@ -6,14 +6,14 @@ import {
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
-const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
+import QuillEditor from "../../../../components/QuillEditor";
 import React, { useState, useEffect, ChangeEvent } from "react";
 import axios, { AxiosError } from "axios";
 
@@ -23,13 +23,11 @@ interface Amenity {
   amenity_logo: string; // Add this if the API returns a logo
 }
 
-
-interface Policy { 
+interface Policy {
   id: number; // Use number if your API returns numeric IDs
   policy_title: string;
   policy_description: string; // Corrected spelling from 'policy_decription' to 'policy_description'
 }
-
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
@@ -52,7 +50,7 @@ interface HotelFormData {
   hotel_or_home_stay: string;
   location_name: string;
   hotel_name: string;
-  description: string;
+  // description: string;
   starting_price: string;
   highest_price: string;
   ratings: string;
@@ -75,15 +73,15 @@ interface HotelFormData {
   i_frame_link: string;
 }
 
-
 const Page = () => {
+  const [description, setDescription] = useState<string>(""); // Type for description
   const [formData, setFormData] = useState<HotelFormData>({
     property_id: "",
     hotel_or_home_stay: "",
     status: "",
     location_name: "",
     hotel_name: "",
-    description: "",
+    // description: "",
     starting_price: "",
     highest_price: "",
     ratings: "",
@@ -102,24 +100,25 @@ const Page = () => {
     banner_images: [],
     video_link: "",
     full_address: "",
-    i_frame_link: ""
+    i_frame_link: "",
   });
 
   const [imageInput, setImageInput] = useState("");
-  const [homeOrHomeStay, setHomeOrHomeStay] = useState<string>('');
-  const [status, setStatus] = useState<string>('');
+  const [homeOrHomeStay, setHomeOrHomeStay] = useState<string>("");
+  const [status, setStatus] = useState<string>("");
 
-
-  const [locations, setLocations] = useState<{
-    location_name: any; name: string
-  }[]>([]);
-  const [maxAdults, setMaxAdults] = useState('');
-  const [maxChildren, setMaxChildren] = useState('');
-  const [maxInfants, setMaxInfants] = useState('');
+  const [locations, setLocations] = useState<
+    {
+      location_name: any;
+      name: string;
+    }[]
+  >([]);
+  const [maxAdults, setMaxAdults] = useState("");
+  const [maxChildren, setMaxChildren] = useState("");
+  const [maxInfants, setMaxInfants] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
 
-  const [description, setDescription] = useState("");
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
 
@@ -127,17 +126,25 @@ const Page = () => {
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  const [educationFields, setEducationFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
-  const [healthFields, setHealthFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
+  const [educationFields, setEducationFields] = useState<Field[]>([
+    { name: "", content: "", distance: "" },
+  ]);
+  const [healthFields, setHealthFields] = useState<Field[]>([
+    { name: "", content: "", distance: "" },
+  ]);
+  const [transportationFields, setTransportationFields] = useState<Field[]>([
+    { name: "", content: "", distance: "" },
+  ]);
 
   // Handler to add new input row (max 5)
-  const handleAddRow = (fields: Field[], setFields: React.Dispatch<React.SetStateAction<Field[]>>) => {
+  const handleAddRow = (
+    fields: Field[],
+    setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  ) => {
     if (fields.length < 5) {
       setFields([...fields, { name: "", content: "", distance: "" }]);
     }
   };
-
 
   // Handler to update input fields
   const handleInputChange = (
@@ -175,9 +182,11 @@ const Page = () => {
     return formattedData;
   };
 
-
   // Render input rows
-  const renderInputRows = (fields: Field[], setFields: React.Dispatch<React.SetStateAction<Field[]>>) => {
+  const renderInputRows = (
+    fields: Field[],
+    setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  ) => {
     return fields.map((field, index) => (
       <div key={index} className="flex gap-4 mb-4">
         <input
@@ -208,7 +217,6 @@ const Page = () => {
     ));
   };
 
-
   const handleCheckboxChange = (label: string) => {
     setSelectedAmenities((prevSelected) => {
       if (prevSelected.includes(label)) {
@@ -219,30 +227,32 @@ const Page = () => {
     });
   };
 
-
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/admin/get_location');
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_location"
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data = await response.json();
         // Assuming the API returns an array of locations
         setLocations(data); // Adjust based on the actual structure of the API response
       } catch (error) {
-        console.error('Failed to fetch locations:', error);
+        console.error("Failed to fetch locations:", error);
       }
     };
 
     fetchLocations();
   }, []);
 
-
   useEffect(() => {
     const fetchAmenities = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_amenities");
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_amenities"
+        );
         const jsonResponse = await response.json();
 
         console.log(jsonResponse); // Log the response data
@@ -254,16 +264,17 @@ const Page = () => {
       }
     };
 
-
     fetchAmenities();
   }, []);
 
   useEffect(() => {
     const fetchPolicies = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_policy");
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_policy"
+        );
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         const data: Policy[] = await response.json();
         setPolicies(data);
@@ -274,12 +285,12 @@ const Page = () => {
     fetchPolicies();
   }, []);
 
-
-
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_faq");
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_faq"
+        );
         const data: FAQ[] = await response.json();
         setFAQs(data);
       } catch (error) {
@@ -290,8 +301,9 @@ const Page = () => {
     fetchFAQs();
   }, []);
 
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setHomeOrHomeStay(e.target.value);
     setStatus(e.target.value);
     const { name, value } = e.target;
@@ -306,55 +318,58 @@ const Page = () => {
     const token = localStorage.getItem("access_token");
     console.log("Form submitted");
     console.log("Token:", token);
-  
+
     const formDataToSend = new FormData();
-  
+
     // Append existing form data
     for (const key in formData) {
-      if (key === 'banner_images') {
+      if (key === "banner_images") {
         // Append each file individually
-        formData.banner_images.forEach(file => {
-          formDataToSend.append('banner_images[]', file);
+        formData.banner_images.forEach((file) => {
+          formDataToSend.append("banner_images[]", file);
         });
       } else {
         formDataToSend.append(key, formData[key as keyof HotelFormData]); // Use type assertion
       }
     }
-  
+
     // Append additional fields
-    formDataToSend.append('home_or_home_stay', homeOrHomeStay);
-    formDataToSend.append('setatus', status);
-  
+    formDataToSend.append("home_or_home_stay", homeOrHomeStay);
+    formDataToSend.append("status", status);
+
     // Append selected amenities
     selectedAmenities.forEach((amenity, index) => {
       formDataToSend.append(`amenity${index + 1}`, amenity); // Append each selected amenity
     });
-  
+
     // Append Education Fields
     educationFields.forEach((field, index) => {
       formDataToSend.append(`education_name${index + 1}`, field.name);
       formDataToSend.append(`education_content${index + 1}`, field.content);
       formDataToSend.append(`education_distance${index + 1}`, field.distance);
     });
-  
+
     // Append Health Fields
     healthFields.forEach((field, index) => {
       formDataToSend.append(`health_name${index + 1}`, field.name);
       formDataToSend.append(`health_content${index + 1}`, field.content);
       formDataToSend.append(`health_distance${index + 1}`, field.distance);
     });
-  
+
     // Append Transportation Fields
     transportationFields.forEach((field, index) => {
       formDataToSend.append(`transport_name${index + 1}`, field.name);
       formDataToSend.append(`transport_content${index + 1}`, field.content);
       formDataToSend.append(`transport_distance${index + 1}`, field.distance);
     });
-  
+
     // Append selected policies
     selectedPolicies.forEach((policy, index) => {
       formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
-      formDataToSend.append(`policy_description${index + 1}`, policy.policy_description);
+      formDataToSend.append(
+        `policy_description${index + 1}`,
+        policy.policy_description
+      );
     });
 
     // Append selected FAQs
@@ -362,8 +377,15 @@ const Page = () => {
       formDataToSend.append(`faq_title${index + 1}`, faq.faq_title);
       formDataToSend.append(`faq_description${index + 1}`, faq.faq_description);
     });
-  
+
     try {
+      // Create a temporary DOM element to convert HTML to plain text
+      const tempElement = document.createElement("div");
+      tempElement.innerHTML = description;
+      const plainTextDescription =
+        tempElement.textContent || tempElement.innerText || ""; // Extract plain text
+      formDataToSend.append("description", plainTextDescription);
+
       const response = await axios.post(
         "https://yrpitsolutions.com/tourism_api/api/admin/hotels",
         formDataToSend,
@@ -387,9 +409,6 @@ const Page = () => {
     }
   };
 
-
-
-
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files; // Get the FileList object
     if (files) {
@@ -401,36 +420,41 @@ const Page = () => {
     }
   };
 
-
-
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Add New Hotel</h2>
-        <div className="flex space-x-2"> {/* Use flex and space-x-2 for horizontal spacing */}
+        <div className="flex space-x-2">
+          {" "}
+          {/* Use flex and space-x-2 for horizontal spacing */}
           <Link href="/hotel/all-hotels" className="btn-primary">
             <EyeIcon className="w-5 h-5" /> View All Hotel
           </Link>
         </div>
-
       </div>
       {/* statisticts */}
-      <form onSubmit={handleSubmit} className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+      <form
+        onSubmit={handleSubmit}
+        className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0"
+      >
         <div className="col-span-12 lg:col-span-6">
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                className={`${
+                  open ? "rounded-t-2xl" : "rounded-2xl"
+                } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+              >
                 <h3 className="h3">Hotel Content </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                    }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                    open ? "rotate-180" : ""
+                  }`}
                 />
               </div>
             )}
-            initialOpen={true}>
-
+            initialOpen={true}
+          >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <div className="border-t pt-4">
                 <p className="mt-6 mb-4 text-xl font-medium">Property ID :</p>
@@ -449,24 +473,28 @@ const Page = () => {
                       type="radio"
                       id="hotel"
                       name="hotel_or_home_stay"
-                      value="hotel"  // Fixed value for the Hotel option
-                      checked={formData.hotel_or_home_stay === "hotel"}  // Check if this option is selected
+                      value="hotel" // Fixed value for the Hotel option
+                      checked={formData.hotel_or_home_stay === "hotel"} // Check if this option is selected
                       onChange={handleChange}
                       className="mr-2"
                     />
-                    <label htmlFor="hotel" className="text-base">Hotel</label>
+                    <label htmlFor="hotel" className="text-base">
+                      Hotel
+                    </label>
                   </div>
                   <div className="flex items-center">
                     <input
                       type="radio"
                       id="homestay"
                       name="hotel_or_home_stay"
-                      value="homestay"  // Fixed value for the Homestay option
-                      checked={formData.hotel_or_home_stay === "homestay"}  // Check if this option is selected
+                      value="homestay" // Fixed value for the Homestay option
+                      checked={formData.hotel_or_home_stay === "homestay"} // Check if this option is selected
                       onChange={handleChange}
                       className="mr-2"
                     />
-                    <label htmlFor="homestay" className="text-base">Homestay</label>
+                    <label htmlFor="homestay" className="text-base">
+                      Homestay
+                    </label>
                   </div>
                 </div>
 
@@ -480,7 +508,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Starting Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Price:</p>
                 <input
                   type="text"
                   id="starting_price"
@@ -490,7 +518,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Starting Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Sale Price:</p>
                 <input
                   type="text"
                   id="highest_price"
@@ -502,11 +530,12 @@ const Page = () => {
                 />
                 {/* <CustomRangeSlider /> */}
 
-
                 <p className="mt-6 mb-4 text-xl font-medium">People</p>
                 <div className="flex space-x-4">
                   <div className="w-full flex flex-col">
-                    <label htmlFor="adults" className="text-base">Max Adults:</label>
+                    <label htmlFor="adults" className="text-base">
+                      Max Adults:
+                    </label>
                     <input
                       type="text"
                       id="max_adult"
@@ -521,7 +550,9 @@ const Page = () => {
                     /> */}
                   </div>
                   <div className="w-full flex flex-col">
-                    <label htmlFor="children" className="text-base">Max Children:</label>
+                    <label htmlFor="children" className="text-base">
+                      Max Children:
+                    </label>
                     <input
                       type="text"
                       id="max_children"
@@ -537,7 +568,9 @@ const Page = () => {
                     /> */}
                   </div>
                   <div className="w-full flex flex-col">
-                    <label htmlFor="infants" className="text-base">Max Infants:</label>
+                    <label htmlFor="infants" className="text-base">
+                      Max Infants:
+                    </label>
                     <input
                       type="text"
                       id="max_infant"
@@ -554,7 +587,6 @@ const Page = () => {
                   </div>
                 </div>
 
-
                 <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
                 <input
                   type="text"
@@ -565,10 +597,8 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                {/* <QuillEditor onChange={setDescription} value={description} /> */}
-                <p className="mt-3 mb-4 text-xl font-medium">
-                  Hotel Rating :
-                </p>
+                <QuillEditor onChange={setDescription} value={description} />
+                <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :</p>
                 <input
                   type="text"
                   id="ratings"
@@ -588,7 +618,6 @@ const Page = () => {
                     { name: "5" },
                   ]}
                 /> */}
-
               </div>
             </div>
           </Accordion>
@@ -596,16 +625,20 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}>
-                <h3 className="h3">Hotel  Details </h3>
+                className={`${
+                  open ? "rounded-t-2xl" : "rounded-2xl"
+                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+              >
+                <h3 className="h3">Hotel Details </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                    }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                    open ? "rotate-180" : ""
+                  }`}
                 />
               </div>
             )}
-            initialOpen={true}>
+            initialOpen={true}
+          >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Bedrooms:</p>
               <input
@@ -615,7 +648,7 @@ const Page = () => {
                 value={formData.no_of_bedrooms}
                 onChange={handleChange}
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
-                placeholder="Name of Hotel"
+                placeholder="5"
               />
               {/* <SelectUI
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
@@ -629,7 +662,7 @@ const Page = () => {
                 value={formData.no_of_bathrooms}
                 onChange={handleChange}
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
-                placeholder="Name of Hotel"
+                placeholder="10"
               />
               {/* <SelectUI
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
@@ -645,7 +678,6 @@ const Page = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="06"
               />
-
 
               <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :</p>
               <input
@@ -666,141 +698,189 @@ const Page = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="3"
               />
-
-
             </div>
           </Accordion>
 
           <Accordion
-      buttonContent={(open) => (
-        <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-          <h3 className="h3">Hotel Policy</h3>
-          <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
-        </div>
-      )}
-      initialOpen={true}
-    >
-      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-        {policies.length > 0 ? (
-          <div className="mb-4">
-            <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">Select a Policy</label>
-            <select
-              id="policyDropdown"
-              className="w-full border p-2 rounded-md"
-              onChange={(e) => {
-                const selectedPolicy = policies.find((policy) => policy.id === parseInt(e.target.value));
-                if (selectedPolicy && !selectedPolicies.some(p => p.id === selectedPolicy.id)) {
-                  setSelectedPolicies((prev) => [...prev, selectedPolicy]);
-                }
-              }}
-            >
-              <option value="" disabled selected>Select a policy...</option>
-              {policies.map((policy) => (
-                <option key={policy.id} value={policy.id}>
-                  {policy.policy_title}
-                </option>
-              ))}
-            </select>
-          </div>
-        ) : (
-          <p>No policies available</p>
-        )}
-
-        {/* Render input fields for each selected policy */}
-        {selectedPolicies.map((policy) => (
-    <div key={policy.id} className="mb-4">
-        <div className="flex gap-4">
-            <input
-                type="text"
-                className="w-1/2 border p-2 rounded-md"
-                value={policy.policy_title}
-                readOnly
-            />
-            <input
-                type="text"
-                className="w-1/2 border p-2 rounded-md"
-                value={policy.policy_description} // Ensure this matches
-                onChange={(e) => {
-                    const updatedPolicies = selectedPolicies.map((p) =>
-                        p.id === policy.id ? { ...p, policy_description: e.target.value } : p // Ensure proper key name here
-                    );
-                    setSelectedPolicies(updatedPolicies);
-                }}
-            />
-        </div>
-    </div>
-))}
-
-      </div>
-    </Accordion>
-
-    <Accordion
-        buttonContent={(open) => (
-          <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-            <h3 className="h3">Hotel FAQ</h3>
-            <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
-          </div>
-        )}
-        initialOpen={true}
-      >
-        <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-          {faqs.length > 0 ? (
-            <div className="mb-4">
-              <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">Select a FAQ</label>
-              <select
-                id="faqDropdown"
-                className="w-full border p-2 rounded-md"
-                onChange={(e) => {
-                  const selectedFAQ = faqs.find((faq) => faq.id === parseInt(e.target.value));
-                  if (selectedFAQ && !selectedFAQs.some(f => f.id === selectedFAQ.id)) {
-                    setSelectedFAQs((prev) => [...prev, selectedFAQ]);
-                  }
-                }}
+            buttonContent={(open) => (
+              <div
+                className={`${
+                  open ? "rounded-t-2xl" : "rounded-2xl"
+                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
-                <option value="" disabled selected>Select a FAQ...</option>
-                {faqs.map((faq) => (
-                  <option key={faq.id} value={faq.id}>
-                    {faq.faq_title}
-                  </option>
-                ))}
-              </select>
-            </div>
-          ) : (
-            <p>No FAQs available</p>
-          )}
-
-          {/* Render input fields for each selected FAQ */}
-          {selectedFAQs.map((faq) => (
-            <div key={faq.id} className="mb-4">
-              <div className="flex gap-4">
-                <input
-                  type="text"
-                  className="w-1/2 border p-2 rounded-md"
-                  value={faq.faq_title}
-                  readOnly
-                />
-                <input
-                  type="text"
-                  className="w-1/2 border p-2 rounded-md"
-                  value={faq.faq_description}
-                  onChange={(e) => {
-                    const updatedFAQs = selectedFAQs.map((f) =>
-                      f.id === faq.id ? { ...f, faq_description: e.target.value } : f
-                    );
-                    setSelectedFAQs(updatedFAQs);
-                  }}
+                <h3 className="h3">Hotel Policy</h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                    open ? "rotate-180" : ""
+                  }`}
                 />
               </div>
-            </div>
-          ))}
+            )}
+            initialOpen={true}
+          >
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {policies.length > 0 ? (
+                <div className="mb-4">
+                  <label
+                    htmlFor="policyDropdown"
+                    className="text-lg font-bold mb-2 block"
+                  >
+                    Select a Policy
+                  </label>
+                  <select
+                    id="policyDropdown"
+                    className="w-full border p-2 rounded-md"
+                    onChange={(e) => {
+                      const selectedPolicy = policies.find(
+                        (policy) => policy.id === parseInt(e.target.value)
+                      );
+                      if (
+                        selectedPolicy &&
+                        !selectedPolicies.some(
+                          (p) => p.id === selectedPolicy.id
+                        )
+                      ) {
+                        setSelectedPolicies((prev) => [
+                          ...prev,
+                          selectedPolicy,
+                        ]);
+                      }
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select a policy...
+                    </option>
+                    {policies.map((policy) => (
+                      <option key={policy.id} value={policy.id}>
+                        {policy.policy_title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <p>No policies available</p>
+              )}
 
-        </div>
-      </Accordion>
+              {/* Render input fields for each selected policy */}
+              {selectedPolicies.map((policy) => (
+                <div key={policy.id} className="mb-4">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.policy_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.policy_description}
+                      onChange={(e) => {
+                        const updatedPolicies = selectedPolicies.map(
+                          (p) =>
+                            p.id === policy.id
+                              ? { ...p, policy_description: e.target.value }
+                              : p // Ensure proper key name here
+                        );
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Accordion>
 
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+                className={`${
+                  open ? "rounded-t-2xl" : "rounded-2xl"
+                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+              >
+                <h3 className="h3">Hotel FAQ</h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                    open ? "rotate-180" : ""
+                  }`}
+                />
+              </div>
+            )}
+            initialOpen={true}
+          >
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {faqs.length > 0 ? (
+                <div className="mb-4">
+                  <label
+                    htmlFor="faqDropdown"
+                    className="text-lg font-bold mb-2 block"
+                  >
+                    Select a FAQ
+                  </label>
+                  <select
+                    id="faqDropdown"
+                    className="w-full border p-2 rounded-md"
+                    onChange={(e) => {
+                      const selectedFAQ = faqs.find(
+                        (faq) => faq.id === parseInt(e.target.value)
+                      );
+                      if (
+                        selectedFAQ &&
+                        !selectedFAQs.some((f) => f.id === selectedFAQ.id)
+                      ) {
+                        setSelectedFAQs((prev) => [...prev, selectedFAQ]);
+                      }
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select a FAQ...
+                    </option>
+                    {faqs.map((faq) => (
+                      <option key={faq.id} value={faq.id}>
+                        {faq.faq_title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <p>No FAQs available</p>
+              )}
+
+              {/* Render input fields for each selected FAQ */}
+              {selectedFAQs.map((faq) => (
+                <div key={faq.id} className="mb-4">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.faq_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.faq_description}
+                      onChange={(e) => {
+                        const updatedFAQs = selectedFAQs.map((f) =>
+                          f.id === faq.id
+                            ? { ...f, faq_description: e.target.value }
+                            : f
+                        );
+                        setSelectedFAQs(updatedFAQs);
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Accordion>
+
+          <Accordion
+            buttonContent={(open) => (
+              <div
+                className={`${
+                  open ? "rounded-t-2xl" : "rounded-2xl"
+                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
                 <h3 className="h3">Sorroundings</h3>
               </div>
@@ -815,7 +895,7 @@ const Page = () => {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddRow(educationFields, setEducationFields)
+                    handleAddRow(educationFields, setEducationFields);
                   }}
                   className="text-blue-500 hover:underline"
                 >
@@ -830,7 +910,7 @@ const Page = () => {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddRow(healthFields, setHealthFields)
+                    handleAddRow(healthFields, setHealthFields);
                   }}
                   className="text-blue-500 hover:underline"
                 >
@@ -845,7 +925,7 @@ const Page = () => {
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    handleAddRow(transportationFields, setTransportationFields)
+                    handleAddRow(transportationFields, setTransportationFields);
                   }}
                   className="text-blue-500 hover:underline"
                 >
@@ -858,7 +938,9 @@ const Page = () => {
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
             <div className="">
               <p className=" mb-3 text-xl font-medium">Status:</p>
-              <div className="flex flex-col gap-2"> {/* Change to flex-col for vertical stacking */}
+              <div className="flex flex-col gap-2">
+                {" "}
+                {/* Change to flex-col for vertical stacking */}
                 <div className="flex items-center">
                   <input
                     type="radio"
@@ -867,7 +949,9 @@ const Page = () => {
                     value="publish"
                     className="mr-2"
                   />
-                  <label htmlFor="hotel" className="text-base">Publish</label>
+                  <label htmlFor="hotel" className="text-base">
+                    Publish
+                  </label>
                 </div>
                 <div className="flex items-center">
                   <input
@@ -877,14 +961,19 @@ const Page = () => {
                     value="draft"
                     className="mr-2"
                   />
-                  <label htmlFor="homestay" className="text-base">Draft</label>
+                  <label htmlFor="homestay" className="text-base">
+                    Draft
+                  </label>
                 </div>
               </div>
             </div>
           </div>
 
           <Link href="#" className="btn-primary font-semibold mt-6">
-            <span className="inline-block" onClick={handleSubmit}> Save & Preview </span>
+            <span className="inline-block" onClick={handleSubmit}>
+              {" "}
+              Save & Preview{" "}
+            </span>
           </Link>
         </div>
         <div className="col-span-12 lg:col-span-6">
@@ -894,12 +983,14 @@ const Page = () => {
                 <div className="rounded-2xl flex items-center justify-between">
                   <h3 className="h3">Banner Images and Videos </h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                      open ? "rotate-180" : ""
+                    }`}
                   />
                 </div>
               )}
-              initialOpen={true}>
+              initialOpen={true}
+            >
               <div className="pt-6">
                 <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                   <label
@@ -908,17 +999,27 @@ const Page = () => {
                   >
                     <span className="flex flex-col items-center justify-center py-12">
                       <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
-                      <span className="block text-center mb-6 clr-neutral-500">OR</span>
-                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">Select Files</span>
+                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
+                        Drag & Drop
+                      </span>
+                      <span className="block text-center mb-6 clr-neutral-500">
+                        OR
+                      </span>
+                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
+                        Select Files
+                      </span>
                       <span className="flex items-center justify-center flex-wrap gap-5">
                         <span className="flex items-center gap-2">
                           <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">Maximum allowed file size is 9.00 MB</span>
+                          <span className="block mb-0 clr-neutral-500">
+                            Maximum allowed file size is 9.00 MB
+                          </span>
                         </span>
                         <span className="flex items-center gap-2">
                           <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">Maximum 10 files are allowed</span>
+                          <span className="block mb-0 clr-neutral-500">
+                            Maximum 10 files are allowed
+                          </span>
                         </span>
                       </span>
                     </span>
@@ -948,7 +1049,9 @@ const Page = () => {
                       src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2233.5934788396344!2d89.78232001463437!3d23.836268639364576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1688381345276!5m2!1sen!2sbd"></iframe>
                   </div>
                 </div> */}
-                <p className="mt-6 mb-4 text-xl font-medium">Map Address (Script) :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">
+                  Map Address (Script) :
+                </p>
                 <input
                   type="text"
                   name="i_frame_link"
@@ -991,11 +1094,14 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Attributes</h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                      open ? "rotate-180" : ""
+                    }`}
                   />
                 </div>
               )}
-              initialOpen={true}>
+              initialOpen={true}
+            >
               <div className="pt-6">
                 <p className="text-xl font-medium">Features:</p>
                 {amenities.length === 0 ? (
@@ -1006,15 +1112,24 @@ const Page = () => {
                       <li key={item.id} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name}
-                          img={item.amenity_logo ? <img src={item.amenity_logo} alt={item.amenity_name} /> : null}
-                          onChange={() => handleCheckboxChange(item.amenity_name)} // Call the handler
-                          checked={selectedAmenities.includes(item.amenity_name)} // Set checked state
+                          img={
+                            item.amenity_logo ? (
+                              <img
+                                src={item.amenity_logo}
+                                alt={item.amenity_name}
+                              />
+                            ) : null
+                          }
+                          onChange={() =>
+                            handleCheckboxChange(item.amenity_name)
+                          } // Call the handler
+                          checked={selectedAmenities.includes(
+                            item.amenity_name
+                          )} // Set checked state
                         />
-
                       </li>
                     ))}
                   </ul>
-
                 )}
               </div>
             </Accordion>
@@ -1025,12 +1140,14 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Contact Information </h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                      open ? "rotate-180" : ""
+                    }`}
                   />
                 </div>
               )}
-              initialOpen={true}>
+              initialOpen={true}
+            >
               <div className="pt-6">
                 <p className="mb-4 text-xl font-medium">Zip/Post Code :</p>
                 <input
@@ -1074,16 +1191,13 @@ const Page = () => {
                 />
                 <Link
                   href="#"
-                  className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold mt-6">
+                  className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold mt-6"
+                >
                   <span className="inline-block"> Add New </span>
                 </Link>
               </div>
             </Accordion>
           </div>
-
-
-
-
         </div>
       </form>
 

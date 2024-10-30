@@ -26,7 +26,7 @@ const LocationEntry: React.FC<{ placeholder: string }> = ({ placeholder }) => {
 
   return (
     <Combobox value={selected} onChange={setSelected}>
-      <div className="relative w-full md:w-[48%] xl:w-[22%] shrink-0">
+      <div className="relative w-full md:w-[50%] xl:w-[25%] shrink-0">
         <div className="relative w-full cursor-pointer overflow-hidden rounded-full sm:text-sm bg-[var(--bg-1)] border focus:outline-none">
           <Combobox.Input
             className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none"
