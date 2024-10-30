@@ -12,8 +12,13 @@ import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
+import { useState } from "react";
+
 
 const Page = () => {
+   // Checkbox states
+   const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
+   const [isTermsChecked, setIsTermsChecked] = useState(false);
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -241,7 +246,8 @@ const Page = () => {
                 <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   {propertyAmenities.map((item) => (
                     <li key={item} className="py-2">
-                      <CheckboxCustom label={item} />
+                      <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label={item} />
                     </li>
                   ))}
                 </ul>
@@ -309,10 +315,12 @@ const Page = () => {
           <div className="py-10">
             <ul className="flex flex-col gap-4">
               <li>
-                <CheckboxCustom label=" I agree to the privacy & policy" />
+                <CheckboxCustom checked={isTermsChecked}
+                  onChange={() => setIsTermsChecked(!isTermsChecked)} label=" I agree to the privacy & policy" />
               </li>
               <li>
-                <CheckboxCustom label="I agree with all terms & conditions" />
+                <CheckboxCustom checked={isTermsChecked}
+                  onChange={() => setIsTermsChecked(!isTermsChecked)} label="I agree with all terms & conditions" />
               </li>
             </ul>
           </div>

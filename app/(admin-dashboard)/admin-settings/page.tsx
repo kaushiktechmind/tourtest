@@ -25,6 +25,9 @@ const Page = () => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [imageSrc, setImageSrc] = useState<string>("/img/team-1.jpg");
 
+  const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
+  const [isTermsChecked, setIsTermsChecked] = useState(false);
+
   const handleImageClick = () => {
     if (inputFileRef.current) {
       inputFileRef.current.click();
@@ -214,8 +217,10 @@ const Page = () => {
 
                         <div className="col-span-12">
                           <div className="flex flex-col gap-3">
-                            <CheckboxCustom label="I agree to the privacy & policy" />
-                            <CheckboxCustom label="I agree with all terms & conditions" />
+                            <CheckboxCustom  checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="I agree to the privacy & policy" />
+                            <CheckboxCustom  checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="I agree with all terms & conditions" />
                           </div>
                         </div>
 
@@ -669,7 +674,8 @@ const Page = () => {
                       data. You can cancel the deletion for 14 days.
                     </p>
                     <div className="mb-8">
-                      <CheckboxCustom label="Confirm that I want to delete my account." />
+                      <CheckboxCustom checked={isTermsChecked}
+                  onChange={() => setIsTermsChecked(!isTermsChecked)} label="Confirm that I want to delete my account." />
                     </div>
                     <Link
                       href="#"
