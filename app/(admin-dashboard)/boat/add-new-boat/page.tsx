@@ -11,6 +11,8 @@ import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
+import {useState, useEffect } from "react";
+
 
 const Page = () => {
   const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
