@@ -26,7 +26,15 @@ import {
   ShareIcon,
 } from "@heroicons/react/24/outline";
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
+
 import CheckboxCustom from "@/components/Checkbox";
+
+interface Room {
+  id: number;
+  img: string;
+  title: string;
+  price: number;
+}
 
 
 
@@ -35,9 +43,11 @@ function classNames(...classes: any[]) {
 }
 
 const Page = () => {
+  const [roomData, setRoomData] = useState<Room[]>([]);
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
+
 
   const [hotelDetails, setHotelDetails] = useState({
     id: 0,
@@ -148,15 +158,15 @@ const Page = () => {
     faq_description29: "",
     faq_title30: "",
     faq_description30: "",
-    policy_title1: "", 
+    policy_title1: "",
     policy_description1: "",
-    policy_title2: "", 
+    policy_title2: "",
     policy_description2: "",
-    policy_title3: "", 
+    policy_title3: "",
     policy_description3: "",
-    policy_title4: "", 
+    policy_title4: "",
     policy_description4: "",
-    policy_title5: "", 
+    policy_title5: "",
     policy_description5: "",
 
   });
@@ -318,9 +328,39 @@ const Page = () => {
   }, [hotelDetailsId]);
 
 
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const response = await fetch(
+          `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelDetailsId}/rooms`
+        );
+        const result = await response.json();
+        if (result.message === "Rooms retrieved successfully") {
+          const formattedRooms: Room[] = result.data.map((room: any) => ({
+            id: room.id,
+            img: room.featured_images[0],
+            title: room.room_name,
+            price: parseFloat(room.room_price),
+            amenity1: room.amenity1,
+            amenity2: room.amenity2,
+            amenity3: room.amenity3,
+
+          }));
+          setRoomData(formattedRooms);
+        }
+      } catch (error) {
+        console.error("Error fetching room data:", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
+
+
+
   return (
     <main>
-      <div className="bg-[var(--bg-2)]">
+      <div className="bg-[var(--bg-2)] ">
         <div className="container-fluid p-0">
           <div>
             <div className="col-span-12">
@@ -346,17 +386,17 @@ const Page = () => {
                   },
                 }}
                 modules={[Navigation]}
-                className="swiper property-gallery-slider"
+                className="swiper property-gallery-slider "
               >
                 {hotelDetails?.banner_images?.map((image, index) => (
                   <SwiperSlide key={index} className="swiper-slide">
-                    <Link href={image} className="link block property-gallery">
+                    <Link href={image} className="link block property-gallery mt-[90px]">
                       <Image
                         width={618}
-                        height={618}
+                        height={18}
                         src={image}
                         alt={`banner image ${index + 1}`}
-                        className="rounded-2xl object-cover h-64 w-full"
+                        className="rounded-2xl object-cover h-full w-full"
                       />
                     </Link>
                   </SwiperSlide>
@@ -410,7 +450,7 @@ const Page = () => {
                     <li>
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-5 h-5 text-[var(--secondary-500)]" />
-                        <p className="mb-0"> 3890 Poplar Dr. </p>
+                        <p className="mb-0"> {hotelDetails.location_name}</p>
                       </div>
                     </li>
                     <li className="text-primary text-lg">•</li>
@@ -435,7 +475,7 @@ const Page = () => {
                     </li>
                   </ul>
                   <div className="border border-dashed my-8"></div>
-                  <ul className="flex items-center flex-wrap gap-3">
+                  {/* <ul className="flex items-center flex-wrap gap-3">
                     <li>
                       <span className="block text-lg font-medium">
                         Facilities -
@@ -532,7 +572,7 @@ const Page = () => {
                         />
                       </div>
                     </li>
-                  </ul>
+                  </ul> */}
                   <Tooltip
                     id="parking"
                     style={tooltipStyle}
@@ -1265,82 +1305,95 @@ const Page = () => {
                 </div>
 
 
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
+                  <h4 className="mb-5 text-2xl font-semibold">
+                    {" "}
+                    Featured Room{" "}
+                  </h4>
+                  <ul className="flex flex-col gap-4">
+                    {roomData.map((item) => (
+                      <HotelDetailsFeaturedRoom key={item.id} item={item} />
+                    ))}
+                  </ul>
+                </div>
+
+
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">
                   <h4 className="mb-5 text-2xl font-semibold">
                     {" "}
                     Hotel Policies{" "}
                   </h4>
                   <ul className="flex flex-col gap-4 mb-5">
-  {hotelDetails.policy_title1 && hotelDetails.policy_description1 && (
-    <li>
-      <div className="flex gap-4">
-        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-          <i className="las la-check text-lg text-primary"></i>
-        </div>
-        <span className="inline-block">
-          <div className="font-bold">{hotelDetails.policy_title1}</div>
-          <span>{hotelDetails.policy_description1}</span>
-        </span>
-      </div>
-    </li>
-  )}
+                    {hotelDetails.policy_title1 && hotelDetails.policy_description1 && (
+                      <li>
+                        <div className="flex gap-4">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">
+                            <div className="font-bold">{hotelDetails.policy_title1}</div>
+                            <span>{hotelDetails.policy_description1}</span>
+                          </span>
+                        </div>
+                      </li>
+                    )}
 
-  {hotelDetails.policy_title2 && hotelDetails.policy_description2 && (
-    <li>
-      <div className="flex gap-4">
-        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-          <i className="las la-check text-lg text-primary"></i>
-        </div>
-        <span className="inline-block">
-          <div className="font-bold">{hotelDetails.policy_title2}</div>
-          <span>{hotelDetails.policy_description2}</span>
-        </span>
-      </div>
-    </li>
-  )}
+                    {hotelDetails.policy_title2 && hotelDetails.policy_description2 && (
+                      <li>
+                        <div className="flex gap-4">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">
+                            <div className="font-bold">{hotelDetails.policy_title2}</div>
+                            <span>{hotelDetails.policy_description2}</span>
+                          </span>
+                        </div>
+                      </li>
+                    )}
 
-  {hotelDetails.policy_title3 && hotelDetails.policy_description3 && (
-    <li>
-      <div className="flex gap-4">
-        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-          <i className="las la-check text-lg text-primary"></i>
-        </div>
-        <span className="inline-block">
-          <div className="font-bold">{hotelDetails.policy_title3}</div>
-          <span>{hotelDetails.policy_description3}</span>
-        </span>
-      </div>
-    </li>
-  )}
+                    {hotelDetails.policy_title3 && hotelDetails.policy_description3 && (
+                      <li>
+                        <div className="flex gap-4">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">
+                            <div className="font-bold">{hotelDetails.policy_title3}</div>
+                            <span>{hotelDetails.policy_description3}</span>
+                          </span>
+                        </div>
+                      </li>
+                    )}
 
-  {hotelDetails.policy_title4 && hotelDetails.policy_description4 && (
-    <li>
-      <div className="flex gap-4">
-        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-          <i className="las la-check text-lg text-primary"></i>
-        </div>
-        <span className="inline-block">
-          <div className="font-bold">{hotelDetails.policy_title4}</div>
-          <span>{hotelDetails.policy_description4}</span>
-        </span>
-      </div>
-    </li>
-  )}
+                    {hotelDetails.policy_title4 && hotelDetails.policy_description4 && (
+                      <li>
+                        <div className="flex gap-4">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">
+                            <div className="font-bold">{hotelDetails.policy_title4}</div>
+                            <span>{hotelDetails.policy_description4}</span>
+                          </span>
+                        </div>
+                      </li>
+                    )}
 
-  {hotelDetails.policy_title5 && hotelDetails.policy_description5 && (
-    <li>
-      <div className="flex gap-4">
-        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-          <i className="las la-check text-lg text-primary"></i>
-        </div>
-        <span className="inline-block">
-          <div className="font-bold">{hotelDetails.policy_title5}</div>
-          <span>{hotelDetails.policy_description5}</span>
-        </span>
-      </div>
-    </li>
-  )}
-</ul>
+                    {hotelDetails.policy_title5 && hotelDetails.policy_description5 && (
+                      <li>
+                        <div className="flex gap-4">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">
+                            <div className="font-bold">{hotelDetails.policy_title5}</div>
+                            <span>{hotelDetails.policy_description5}</span>
+                          </span>
+                        </div>
+                      </li>
+                    )}
+                  </ul>
 
                   {/* <Link
                     href="#"

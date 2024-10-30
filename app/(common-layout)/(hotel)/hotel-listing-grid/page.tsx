@@ -3,7 +3,12 @@ import CardPagination from "@/components/CardPagination";
 import HotelListingCard from "@/components/HotelListingCard";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 const Page = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
 
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +16,7 @@ const Page = () => {
    // Function to fetch data from API
    const fetchHotels = async () => {
     try {
-      const response = await axios.get("https://yrpitsolutions.com/tourism_api/api/admin/hotels");
+      const response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/admin/hotels/${type}`);
 
       console.log("API Response:", response.data); // Log the response to check the structure
 

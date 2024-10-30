@@ -441,15 +441,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Content </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -588,26 +586,22 @@ const Page = () => {
                 </div>
 
                 <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
-                <input
-                  type="text"
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Name of Hotel"
-                />
                 <QuillEditor onChange={setDescription} value={description} />
                 <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :</p>
-                <input
-                  type="text"
+                <select
                   id="ratings"
                   name="ratings"
                   value={formData.ratings}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Name of Hotel"
-                />
+                >
+                  <option value="" disabled>Select Rating</option>
+                  <option value="5">5</option>
+                  <option value="4">4</option>
+                  <option value="3">3</option>
+                  <option value="2">2</option>
+                  <option value="1">1</option>
+                </select>
 
                 {/* <SelectUI
                   options={[
@@ -625,15 +619,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Details </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -704,15 +696,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Policy</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -794,15 +784,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel FAQ</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -878,9 +866,8 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
                 <h3 className="h3">Sorroundings</h3>
               </div>
@@ -983,9 +970,8 @@ const Page = () => {
                 <div className="rounded-2xl flex items-center justify-between">
                   <h3 className="h3">Banner Images and Videos </h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
@@ -1072,15 +1058,21 @@ const Page = () => {
                 />
 
                 <p className="mt-6 mb-4 text-xl font-medium">Location :</p>
-                <input
-                  type="text"
+
+                <select
                   id="location_name"
                   name="location_name"
                   value={formData.location_name}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Address"
-                />
+                >
+                  <option value="" disabled>Select a location</option>
+                  {locations.map((location, index) => (
+                    <option key={index} value={location.location_name}>
+                      {location.location_name} {/* Display the location_name */}
+                    </option>
+                  ))}
+                </select>
 
                 {/* <SelectUI
                   options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
@@ -1094,9 +1086,8 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Attributes</h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
@@ -1112,14 +1103,14 @@ const Page = () => {
                       <li key={item.id} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name}
-                          img={
-                            item.amenity_logo ? (
-                              <img
-                                src={item.amenity_logo}
-                                alt={item.amenity_name}
-                              />
-                            ) : null
-                          }
+                          // img={
+                          //   item.amenity_logo ? (
+                          //     <img
+                          //       src={item.amenity_logo}
+                          //       alt={item.amenity_name}
+                          //     />
+                          //   ) : null
+                          // }
                           onChange={() =>
                             handleCheckboxChange(item.amenity_name)
                           } // Call the handler
@@ -1140,9 +1131,8 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Contact Information </h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
