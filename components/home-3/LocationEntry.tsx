@@ -6,31 +6,39 @@ const people = [
   { id: 1, name: "New York" },
   { id: 2, name: "Washington" },
   { id: 3, name: "Chicago" },
-  { id: 4, name: "Los Angelos" },
+  { id: 4, name: "Los Angeles" },
   { id: 6, name: "Oklahoma" },
 ];
 
-const LocationEntry: React.FC<{ placeholder: string }> = ({ placeholder }) => {
-  const [selected, setSelected] = useState({});
+interface LocationEntryProps {
+  placeholder: string;
+  onChange: (location: string) => void; // Add onChange prop type
+}
+
+const LocationEntry: React.FC<LocationEntryProps> = ({ placeholder, onChange }) => {
+  const [selected, setSelected] = useState<{ id: number; name: string } | null>(null);
   const [query, setQuery] = useState("");
 
   const filteredPeople =
     query === ""
       ? people
       : people.filter((person) =>
-          person.name
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
+          person.name.toLowerCase().includes(query.toLowerCase())
         );
 
+  const handleSelect = (person: { id: number; name: string }) => {
+    setSelected(person);
+    setQuery(person.name);
+    onChange(person.name); // Call the onChange prop with the selected location
+  };
+
   return (
-    <Combobox value={selected} onChange={setSelected}>
+    <Combobox value={selected} onChange={handleSelect}>
       <div className="relative w-full md:w-[50%] xl:w-[25%] shrink-0">
         <div className="relative w-full cursor-pointer overflow-hidden rounded-full sm:text-sm bg-[var(--bg-1)] border focus:outline-none">
           <Combobox.Input
             className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none"
-            displayValue={(person: any) => person.name}
+            displayValue={(person: any) => person ? person.name : ""}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={placeholder}
           />
@@ -43,7 +51,8 @@ const LocationEntry: React.FC<{ placeholder: string }> = ({ placeholder }) => {
           leave="transition ease-in duration-100"
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
-          afterLeave={() => setQuery("")}>
+          afterLeave={() => setQuery("")}
+        >
           <Combobox.Options className="absolute z-50 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {filteredPeople.length === 0 && query !== "" ? (
               <div className="relative cursor-default select-none py-2 px-4 text-gray-700">
@@ -58,20 +67,23 @@ const LocationEntry: React.FC<{ placeholder: string }> = ({ placeholder }) => {
                       active ? "bg-gray-200 text-gray-900" : "text-gray-900"
                     }`
                   }
-                  value={person}>
+                  value={person}
+                >
                   {({ selected, active }) => (
                     <>
                       <span
                         className={`block truncate ${
                           selected ? "font-medium" : "font-normal"
-                        }`}>
+                        }`}
+                      >
                         {person.name}
                       </span>
                       {selected ? (
                         <span
                           className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
                             active ? "text-white" : "text-teal-600"
-                          }`}>
+                          }`}
+                        >
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}

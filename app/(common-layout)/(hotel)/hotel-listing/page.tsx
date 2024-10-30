@@ -10,16 +10,33 @@ const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
+  const loc = searchParams.get("loc");
+  const startdate = searchParams.get("startdate");
+  const enddate = searchParams.get("enddate");
 
 
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Function to fetch data from API
   const fetchHotels = async () => {
+    setLoading(true); // Set loading to true before starting fetch
+    setError(null);   // Reset error state
+
     try {
-      const response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`);
+      let response;
+
+      // Check if type is provided
+      if (type) {
+        response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`);
+      } else if (loc && startdate && enddate) {
+        // If no type, check if loc, startdate, and enddate are provided
+        response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`);
+      } else {
+        // If neither condition is satisfied, set error and return
+        setError("Please provide valid search parameters.");
+        return;
+      }
 
       console.log("API Response:", response.data); // Log the response to check the structure
 
@@ -30,11 +47,11 @@ const Page = () => {
         console.warn("No hotels found in response.");
         setHotels([]); // Set to empty array if no hotels found
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error fetching hotels:", error);
       setError("Failed to fetch hotels. Please try again later.");
     } finally {
-      setLoading(false);
+      setLoading(false); // Always set loading to false at the end
     }
   };
 

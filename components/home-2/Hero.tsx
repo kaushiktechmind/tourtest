@@ -4,8 +4,6 @@ import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import LocationEntry from "../home-3/LocationEntry";
-import HeroDropdown4 from "../home-1/HeroDropdown4";
-import { SearchIcon } from "@/public/data/icons";
 import AddRoom from "./AddRoom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -13,7 +11,25 @@ import "react-datepicker/dist/react-datepicker.css";
 const Hero = () => {
   const [isOpen, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [locationName, setLocationName] = useState(""); // State to hold the location name
   const [startDate, endDate] = dateRange;
+
+  const handleSearch = () => {
+    // Check if any field is empty
+    if (!locationName || !startDate || !endDate) {
+      alert("Please fill all fields before searching.");
+      return; // Stop execution if any field is empty
+    }
+
+    const formattedStartDate = startDate.toISOString().split("T")[0]; // Format the start date
+    const formattedEndDate = endDate.toISOString().split("T")[0]; // Format the end date
+
+    // Generate the search URL
+    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}`;
+
+    // Redirect to the search URL
+    window.location.href = searchUrl; 
+  };
 
   return (
     <section className="bg-[url('/img/andban-hero.jpg')] bg-cover bg-no-repeat relative isolate min-h-screen flex items-center py-20">
@@ -23,7 +39,10 @@ const Hero = () => {
         </h1>
 
         <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center">
-          <LocationEntry placeholder="Location" />
+          <LocationEntry 
+            placeholder="Location" 
+            onChange={(value) => setLocationName(value)} // Set location name on change
+          />
 
           <div className="relative w-full md:w-[50%] xl:w-[25%] flex items-center bg-gray-100 rounded-full p-3 border">
             <DatePicker
@@ -48,14 +67,12 @@ const Hero = () => {
             <AddRoom />
           </div>
 
-
-          <Link
-            href="#"
+          <button
+            onClick={handleSearch} // Call the search function on click
             className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
           >
-            <SearchIcon />
             <span className="ml-2">Search</span>
-          </Link>
+          </button>
         </div>
       </div>
     </section>

@@ -28,6 +28,22 @@ import {
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
 import CheckboxCustom from "@/components/Checkbox";
+const featuredHotelData = [
+  {
+    id: 1,
+    img: "/img/featured-hotel-7.jpg",
+    title: "Luxury Room",
+    price: 256,
+    favourite: false,
+  },
+  {
+    id: 2,
+    img: "/img/featured-hotel-8.jpg",
+    title: "Luxury Room",
+    price: 256,
+    favourite: false,
+  },
+];
 
 interface Room {
   id: number;
@@ -338,13 +354,13 @@ const Page = () => {
         if (result.message === "Rooms retrieved successfully") {
           const formattedRooms: Room[] = result.data.map((room: any) => ({
             id: room.id,
-            img: room.featured_images[0],
+            img: room.featured_images[0] || "/img/default-room.jpg",
             title: room.room_name,
+            amenity1: room.amenities[0],
+            amenity2: room.amenities[1],
+            amenity3: room.amenities[2],
             price: parseFloat(room.room_price),
-            amenity1: room.amenity1,
-            amenity2: room.amenity2,
-            amenity3: room.amenity3,
-
+            
           }));
           setRoomData(formattedRooms);
         }
@@ -417,6 +433,7 @@ const Page = () => {
       <div className="bg-[var(--bg-2)] py-[30px] lg:py-[60px] px-3">
         <div className="container">
           <div className="grid grid-cols-12 gap-4 lg:gap-6">
+            
             <div className="col-span-12 xl:col-span-8">
               <div className="p-4 rounded-2xl bg-white mb-6 lg:mb-10">
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
