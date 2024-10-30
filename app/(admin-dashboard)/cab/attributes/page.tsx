@@ -56,11 +56,11 @@ const Page = () => {
               <h5 className="text-base sm:text-lg md:text-xl font-medium pb-4">
                 Tagline:
               </h5>
-              <CheckboxCustom label="I agree to the privacy policy" />
+              {/* <CheckboxCustom label="I agree to the privacy policy" /> */}
               <h5 className="text-base xm:text-lg md:text-xl font-medium py-4">
                 Tag
               </h5>
-              <CheckboxCustom label="I agree to the Terms & Conditions" />
+              {/* <CheckboxCustom label="I agree to the Terms & Conditions" /> */}
               <button type="submit" className="btn-primary mt-5 lg:mt-7">
                 Add New
               </button>

@@ -140,7 +140,7 @@ export default function DemoApp() {
                                 htmlFor="date-range">
                                 Status :{" "}
                               </label>
-                              <CheckboxCustom label="Available for booking?" />
+                              {/* <CheckboxCustom label="Available for booking?" /> */}
                             </div>
                             <div className="col-span-2 flex flex-col gap-3">
                               <label

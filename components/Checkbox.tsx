@@ -1,16 +1,13 @@
 import React, { ReactNode } from "react";
-interface CheckboxCustomProps {
-  label: string;
-  img?: ReactNode;
-}
 
 interface CheckboxCustomProps {
   label: string;
   img?: ReactNode;
-  onChange: () => void; // Add this line
-  checked: boolean; // Add this line
+  onChange?: () => void; // Make onChange optional
+  checked?: boolean; // Make checked optional
 }
-const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img, onChange, checked }) => {
+
+const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img, onChange = () => {}, checked = false }) => {
   return (
     <div className="flex items-center">
       <input
@@ -18,8 +15,8 @@ const CheckboxCustom: React.FC<CheckboxCustomProps> = ({ label, img, onChange, c
         id={label}
         name="amenities"
         value={label}
-        checked={checked} // Set the checked state
-        onChange={onChange} // Set the onChange handler
+        checked={checked} // Use the checked state, defaults to false
+        onChange={onChange} // Use the onChange handler, defaults to a no-op function
         className="opacity-0 absolute h-8 w-8"
       />
       <div className="bg-white border border-gray-400 rounded-full w-5 h-5 flex shrink-0 justify-center items-center mr-2 focus-within:border-[var(--primary)]">

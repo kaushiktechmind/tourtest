@@ -166,7 +166,7 @@ const Page = () => {
                   {" "}
                   Features :{" "}
                 </p>
-                <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                {/* <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   <li className="py-2">
                     <CheckboxCustom label="Convertibles" />
                   </li>
@@ -191,7 +191,7 @@ const Page = () => {
                   <li className="py-2">
                     <CheckboxCustom label="Wagons" />
                   </li>
-                </ul>
+                </ul> */}
               </div>
             </Accordion>
           </div>
@@ -285,7 +285,7 @@ const Page = () => {
                   {" "}
                   Features :{" "}
                 </p>
-                <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                {/* <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   <li className="py-2">
                     <CheckboxCustom label="Airbag" />
                   </li>
@@ -304,7 +304,7 @@ const Page = () => {
                   <li className="py-2">
                     <CheckboxCustom label="Steering Wheel" />
                   </li>
-                </ul>
+                </ul> */}
               </div>
             </Accordion>
           </div>
@@ -363,12 +363,12 @@ const Page = () => {
 
           <div className="py-10">
             <ul className="flex flex-col gap-4">
-              <li>
+              {/* <li>
                 <CheckboxCustom label=" I agree to the privacy & policy" />
               </li>
               <li>
                 <CheckboxCustom label="I agree with all terms & conditions" />
-              </li>
+              </li> */}
             </ul>
           </div>
 

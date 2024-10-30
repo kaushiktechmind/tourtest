@@ -13,6 +13,8 @@ import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
 
 const Page = () => {
+  const [isPrivacyChecked, setIsPrivacyChecked] = useState(false);
+  const [isTermsChecked, setIsTermsChecked] = useState(false);
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -168,28 +170,36 @@ const Page = () => {
                 </p>
                 <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   <li className="py-2">
-                    <CheckboxCustom label="Convertibles" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Convertibles" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Coupes" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Coupes" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Hatchbacks" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Hatchbacks" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="MiniVans" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="MiniVans" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Sedan" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Sedan" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="SUVs" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="SUVs" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Trucks" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Trucks" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Wagons" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Wagons" />
                   </li>
                 </ul>
               </div>
@@ -287,22 +297,28 @@ const Page = () => {
                 </p>
                 <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
                   <li className="py-2">
-                    <CheckboxCustom label="Airbag" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Airbag" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Fm Radio" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Fm Radio" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Power Windows" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Power Windows" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Sensor" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Sensor" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Speed Km" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Speed Km" />
                   </li>
                   <li className="py-2">
-                    <CheckboxCustom label="Steering Wheel" />
+                    <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="Steering Wheel" />
                   </li>
                 </ul>
               </div>
@@ -364,10 +380,12 @@ const Page = () => {
           <div className="py-10">
             <ul className="flex flex-col gap-4">
               <li>
-                <CheckboxCustom label=" I agree to the privacy & policy" />
+                <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label=" I agree to the privacy & policy" />
               </li>
               <li>
-                <CheckboxCustom label="I agree with all terms & conditions" />
+                <CheckboxCustom checked={isPrivacyChecked}
+                  onChange={() => setIsPrivacyChecked(!isPrivacyChecked)} label="I agree with all terms & conditions" />
               </li>
             </ul>
           </div>
