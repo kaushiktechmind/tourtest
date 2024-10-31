@@ -10,25 +10,36 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Hero = () => {
   const [isOpen, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
   const [locationName, setLocationName] = useState(""); // State to hold the location name
   const [startDate, endDate] = dateRange;
 
   const handleSearch = () => {
-    // Check if any field is empty
     if (!locationName || !startDate || !endDate) {
       alert("Please fill all fields before searching.");
-      return; // Stop execution if any field is empty
+      return;
     }
 
-    const formattedStartDate = startDate.toISOString().split("T")[0]; // Format the start date
-    const formattedEndDate = endDate.toISOString().split("T")[0]; // Format the end date
+    const formatDate = (date: Date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
 
-    // Generate the search URL
-    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}`;
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
 
-    // Redirect to the search URL
-    window.location.href = searchUrl; 
+    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(
+      locationName
+    )}&startdate=${encodeURIComponent(
+      formattedStartDate
+    )}&enddate=${encodeURIComponent(formattedEndDate)}`;
+
+    window.location.href = searchUrl;
   };
 
   return (
@@ -39,8 +50,8 @@ const Hero = () => {
         </h1>
 
         <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center">
-          <LocationEntry 
-            placeholder="Location" 
+          <LocationEntry
+            placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
           />
 

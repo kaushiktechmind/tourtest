@@ -17,12 +17,13 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
               height={305}
               src={img}
               alt="image"
-              className=" w-full rounded-2xl"
+              className="rounded-2xl"
             />
           </div>
           <button
             onClick={() => setFavorite(!favorite)}
-            className="absolute z-10 inline-block text-primary top-6 right-6 rounded-full bg-white p-2.5 ">
+            className="absolute z-10 inline-block text-primary top-6 right-6 rounded-full bg-white p-2.5 "
+          >
             {favorite ? (
               <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
             ) : (
@@ -35,7 +36,8 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
             <div className="flex justify-between mb-2">
               <Link
                 href="hotel-listing-details"
-                className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
+                className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
+              >
                 {title}
               </Link>
               {/* <div className="flex items-center shrink-0">
@@ -74,7 +76,8 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
               </span>
               <Link
                 href="hotel-listing-details"
-                className="btn-outline  font-semibold">
+                className="btn-outline  font-semibold"
+              >
                 Book Now
               </Link>
             </div>

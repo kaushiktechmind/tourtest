@@ -21,7 +21,8 @@ const HotelListingList = ({ item }: { item: any }) => {
 
   // Create an array of amenities dynamically
   const amenities = [];
-  for (let i = 1; i <= 30; i++) { // Adjust the upper limit as needed
+  for (let i = 1; i <= 30; i++) {
+    // Adjust the upper limit as needed
     const amenityName = amenitiesData[`amenity_name${i}`];
     const amenityLogo = amenitiesData[`amenity_logo${i}`];
 
@@ -39,14 +40,19 @@ const HotelListingList = ({ item }: { item: any }) => {
             <Image
               width={369}
               height={282}
-              src={banner_images[0]} // Use the first banner image
+              src={
+                banner_images && banner_images.length > 0
+                  ? banner_images[0]
+                  : "fallback-image-url"
+              }
               alt={hotel_name}
               className="rounded-2xl"
             />
           </div>
           <button
             onClick={() => setFavorite(!favorite)}
-            className="absolute z-10 inline-block text-primary top-3 sm:top-6 right-3 sm:right-6 rounded-full bg-white p-2.5">
+            className="absolute z-10 inline-block text-primary top-3 sm:top-6 right-3 sm:right-6 rounded-full bg-white p-2.5"
+          >
             {favorite ? (
               <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
             ) : (
@@ -59,12 +65,15 @@ const HotelListingList = ({ item }: { item: any }) => {
             <div className="flex justify-between mb-2">
               <Link
                 href={`/hotel-listing-details?hotelDetailsId=${id}`}
-                className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
+                className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
+              >
                 {hotel_name}
               </Link>
               <div className="flex items-center shrink-0">
                 <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                <span className="block text-[var(--neutral-700)]">{ratings}</span>
+                <span className="block text-[var(--neutral-700)]">
+                  {ratings}
+                </span>
               </div>
             </div>
             <div className="flex justify-between mb-6">
@@ -79,7 +88,8 @@ const HotelListingList = ({ item }: { item: any }) => {
                 <li key={index}>
                   <div
                     data-tooltip-id="amenity"
-                    className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                    className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                  >
                     <Image
                       width={28}
                       height={28}
@@ -101,7 +111,8 @@ const HotelListingList = ({ item }: { item: any }) => {
               </span>
               <Link
                 href="/hotel-listing-details"
-                className="btn-outline font-semibold">
+                className="btn-outline font-semibold"
+              >
                 Book Now
               </Link>
             </div>

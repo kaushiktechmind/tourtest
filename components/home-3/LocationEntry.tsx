@@ -8,6 +8,7 @@ const people = [
   { id: 3, name: "Chicago" },
   { id: 4, name: "Los Angeles" },
   { id: 6, name: "Oklahoma" },
+  { id: 6, name: "Sweden" },
 ];
 
 interface LocationEntryProps {
@@ -15,8 +16,13 @@ interface LocationEntryProps {
   onChange: (location: string) => void; // Add onChange prop type
 }
 
-const LocationEntry: React.FC<LocationEntryProps> = ({ placeholder, onChange }) => {
-  const [selected, setSelected] = useState<{ id: number; name: string } | null>(null);
+const LocationEntry: React.FC<LocationEntryProps> = ({
+  placeholder,
+  onChange,
+}) => {
+  const [selected, setSelected] = useState<{ id: number; name: string } | null>(
+    null
+  );
   const [query, setQuery] = useState("");
 
   const filteredPeople =
@@ -38,7 +44,7 @@ const LocationEntry: React.FC<LocationEntryProps> = ({ placeholder, onChange }) 
         <div className="relative w-full cursor-pointer overflow-hidden rounded-full sm:text-sm bg-[var(--bg-1)] border focus:outline-none">
           <Combobox.Input
             className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none"
-            displayValue={(person: any) => person ? person.name : ""}
+            displayValue={(person: any) => (person ? person.name : "")}
             onChange={(event) => setQuery(event.target.value)}
             placeholder={placeholder}
           />

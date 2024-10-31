@@ -39,11 +39,11 @@ interface HotelFormData {
   max_adults: string;
   max_childs: string;
   max_infants: string;
-  amenities: string[]; // Assuming it's a string ID
+  amenities: []; // Assuming it's a string ID
   status: string;
   agent_price: string;
   featured_images: File[];
-  [key: string]: string | File[] | string[]; // For multiple image uploads
+  [key: string]: string | File[]; // For multiple image uploads
 }
 
 const Page = () => {
@@ -51,7 +51,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const hotelId = searchParams.get("hotelId"); // Get FAQ ID from URL params
 
-  const [rooms, setRooms] = useState<Room[]>([]); // Explicitly set the type for rooms
+  const [rooms, setRooms] = useState<Room[]>([]);
 
   const [formData, setFormData] = useState<HotelFormData>({
     hotel_id: hotelId ?? "",
@@ -106,7 +106,7 @@ const Page = () => {
     const fetchRooms = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms"
+          `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelId}/rooms`
         );
         if (!response.ok) {
           const errorMessage = await response.text(); // Retrieve the error message
@@ -114,7 +114,7 @@ const Page = () => {
           throw new Error(`Failed to add room: ${errorMessage}`);
         }
         const data = await response.json();
-        setRooms(data.rooms); // Assuming the rooms array is in data.rooms
+        setRooms(data.data); // Assuming the rooms array is in data.rooms
       } catch (error) {
         console.error(error);
       }
@@ -407,19 +407,19 @@ const Page = () => {
                   {amenities.length === 0 ? (
                     <p>No amenities available</p>
                   ) : (
-                    <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                    <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-2">
                       {amenities.map((item) => (
                         <li key={item.id} className="py-2">
                           <CheckboxCustom
                             label={item.amenity_name}
-                            img={
-                              item.amenity_logo ? (
-                                <img
-                                  src={item.amenity_logo}
-                                  alt={item.amenity_name}
-                                />
-                              ) : null
-                            }
+                            // img={
+                            //   item.amenity_logo ? (
+                            //     <img
+                            //       src={item.amenity_logo}
+                            //       alt={item.amenity_name}
+                            //     />
+                            //   ) : null
+                            // }
                             onChange={() =>
                               handleCheckboxChange(item.amenity_name)
                             }
@@ -489,8 +489,9 @@ const Page = () => {
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
+
               <tbody>
-                {rooms.length > 0 ? (
+                {(rooms ?? []).length > 0 ? (
                   rooms.map(({ id, room_name, room_price, status }) => (
                     <tr
                       key={id}
@@ -503,7 +504,7 @@ const Page = () => {
                       </td>
                       <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                         <Link
-                          href="/hotel/edit-hotel-attributes"
+                          href={`/hotel/edit-manage-room?hotelId=${hotelId}`}
                           className="text-primary"
                         >
                           <PencilSquareIcon className="w-5 h-5" />

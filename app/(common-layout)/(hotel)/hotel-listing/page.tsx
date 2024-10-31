@@ -6,14 +6,13 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const Page = () => {
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
-
+  console.log(startdate, enddate, "----------------");
 
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,17 +20,22 @@ const Page = () => {
 
   const fetchHotels = async () => {
     setLoading(true); // Set loading to true before starting fetch
-    setError(null);   // Reset error state
+    setError(null); // Reset error state
 
     try {
       let response;
 
       // Check if type is provided
       if (type) {
-        response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`);
-      } else if (loc && startdate && enddate) {
+        response = await axios.get(
+          `https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`
+        );
+      } else if (loc) {
         // If no type, check if loc, startdate, and enddate are provided
-        response = await axios.get(`https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`);
+        // alert("hello i am inside loc date filter");
+        response = await axios.get(
+          `https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`
+        );
       } else {
         // If neither condition is satisfied, set error and return
         setError("Please provide valid search parameters.");
@@ -71,9 +75,7 @@ const Page = () => {
   return (
     <>
       {Array.isArray(hotels) && hotels.length > 0 ? (
-        hotels.map((item) => (
-          <HotelListingList key={item.id} item={item} />
-        ))
+        hotels.map((item) => <HotelListingList key={item.id} item={item} />)
       ) : (
         <div>No hotels available.</div>
       )}

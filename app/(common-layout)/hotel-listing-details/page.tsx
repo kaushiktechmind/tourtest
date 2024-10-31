@@ -1507,7 +1507,7 @@ const Page = () => {
                             selected ? "text-primary font-medium" : ""
                           )
                         }>
-                        Enquiry Form
+                        Enquiry Forma
                       </Tab>
                     </Tab.List>
                     <Tab.Panels className="tab-content mb-6 lg:mb-8">
@@ -1517,7 +1517,7 @@ const Page = () => {
                             <div className="w-full flex">
                               <input
                                 type="text"
-                                className="w-[80%] md:w-[90%] focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
+                                className="w-[80%] md:w-[90%a] focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
                                 placeholder="Location"
                               />
                               <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
