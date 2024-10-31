@@ -12,7 +12,11 @@ const Page = () => {
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
-  console.log(startdate, enddate, "----------------");
+  const adults = searchParams.get("adults");
+  const children = searchParams.get("children");
+  const infants = searchParams.get("infants");
+  
+  console.log(adults, children, infants, "----------------");
 
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +36,6 @@ const Page = () => {
         );
       } else if (loc) {
         // If no type, check if loc, startdate, and enddate are provided
-        // alert("hello i am inside loc date filter");
         response = await axios.get(
           `https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`
         );
@@ -75,7 +78,16 @@ const Page = () => {
   return (
     <>
       {Array.isArray(hotels) && hotels.length > 0 ? (
-        hotels.map((item) => <HotelListingList key={item.id} item={item} />)
+        // Filter the hotels array to remove duplicates based on the hotel ID
+        [...new Map(hotels.map((item) => [item.id, item])).values()].map((uniqueItem) => (
+          <HotelListingList 
+            key={uniqueItem.id} 
+            item={uniqueItem} 
+            adults={Number(adults)} 
+            children={Number(children)} 
+            infants={Number(infants)} 
+          />
+        ))
       ) : (
         <div>No hotels available.</div>
       )}

@@ -17,13 +17,20 @@ const Hero = () => {
   const [locationName, setLocationName] = useState(""); // State to hold the location name
   const [startDate, endDate] = dateRange;
 
+  // Assume total is defined here based on AddRoom's state
+  const [total, setTotal] = useState({
+    adults: 0,
+    children: 0,
+    infants: 0,
+  });
+
   const handleSearch = () => {
     if (!locationName || !startDate || !endDate) {
       alert("Please fill all fields before searching.");
       return;
     }
 
-    const formatDate = (date: Date) => {
+    const formatDate = (date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
       const day = String(date.getDate()).padStart(2, "0");
@@ -37,7 +44,7 @@ const Hero = () => {
       locationName
     )}&startdate=${encodeURIComponent(
       formattedStartDate
-    )}&enddate=${encodeURIComponent(formattedEndDate)}`;
+    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults}&children=${total.children}&infants=${total.infants}`;
 
     window.location.href = searchUrl;
   };
@@ -75,7 +82,7 @@ const Hero = () => {
           </div>
 
           <div className="w-full md:w-[50%] xl:w-[25%]">
-            <AddRoom />
+            <AddRoom setTotal={setTotal} /> {/* Pass setTotal to AddRoom */}
           </div>
 
           <button

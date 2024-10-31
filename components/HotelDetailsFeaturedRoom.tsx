@@ -46,7 +46,7 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
               </div> */}
             </div>
             {/* <p className="mb-4">Free Cancellation after 5 hours of booking</p> */}
-            <ul className="columns-1 sm:columns-2">
+            {/* <ul className="columns-1 sm:columns-2">
               <li className="py-2 sm:py-3">
                 <div className="flex items-center gap-2">
                   <Image
@@ -61,7 +61,7 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
                   <span className="block">{amenity3}</span>
                 </div>
               </li>
-            </ul>
+            </ul> */}
           </div>
           <div className="property-card__body py-0 pt-4">
             <div className="hr-dashed"></div>

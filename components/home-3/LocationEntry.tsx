@@ -7,8 +7,9 @@ const people = [
   { id: 2, name: "Washington" },
   { id: 3, name: "Chicago" },
   { id: 4, name: "Los Angeles" },
-  { id: 6, name: "Oklahoma" },
+  { id: 5, name: "Oklahoma" },
   { id: 6, name: "Sweden" },
+  { id: 7, name: "India" }
 ];
 
 interface LocationEntryProps {

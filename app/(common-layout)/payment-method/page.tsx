@@ -1,8 +1,14 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import featured1 from "@/public/img/featured-img-1.jpg";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const page = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const totalPrice = searchParams.get("totalPrice");
+  // alert(totalPrice)
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
       <div className="container">
@@ -301,7 +307,7 @@ const page = () => {
               <ul className="flex flex-col gap-4">
                 <li className="flex items-center justify-between flex-wrap">
                   <p className="mb-0">Subtotal</p>
-                  <p className="mb-0 font-medium">$1015</p>
+                  <p className="mb-0 font-medium">{totalPrice}</p>
                 </li>
                 <li className="flex items-center justify-between flex-wrap">
                   <p className="mb-0">Service charge</p>
@@ -318,8 +324,8 @@ const page = () => {
               </ul>
               <div className="border border-dashed my-8"></div>
               <div className="flex items-center justify-between flex-wrap mb-6">
-                <p className="mb-0">Payable Now</p>
-                <p className="mb-0 font-medium">1115</p>
+                <p className="mb-0">Sub Total</p>
+                <p className="mb-0 font-medium">{totalPrice}</p>
               </div>
               <Link
                 href="#"

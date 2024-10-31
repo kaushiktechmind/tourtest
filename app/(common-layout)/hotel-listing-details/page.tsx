@@ -8,6 +8,14 @@ import { Navigation } from "swiper";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { Tab } from "@headlessui/react";
+
+import "react-datepicker/dist/react-datepicker.css";
+import LocationEntry from "@/components/home-3/LocationEntry";
+import AddRoom from "@/components/home-2/AddRoom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+
 import { CheckIcon, StarIcon } from "@heroicons/react/20/solid";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -28,28 +36,14 @@ import {
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
 import CheckboxCustom from "@/components/Checkbox";
-const featuredHotelData = [
-  {
-    id: 1,
-    img: "/img/featured-hotel-7.jpg",
-    title: "Luxury Room",
-    price: 256,
-    favourite: false,
-  },
-  {
-    id: 2,
-    img: "/img/featured-hotel-8.jpg",
-    title: "Luxury Room",
-    price: 256,
-    favourite: false,
-  },
-];
 
 interface Room {
   id: number;
   img: string;
   title: string;
   price: number;
+  extra_bed_price: number;
+
 }
 
 
@@ -63,6 +57,63 @@ const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
+  
+
+  const adults = searchParams.get("adults");
+  const children = searchParams.get("children");
+  const infants = searchParams.get("infants");
+
+
+
+
+  const [isOpen, setOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
+    null,
+    null,
+  ]);
+  const [locationName, setLocationName] = useState(""); // State to hold the location name
+  const [startDate, endDate] = dateRange;
+
+  // Assume total is defined here based on AddRoom's state
+  const [total, setTotal] = useState({
+    adults: 0,
+    children: 0,
+    infants: 0,
+  });
+
+  const handleSearch = () => {
+    const locationName = "India";
+    if (!locationName || !startDate || !endDate) {
+      alert("Please fill all fields before searching.");
+      return;
+    }
+
+    const formatDate = (date) => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    };
+
+    const formattedStartDate = formatDate(startDate);
+    const formattedEndDate = formatDate(endDate);
+
+    const searchUrl = `/hotel-listing-details?hotelDetailsId=${hotelDetailsId}loc=${encodeURIComponent(
+      locationName
+    )}&startdate=${encodeURIComponent(
+      formattedStartDate
+    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults}&children=${total.children}&infants=${total.infants}`;
+
+    window.location.href = searchUrl;
+  };
+
+
+  
+  
+  
+
+
+
 
 
   const [hotelDetails, setHotelDetails] = useState({
@@ -204,6 +255,7 @@ const Page = () => {
 
           if (result.data) {
             setHotelDetails({
+             
               id: result.data.id,
               property_id: result.data.property_id,
               hotel_or_home_stay: result.data.hotel_or_home_stay,
@@ -354,13 +406,15 @@ const Page = () => {
         if (result.message === "Rooms retrieved successfully") {
           const formattedRooms: Room[] = result.data.map((room: any) => ({
             id: room.id,
+            extra: room.extra_bed_price,
             img: room.featured_images[0] || "/img/default-room.jpg",
             title: room.room_name,
             amenity1: room.amenities[0],
             amenity2: room.amenities[1],
             amenity3: room.amenities[2],
             price: parseFloat(room.room_price),
-            
+            extra_bed_price: parseFloat(room.extra_bed_price),
+
           }));
           setRoomData(formattedRooms);
         }
@@ -371,8 +425,29 @@ const Page = () => {
 
     fetchRooms();
   }, []);
+   
+  const calculatePrice = () => {
+    const startingPrice = Number(parseFloat(hotelDetails.starting_price));
+    const extraBedPrice = 800;
+    // alert(extraBedPrice, "ddsssssssss");
 
+    let adultPrice = 0;
+    
+    if (Number(adults) == 1 || Number(adults) == 2) {
+      adultPrice = startingPrice; ///here to fetch starting price
+    } else if (Number(adults) == 3) {
+      adultPrice = 1000 + extraBedPrice;
+    } else if (Number(adults) >= 4) {
+      adultPrice = 1000 + 1000; 
+    }
 
+    const childPrice = children * 500; // Each child adds 500
+    const totalPrice = adultPrice + childPrice;
+
+    return { adultPrice, childPrice, totalPrice };
+  };
+
+  const { adultPrice, childPrice, totalPrice } = calculatePrice();
 
   return (
     <main>
@@ -433,7 +508,7 @@ const Page = () => {
       <div className="bg-[var(--bg-2)] py-[30px] lg:py-[60px] px-3">
         <div className="container">
           <div className="grid grid-cols-12 gap-4 lg:gap-6">
-            
+
             <div className="col-span-12 xl:col-span-8">
               <div className="p-4 rounded-2xl bg-white mb-6 lg:mb-10">
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
@@ -1322,6 +1397,47 @@ const Page = () => {
                 </div>
 
 
+
+
+                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center">
+                  {/* <LocationEntry
+            placeholder="Location"
+            onChange={(value) => setLocationName(value)} // Set location name on change
+          /> */}
+
+                  <div className="relative w-full md:w-[60%] xl:w-[30%] flex items-center bg-gray-100 rounded-full p-3 border">
+                    <DatePicker
+                      placeholderText="2024-10-30 - 2024-11-01"
+                      selectsRange={true}
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(update) => setDateRange(update)}
+                      className="w-full text-center bg-transparent outline-none"
+                      dateFormat="MM/dd/yyyy"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3"
+                      onClick={() => setOpen((prev) => !prev)}
+                    >
+                      {/* <CalendarDaysIcon className="w-6 h-6 text-gray-600" /> */}
+                    </button>
+                  </div>
+
+                  <div className="w-full md:w-[55%] xl:w-[28%]">
+                    <AddRoom setTotal={setTotal} total={total} /> {/* Pass total to AddRoom */}
+                  </div>
+
+
+                  <button
+                    onClick={handleSearch} // Call the search function on click
+                    className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
+                  >
+                    <span className="ml-2">Search</span>
+                  </button>
+                </div>
+
+
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">
                     {" "}
@@ -1507,25 +1623,14 @@ const Page = () => {
                             selected ? "text-primary font-medium" : ""
                           )
                         }>
-                        Enquiry Forma
+                        Andman
                       </Tab>
                     </Tab.List>
                     <Tab.Panels className="tab-content mb-6 lg:mb-8">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
-                          <div className="col-span-1">
-                            <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="w-[80%] md:w-[90%a] focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Location"
-                              />
-                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-map-marker-alt"></i>
-                              </span>
-                            </div>
-                          </div>
-                          <div className="col-span-1">
+
+                          {/* <div className="col-span-1">
                             <div className="w-full flex">
                               <input
                                 type="text"
@@ -1536,8 +1641,8 @@ const Page = () => {
                                 <i className="las text-2xl la-calendar-alt"></i>
                               </span>
                             </div>
-                          </div>
-                          <div className="col-span-1">
+                          </div> */}
+                          {/* <div className="col-span-1">
                             <div className="w-full flex">
                               <input
                                 type="text"
@@ -1548,31 +1653,34 @@ const Page = () => {
                                 <i className="las text-2xl la-clock"></i>
                               </span>
                             </div>
-                          </div>
+                          </div> */}
                         </div>
+
+                        
+                        
                         <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500"> Base Price </p>
-                          <p className="mb-0 font-medium"> $360 </p>
+                          <p className="mb-0 clr-neutral-500"> Adult Price </p>
+                          <p className="mb-0 font-medium">{adultPrice}  </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> State Tax </p>
-                          <p className="mb-0 font-medium"> $70 </p>
+                          <p className="mb-0 clr-neutral-500"> Child Price </p>
+                          <p className="mb-0 font-medium"> {childPrice} </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> Night Charge </p>
-                          <p className="mb-0 font-medium"> $170 </p>
+                          <p className="mb-0 clr-neutral-500"> Infant Price </p>
+                          <p className="mb-0 font-medium">  0 </p>
                         </div>
-                        <div className="flex items-center justify-between">
+                        {/* <div className="flex items-center justify-between">
                           <p className="mb-0 clr-neutral-500">
                             {" "}
-                            Convenience Fee{" "}
+                            Extra Bed Price{" "}
                           </p>
-                          <p className="mb-0 font-medium"> $15 </p>
-                        </div>
+                          <p className="mb-0 font-medium"> 0 </p>
+                        </div> */}
                         <div className="hr-dashed my-4"></div>
                         <div className="flex items-center justify-between">
                           <p className="mb-0 clr-neutral-500"> Total </p>
-                          <p className="mb-0 font-medium"> $1025 </p>
+                          <p className="mb-0 font-medium"> {totalPrice} </p>
                         </div>
                       </Tab.Panel>
                       <Tab.Panel>
@@ -1600,7 +1708,7 @@ const Page = () => {
                   </Tab.Group>
 
                   <Link
-                    href="#"
+                    href={`/payment-method?totalPrice=${totalPrice}`}
                     className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6">
                     <span className="inline-block"> Proceed Booking </span>
                   </Link>

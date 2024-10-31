@@ -5,35 +5,33 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const HotelListingList = ({ item }: { item: any }) => {
+const HotelListingList = ({ item, adults, children, infants }: { item: any; adults: number; children: number; infants: number; }) => {
   const [favorite, setFavorite] = useState(false);
   const {
     id,
+    hotel_id,
     banner_images,
     location_name,
     starting_price,
     highest_price,
     ratings,
     hotel_name,
-    // Extract amenities using a loop
     ...amenitiesData // This will gather all remaining properties
   } = item;
 
   // Create an array of amenities dynamically
   const amenities = [];
   for (let i = 1; i <= 30; i++) {
-    // Adjust the upper limit as needed
     const amenityName = amenitiesData[`amenity_name${i}`];
     const amenityLogo = amenitiesData[`amenity_logo${i}`];
 
-    // Push to the array if both name and logo are available
     if (amenityName && amenityLogo) {
       amenities.push({ name: amenityName, logo: amenityLogo });
     }
   }
 
   return (
-    <div key={id} className="col-span-12">
+    <div key={id || hotel_id} className="col-span-12">
       <div className="flex flex-col lg:flex-row p-2 rounded-2xl bg-white hover:shadow-lg duration-300 border">
         <div className="relative">
           <div className="rounded-2xl">
@@ -64,7 +62,7 @@ const HotelListingList = ({ item }: { item: any }) => {
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${id}`}
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&adults=${adults}&children=${children}&infants=${infants}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
@@ -83,7 +81,6 @@ const HotelListingList = ({ item }: { item: any }) => {
               </div>
             </div>
             <ul className="flex items-center flex-wrap gap-3">
-              {/* Loop through amenities to display each one */}
               {amenities.map((amenity, index) => (
                 <li key={index}>
                   <div
@@ -93,8 +90,8 @@ const HotelListingList = ({ item }: { item: any }) => {
                     <Image
                       width={28}
                       height={28}
-                      src={amenity.logo} // Use the amenity logo
-                      alt={amenity.name} // Use the amenity name as alt text
+                      src={amenity.logo}
+                      alt={amenity.name}
                       className="w-7 h-7 object-fit-contain"
                     />
                   </div>
@@ -110,7 +107,7 @@ const HotelListingList = ({ item }: { item: any }) => {
                 </span>
               </span>
               <Link
-                href="/hotel-listing-details"
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&adults=${adults}&children=${children}&infants=${infants}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

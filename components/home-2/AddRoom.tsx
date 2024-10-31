@@ -1,10 +1,12 @@
 "use client";
 import { useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const AddRoom = () => {
+
+
+const AddRoom = ({ setTotal }) => {
   const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0 }]);
-  const [total, setTotal] = useState({ adults: 0, children: 0, infants: 0 });
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddRoom = () => {
@@ -50,7 +52,7 @@ const AddRoom = () => {
   return (
     <div className="relative">
       <div className="border rounded-full p-3 cursor-pointer hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
-        {total.adults} adult - {total.children} child - {total.infants} infant
+        {rooms.reduce((acc, room) => acc + room.adults, 0)} adult - {rooms.reduce((acc, room) => acc + room.children, 0)} child - {rooms.reduce((acc, room) => acc + room.infants, 0)} infant
       </div>
 
       {isOpen && (
@@ -90,7 +92,7 @@ const AddRoom = () => {
                       className="w-full border rounded p-1"
                     >
                       <option value={0}></option>
-                      {[...Array(2).keys()].map((num) => (
+                      {[...Array(3).keys()].map((num) => (
                         <option key={num} value={num}>
                           {num}
                         </option>
@@ -105,7 +107,7 @@ const AddRoom = () => {
                       className="w-full border rounded p-1"
                     >
                       <option value={0}></option>
-                      {[...Array(2).keys()].map((num) => (
+                      {[...Array(3).keys()].map((num) => (
                         <option key={num} value={num}>
                           {num}
                         </option>
