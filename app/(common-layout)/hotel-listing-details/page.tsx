@@ -37,6 +37,13 @@ import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
 import CheckboxCustom from "@/components/Checkbox";
 
+interface RoomPrice {
+  room_price: number;
+  extra_bed_price: number;
+  child_price: number;
+  id: number
+}
+
 interface Room {
   id: number;
   img: string;
@@ -54,10 +61,12 @@ function classNames(...classes: any[]) {
 
 const Page = () => {
   const [roomData, setRoomData] = useState<Room[]>([]);
+  const [selectedRoomPrice, setSelectedRoomPrice] = useState<RoomPrice | null>(null);
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
-  
+
 
   const adults = searchParams.get("adults");
   const children = searchParams.get("children");
@@ -108,9 +117,13 @@ const Page = () => {
   };
 
 
-  
-  
-  
+  const handleRoomSelection = (price: RoomPrice) => {
+    setSelectedRoomPrice(price);
+  };
+
+
+
+
 
 
 
@@ -255,7 +268,7 @@ const Page = () => {
 
           if (result.data) {
             setHotelDetails({
-             
+
               id: result.data.id,
               property_id: result.data.property_id,
               hotel_or_home_stay: result.data.hotel_or_home_stay,
@@ -413,6 +426,7 @@ const Page = () => {
             amenity2: room.amenities[1],
             amenity3: room.amenities[2],
             price: parseFloat(room.room_price),
+            child_price: parseFloat(room.child_price),
             extra_bed_price: parseFloat(room.extra_bed_price),
 
           }));
@@ -425,32 +439,12 @@ const Page = () => {
 
     fetchRooms();
   }, []);
-   
-  const calculatePrice = () => {
-    const startingPrice = Number(parseFloat(hotelDetails.starting_price));
-    const extraBedPrice = 800;
-    // alert(extraBedPrice, "ddsssssssss");
 
-    let adultPrice = 0;
-    
-    if (Number(adults) == 1 || Number(adults) == 2) {
-      adultPrice = startingPrice; ///here to fetch starting price
-    } else if (Number(adults) == 3) {
-      adultPrice = 1000 + extraBedPrice;
-    } else if (Number(adults) >= 4) {
-      adultPrice = 1000 + 1000; 
-    }
 
-    const childPrice = children * 500; // Each child adds 500
-    const totalPrice = adultPrice + childPrice;
-
-    return { adultPrice, childPrice, totalPrice };
-  };
-
-  const { adultPrice, childPrice, totalPrice } = calculatePrice();
 
   return (
     <main>
+
       <div className="bg-[var(--bg-2)] ">
         <div className="container-fluid p-0">
           <div>
@@ -504,6 +498,15 @@ const Page = () => {
           </div>
         </div>
       </div>
+      {selectedRoomPrice ? (
+        <div className="price-section">
+          <h5>Room Price: ${selectedRoomPrice.room_price}</h5>
+          <p>Extra Bed Price: ${selectedRoomPrice.extra_bed_price}</p>
+          <p>Child Price: ${selectedRoomPrice.child_price}</p>
+        </div>
+      ) : (
+        <p>Select a room to view pricing details</p>
+      )}
 
       <div className="bg-[var(--bg-2)] py-[30px] lg:py-[60px] px-3">
         <div className="container">
@@ -1425,7 +1428,7 @@ const Page = () => {
                   </div>
 
                   <div className="w-full md:w-[55%] xl:w-[28%]">
-                    <AddRoom setTotal={setTotal} total={total} /> {/* Pass total to AddRoom */}
+                    <AddRoom setTotal={setTotal} total={total} /> {/* Pas s total to AddRoom */}
                   </div>
 
 
@@ -1445,7 +1448,7 @@ const Page = () => {
                   </h4>
                   <ul className="flex flex-col gap-4">
                     {roomData.map((item) => (
-                      <HotelDetailsFeaturedRoom key={item.id} item={item} />
+                      <HotelDetailsFeaturedRoom key={item.id} item={item} onRoomSelect={handleRoomSelection} />
                     ))}
                   </ul>
                 </div>
@@ -1656,31 +1659,67 @@ const Page = () => {
                           </div> */}
                         </div>
 
-                        
-                        
-                        <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500"> Adult Price </p>
-                          <p className="mb-0 font-medium">{adultPrice}  </p>
+
+
+                        {/* <div className="flex items-center justify-between mb-4 mt-6">
+                          <p className="mb-0 clr-neutral-500">Adult Price</p>
+                          <p className="mb-0 font-medium">${selectedRoomPrice?.room_price || 'N/A'}</p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> Child Price </p>
-                          <p className="mb-0 font-medium"> {childPrice} </p>
+                          <p className="mb-0 clr-neutral-500">Extra Bed Price</p>
+                          <p className="mb-0 font-medium">${selectedRoomPrice?.extra_bed_price || 'N/A'}</p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> Infant Price </p>
-                          <p className="mb-0 font-medium">  0 </p>
-                        </div>
-                        {/* <div className="flex items-center justify-between">
-                          <p className="mb-0 clr-neutral-500">
-                            {" "}
-                            Extra Bed Price{" "}
-                          </p>
-                          <p className="mb-0 font-medium"> 0 </p>
+                          <p className="mb-0 clr-neutral-500">Child Price</p>
+                          ${selectedRoomPrice ? selectedRoomPrice.child_price * 2 : 0}
+
                         </div> */}
+
+                        <div>
+                          <p className="mb-0 font-medium">
+                            Adult Price: $
+                            {(() => {
+                              // Base room price
+                              const roomPrice = selectedRoomPrice ? selectedRoomPrice.room_price : 0;
+
+                              // Adult price is always equal to room price
+                              return roomPrice;
+                            })()}
+                          </p>
+                          <p className="mb-0 font-medium">Extra Bed Price: $
+                            {(() => {
+                              const extraBedPrice = selectedRoomPrice ? selectedRoomPrice.extra_bed_price : 0;
+                              // Charge for extra bed only if there are exactly 3 adults
+                              return (Number(adults) == 3 ? extraBedPrice : 0);
+                            })()}
+                          </p>
+                          <p className="mb-0 font-medium">Child Price: $
+                            {(() => {
+                              const childPrice = selectedRoomPrice ? selectedRoomPrice.child_price : 0;
+                              // Charge for children only if there are any
+                              return (Number(children) > 0 ? childPrice : 0);
+                            })()}
+                          </p>
+                          <p className="mb-0 font-medium">Total Price: $
+                            {(() => {
+                              const roomPrice = selectedRoomPrice ? selectedRoomPrice.room_price : 0;
+                              const extraBedPrice = selectedRoomPrice ? selectedRoomPrice.extra_bed_price : 0;
+                              const childPrice = selectedRoomPrice ? selectedRoomPrice.child_price : 0;
+
+                              // Total price is the sum of room price, extra bed price, and child price
+                              const totalPrice = roomPrice +
+                                (Number(adults) == 3 ? extraBedPrice : 0) +
+                                (Number(children) > 0 ? childPrice : 0);
+
+                              return totalPrice; // Return the total price for display
+                            })()}
+                          </p>
+                        </div>
+
+
                         <div className="hr-dashed my-4"></div>
                         <div className="flex items-center justify-between">
-                          <p className="mb-0 clr-neutral-500"> Total </p>
-                          <p className="mb-0 font-medium"> {totalPrice} </p>
+
                         </div>
                       </Tab.Panel>
                       <Tab.Panel>
@@ -1707,9 +1746,25 @@ const Page = () => {
                     </Tab.Panels>
                   </Tab.Group>
 
+                  <p></p>
+
+
                   <Link
-                    href={`/payment-method?totalPrice=${totalPrice}`}
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6">
+                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&totalPrice=${(() => {
+                      const roomPrice = selectedRoomPrice ? selectedRoomPrice.room_price : 0;
+                      const extraBedPrice = selectedRoomPrice ? selectedRoomPrice.extra_bed_price : 0;
+                      const childPrice = selectedRoomPrice ? selectedRoomPrice.child_price : 0;
+                      // const id = selectedRoomPrice ? selectedRoomPrice.id : ''; 
+
+                      // Total price calculation
+                      return (
+                        roomPrice +
+                        (Number(adults) === 3 ? extraBedPrice : 0) +
+                        (Number(children) > 0 ? childPrice : 0)
+                      );
+                    })()}`} // Include the ID in the URL
+                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                  >
                     <span className="inline-block"> Proceed Booking </span>
                   </Link>
                   <ul className="flex justify-center gap-3 flex-wrap">

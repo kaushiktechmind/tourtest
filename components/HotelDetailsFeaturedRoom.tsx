@@ -4,9 +4,11 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const HotelDetailsFeaturedRoom = ({ item }: any) => {
+const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
+  const { id, img, price, title, amenity1, amenity2, amenity3, extra_bed_price, child_price } = item;
+
   const [favorite, setFavorite] = useState(false);
-  const { id, img, price, title, amenity1, amenity2, amenity3 } = item;
+
   return (
     <li key={id}>
       <div className="p-2 rounded-2xl flex flex-col md:flex-row bg-[var(--bg-2)]">
@@ -40,28 +42,9 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
               >
                 {title}
               </Link>
-              {/* <div className="flex items-center shrink-0">
-                <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                <span className="block text-[var(--neutral-700)]">4.8</span>
-              </div> */}
+
             </div>
-            {/* <p className="mb-4">Free Cancellation after 5 hours of booking</p> */}
-            {/* <ul className="columns-1 sm:columns-2">
-              <li className="py-2 sm:py-3">
-                <div className="flex items-center gap-2">
-                  <Image
-                    width={24}
-                    height={24}
-                    src="/img/icon-ac-secondary.png"
-                    alt="image"
-                    className="w-6 h-6 object-fit-contain"
-                  />
-                  <span className="block">{amenity1}</span>
-                  <span className="block">{amenity2}</span>
-                  <span className="block">{amenity3}</span>
-                </div>
-              </li>
-            </ul> */}
+
           </div>
           <div className="property-card__body py-0 pt-4">
             <div className="hr-dashed"></div>
@@ -70,16 +53,14 @@ const HotelDetailsFeaturedRoom = ({ item }: any) => {
             <div className="flex flex-wrap justify-between items-center">
               <span className="block text-xl font-medium text-primary">
                 ${price}
-                {/* <span className="inline-block text-gray-600 text-base font-normal">
-                  /per night
-                </span> */}
+
               </span>
-              <Link
-                href="hotel-listing-details"
-                className="btn-outline  font-semibold"
+              <button
+                onClick={() => onRoomSelect({ room_price: price, extra_bed_price, child_price, id })}
+                className="btn-outline font-semibold"
               >
                 Book Now
-              </Link>
+              </button>
             </div>
           </div>
         </div>
