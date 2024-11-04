@@ -1568,13 +1568,13 @@ const Page = () => {
                   </Link> */}
                 </div>
 
-                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center">
+                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
                   {/* <LocationEntry
             placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
           /> */}
 
-                  <div className="relative w-full md:w-[60%] xl:w-[30%] flex items-center bg-gray-100 rounded-full p-3 border">
+                  <div className="relative w-full md:w-[60%] xl:w-[30%] flex items-center bg-gray-100 rounded-full p-3 border ">
                     <DatePicker
                       placeholderText="2024-10-30 - 2024-11-01"
                       selectsRange={true}

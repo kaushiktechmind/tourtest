@@ -214,7 +214,7 @@ const Page = () => {
                       className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
                       placeholder="Enter Address"></textarea>
                   </div>
-                  
+
                 </div>
               </div>
               {/* <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6">
@@ -377,7 +377,9 @@ const Page = () => {
                 <p className="mb-0">Sub Total</p>
                 <p className="mb-0 font-medium">{totalPrice}</p>
               </div>
-              <RazorpayButton totalPrice={Number(totalPrice) * 100} currency="INR" adults={Number(adults)} children={Number(children)} infants={Number(infants)} /> 
+              <RazorpayButton totalPrice={Number(totalPrice) * 100} currency="INR" adults={Number(adults)} infants={Number(infants)}>
+                {Number(children)}
+              </RazorpayButton>
             </div>
           </div>
         </div>

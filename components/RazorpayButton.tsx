@@ -6,7 +6,7 @@ interface RazorpayButtonProps {
   totalPrice: number;
   currency: string;
   adults: number;
-  children: number;
+  children?: number;
   infants: number;
 }
 

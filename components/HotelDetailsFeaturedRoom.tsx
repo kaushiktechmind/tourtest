@@ -22,16 +22,6 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               className="rounded-2xl w-348 h-348"
             />
           </div>
-          {/* <button
-            onClick={() => setFavorite(!favorite)}
-            className="absolute z-10 inline-block text-primary top-6 right-6 rounded-full bg-white p-2.5 "
-          >
-            {favorite ? (
-              <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
-            ) : (
-              <HeartIconOutline />
-            )}
-          </button> */}
         </div>
 
 
@@ -44,8 +34,9 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               >
                 {title}
               </Link>
-
+         <p>adsad</p>
             </div>
+            
             <p className="mb-4">Free Cancellation after 5 hours of booking</p>
             <ul className="columns-1 sm:columns-2">
               <li className="py-2 sm:py-3">
@@ -106,7 +97,7 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
           <div className="property-card__body">
             <div className="flex flex-wrap justify-between items-center">
               <span className="block text-xl font-medium text-primary">
-                ${price}
+                ${price}/Per Night
 
               </span>
               <button
