@@ -12,6 +12,7 @@ const Page = () => {
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
+  const noOfRooms = searchParams.get("noOfRooms");
   const adults = searchParams.get("adults");
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
@@ -62,10 +63,10 @@ const Page = () => {
     }
   };
 
-  // Fetch hotels when component mounts
-  useEffect(() => {
-    fetchHotels();
-  }, []);
+  // // Fetch hotels when component mounts
+  // useEffect(() => {
+  //   fetchHotels();
+  // }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -87,6 +88,7 @@ const Page = () => {
               adults={Number(adults)}
               children={Number(children)}
               infants={Number(infants)}
+              noOfRooms={noOfRooms}
               loc={loc}
               startdate={startdate}
               enddate={enddate}

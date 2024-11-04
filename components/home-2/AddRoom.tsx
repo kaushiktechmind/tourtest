@@ -1,11 +1,8 @@
 "use client";
 import { useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useRouter, useSearchParams } from "next/navigation";
 
-
-
-const AddRoom = ({ setTotal }) => {
+const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate }) => {
   const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0 }]);
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,7 +20,7 @@ const AddRoom = ({ setTotal }) => {
 
   const handleChange = (index: number, type: 'adults' | 'children' | 'infants', value: number) => {
     const updatedRooms = [...rooms];
-    
+
     if (updatedRooms[index]) {
       updatedRooms[index][type] = value;
       setRooms(updatedRooms);
@@ -32,7 +29,6 @@ const AddRoom = ({ setTotal }) => {
       console.error("Invalid index:", index);
     }
   };
-
   const calculateTotal = (rooms: Array<{ adults: number; children: number; infants: number }>) => {
     const totalCounts = rooms.reduce(
       (acc, room) => ({
@@ -42,7 +38,28 @@ const AddRoom = ({ setTotal }) => {
       }),
       { adults: 0, children: 0, infants: 0 }
     );
-    setTotal(totalCounts);
+  
+    // Set the total including the number of rooms
+    setTotal({
+      ...totalCounts,
+      noOfRooms: rooms.length, // Update this line to include the number of rooms
+    });
+  };
+  
+  const handleSearch = () => {
+    const noOfRooms = rooms.length; // Total number of rooms
+    const total = rooms.reduce(
+      (acc, room) => ({
+        adults: acc.adults + room.adults,
+        children: acc.children + room.children,
+        infants: acc.infants + room.infants,
+      }),
+      { adults: 0, children: 0, infants: 0 }
+    );
+
+    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults}&children=${total.children}&infants=${total.infants}&noOfRooms=${noOfRooms}`;
+    
+    window.location.href = searchUrl; // Redirect to the constructed URL
   };
 
   const handleDone = () => {
@@ -52,7 +69,7 @@ const AddRoom = ({ setTotal }) => {
   return (
     <div className="relative">
       <div className="border rounded-full p-3 cursor-pointer hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
-        {rooms.reduce((acc, room) => acc + room.adults, 0)} adult - {rooms.reduce((acc, room) => acc + room.children, 0)} child - {rooms.reduce((acc, room) => acc + room.infants, 0)} infant
+       {rooms.reduce((acc, room) => acc + room.adults, 0)} adult{rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? 's' : ''} - {rooms.reduce((acc, room) => acc + room.children, 0)} child{rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? 'ren' : ''} - {rooms.reduce((acc, room) => acc + room.infants, 0)} infant{rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? 's' : ''}
       </div>
 
       {isOpen && (
@@ -132,6 +149,8 @@ const AddRoom = ({ setTotal }) => {
               >
                 Done
               </button>
+
+              
             </div>
           </div>
         </div>

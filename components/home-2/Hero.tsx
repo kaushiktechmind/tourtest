@@ -22,6 +22,7 @@ const Hero = () => {
     adults: 0,
     children: 0,
     infants: 0,
+    noOfRooms: 0,
   });
 
   const handleSearch = () => {
@@ -46,7 +47,7 @@ const Hero = () => {
       formattedStartDate
     )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${
       total.adults
-    }&children=${total.children}&infants=${total.infants}`;
+    }&children=${total.children}&infants=${total.infants}&noOfRooms=${total.noOfRooms}`;
 
     window.location.href = searchUrl;
   };

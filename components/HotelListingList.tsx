@@ -13,6 +13,7 @@ const HotelListingList = ({
   loc,
   startdate,
   enddate,
+  noOfRooms
 }: {
   item: any;
   adults: number;
@@ -21,6 +22,7 @@ const HotelListingList = ({
   loc: string;
   startdate: string;
   enddate: string;
+  noOfRooms: number;
 }) => {
   const [favorite, setFavorite] = useState(false);
   const {
@@ -80,7 +82,7 @@ const HotelListingList = ({
               <Link
                 href={`/hotel-listing-details?hotelDetailsId=${
                   id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${children}&infants=${infants}`}
+                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${children}&infants=${infants}&noOfRooms=${noOfRooms}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
@@ -220,7 +222,7 @@ const HotelListingList = ({
               <Link
                 href={`/hotel-listing-details?hotelDetailsId=${
                   id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${children}&infants=${infants}`}
+                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${children}&infants=${infants}&noOfRooms=${noOfRooms}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

@@ -8,6 +8,13 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
   const { id, img, price, title, amenity1, amenity2, amenity3, extra_bed_price, child_price } = item;
 
   const [favorite, setFavorite] = useState(false);
+  
+  // State to manage the selected option in the dropdown
+  const [selectedOption, setSelectedOption] = useState('');
+
+  const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedOption(event.target.value);
+  };
 
   return (
     <li key={id}>
@@ -24,7 +31,6 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
           </div>
         </div>
 
-
         <div className="p-2 sm:p-4 flex-grow">
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
@@ -34,9 +40,27 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               >
                 {title}
               </Link>
-         <p>adsad</p>
+              <select
+              value={selectedOption}
+              onChange={handleChange}
+              className="mt-2 p-2 border rounded"
+            >
+              <option value="">Choose Rooms</option>
+              <option value="option1">1</option>
+              <option value="option2">2</option>
+              <option value="option3">3</option>
+              <option value="option4">4</option>
+              <option value="option5">5</option>
+              <option value="option6">6</option>
+              <option value="option7">7</option>
+              <option value="option8">8</option>
+              <option value="option9">9</option>
+            </select>
             </div>
-            
+
+            {/* Dropdown below the text */}
+           
+
             <p className="mb-4">Free Cancellation after 5 hours of booking</p>
             <ul className="columns-1 sm:columns-2">
               <li className="py-2 sm:py-3">
@@ -88,8 +112,6 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
                 </div>
               </li>
             </ul>
-
-
           </div>
           <div className="property-card__body py-0 pt-4">
             <div className="hr-dashed"></div>
@@ -98,7 +120,6 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
             <div className="flex flex-wrap justify-between items-center">
               <span className="block text-xl font-medium text-primary">
                 ${price}/Per Night
-
               </span>
               <button
                 onClick={() => onRoomSelect({ room_price: price, extra_bed_price, child_price, id })}

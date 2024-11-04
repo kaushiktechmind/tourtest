@@ -72,6 +72,7 @@ const Page = () => {
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
+  const noOfRooms = Number(searchParams.get("noOfRooms"));
 
   // alert(loc);
   // alert(startdate);
