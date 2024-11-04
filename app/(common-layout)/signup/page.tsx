@@ -7,7 +7,7 @@ import { useState } from "react";
 const SignupPage = () => {
   // State variables for form inputs
   const [fullName, setFullName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [mobileNumber, setMobileNumber] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -31,7 +31,7 @@ const SignupPage = () => {
     // Create an object to hold the form data
     const formData = {
       name: fullName,
-      phone_number: phoneNumber,
+      mobile_number: mobileNumber,
       email: email,
       password: trimmedPassword, // Main password field
       password_confirmation: trimmedConfirmPassword, // Confirmation field
@@ -41,13 +41,16 @@ const SignupPage = () => {
     console.log("Form Data:", JSON.stringify(formData));
 
     try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/user/register",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       const data = await response.json();
 
@@ -59,7 +62,9 @@ const SignupPage = () => {
       } else {
         // Handle errors (e.g., display error messages)
         console.error("Registration error:", data);
-        setErrorMessage(data.message || "Registration failed. Please try again."); // Set error message
+        setErrorMessage(
+          data.message || "Registration failed. Please try again."
+        ); // Set error message
       }
     } catch (error) {
       console.error("Network error:", error);
@@ -87,7 +92,8 @@ const SignupPage = () => {
                   <div className="col-span-12">
                     <label
                       htmlFor="full-name"
-                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3"
+                    >
                       Full Name
                     </label>
                     <input
@@ -101,23 +107,25 @@ const SignupPage = () => {
                   </div>
                   <div className="col-span-12">
                     <label
-                      htmlFor="phone-number"
-                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3">
-                      Enter Your Phone Number
+                      htmlFor="mobile-number"
+                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3"
+                    >
+                      Enter Your Mobile Number
                     </label>
                     <input
                       type="text"
                       className="w-full bg-[var(--bg-1)] border focus:outline-none rounded-full py-3 px-5"
                       placeholder="Enter Your Mobile Number"
-                      id="phone-number"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      id="mobile-number"
+                      value={mobileNumber}
+                      onChange={(e) => setMobileNumber(e.target.value)}
                     />
                   </div>
                   <div className="col-span-12">
                     <label
                       htmlFor="email"
-                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3"
+                    >
                       Enter Your Email ID
                     </label>
                     <input
@@ -132,7 +140,8 @@ const SignupPage = () => {
                   <div className="col-span-12">
                     <label
                       htmlFor="password"
-                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3"
+                    >
                       Enter Your Password
                     </label>
                     <input
@@ -147,7 +156,8 @@ const SignupPage = () => {
                   <div className="col-span-12">
                     <label
                       htmlFor="confirm-password"
-                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-normal sm:font-medium block mb-3"
+                    >
                       Confirm Your Password
                     </label>
                     <input
@@ -164,7 +174,8 @@ const SignupPage = () => {
                       Do you have an account?
                       <Link
                         href="sign-in"
-                        className="link font-semibold text-primary">
+                        className="link font-semibold text-primary"
+                      >
                         Signin
                       </Link>
                     </p>
@@ -172,7 +183,8 @@ const SignupPage = () => {
                   <div className="col-span-12">
                     <button
                       type="submit"
-                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 font-semibold">
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 font-semibold"
+                    >
                       <span className="inline-block"> Signup </span>
                     </button>
                   </div>
@@ -198,9 +210,11 @@ const SignupPage = () => {
       {isPopupVisible && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white rounded-lg p-6 shadow-lg">
-            <h4 className="mb-4 text-lg font-semibold">Registration Successful</h4>
+            <h4 className="mb-4 text-lg font-semibold">
+              Registration Successful
+            </h4>
             <p>You have registered successfully!</p>
-            <button 
+            <button
               className="mt-4 px-4 py-2 bg-primary text-white rounded"
               onClick={closePopup}
             >

@@ -29,7 +29,8 @@ const Dropdown: React.FC<DropdownProps> = ({
     <ul
       className={`my-dropdown static lg:absolute shadow-md ${dropdownClass} ${
         dropdown ? "block" : "hidden"
-      }`}>
+      }`}
+    >
       {submenus.map((submenu, index) => (
         <MenuItems depthLevel={depthLevel} items={submenu} key={index} />
       ))}
@@ -82,14 +83,16 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
       className={`relative menu-items cursor-pointer ${
         depthLevel == 0 ? "white-text-nav" : "text-gray-700"
       }`}
-      ref={ref}>
+      ref={ref}
+    >
       {items.submenu ? (
         <>
           <span
             aria-haspopup="menu"
             aria-expanded={dropdown ? "true" : "false"}
             onClick={() => setDropdown((prev) => !prev)}
-            className={`flex items-center justify-between gap-1`}>
+            className={`flex items-center justify-between gap-1`}
+          >
             {items.title}
             {depthLevel > 0 && <i className="las la-angle-right"></i>}
             {depthLevel == 0 && typeof items.title === "string" && (

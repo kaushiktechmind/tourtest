@@ -1,15 +1,66 @@
 import { Menu, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function ProfileDropdown() {
+  const [name, setName] = useState("Guest User");
+  const [profilePhoto, setProfilePhoto] = useState("/img/user-1.jpg"); // Default photo
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("name");
+    const storedProfilePhoto = localStorage.getItem("profile_photo");
+
+    if (storedName) {
+      setName(storedName);
+    }
+
+    if (storedProfilePhoto) {
+      setProfilePhoto(storedProfilePhoto);
+    }
+  }, []); // Empty dependency array means this runs once on mount
+
+
+
+  // Function to handle user logout
+  const handleLogout = async () => {
+    const token = localStorage.getItem("access_token"); // Step 1: Get the access token
+    if (!token) return; // If no token, exit the function
+
+    try {
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/user/logout",
+        {
+          method: "POST", // Step 2: Use POST method for logout
+          headers: {
+            "Content-Type": "application/json", // Set the content type
+            Authorization: `Bearer ${token}`, // Step 3: Set the Authorization header with the token
+          },
+        }
+      );
+
+      if (response.ok) {
+        // Step 4: Check if the response is successful
+        localStorage.removeItem("name"); // Clear the username
+        localStorage.removeItem("access_token"); // Clear the access token
+        // Redirect or perform other actions after logout
+        window.location.href = "/sign-in"; // Example: redirect to the login page
+      } else {
+        console.error("Logout failed:", response.statusText); // Log any errors
+      }
+    } catch (error) {
+      console.error("An error occurred during logout:", error); // Handle network errors
+    }
+  };
+
   return (
     <div className="text-left z-10">
       <Menu as="div" className="relative inline-block top-1 md:top-[2px]">
         <Menu.Button className="flex justify-center items-center rounded-full focus:outline-none">
           <Image
             className="rounded-full"
-            src="/img/user-1.jpg"
+            src={profilePhoto}
             width={45}
             height={45}
             alt="profile"
@@ -23,13 +74,14 @@ export default function ProfileDropdown() {
           enterTo="transform opacity-100 scale-100"
           leave="transition ease-in duration-75"
           leaveFrom="transform opacity-100 scale-100"
-          leaveTo="transform opacity-0 scale-95">
+          leaveTo="transform opacity-0 scale-95"
+        >
           <Menu.Items className="absolute left-[-80px] lg:right-0 lg:left-auto mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 p-3 focus:outline-none">
             <div className="px-1 py-1 ">
               <Menu.Item>
                 <div className="flex gap-3 pb-3 items-center border-b border-dashed">
                   <Image
-                    src="/img/user-1.jpg"
+                    src={profilePhoto}
                     alt="profile"
                     className="rounded-full"
                     width={55}
@@ -37,7 +89,7 @@ export default function ProfileDropdown() {
                   />
                   <div className="flex flex-col">
                     <span className="text-gray-800 text-xl font-semibold">
-                      Peter Parker
+                      {name}
                     </span>
                     <span className="text-gray-600 text-sm">
                       Los Angeles, CA
@@ -47,54 +99,33 @@ export default function ProfileDropdown() {
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-gray-200 text-gray-800" : ""
-                    } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm mt-2`}>
+                  <Link href="/userprofile"
+                    className={`${active ? "bg-gray-200 text-gray-800" : ""
+                      } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm mt-2`}
+                  >
                     <UserIcon />
                     My Account
-                  </button>
+                  </Link>
                 )}
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-gray-200 text-gray-800" : ""
-                    } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm`}>
+                  <Link href="/offers   "
+                    className={`${active ? "bg-gray-200 text-gray-800" : ""
+                      } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm`}
+                  >
                     <CalenderIcon />
                     My Bookings
-                  </button>
+                  </Link>
                 )}
               </Menu.Item>
               <Menu.Item>
                 {({ active }) => (
                   <button
-                    className={`${
-                      active ? "bg-gray-200 text-gray-800" : ""
-                    } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm mb-2 border-b border-dashed`}>
-                    <HeartIcon />
-                    Wishlist
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-gray-200 text-gray-800" : ""
-                    } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm mt-2`}>
-                    <InfoIcon />
-                    Help
-                  </button>
-                )}
-              </Menu.Item>
-              <Menu.Item>
-                {({ active }) => (
-                  <button
-                    className={`${
-                      active ? "bg-gray-200 text-gray-800" : ""
-                    } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm`}>
+                    onClick={handleLogout}
+                    className={`${active ? "bg-gray-200 text-gray-800" : ""
+                      } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm`}
+                  >
                     <LogOutIcon />
                     Log out
                   </button>
@@ -115,7 +146,8 @@ const UserIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-5 h-5">
+      className="w-5 h-5"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -132,7 +164,8 @@ const CalenderIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-5 h-5">
+      className="w-5 h-5"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -149,7 +182,8 @@ const HeartIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-5 h-5">
+      className="w-5 h-5"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -166,7 +200,8 @@ const InfoIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-5 h-5">
+      className="w-5 h-5"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
@@ -183,7 +218,8 @@ const LogOutIcon = () => {
       viewBox="0 0 24 24"
       strokeWidth={1.5}
       stroke="currentColor"
-      className="w-5 h-5">
+      className="w-5 h-5"
+    >
       <path
         strokeLinecap="round"
         strokeLinejoin="round"

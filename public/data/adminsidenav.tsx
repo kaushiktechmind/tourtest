@@ -83,7 +83,7 @@ export const sidenavData = [
   },
   {
     id: 8,
-    name: "Cancel Booking",
+    name: "Booking",
     icon: <i className="las la-calendar-times text-2xl"></i>,
     url: "/cancel-booking",
   },

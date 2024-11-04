@@ -44,7 +44,9 @@ const Hero = () => {
       locationName
     )}&startdate=${encodeURIComponent(
       formattedStartDate
-    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults}&children=${total.children}&infants=${total.infants}`;
+    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${
+      total.adults
+    }&children=${total.children}&infants=${total.infants}`;
 
     window.location.href = searchUrl;
   };
@@ -69,6 +71,7 @@ const Hero = () => {
               startDate={startDate}
               endDate={endDate}
               onChange={(update) => setDateRange(update)}
+              // minDate={new Date()} // Disable past dates
               className="w-full text-center bg-transparent outline-none"
               dateFormat="MM/dd/yyyy"
             />

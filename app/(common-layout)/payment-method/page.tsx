@@ -29,7 +29,7 @@ interface RoomData {
 const date = new Date();
 const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '-'); // Output: "DD-MM-YYYY"
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const totalPrice = searchParams.get("totalPrice");
@@ -102,6 +102,17 @@ const page = () => {
                       <p className="mb-0 text-lg font-medium"> {children} </p>
                     </div>
                   </div>
+                  <div className="col-span-12 md:col-span-4">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Infants
+                        </span>
+                        <i className="text-2xl las la-edit"></i>
+                      </div>
+                      <p className="mb-0 text-lg font-medium"> {infants} </p>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex flex-wrap border items-center rounded-2xl">
                   <div className="rounded-2xl p-2">
@@ -157,10 +168,10 @@ const page = () => {
                     Transaction ID:
                     <span className="text-primary">25246584</span>
                   </p>
-                  <p className="mb-0">
+                  {/* <p className="mb-0">
                     Total Payable Amount:
                     <span className="text-primary">$1115</span>
-                  </p>
+                  </p> */}
                 </div>
                 <div className="border border-dashed my-6"></div>
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
@@ -203,9 +214,10 @@ const page = () => {
                       className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
                       placeholder="Enter Address"></textarea>
                   </div>
+                  
                 </div>
               </div>
-              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6">
+              {/* <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6">
                 <h4 className="mb-6 text-2xl font-semibold">
                   {" "}
                   Payment methods{" "}
@@ -312,7 +324,7 @@ const page = () => {
                     />
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className="col-span-12 lg:col-span-4">
@@ -365,7 +377,7 @@ const page = () => {
                 <p className="mb-0">Sub Total</p>
                 <p className="mb-0 font-medium">{totalPrice}</p>
               </div>
-              <RazorpayButton totalPrice={Number(totalPrice) * 100} currency="INR" /> 
+              <RazorpayButton totalPrice={Number(totalPrice) * 100} currency="INR" adults={Number(adults)} children={Number(children)} infants={Number(infants)} /> 
             </div>
           </div>
         </div>
@@ -374,4 +386,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

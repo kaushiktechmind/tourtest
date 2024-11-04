@@ -1,14 +1,23 @@
-"use client"
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import LoginImg from "@/public/img/admin-signin.png";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const Page = () => {
-  const [email, setEmail] = useState<string>("");
+  const [login, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false); // State for popup visibility
+  const [userName, setUserName] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Check for user's name in localStorage after login
+    const savedName = localStorage.getItem("name");
+    if (savedName) {
+      setUserName(savedName);
+    }
+  }, []);
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
@@ -18,26 +27,36 @@ const Page = () => {
 
     // API request to login
     try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/user/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            login,
+            password,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Login failed. Please check your credentials.");
       }
 
       const data = await response.json();
-      
+
       // Save the token (You can also store admin info as needed)
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("id", data.user.id);
+      localStorage.setItem("name", data.user.name);
+      localStorage.setItem("email", data.user.email);
+      localStorage.setItem("mobile_number", data.user.mobile_number);
+      localStorage.setItem("profile_photo", data.user.profile_photo);
       
+
+
       // Show the popup after successful login
       setShowPopup(true);
       console.log("Login successful:", data.admin);
@@ -70,12 +89,13 @@ const Page = () => {
                   <div className="col-span-12">
                     <label
                       htmlFor="enter-email"
-                      className="text-base sm:text-lg md:text-xl font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-medium block mb-3"
+                    >
                       Enter Your Email ID
                     </label>
                     <input
                       type="email"
-                      value={email}
+                      value={login}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full bg-[var(--bg-1)] border focus:outline-none rounded-full py-3 px-5"
                       placeholder="Enter Your Email"
@@ -86,7 +106,8 @@ const Page = () => {
                   <div className="col-span-12">
                     <label
                       htmlFor="enter-password"
-                      className="text-base sm:text-lg md:text-xl font-medium block mb-3">
+                      className="text-base sm:text-lg md:text-xl font-medium block mb-3"
+                    >
                       Enter Your Password
                     </label>
                     <input
@@ -100,7 +121,8 @@ const Page = () => {
                     />
                     <Link
                       href="signup"
-                      className="link block text-sm text-primary :clr-primary-400 text-end">
+                      className="link block text-sm text-primary :clr-primary-400 text-end"
+                    >
                       Forget password
                     </Link>
                   </div>
@@ -110,7 +132,8 @@ const Page = () => {
                       Don&apos;t have an account?{" "}
                       <Link
                         href="signup"
-                        className="link font-semibold text-primary">
+                        className="link font-semibold text-primary"
+                      >
                         Signup
                       </Link>
                     </p>
@@ -118,7 +141,8 @@ const Page = () => {
                   <div className="col-span-12">
                     <button
                       type="submit"
-                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold">
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold"
+                    >
                       <span className="inline-block"> Signin </span>
                     </button>
                   </div>
@@ -141,7 +165,9 @@ const Page = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-5 rounded-lg text-center">
             <h2 className="text-lg font-semibold">Login Successful!</h2>
-            <p className="mt-2">Welcome back! You have logged in successfully.</p>
+            <p className="mt-2">
+              Welcome back! You have logged in successfully.
+            </p>
             <button
               onClick={handleClosePopup}
               className="mt-4 py-2 px-4 rounded bg-primary text-white hover:bg-primary-400"

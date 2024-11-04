@@ -15,7 +15,7 @@ const Page = () => {
   const adults = searchParams.get("adults");
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
-  
+
   console.log(adults, children, infants, "----------------");
 
   const [hotels, setHotels] = useState<any[]>([]);
@@ -79,15 +79,20 @@ const Page = () => {
     <>
       {Array.isArray(hotels) && hotels.length > 0 ? (
         // Filter the hotels array to remove duplicates based on the hotel ID
-        [...new Map(hotels.map((item) => [item.id, item])).values()].map((uniqueItem) => (
-          <HotelListingList 
-            key={uniqueItem.id} 
-            item={uniqueItem} 
-            adults={Number(adults)} 
-            children={Number(children)} 
-            infants={Number(infants)} 
-          />
-        ))
+        [...new Map(hotels.map((item) => [item.id, item])).values()].map(
+          (uniqueItem) => (
+            <HotelListingList
+              key={uniqueItem.id}
+              item={uniqueItem}
+              adults={Number(adults)}
+              children={Number(children)}
+              infants={Number(infants)}
+              loc={loc}
+              startdate={startdate}
+              enddate={enddate}
+            />
+          )
+        )
       ) : (
         <div>No hotels available.</div>
       )}

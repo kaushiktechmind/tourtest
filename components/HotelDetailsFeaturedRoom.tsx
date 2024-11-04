@@ -19,10 +19,10 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               height={305}
               src={img}
               alt="image"
-              className="rounded-2xl"
+              className="rounded-2xl w-348 h-348"
             />
           </div>
-          <button
+          {/* <button
             onClick={() => setFavorite(!favorite)}
             className="absolute z-10 inline-block text-primary top-6 right-6 rounded-full bg-white p-2.5 "
           >
@@ -31,8 +31,10 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
             ) : (
               <HeartIconOutline />
             )}
-          </button>
+          </button> */}
         </div>
+
+
         <div className="p-2 sm:p-4 flex-grow">
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
@@ -44,6 +46,58 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               </Link>
 
             </div>
+            <p className="mb-4">Free Cancellation after 5 hours of booking</p>
+            <ul className="columns-1 sm:columns-2">
+              <li className="py-2 sm:py-3">
+                <div className="flex items-center gap-2">
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/img/icon-ac-secondary.png"
+                    alt="image"
+                    className="w-6 h-6 object-fit-contain"
+                  />
+                  <span className="block">Air Condition</span>
+                </div>
+              </li>
+              <li className="py-2 sm:py-3">
+                <div className="flex items-center gap-2">
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/img/icon-wifi-secondary.png"
+                    alt="image"
+                    className="w-6 h-6 object-fit-contain"
+                  />
+                  <span className="block"> Wifi </span>
+                </div>
+              </li>
+              <li className="py-2 sm:py-3">
+                <div className="flex items-center gap-2">
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/img/icon-bed-secondary.png"
+                    alt="image"
+                    className="w-6 h-6 object-fit-contain"
+                  />
+                  <span className="block">Deluxe Bed Suite</span>
+                </div>
+              </li>
+              <li className="py-2 sm:py-3">
+                <div className="flex items-center gap-2">
+                  <Image
+                    width={24}
+                    height={24}
+                    src="/img/icon-kitchen-secondary.png"
+                    alt="image"
+                    className="w-6 h-6 object-fit-contain"
+                  />
+                  <span className="block"> Kitchen </span>
+                </div>
+              </li>
+            </ul>
+
 
           </div>
           <div className="property-card__body py-0 pt-4">
