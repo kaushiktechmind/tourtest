@@ -63,10 +63,10 @@ const Page = () => {
     }
   };
 
-  // // Fetch hotels when component mounts
-  // useEffect(() => {
-  //   fetchHotels();
-  // }, []);
+  // Fetch hotels when component mounts
+  useEffect(() => {
+    fetchHotels();
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -86,7 +86,7 @@ const Page = () => {
               key={uniqueItem.id}
               item={uniqueItem}
               adults={Number(adults)}
-              children={Number(children)}
+              numChildren={Number(children)}
               infants={Number(infants)}
               noOfRooms={noOfRooms}
               loc={loc}

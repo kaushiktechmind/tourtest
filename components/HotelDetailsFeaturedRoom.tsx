@@ -4,13 +4,38 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 
-const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
-  const { id, img, price, title, amenity1, amenity2, amenity3, extra_bed_price, child_price } = item;
+const HotelDetailsFeaturedRoom = ({
+  item,
+  onSelectionChange,
+  onRoomSelect,
+  noOfRooms,
+  noOfNights,
+}: any) => {
+  const {
+    id,
+    img,
+    price,
+    title,
+    amenity1,
+    amenity2,
+    amenity3,
+    extra_bed_price,
+    child_price,
+  } = item;
 
-  const [favorite, setFavorite] = useState(false);
-  
+  const [selectedValue, setSelectedValue] = useState(0);
+  const handleDropdownChange = (event) => {
+    const newValue = parseInt(event.target.value, 10);
+    const changeAllowed = onSelectionChange(selectedValue, newValue, price, id);
+    if (changeAllowed) {
+      setSelectedValue(newValue);
+    } else {
+      alert("Selection exceeds the allowed limit!");
+    }
+  };
+
   // State to manage the selected option in the dropdown
-  const [selectedOption, setSelectedOption] = useState('');
+  const [selectedOption, setSelectedOption] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
@@ -40,26 +65,21 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
               >
                 {title}
               </Link>
+              <p>{noOfNights} Nights </p>
               <select
-              value={selectedOption}
-              onChange={handleChange}
-              className="mt-2 p-2 border rounded"
-            >
-              <option value="">Choose Rooms</option>
-              <option value="option1">1</option>
-              <option value="option2">2</option>
-              <option value="option3">3</option>
-              <option value="option4">4</option>
-              <option value="option5">5</option>
-              <option value="option6">6</option>
-              <option value="option7">7</option>
-              <option value="option8">8</option>
-              <option value="option9">9</option>
-            </select>
+                value={selectedValue}
+                onChange={handleDropdownChange}
+                className="mt-2 p-2 border rounded"
+              >
+                {[...Array(noOfRooms + 1)].map((_, i) => (
+                  <option key={i} value={i}>
+                    {i}
+                  </option>
+                ))}
+              </select>
             </div>
 
             {/* Dropdown below the text */}
-           
 
             <p className="mb-4">Free Cancellation after 5 hours of booking</p>
             <ul className="columns-1 sm:columns-2">
@@ -122,7 +142,14 @@ const HotelDetailsFeaturedRoom = ({ item, onRoomSelect }: any) => {
                 ${price}/Per Night
               </span>
               <button
-                onClick={() => onRoomSelect({ room_price: price, extra_bed_price, child_price, id })}
+                onClick={() =>
+                  onRoomSelect({
+                    room_price: price,
+                    extra_bed_price,
+                    child_price,
+                    id,
+                  })
+                }
                 className="btn-outline font-semibold"
               >
                 Book Now

@@ -61,6 +61,22 @@ const Page = () => {
     null
   );
 
+  const [totalSelected, setTotalSelected] = useState(0);
+  const [totalCost, setTotalCost] = useState(0);
+
+  const handleSelectionChange = (prevValue, newValue, roomPrice, roomId) => {
+    const difference = newValue - prevValue;
+    const newTotalSelected = totalSelected + difference;
+
+    if (newTotalSelected <= noOfRooms) {
+      setTotalSelected(newTotalSelected);
+
+      // Calculate the new total cost based on the price for this room
+      setTotalCost((currentTotal) => currentTotal + difference * roomPrice);
+      return true;
+    }
+    return false;
+  };
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
@@ -73,6 +89,11 @@ const Page = () => {
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
   const noOfRooms = Number(searchParams.get("noOfRooms"));
+
+  const date1 = new Date(String(startdate));
+  const date2 = new Date(String(enddate));
+  const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
+  const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   // alert(loc);
   // alert(startdate);
@@ -91,6 +112,7 @@ const Page = () => {
     adults: 0,
     children: 0,
     infants: 0,
+    noOfRooms: 0,
   });
 
   const handleSearch = () => {
@@ -116,7 +138,9 @@ const Page = () => {
       formattedStartDate
     )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${
       total.adults
-    }&children=${total.children}&infants=${total.infants}`;
+    }&children=${total.children}&infants=${total.infants}&noOfRooms=${
+      total.noOfRooms
+    }`;
 
     window.location.href = searchUrl;
   };
@@ -421,7 +445,10 @@ const Page = () => {
         console.log("API result:", result); // Log the API result
 
         // Adjust the success message condition here
-        if (result.message === "Data retrieved successfully" || result.message === "Rooms retrieved successfully") {
+        if (
+          result.message === "Data retrieved successfully" ||
+          result.message === "Rooms retrieved successfully"
+        ) {
           let formattedRooms: Room[] = [];
 
           if (loc !== "null") {
@@ -611,7 +638,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="parking"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -624,7 +652,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="restaurent"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -637,7 +666,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="room"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -650,7 +680,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="fitness"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -663,7 +694,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="swimming"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -676,7 +708,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="laundry"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -689,7 +722,8 @@ const Page = () => {
                     <li>
                       <div
                         data-tooltip-id="free"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
+                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                      >
                         <Image
                           width={28}
                           height={28}
@@ -1617,9 +1651,17 @@ const Page = () => {
                       <HotelDetailsFeaturedRoom
                         key={item.id}
                         item={item}
-                        onRoomSelect={handleRoomSelection}
+                        noOfRooms={noOfRooms}
+                        noOfNights={noOfNights}
+                        // onRoomSelect={handleRoomSelection}
+                        onSelectionChange={handleSelectionChange}
                       />
                     ))}
+                    {totalSelected > noOfRooms && (
+                      <p style={{ color: "red" }}>
+                        Combined selection exceeds allowed limit!
+                      </p>
+                    )}
                   </ul>
                 </div>
 
@@ -1929,10 +1971,12 @@ const Page = () => {
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">Total Price: </p>
+                          <p className="mb-0 clr-neutral-500">
+                            <p>Total Cost: </p>
+                          </p>
                           <p className="mb-0 font-medium">
-                            $
-                            {(() => {
+                            ${totalCost}
+                            {/* {(() => {
                               let x; // Declare x outside the condition
                               if (Number(adults) === 1) {
                                 x = 1; // Assign value if 1 adult
@@ -1962,7 +2006,7 @@ const Page = () => {
                                 (Number(children) > 0 ? childPrice : 0);
 
                               return totalPrice; // Return the total price for display
-                            })()}
+                            })()} */}
                           </p>
                         </div>
 
@@ -1997,36 +2041,36 @@ const Page = () => {
                   <p></p>
 
                   <Link
-                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&totalPrice=${(() => {
-                      let x; // Declare x outside the condition
-                      if (Number(adults) === 1) {
-                        x = 1; // Assign value if 1 adult
-                      } else {
-                        x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
-                      }
+                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&totalCost=${totalCost}`}
+                    // let x; // Declare x outside the condition
+                    // if (Number(adults) === 1) {
+                    //   x = 1; // Assign value if 1 adult
+                    // } else {
+                    //   x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
+                    // }
 
-                      // Calculate room price
-                      const roomPrice = selectedRoomPrice
-                        ? selectedRoomPrice.room_price * x
-                        : 0;
+                    // // Calculate room price
+                    // const roomPrice = selectedRoomPrice
+                    //   ? selectedRoomPrice.room_price * x
+                    //   : 0;
 
-                      // Calculate extra bed price if applicable
-                      const extraBedPrice =
-                        Number(adults) > 2 && Number(adults) % 2 !== 0
-                          ? selectedRoomPrice?.extra_bed_price || 0
-                          : 0;
+                    // // Calculate extra bed price if applicable
+                    // const extraBedPrice =
+                    //   Number(adults) > 2 && Number(adults) % 2 !== 0
+                    //     ? selectedRoomPrice?.extra_bed_price || 0
+                    //     : 0;
 
-                      // Get child price
-                      const childPrice = selectedRoomPrice?.child_price || 0;
+                    // // Get child price
+                    // const childPrice = selectedRoomPrice?.child_price || 0;
 
-                      // Total price is the sum of room price, extra bed price, and child price
-                      const totalPrice =
-                        roomPrice +
-                        extraBedPrice +
-                        (Number(children) > 0 ? childPrice : 0);
+                    // // Total price is the sum of room price, extra bed price, and child price
+                    // const totalPrice =
+                    //   roomPrice +
+                    //   extraBedPrice +
+                    //   (Number(children) > 0 ? childPrice : 0);
 
-                      return totalPrice; // Return the total price for display
-                    })()}`} // Include the ID in the URL
+                    // return totalPrice; // Return the total price for display
+                    // })()}`} // Include the ID in the URL
                     className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                   >
                     <span className="inline-block"> Proceed Booking </span>
