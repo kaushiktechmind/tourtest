@@ -302,7 +302,7 @@ const Page = () => {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     setHomeOrHomeStay(e.target.value);
     setStatus(e.target.value);
@@ -312,6 +312,7 @@ const Page = () => {
       [name]: value,
     }));
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

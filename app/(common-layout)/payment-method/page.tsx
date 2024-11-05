@@ -32,7 +32,7 @@ const formattedDate = date.toLocaleDateString('en-GB').replace(/\//g, '-'); // O
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const totalCost = searchParams.get("totalCost");
+  const grandTotal = searchParams.get("grandTotal");
   const adults = searchParams.get("adults");
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
@@ -357,7 +357,7 @@ const Page = () => {
               <ul className="flex flex-col gap-4">
                 <li className="flex items-center justify-between flex-wrap">
                   <p className="mb-0">Subtotal</p>
-                  <p className="mb-0 font-medium">{totalCost}</p>
+                  <p className="mb-0 font-medium">{grandTotal}</p>
                 </li>
                 <li className="flex items-center justify-between flex-wrap">
                   <p className="mb-0">Service charge</p>
@@ -375,9 +375,9 @@ const Page = () => {
               <div className="border border-dashed my-8"></div>
               <div className="flex items-center justify-between flex-wrap mb-6">
                 <p className="mb-0">Sub Total</p>
-                <p className="mb-0 font-medium">{totalCost}</p>
+                <p className="mb-0 font-medium">{grandTotal}</p>
               </div>
-              <RazorpayButton totalCost={Number(totalCost) * 100} currency="INR" adults={Number(adults)} infants={Number(infants)}>
+              <RazorpayButton grandTotal={Number(grandTotal) * 100} currency="INR" adults={Number(adults)} infants={Number(infants)}>
                 {Number(children)}
               </RazorpayButton>
             </div>

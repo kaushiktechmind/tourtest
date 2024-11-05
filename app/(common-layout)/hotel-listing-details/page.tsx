@@ -63,20 +63,43 @@ const Page = () => {
 
   const [totalSelected, setTotalSelected] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
+  const [totalChildPrice, setTotalChildPrice] = useState(0);
+  const [totalExtraBedPrice, setTotalExtraBedPrice] = useState(0);
 
-  const handleSelectionChange = (prevValue, newValue, roomPrice, roomId) => {
-    const difference = newValue - prevValue;
-    const newTotalSelected = totalSelected + difference;
+const handleSelectionChange = (prevValue, newValue, roomPrice, roomId) => {
+  const difference = newValue - prevValue;
+  const newTotalSelected = totalSelected + difference;
 
-    if (newTotalSelected <= noOfRooms) {
-      setTotalSelected(newTotalSelected);
+  if (newTotalSelected <= noOfRooms) {
+    setTotalSelected(newTotalSelected);
 
-      // Calculate the new total cost based on the price for this room
-      setTotalCost((currentTotal) => currentTotal + difference * roomPrice);
-      return true;
-    }
-    return false;
-  };
+    // Calculate the new total cost based on the price for this room
+    setTotalCost((currentTotal) => currentTotal + difference * roomPrice);
+    return true;
+  }
+  return false;
+};
+
+const handleChildToggle = (isChecked, childPrice, roomId) => {
+  setTotalChildPrice((currentTotal) =>
+    isChecked ? currentTotal + childPrice : currentTotal - childPrice
+  );
+  
+  setTotalCost((currentTotal) =>
+    isChecked ? currentTotal + childPrice : currentTotal - childPrice
+  );
+};
+
+
+const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
+  setTotalExtraBedPrice((currentTotal) =>
+    isSelected ? currentTotal + extraBedPrice : currentTotal - extraBedPrice
+  );
+  
+  setTotalCost((currentTotal) =>
+    isSelected ? currentTotal + extraBedPrice : currentTotal - extraBedPrice
+  );
+};
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
@@ -94,6 +117,8 @@ const Page = () => {
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
   const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+  const grandTotal = totalCost*noOfNights;
 
   // alert(loc);
   // alert(startdate);
@@ -493,6 +518,13 @@ const Page = () => {
 
     fetchRooms();
   }, [loc, startdate, enddate, hotelDetailsId]);
+
+  const grandTotalExtraBedPrice = totalExtraBedPrice * noOfNights;
+  const grandTotalChildPrice = totalChildPrice * noOfNights;
+  const grandTotalAdultPrice = grandTotal - ( grandTotalExtraBedPrice + grandTotalChildPrice);
+
+
+  
 
   return (
     <main>
@@ -1655,6 +1687,8 @@ const Page = () => {
                         noOfNights={noOfNights}
                         // onRoomSelect={handleRoomSelection}
                         onSelectionChange={handleSelectionChange}
+                        onChildToggle={handleChildToggle} 
+                        onExtraBedToggle={handleExtraBedToggle}
                       />
                     ))}
                     {totalSelected > noOfRooms && (
@@ -1919,8 +1953,8 @@ const Page = () => {
 
                         <div className="flex items-center justify-between mb-4 mt-6">
                           <p className="mb-0 clr-neutral-500">Adult Price: </p>
-                          <p className="mb-0 font-medium">
-                            $
+                          <p className="mb-0 font-medium"> ${grandTotalAdultPrice}
+                            {/* $
                             {(() => {
                               let x; // Declare x outside the condition
                               if (Number(adults) == 1) {
@@ -1934,7 +1968,7 @@ const Page = () => {
 
                               // Adult price is always equal to room price
                               return roomPrice;
-                            })()}
+                            })()} */}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
@@ -1942,8 +1976,8 @@ const Page = () => {
                             Extra Bed Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-                            $
-                            {(() => {
+                            ${grandTotalExtraBedPrice}
+                            {/* {(() => {
                               // Check the number of adults and calculate extra bed price
                               const extraBedPrice =
                                 Number(adults) > 2 && Number(adults) % 2 !== 0
@@ -1953,21 +1987,15 @@ const Page = () => {
                                   : 0; // Return 0 if conditions are not met
 
                               return extraBedPrice; // Return the calculated price
-                            })()}
+                            })()} */}
                           </p>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
                           <p className="mb-0 clr-neutral-500">Child Price: </p>
                           <p className="mb-0 font-medium">
-                            $
-                            {(() => {
-                              const childPrice = selectedRoomPrice
-                                ? selectedRoomPrice.child_price
-                                : 0;
-                              // Charge for children only if there are any
-                              return Number(children) > 0 ? childPrice : 0;
-                            })()}
+                           
+                           ${grandTotalChildPrice}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
@@ -1975,7 +2003,7 @@ const Page = () => {
                             <p>Total Cost: </p>
                           </p>
                           <p className="mb-0 font-medium">
-                            ${totalCost}
+                            ${grandTotal}
                             {/* {(() => {
                               let x; // Declare x outside the condition
                               if (Number(adults) === 1) {
@@ -2041,7 +2069,7 @@ const Page = () => {
                   <p></p>
 
                   <Link
-                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&totalCost=${totalCost}`}
+                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`}
                     // let x; // Declare x outside the condition
                     // if (Number(adults) === 1) {
                     //   x = 1; // Assign value if 1 adult

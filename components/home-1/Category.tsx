@@ -7,14 +7,14 @@ import { ArrowUpRight } from "@/public/data/icons";
 
 const Category = () => {
   return (
-    <section className="bg-white py-[60px] lg:py-[120px] relative px-3 ">
+    <section className="bg-white py-[60px] lg:py-[120px] relative px-3 z-1 ">
       <Image
         className="absolute hidden lg:block top-12 left-12"
         src={categoryEl}
         alt="img"
       />
       <div className="container">
-        <div className="max-w-[570px] mx-auto flex flex-col items-center text-center">
+        <div className="max-w-[570px] mx-auto flex flex-col items-center text-center z-1">
           <SubHeadingBtn text="Category" classes="bg-[var(--primary-light)]" />
           <h2 className="h2 mt-5">Choose Our Category</h2>
           <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">

@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { Children, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate }) => {
@@ -8,7 +8,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
 
   const handleAddRoom = () => {
     if (rooms.length < 5) {
-      setRooms([...rooms, { adults: 0, children: 0, infants: 0 }]);
+      setRooms([...rooms, { adults: 1, children: 0, infants: 0 }]);
     }
   };
 
@@ -61,10 +61,31 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
     
     window.location.href = searchUrl; // Redirect to the constructed URL
   };
-
   const handleDone = () => {
     setIsOpen(false);
+    
+    // Calculate totals
+    const total = rooms.reduce(
+      (acc, room) => ({
+        adults: acc.adults + room.adults,
+        children: acc.children + room.children,
+        infants: acc.infants + room.infants,
+      }),
+      { adults: 0, children: 0, infants: 0 }
+    );
+    const noOfRooms = rooms.length;
+  
+    // Construct new URL with parameters
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("children", total.children);
+    searchParams.set("infants", total.infants);
+    searchParams.set("noOfRooms", noOfRooms);
+  
+    // Update URL without reloading the page
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
   };
+  
 
   return (
     <div className="relative">

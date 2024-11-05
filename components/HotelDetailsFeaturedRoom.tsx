@@ -1,5 +1,3 @@
-import { HeartIconOutline } from "@/public/data/icons";
-import { HeartIcon, StarIcon } from "@heroicons/react/20/solid";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -10,6 +8,9 @@ const HotelDetailsFeaturedRoom = ({
   onRoomSelect,
   noOfRooms,
   noOfNights,
+  onChildToggle,
+  onExtraBedToggle
+
 }: any) => {
   const {
     id,
@@ -26,7 +27,7 @@ const HotelDetailsFeaturedRoom = ({
   const [selectedValue, setSelectedValue] = useState(0);
   const handleDropdownChange = (event) => {
     const newValue = parseInt(event.target.value, 10);
-    const changeAllowed = onSelectionChange(selectedValue, newValue, price, id);
+    const changeAllowed = onSelectionChange(selectedValue, newValue, price, extra_bed_price, child_price, id);
     if (changeAllowed) {
       setSelectedValue(newValue);
     } else {
@@ -39,6 +40,21 @@ const HotelDetailsFeaturedRoom = ({
 
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
+  };
+
+  const [isChildSelected, setIsChildSelected] = useState(false);
+  const [isExtraBedSelected, setIsExtraBedSelected] = useState(false);
+
+  const handleChildToggle = (event) => {
+    const checked = event.target.checked;
+    setIsChildSelected(checked);
+    onChildToggle(checked, child_price, id); // Ensure this calls the parent function
+  };
+
+  const handleExtraBedToggle = (event) => {
+    const checked = event.target.checked;
+    setIsExtraBedSelected(checked);
+    onExtraBedToggle(checked, extra_bed_price, id); // Update the parent
   };
 
   return (
@@ -65,7 +81,7 @@ const HotelDetailsFeaturedRoom = ({
               >
                 {title}
               </Link>
-              <p>{noOfNights} Nights </p>
+              <p>{noOfNights} Nights - </p>
               <select
                 value={selectedValue}
                 onChange={handleDropdownChange}
@@ -141,7 +157,23 @@ const HotelDetailsFeaturedRoom = ({
               <span className="block text-xl font-medium text-primary">
                 ${price}/Per Night
               </span>
-              <button
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={isChildSelected}
+                  onChange={handleChildToggle}
+                />
+                <label>Add Child </label>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <input
+                  type="checkbox"
+                  checked={isExtraBedSelected}
+                  onChange={handleExtraBedToggle}
+                />
+                <label>Add Extra Bed Price</label>
+              </div>
+              {/* <button
                 onClick={() =>
                   onRoomSelect({
                     room_price: price,
@@ -153,7 +185,7 @@ const HotelDetailsFeaturedRoom = ({
                 className="btn-outline font-semibold"
               >
                 Book Now
-              </button>
+              </button> */}
             </div>
           </div>
         </div>

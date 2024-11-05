@@ -3,14 +3,14 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 interface RazorpayButtonProps {
-  totalCost: number;
+  grandTotal: number;
   currency: string;
   adults: number;
   children?: number;
   infants: number;
 }
 
-const RazorpayButton: React.FC<RazorpayButtonProps> = ({ totalCost, adults, children, infants,  currency }) => {
+const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, adults, children, infants,  currency }) => {
   const router = useRouter();
 
   useEffect(() => {
@@ -44,7 +44,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ totalCost, adults, chil
         'Content-Type': 'application/json',
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify({ amount: totalCost, currency }),
+      body: JSON.stringify({ amount: grandTotal, currency }),
     });
 
     const data = await response.json();
