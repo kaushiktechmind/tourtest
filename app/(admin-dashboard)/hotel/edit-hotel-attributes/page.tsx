@@ -16,7 +16,7 @@ const Page = () => {
     amenity_logo: "",
   });
   const [iconFile, setIconFile] = useState<File | null>(null);
-  const [iconImage, setIconImage] = useState<string>('');
+  const [iconImage, setIconImage] = useState<string>("");
   const router = useRouter();
   const searchParams = useSearchParams();
   const amenityId = searchParams.get("amenityId");
@@ -81,9 +81,11 @@ const Page = () => {
       amenity_logo: iconFile,
     };
     const form = new FormData();
-    form.append('amenity_name', amenityData.amenity_name);
-    form.append('amenity_logo', iconFile) ;
-    form.append('_method', 'PUT');
+    form.append("amenity_name", amenityData.amenity_name);
+    if (iconFile) {
+      form.append("amenity_logo", iconFile);
+    }
+    form.append("_method", "PUT");
 
     try {
       const response = await fetch(
@@ -103,7 +105,8 @@ const Page = () => {
         const errorResponse = await response.json();
         console.error("Response error:", errorResponse);
         alert(
-          "Error updating amenity: " + (errorResponse.message || "Unknown error")
+          "Error updating amenity: " +
+            (errorResponse.message || "Unknown error")
         );
         return;
       }
@@ -153,7 +156,7 @@ const Page = () => {
                   <Image
                     width={22}
                     height={22}
-                    src={iconFile?iconImage: amenityData.amenity_logo}
+                    src={iconFile ? iconImage : amenityData.amenity_logo}
                     alt="Current Amenity Logo"
                     className="h-20 w-20 object-contain"
                   />

@@ -34,14 +34,25 @@ const Page = () => {
               </div>
               <Link
                 href="#"
-                className="btn-outline text-primary font-semibold shrink-0">
+                className="btn-outline text-primary font-semibold shrink-0"
+              >
                 <TrashIcon className="w-5 h-5" /> Remove All
               </Link>
             </div>
             <h5 className="font-medium mb-3"> Wishlist (4) </h5>
             <div className="grid grid-cols-12 gap-4">
               {featuredHotels.map((item) => (
-                <HotelListingList key={item.id} item={item} />
+                <HotelListingList
+                  key={item.id}
+                  item={item}
+                  adults={0}
+                  numChildren={0}
+                  infants={0}
+                  loc={""}
+                  startdate={""}
+                  enddate={""}
+                  noOfRooms={0}
+                />
               ))}
             </div>
           </div>

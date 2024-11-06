@@ -85,7 +85,7 @@ const Hero = () => {
             </button>
           </div>
 
-          <div className="w-full md:w-[50%] xl:w-[25%]">
+          <div className="w-full md:w-[55%] xl:w-[27%]">
             <AddRoom setTotal={setTotal} /> {/* Pass setTotal to AddRoom */}
           </div>
 

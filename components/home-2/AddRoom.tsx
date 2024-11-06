@@ -1,9 +1,12 @@
 "use client";
 import { Children, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate }) => {
-  const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0 }]);
+
+
+const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate, adults }) => {
+  const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0, noOfRooms: 0 }]);
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAddRoom = () => {
@@ -11,6 +14,12 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
       setRooms([...rooms, { adults: 1, children: 0, infants: 0 }]);
     }
   };
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const adultNo = Number(searchParams.get("adults"));
+  const childrenNo = Number(searchParams.get("children"));
+  const infantNo = Number(searchParams.get("infants"));
 
   const handleRemoveRoom = (index: number) => {
     const updatedRooms = rooms.filter((_, i) => i !== index);
@@ -62,6 +71,13 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
     window.location.href = searchUrl; // Redirect to the constructed URL
   };
   const handleDone = () => {
+    // Check if the current page is the home page
+    if (window.location.pathname === '/home-2') {
+      setIsOpen(false);
+      // Do nothing if on the home page
+      return;
+    }
+  
     setIsOpen(false);
     
     // Calculate totals
@@ -77,6 +93,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
   
     // Construct new URL with parameters
     const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("adults", total.adults);
     searchParams.set("children", total.children);
     searchParams.set("infants", total.infants);
     searchParams.set("noOfRooms", noOfRooms);
@@ -89,8 +106,13 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
 
   return (
     <div className="relative">
-      <div className="border rounded-full p-3 cursor-pointer hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
-       {rooms.reduce((acc, room) => acc + room.adults, 0)} adult{rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? 's' : ''} - {rooms.reduce((acc, room) => acc + room.children, 0)} child{rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? 'ren' : ''} - {rooms.reduce((acc, room) => acc + room.infants, 0)} infant{rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? 's' : ''}
+     <div
+        className="border rounded-full p-3 cursor-pointer hover:bg-gray-200"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {rooms.length > 0
+          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.adults, adultNo)} adult${rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.children, childrenNo)} child${rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? "ren" : ""} - ${rooms.reduce((acc, room) => acc + room.infants, infantNo)} infant${rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? "s" : ""}`
+          : "0 rooms - 0 adults - 0 children - 0 infants"}
       </div>
 
       {isOpen && (

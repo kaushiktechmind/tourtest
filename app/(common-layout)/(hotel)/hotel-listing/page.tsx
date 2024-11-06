@@ -12,7 +12,7 @@ const Page = () => {
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
-  const noOfRooms = searchParams.get("noOfRooms");
+  const noOfRooms = Number(searchParams.get("noOfRooms"));
   const adults = searchParams.get("adults");
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
@@ -88,10 +88,10 @@ const Page = () => {
               adults={Number(adults)}
               numChildren={Number(children)}
               infants={Number(infants)}
-              noOfRooms={noOfRooms}
-              loc={loc}
-              startdate={startdate}
-              enddate={enddate}
+              noOfRooms={noOfRooms ?? ""}
+              loc={loc ?? ""}
+              startdate={startdate ?? ""}
+              enddate={enddate ?? ""}
             />
           )
         )
