@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import LocationEntry from "../home-3/LocationEntry";
@@ -10,14 +10,8 @@ import "react-datepicker/dist/react-datepicker.css";
 
 const Hero = () => {
   const [isOpen, setOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
-    null,
-    null,
-  ]);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([null, null]);
   const [locationName, setLocationName] = useState(""); // State to hold the location name
-  const [startDate, endDate] = dateRange;
-
-  // Assume total is defined here based on AddRoom's state
   const [total, setTotal] = useState({
     adults: 0,
     children: 0,
@@ -25,15 +19,28 @@ const Hero = () => {
     noOfRooms: 0,
   });
 
+  // Set initial values from localStorage if available
+  useEffect(() => {
+    const storedStartDate = localStorage.getItem('startDate');
+    const storedEndDate = localStorage.getItem('endDate');
+    
+    if (storedStartDate && storedEndDate) {
+      setDateRange([new Date(storedStartDate), new Date(storedEndDate)]);
+    }
+  }, []);
+
+  const [startDate, endDate] = dateRange;
+
   const handleSearch = () => {
     if (!locationName || !startDate || !endDate) {
       alert("Please fill all fields before searching.");
       return;
     }
 
-    const formatDate = (date) => {
+    const formatDate = (date: Date | null) => {
+      if (!date) return '';
       const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+      const month = String(date.getMonth() + 1).padStart(2, "0");
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     };
@@ -41,19 +48,17 @@ const Hero = () => {
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
 
-    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(
-      locationName
-    )}&startdate=${encodeURIComponent(
-      formattedStartDate
-    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${
-      total.adults
-    }&children=${total.children}&infants=${total.infants}&noOfRooms=${total.noOfRooms}`;
+    // Store the startDate and endDate in localStorage
+    localStorage.setItem('startDate', formattedStartDate);
+    localStorage.setItem('endDate', formattedEndDate);
+
+    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}&noOfRooms=${total.noOfRooms}`;
 
     window.location.href = searchUrl;
   };
 
   return (
-    <section className="bg-[url('/img/andban-hero.jpg')] bg-cover bg-no-repeat relative isolate min-h-screen flex items-center py-20">
+    <section className="bg-[url('/img/andban-hero.jpg')] bg-cover bg-no-repeat relative isolate min-h-screen flex items-center py-20 z-[10]">
       <div className="container mx-auto text-center relative z-100">
         <h1 className="text-white font-semibold mb-10 text-3xl md:text-5xl">
           Welcome to Andman Mangroves
@@ -67,12 +72,10 @@ const Hero = () => {
 
           <div className="relative w-full md:w-[50%] xl:w-[25%] flex items-center bg-gray-100 rounded-full p-3 border">
             <DatePicker
-              placeholderText="01/01/2024 - 01/01/2024"
               selectsRange={true}
               startDate={startDate}
               endDate={endDate}
               onChange={(update) => setDateRange(update)}
-              // minDate={new Date()} // Disable past dates
               className="w-full text-center bg-transparent outline-none"
               dateFormat="MM/dd/yyyy"
             />
@@ -85,7 +88,7 @@ const Hero = () => {
             </button>
           </div>
 
-          <div className="w-full md:w-[50%] xl:w-[25%]">
+          <div className="w-full md:w-[55%] xl:w-[27%]">
             <AddRoom setTotal={setTotal} /> {/* Pass setTotal to AddRoom */}
           </div>
 

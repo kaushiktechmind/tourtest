@@ -56,6 +56,9 @@ function classNames(...classes: any[]) {
 }
 
 const Page = () => {
+  const defaultAdults = 2; // Set your default number of adults
+  const defaultChildren = 1; // Set your default number of children
+  const defaultInfants = 0; // Set your default number of infants
   const [roomData, setRoomData] = useState<Room[]>([]);
   const [selectedRoomPrice, setSelectedRoomPrice] = useState<RoomPrice | null>(
     null
@@ -64,61 +67,46 @@ const Page = () => {
   const [totalSelected, setTotalSelected] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
   const [totalChildPrice, setTotalChildPrice] = useState(0);
-  const [totalExtraBedPrice, setTotalExtraBedPrice] = useState(0);
 
-const handleSelectionChange = (prevValue, newValue, roomPrice, roomId) => {
-  const difference = newValue - prevValue;
-  const newTotalSelected = totalSelected + difference;
+  const handleSelectionChange = (prevValue, newValue, roomPrice, childPrice, roomId) => {
+    const difference = newValue - prevValue;
+    const newTotalSelected = totalSelected + difference;
 
-  if (newTotalSelected <= noOfRooms) {
-    setTotalSelected(newTotalSelected);
+    if (newTotalSelected <= noOfRooms) {
+      setTotalSelected(newTotalSelected);
 
-    // Calculate the new total cost based on the price for this room
-    setTotalCost((currentTotal) => currentTotal + difference * roomPrice);
-    return true;
-  }
-  return false;
-};
+      // Calculate the new total cost based on room price + child price
+      setTotalCost((currentTotal) => currentTotal + difference * (roomPrice));
 
-const handleChildToggle = (isChecked, childPrice, roomId) => {
-  setTotalChildPrice((currentTotal) =>
-    isChecked ? currentTotal + childPrice : currentTotal - childPrice
-  );
-  
-  setTotalCost((currentTotal) =>
-    isChecked ? currentTotal + childPrice : currentTotal - childPrice
-  );
-};
+      // // Update total child price
+      // setTotalChildPrice((currentTotalChildPrice) =>
+      //   currentTotalChildPrice + difference * childPrice
+      // );
 
+      return true;
+    }
+    return false;
+  };
 
-const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
-  setTotalExtraBedPrice((currentTotal) =>
-    isSelected ? currentTotal + extraBedPrice : currentTotal - extraBedPrice
-  );
-  
-  setTotalCost((currentTotal) =>
-    isSelected ? currentTotal + extraBedPrice : currentTotal - extraBedPrice
-  );
-};
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
 
-  const adults = searchParams.get("adults");
+  const adults = Number(localStorage.getItem('adults'));
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
 
   const loc = searchParams.get("loc");
   const startdate = searchParams.get("startdate");
   const enddate = searchParams.get("enddate");
-  const noOfRooms = Number(searchParams.get("noOfRooms"));
+  const noOfRooms = Number(localStorage.getItem('noOfRooms'));
 
   const date1 = new Date(String(startdate));
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
   const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-  const grandTotal = totalCost*noOfNights;
+  const grandTotal = totalCost * noOfNights;
 
   // alert(loc);
   // alert(startdate);
@@ -130,6 +118,19 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
     null,
   ]);
   const [locationName, setLocationName] = useState(""); // State to hold the location name
+
+
+
+
+  useEffect(() => {
+    const storedStartDate = localStorage.getItem('startDate');
+    const storedEndDate = localStorage.getItem('endDate');
+
+    if (storedStartDate && storedEndDate) {
+      setDateRange([new Date(storedStartDate), new Date(storedEndDate)]);
+    }
+  }, []);
+
   const [startDate, endDate] = dateRange;
 
   // Assume total is defined here based on AddRoom's state
@@ -161,11 +162,9 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
       locationName
     )}&startdate=${encodeURIComponent(
       formattedStartDate
-    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${
-      total.adults
-    }&children=${total.children}&infants=${total.infants}&noOfRooms=${
-      total.noOfRooms
-    }`;
+    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults
+      }&children=${total.children}&infants=${total.infants}&noOfRooms=${total.noOfRooms
+      }`;
 
     window.location.href = searchUrl;
   };
@@ -519,12 +518,17 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
     fetchRooms();
   }, [loc, startdate, enddate, hotelDetailsId]);
 
-  const grandTotalExtraBedPrice = totalExtraBedPrice * noOfNights;
-  const grandTotalChildPrice = totalChildPrice * noOfNights;
-  const grandTotalAdultPrice = grandTotal - ( grandTotalExtraBedPrice + grandTotalChildPrice);
-
-
-  
+  const handleRestrict = async (e) => {
+    e.preventDefault();
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+      router.push("/sign-in");
+    } else {
+      router.push(
+        `/payment-method?adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`
+      );
+    }
+  };
 
   return (
     <main>
@@ -1660,11 +1664,18 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
                     </button>
                   </div>
 
-                  <div className="w-full md:w-[55%] xl:w-[28%]">
-                    <AddRoom setTotal={setTotal} total={total} />{" "}
-                    {/* Pas s total to AddRoom */}
-                  </div>
+                  {/* <h1>{adults}</h1> */}
 
+                  <div className="w-[370px]">
+                    <AddRoom
+                      setTotal={setTotal}
+                      total={total}
+                      adults={defaultAdults}
+                      children={defaultChildren}
+                      infants={defaultInfants}
+                      noOfRooms={1} // or any default number of rooms
+                    />
+                  </div>
                   <button
                     onClick={handleSearch} // Call the search function on click
                     className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
@@ -1685,10 +1696,10 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
                         item={item}
                         noOfRooms={noOfRooms}
                         noOfNights={noOfNights}
+                        adults={adults}
                         // onRoomSelect={handleRoomSelection}
                         onSelectionChange={handleSelectionChange}
-                        onChildToggle={handleChildToggle} 
-                        onExtraBedToggle={handleExtraBedToggle}
+
                       />
                     ))}
                     {totalSelected > noOfRooms && (
@@ -1952,32 +1963,16 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
                         </div> */}
 
                         <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500">Adult Price: </p>
-                          <p className="mb-0 font-medium"> ${grandTotalAdultPrice}
-                            {/* $
-                            {(() => {
-                              let x; // Declare x outside the condition
-                              if (Number(adults) == 1) {
-                                x = 1; // Assign value if 1 adult
-                              } else {
-                                x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
-                              }
-                              const roomPrice = selectedRoomPrice
-                                ? selectedRoomPrice.room_price * x
-                                : 0;
-
-                              // Adult price is always equal to room price
-                              return roomPrice;
-                            })()} */}
-                          </p>
+                          <p className="mb-0 clr-neutral-500">Adults: </p>
+                          <p className="mb-0 font-medium"> {adults} </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
                           <p className="mb-0 clr-neutral-500">
                             Extra Bed Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-                            ${grandTotalExtraBedPrice}
-                            {/* {(() => {
+                            $
+                            {(() => {
                               // Check the number of adults and calculate extra bed price
                               const extraBedPrice =
                                 Number(adults) > 2 && Number(adults) % 2 !== 0
@@ -1987,15 +1982,21 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
                                   : 0; // Return 0 if conditions are not met
 
                               return extraBedPrice; // Return the calculated price
-                            })()} */}
+                            })()}
                           </p>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
                           <p className="mb-0 clr-neutral-500">Child Price: </p>
                           <p className="mb-0 font-medium">
-                           
-                           ${grandTotalChildPrice}
+                            ${totalChildPrice}
+                            {/* {(() => {
+                              const childPrice = selectedRoomPrice
+                                ? selectedRoomPrice.child_price
+                                : 0;
+                              // Charge for children only if there are any
+                              return Number(children) > 0 ? childPrice : 0;
+                            })()} */}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
@@ -2069,39 +2070,11 @@ const handleExtraBedToggle = (isSelected, extraBedPrice, roomId) => {
                   <p></p>
 
                   <Link
-                    href={`/payment-method?roomId=54&adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`}
-                    // let x; // Declare x outside the condition
-                    // if (Number(adults) === 1) {
-                    //   x = 1; // Assign value if 1 adult
-                    // } else {
-                    //   x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
-                    // }
-
-                    // // Calculate room price
-                    // const roomPrice = selectedRoomPrice
-                    //   ? selectedRoomPrice.room_price * x
-                    //   : 0;
-
-                    // // Calculate extra bed price if applicable
-                    // const extraBedPrice =
-                    //   Number(adults) > 2 && Number(adults) % 2 !== 0
-                    //     ? selectedRoomPrice?.extra_bed_price || 0
-                    //     : 0;
-
-                    // // Get child price
-                    // const childPrice = selectedRoomPrice?.child_price || 0;
-
-                    // // Total price is the sum of room price, extra bed price, and child price
-                    // const totalPrice =
-                    //   roomPrice +
-                    //   extraBedPrice +
-                    //   (Number(children) > 0 ? childPrice : 0);
-
-                    // return totalPrice; // Return the total price for display
-                    // })()}`} // Include the ID in the URL
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                    href={`/payment-method?adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`}
+                    onClick={handleRestrict}
+                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                   >
-                    <span className="inline-block"> Proceed Booking </span>
+                    <span className="inline-block">Proceed Booking</span>
                   </Link>
                   <ul className="flex justify-center gap-3 flex-wrap">
                     <li>

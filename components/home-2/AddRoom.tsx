@@ -1,35 +1,42 @@
 "use client";
-import { Children, useState } from "react";
+import { useState, useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
-const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate }) => {
-  const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0 }]);
+const AddRoom = ({ setTotal }) => {
+  const [rooms, setRooms] = useState(() => {
+    // Retrieve saved room data from localStorage, or start with an empty array
+    const savedRooms = localStorage.getItem("roomsData");
+    return savedRooms ? JSON.parse(savedRooms) : [];
+  });
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    // Save the rooms data to localStorage whenever it changes
+    localStorage.setItem("roomsData", JSON.stringify(rooms));
+      localStorage.setItem("noOfRooms", rooms.length)
+    calculateTotal(rooms);
+  }, [rooms]);
 
   const handleAddRoom = () => {
     if (rooms.length < 5) {
-      setRooms([...rooms, { adults: 1, children: 0, infants: 0 }]);
+      setRooms([...rooms, { adults: 0, children: 0, infants: 0 }]);
     }
   };
 
-  const handleRemoveRoom = (index: number) => {
+  const handleRemoveRoom = (index) => {
     const updatedRooms = rooms.filter((_, i) => i !== index);
     setRooms(updatedRooms);
-    calculateTotal(updatedRooms);
   };
 
-  const handleChange = (index: number, type: 'adults' | 'children' | 'infants', value: number) => {
+  const handleChange = (index, type, value) => {
     const updatedRooms = [...rooms];
-
     if (updatedRooms[index]) {
       updatedRooms[index][type] = value;
       setRooms(updatedRooms);
-      calculateTotal(updatedRooms);
-    } else {
-      console.error("Invalid index:", index);
     }
   };
-  const calculateTotal = (rooms: Array<{ adults: number; children: number; infants: number }>) => {
+
+  const calculateTotal = (rooms) => {
     const totalCounts = rooms.reduce(
       (acc, room) => ({
         adults: acc.adults + room.adults,
@@ -38,59 +45,33 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
       }),
       { adults: 0, children: 0, infants: 0 }
     );
-  
-    // Set the total including the number of rooms
+
     setTotal({
       ...totalCounts,
-      noOfRooms: rooms.length, // Update this line to include the number of rooms
+      noOfRooms: rooms.length,
     });
   };
-  
-  const handleSearch = () => {
-    const noOfRooms = rooms.length; // Total number of rooms
-    const total = rooms.reduce(
-      (acc, room) => ({
-        adults: acc.adults + room.adults,
-        children: acc.children + room.children,
-        infants: acc.infants + room.infants,
-      }),
-      { adults: 0, children: 0, infants: 0 }
-    );
 
-    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults}&children=${total.children}&infants=${total.infants}&noOfRooms=${noOfRooms}`;
-    
-    window.location.href = searchUrl; // Redirect to the constructed URL
+  const handleOpenDropdown = () => {
+    setIsOpen(!isOpen);
+    if (rooms.length === 0) {
+      setRooms([{ adults: 0, children: 0, infants: 0 }]);
+    }
   };
+
   const handleDone = () => {
     setIsOpen(false);
-    
-    // Calculate totals
-    const total = rooms.reduce(
-      (acc, room) => ({
-        adults: acc.adults + room.adults,
-        children: acc.children + room.children,
-        infants: acc.infants + room.infants,
-      }),
-      { adults: 0, children: 0, infants: 0 }
-    );
-    const noOfRooms = rooms.length;
-  
-    // Construct new URL with parameters
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.set("children", total.children);
-    searchParams.set("infants", total.infants);
-    searchParams.set("noOfRooms", noOfRooms);
-  
-    // Update URL without reloading the page
-    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
-    window.history.pushState({ path: newUrl }, "", newUrl);
   };
-  
 
   return (
-    <div className="relative">
-      <div className="border rounded-full p-3 cursor-pointer hover:bg-gray-200" onClick={() => setIsOpen(!isOpen)}>
-       {rooms.reduce((acc, room) => acc + room.adults, 0)} adult{rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? 's' : ''} - {rooms.reduce((acc, room) => acc + room.children, 0)} child{rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? 'ren' : ''} - {rooms.reduce((acc, room) => acc + room.infants, 0)} infant{rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? 's' : ''}
+    <div className="relative ">
+      <div
+        className="border rounded-full p-3 cursor-pointer hover:bg-gray-200"
+        onClick={handleOpenDropdown}
+      >
+        {rooms.length > 0
+          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.adults, 0)} adult${rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.children, 0)} child${rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? "ren" : ""} - ${rooms.reduce((acc, room) => acc + room.infants, 0)} infant${rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? "s" : ""}`
+          : "0 rooms - 0 adults - 0 children - 0 infants"}
       </div>
 
       {isOpen && (
@@ -114,8 +95,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
                       onChange={(e) => handleChange(index, "adults", Number(e.target.value))}
                       className="w-full border rounded p-1"
                     >
-                      <option value={0}></option>
-                      {[...Array(4).keys()].map((num) => (
+                      {[...Array(4)].map((_, num) => (
                         <option key={num} value={num}>
                           {num}
                         </option>
@@ -129,8 +109,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
                       onChange={(e) => handleChange(index, "children", Number(e.target.value))}
                       className="w-full border rounded p-1"
                     >
-                      <option value={0}></option>
-                      {[...Array(2).keys()].map((num) => (
+                      {[...Array(3)].map((_, num) => (
                         <option key={num} value={num}>
                           {num}
                         </option>
@@ -144,8 +123,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
                       onChange={(e) => handleChange(index, "infants", Number(e.target.value))}
                       className="w-full border rounded p-1"
                     >
-                      <option value={0}></option>
-                      {[...Array(2).keys()].map((num) => (
+                      {[...Array(3)].map((_, num) => (
                         <option key={num} value={num}>
                           {num}
                         </option>
@@ -170,8 +148,6 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate 
               >
                 Done
               </button>
-
-              
             </div>
           </div>
         </div>

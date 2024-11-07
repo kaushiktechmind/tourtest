@@ -82,7 +82,7 @@ const HotelListingList = ({
               <Link
                 href={`/hotel-listing-details?hotelDetailsId=${
                   id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${numChildren}&infants=${infants}&noOfRooms=${noOfRooms}`}
+                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
@@ -222,7 +222,7 @@ const HotelListingList = ({
               <Link
                 href={`/hotel-listing-details?hotelDetailsId=${
                   id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&adults=${adults}&children=${numChildren}&infants=${infants}&noOfRooms=${noOfRooms}`}
+                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

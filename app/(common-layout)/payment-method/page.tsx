@@ -33,9 +33,6 @@ const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const grandTotal = searchParams.get("grandTotal");
-  const adults = searchParams.get("adults");
-  const children = searchParams.get("children");
-  const infants = searchParams.get("infants");
   const roomId = searchParams.get("roomId");
   const [roomData, setRoomData] = useState<RoomData | null>(null);
 
@@ -57,17 +54,22 @@ const Page = () => {
     return <p>Loading...</p>;
   }
 
+  const adults = localStorage.getItem('adults');
+  const children = localStorage.getItem('children');
+  const infants = localStorage.getItem('infants');
+
+
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
       <div className="container">
-        <div className="grid grid-cols-12 gap-4 lg:gap-6">
+        <div className="grid grid-cols-12 gap-4 lg:gap-6  mt-[40px]">
           <div className="col-span-12 lg:col-span-8">
             <div className="pb-lg-0">
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
                 <h3 className="mb-0 h3"> Your Booking Info </h3>
                 <div className="border border-dashed my-6"></div>
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                  <div className="col-span-12 md:col-span-4">
+                  <div className="col-span-12 md:col-span-3">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -80,7 +82,7 @@ const Page = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-4">
+                  <div className="col-span-12 md:col-span-3">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -91,7 +93,7 @@ const Page = () => {
                       <p className="mb-0 text-lg font-medium"> {adults} </p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-4">
+                  <div className="col-span-12 md:col-span-3">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -102,7 +104,7 @@ const Page = () => {
                       <p className="mb-0 text-lg font-medium"> {children} </p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-4">
+                  <div className="col-span-12 md:col-span-3">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -136,19 +138,60 @@ const Page = () => {
                           <span className="inline-block"> {roomData.hotel_name} </span>
                         </div>
                         <div className="flex items-center gap-1">
-                          <i className="las la-star text-xl text-[var(--tertiary)]"></i>
-                          <span className="inline-block clr-neutral-500"> Rating </span>
+                          {/* <i className="las la-star text-xl text-[var(--tertiary)]"></i> */}
+                          {/* <span className="inline-block clr-neutral-500"> Rating </span> */}
                         </div>
                       </div>
                       <div className="border border-dashed my-6"></div>
                       <ul className="flex flex-wrap gap-6">
                         <li className="flex gap-2 items-center">
-                          <i className="las text-lg la-home"></i>
-                          <span className="block text-sm"> Room Size: {roomData.room_size} </span>
+                          {/* <i className="las text-lg la-home"></i> */}
+                          {/* <span className="block text-sm"> Room Size: {roomData.room_size} </span> */}
                         </li>
                         <li className="flex gap-2 items-center">
-                          <i className="las text-lg la-bed"></i>
-                          <span className="block text-sm"> Number of Beds: {roomData.no_of_beds} </span>
+                          {/* <i className="las text-lg la-bed"></i> */}
+                          {/* <span className="block text-sm"> Number of Beds: {roomData.no_of_beds} </span> */}
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+
+                </div>
+                <div className="flex flex-wrap border items-center rounded-2xl">
+                  <div className="rounded-2xl p-2">
+                    <Image
+                      src={roomData.featured_images[0]}
+                      alt="image"
+                      width={100}
+                      height={100}
+                      className="h-[200px] w-full md:w-[350px] rounded-2xl"
+                    />
+                  </div>
+
+                  <div className="p-4">
+                    <div className="property-card__body">
+                      <Link href="hotel-listing-details" className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
+                        {roomData.room_name}
+                      </Link>
+                      <div className="flex justify-between gap-3">
+                        <div className="flex items-center gap-1">
+                          <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>
+                          <span className="inline-block"> {roomData.hotel_name} </span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                          {/* <i className="las la-star text-xl text-[var(--tertiary)]"></i> */}
+                          {/* <span className="inline-block clr-neutral-500"> Rating </span> */}
+                        </div>
+                      </div>
+                      <div className="border border-dashed my-6"></div>
+                      <ul className="flex flex-wrap gap-6">
+                        <li className="flex gap-2 items-center">
+                          {/* <i className="las text-lg la-home"></i> */}
+                          {/* <span className="block text-sm"> Room Size: {roomData.room_size} </span> */}
+                        </li>
+                        <li className="flex gap-2 items-center">
+                          {/* <i className="las text-lg la-bed"></i> */}
+                          {/* <span className="block text-sm"> Number of Beds: {roomData.no_of_beds} </span> */}
                         </li>
                       </ul>
                     </div>
@@ -163,16 +206,6 @@ const Page = () => {
                   {" "}
                   Billing address{" "}
                 </h4>
-                <div className="flex flex-wrap gap-4 justify-between items-center">
-                  <p className="mb-0">
-                    Transaction ID:
-                    <span className="text-primary">25246584</span>
-                  </p>
-                  {/* <p className="mb-0">
-                    Total Payable Amount:
-                    <span className="text-primary">$1115</span>
-                  </p> */}
-                </div>
                 <div className="border border-dashed my-6"></div>
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 md:col-span-6">
@@ -196,17 +229,27 @@ const Page = () => {
                       placeholder="Enter Phone Number"
                     />
                   </div>
+                  
+                  
                   <div className="col-span-12 md:col-span-6">
                     <div className="rounded-full border bg-[var(--bg-1)] pr-4">
                       <select
                         className="w-full bg-transparent px-5 py-3 focus:outline-none"
                         aria-label="Default select example">
-                        <option>USA</option>
+                        <option>India</option>
+                        <option value="1">USA</option>
                         <option value="1">New York</option>
                         <option value="2">Chicago</option>
                         <option value="3">Atlanta</option>
                       </select>
                     </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-12">
+                    <input
+                      type="text"
+                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
+                      placeholder="Enter Passport Number (if outside india)"
+                    />
                   </div>
                   <div className="col-span-12">
                     <textarea
@@ -328,29 +371,7 @@ const Page = () => {
             </div>
           </div>
           <div className="col-span-12 lg:col-span-4">
-            <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-              <h4 className="mb-6 text-2xl font-semibold">
-                {" "}
-                Enter Promo Code{" "}
-              </h4>
-              <div className="p-2 rounded-full border border-neutral-40 bg-[var(--bg-2)] mb-4">
-                <form action="#" className="flex items-center">
-                  <input
-                    type="text"
-                    placeholder="Promo Code"
-                    className="w-full border-0 bg-transparent text-[var(--neutral-700)] px-3 py-2 ::placeholder-neutral-600 focus:outline-none"
-                  />
-                  <button
-                    type="button"
-                    className="grid place-content-center px-6 py-3 rounded-full bg-primary text-white border-0 text-sm">
-                    Apply
-                  </button>
-                </form>
-              </div>
-              <span className="block text-[var(--neutral-700)]">
-                20% Off Discount
-              </span>
-            </div>
+            
             <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 border">
               <h4 className="mb-0 text-2xl font-semibold">Order Summary</h4>
               <div className="border border-dashed my-8"></div>
@@ -360,16 +381,12 @@ const Page = () => {
                   <p className="mb-0 font-medium">{grandTotal}</p>
                 </li>
                 <li className="flex items-center justify-between flex-wrap">
-                  <p className="mb-0">Service charge</p>
-                  <p className="mb-0 font-medium">10%</p>
+                  <p className="mb-0">Child Price</p>
+                  <p className="mb-0 font-medium">0</p>
                 </li>
                 <li className="flex items-center justify-between flex-wrap">
-                  <p className="mb-0">Tax</p>
-                  <p className="mb-0 font-medium">5%</p>
-                </li>
-                <li className="flex items-center justify-between flex-wrap">
-                  <p className="mb-0">Promo Code</p>
-                  <p className="mb-0 font-medium">20% off</p>
+                  <p className="mb-0">Extra Bed Price</p>
+                  <p className="mb-0 font-medium">0</p>
                 </li>
               </ul>
               <div className="border border-dashed my-8"></div>

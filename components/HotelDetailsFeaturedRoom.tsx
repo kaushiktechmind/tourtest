@@ -8,9 +8,6 @@ const HotelDetailsFeaturedRoom = ({
   onRoomSelect,
   noOfRooms,
   noOfNights,
-  onChildToggle,
-  onExtraBedToggle
-
 }: any) => {
   const {
     id,
@@ -27,13 +24,14 @@ const HotelDetailsFeaturedRoom = ({
   const [selectedValue, setSelectedValue] = useState(0);
   const handleDropdownChange = (event) => {
     const newValue = parseInt(event.target.value, 10);
-    const changeAllowed = onSelectionChange(selectedValue, newValue, price, extra_bed_price, child_price, id);
+    const changeAllowed = onSelectionChange(selectedValue, newValue, price, child_price, id);
     if (changeAllowed) {
       setSelectedValue(newValue);
     } else {
       alert("Selection exceeds the allowed limit!");
     }
   };
+  
 
   // State to manage the selected option in the dropdown
   const [selectedOption, setSelectedOption] = useState("");
@@ -41,21 +39,8 @@ const HotelDetailsFeaturedRoom = ({
   const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedOption(event.target.value);
   };
-
-  const [isChildSelected, setIsChildSelected] = useState(false);
-  const [isExtraBedSelected, setIsExtraBedSelected] = useState(false);
-
-  const handleChildToggle = (event) => {
-    const checked = event.target.checked;
-    setIsChildSelected(checked);
-    onChildToggle(checked, child_price, id); // Ensure this calls the parent function
-  };
-
-  const handleExtraBedToggle = (event) => {
-    const checked = event.target.checked;
-    setIsExtraBedSelected(checked);
-    onExtraBedToggle(checked, extra_bed_price, id); // Update the parent
-  };
+  
+  
 
   return (
     <li key={id}>
@@ -79,9 +64,9 @@ const HotelDetailsFeaturedRoom = ({
                 href="hotel-listing-details"
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
-                {title}
+                {title} 
               </Link>
-              <p>{noOfNights} Nights - </p>
+              <p>{noOfNights} Nts : - </p>
               <select
                 value={selectedValue}
                 onChange={handleDropdownChange}
@@ -157,23 +142,7 @@ const HotelDetailsFeaturedRoom = ({
               <span className="block text-xl font-medium text-primary">
                 ${price}/Per Night
               </span>
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  checked={isChildSelected}
-                  onChange={handleChildToggle}
-                />
-                <label>Add Child </label>
-              </div>
-              <div className="flex items-center gap-2 mt-2">
-                <input
-                  type="checkbox"
-                  checked={isExtraBedSelected}
-                  onChange={handleExtraBedToggle}
-                />
-                <label>Add Extra Bed Price</label>
-              </div>
-              {/* <button
+              <button
                 onClick={() =>
                   onRoomSelect({
                     room_price: price,
@@ -185,7 +154,7 @@ const HotelDetailsFeaturedRoom = ({
                 className="btn-outline font-semibold"
               >
                 Book Now
-              </button> */}
+              </button>
             </div>
           </div>
         </div>

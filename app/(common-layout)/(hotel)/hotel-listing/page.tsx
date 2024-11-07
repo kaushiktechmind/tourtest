@@ -10,14 +10,15 @@ const Page = () => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const loc = searchParams.get("loc");
-  const startdate = searchParams.get("startdate");
-  const enddate = searchParams.get("enddate");
-  const noOfRooms = searchParams.get("noOfRooms");
-  const adults = searchParams.get("adults");
-  const children = searchParams.get("children");
-  const infants = searchParams.get("infants");
+ 
+  const noOfRooms = Number(localStorage.getItem('noOfRooms'));
+  const startdate = localStorage.getItem('startDate');
+  const enddate = localStorage.getItem('endDate');
+ 
 
-  console.log(adults, children, infants, "----------------");
+  // alert(noOfRooms)
+
+
 
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,8 +77,12 @@ const Page = () => {
     return <div>{error}</div>;
   }
 
+  // alert(noOfRooms)
+
   return (
     <>
+
+     
       {Array.isArray(hotels) && hotels.length > 0 ? (
         // Filter the hotels array to remove duplicates based on the hotel ID
         [...new Map(hotels.map((item) => [item.id, item])).values()].map(
@@ -85,9 +90,6 @@ const Page = () => {
             <HotelListingList
               key={uniqueItem.id}
               item={uniqueItem}
-              adults={Number(adults)}
-              numChildren={Number(children)}
-              infants={Number(infants)}
               noOfRooms={noOfRooms}
               loc={loc}
               startdate={startdate}
@@ -99,7 +101,7 @@ const Page = () => {
         <div>No hotels available.</div>
       )}
 
-      <CardPagination />
+      {/* <CardPagination /> */}
     </>
   );
 };
