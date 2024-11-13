@@ -10,6 +10,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
   const loc = searchParams.get("loc");
+<<<<<<< HEAD
  
   const noOfRooms = Number(localStorage.getItem('noOfRooms'));
   const startdate = localStorage.getItem('startDate');
@@ -18,6 +19,14 @@ const Page = () => {
 
   // alert(noOfRooms)
 
+=======
+  const startdate = searchParams.get("startdate");
+  const enddate = searchParams.get("enddate");
+  const noOfRooms = Number(searchParams.get("noOfRooms"));
+  const adults = searchParams.get("adults");
+  const children = searchParams.get("children");
+  const infants = searchParams.get("infants");
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 
 
   const [hotels, setHotels] = useState<any[]>([]);
@@ -165,6 +174,7 @@ const Page = () => {
 
   return (
     <>
+<<<<<<< HEAD
     {hotels.length > 0 ? (
       [...new Map(hotels.map((item) => [item.hotel_id, item])).values()].map(
         (uniqueItem) => (
@@ -177,6 +187,24 @@ const Page = () => {
             startdate={startdate}
             enddate={enddate}
           />
+=======
+      {Array.isArray(hotels) && hotels.length > 0 ? (
+        // Filter the hotels array to remove duplicates based on the hotel ID
+        [...new Map(hotels.map((item) => [item.id, item])).values()].map(
+          (uniqueItem) => (
+            <HotelListingList
+              key={uniqueItem.id}
+              item={uniqueItem}
+              adults={Number(adults)}
+              numChildren={Number(children)}
+              infants={Number(infants)}
+              noOfRooms={noOfRooms ?? ""}
+              loc={loc ?? ""}
+              startdate={startdate ?? ""}
+              enddate={enddate ?? ""}
+            />
+          )
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
         )
       )
     ) : (

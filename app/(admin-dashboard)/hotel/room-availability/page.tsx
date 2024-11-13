@@ -32,16 +32,15 @@ export default function DemoApp() {
   // const [noOfRooms, setNoOfRooms] = useState<string>('');
   const [roomDetails, setRoomDetails] = useState<any>(null);
 
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-  const [status, setStatus] = useState('');
-  const [roomPrice, setRoomPrice] = useState('');
-  const [noOfRooms, setNoOfRooms] = useState('');
-  const [location_name, setLocation] = useState('');
+  const [status, setStatus] = useState("");
+  const [roomPrice, setRoomPrice] = useState("");
+  const [noOfRooms, setNoOfRooms] = useState("");
+  const [location_name, setLocation] = useState("");
 
   // const handleUpdateRoomManagement = async () => {
-
 
   //   if (active === null) return; // Ensure an active room ID exists
 
@@ -81,7 +80,7 @@ export default function DemoApp() {
 
   const handleSaveRoomManagement = async () => {
     try {
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem("access_token");
       if (!token) {
         console.error("Token not found!");
         return;
@@ -94,8 +93,13 @@ export default function DemoApp() {
       const payload = {
         hotel_id: hotelId,
         room_id: active,
+<<<<<<< HEAD
         start_date: formatDate(startDate),
         end_date: formatDate(endDate),
+=======
+        start_date: startDate ? startDate.toISOString().split("T")[0] : null, // Format the start date
+        end_date: endDate ? endDate.toISOString().split("T")[0] : null, // Format the end date
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
         room_price: roomPrice,
         no_of_rooms: noOfRooms,
         location_name: location_name,
@@ -103,12 +107,12 @@ export default function DemoApp() {
       };
   
       const response = await axios.post(
-        'https://yrpitsolutions.com/tourism_api/api/admin/save_room_management',
+        "https://yrpitsolutions.com/tourism_api/api/admin/save_room_management",
         payload,
         {
           headers: {
             Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         }
       );
@@ -122,8 +126,11 @@ export default function DemoApp() {
       alert("Failed to save room management details.");
     }
   };
+<<<<<<< HEAD
   
 
+=======
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 
   useEffect(() => {
     // Fetch rooms list for a specific hotel
@@ -141,7 +148,6 @@ export default function DemoApp() {
     fetchRooms();
   }, [hotelId]);
 
-
   useEffect(() => {
     const fetchRoomDetails = async () => {
       if (active) {
@@ -154,7 +160,7 @@ export default function DemoApp() {
             room_price: data.room_price,
             no_of_rooms: data.no_of_rooms,
           });
-          setLocation(data.location_name || ''); // Update 'location_name' state here
+          setLocation(data.location_name || ""); // Update 'location_name' state here
         } catch (error) {
           console.error("Error fetching room details:", error);
         }
@@ -162,7 +168,6 @@ export default function DemoApp() {
     };
     fetchRoomDetails();
   }, [active]);
-
 
   function handleDateClick(arg: any) {
     console.log("Clicked on date: ", arg.dateStr);
@@ -185,8 +190,12 @@ export default function DemoApp() {
         </h2>
         {roomDetails && (
           <div className="hidden sm:block">
-            <p className="py-1 text-xs md:text-base">{roomDetails.room_price}</p>
-            <p className="py-1 text-xs md:text-base">X {roomDetails.no_of_rooms}</p>
+            <p className="py-1 text-xs md:text-base">
+              {roomDetails.room_price}
+            </p>
+            <p className="py-1 text-xs md:text-base">
+              X {roomDetails.no_of_rooms}
+            </p>
           </div>
         )}
       </div>
@@ -201,10 +210,6 @@ export default function DemoApp() {
     dateClick: handleDateClick,
     dayRender: dayRender,
   };
-
-
-
-
 
   return (
     <div className="">
@@ -222,9 +227,10 @@ export default function DemoApp() {
               {roomData.map((room) => (
                 <button
                   onClick={() => setActive(room.id)}
-                  className={`block w-full font-medium text-left rounded-lg p-3 lg:px-6 ${active === room.id &&
+                  className={`block w-full font-medium text-left rounded-lg p-3 lg:px-6 ${
+                    active === room.id &&
                     "bg-[var(--primary-light)] text-primary"
-                    }`}
+                  }`}
                   key={room.id}
                 >
                   {room.room_name.slice(0, 20)} ...
@@ -262,12 +268,20 @@ export default function DemoApp() {
                         <Dialog.Panel className="w-full max-w-md transform overflow-hidden lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
                           <div className="mt-2 flex justify-between items-center border-b pb-3">
                             <h3 className="h3">Date Information</h3>
-                            <XMarkIcon onClick={closeModal} className="w-5 h-5 cursor-pointer" />
+                            <XMarkIcon
+                              onClick={closeModal}
+                              className="w-5 h-5 cursor-pointer"
+                            />
                           </div>
 
                           <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="date-range">Date Ranges :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="date-range"
+                              >
+                                Date Ranges :
+                              </label>
                               <DatePicker
                                 placeholderText="03/08/2023 - 05/08/2023"
                                 selectsRange={true}
@@ -282,7 +296,12 @@ export default function DemoApp() {
                             </div>
 
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="status">Status :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="status"
+                              >
+                                Status :
+                              </label>
                               <input
                                 type="text"
                                 value={status}
@@ -291,7 +310,12 @@ export default function DemoApp() {
                               />
                             </div>
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="location">Location :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="location"
+                              >
+                                Location :
+                              </label>
                               <input
                                 type="text"
                                 value={location_name} // Use the location_name state directly
@@ -301,7 +325,12 @@ export default function DemoApp() {
                             </div>
 
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="hotel-id">Hotel ID :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="hotel-id"
+                              >
+                                Hotel ID :
+                              </label>
                               <input
                                 type="number"
                                 value={hotelId || ""}
@@ -311,7 +340,12 @@ export default function DemoApp() {
                             </div>
 
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="room-id">Room ID :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="room-id"
+                              >
+                                Room ID :
+                              </label>
                               <input
                                 type="text"
                                 value={active || ""}
@@ -321,7 +355,12 @@ export default function DemoApp() {
                             </div>
 
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="room-price">Room Price :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="room-price"
+                              >
+                                Room Price :
+                              </label>
                               <input
                                 type="text"
                                 value={roomPrice}
@@ -331,7 +370,12 @@ export default function DemoApp() {
                             </div>
 
                             <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-                              <label className="text-xl font-medium" htmlFor="no-of-rooms">Number of Rooms :</label>
+                              <label
+                                className="text-xl font-medium"
+                                htmlFor="no-of-rooms"
+                              >
+                                Number of Rooms :
+                              </label>
                               <input
                                 type="text"
                                 value={noOfRooms}
@@ -341,10 +385,18 @@ export default function DemoApp() {
                             </div>
                           </div>
                           <div className="flex gap-3 flex-wrap mt-6 lg:mt-10">
-                            <button className="btn-primary" onClick={handleSaveRoomManagement}>
+                            <button
+                              className="btn-primary"
+                              onClick={handleSaveRoomManagement}
+                            >
                               Save Changes
                             </button>
-                            <button className="btn-outline" onClick={closeModal}>Cancel</button>
+                            <button
+                              className="btn-outline"
+                              onClick={closeModal}
+                            >
+                              Cancel
+                            </button>
                           </div>
                         </Dialog.Panel>
                       </Transition.Child>

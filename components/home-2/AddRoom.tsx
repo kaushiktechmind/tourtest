@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
 
+<<<<<<< HEAD
 const AddRoom = ({ setRooms, onTotalChange }) => {
   const [rooms, setLocalRooms] = useState([]); // Start with an empty array for 0 rooms
+=======
+
+
+const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate, adults }) => {
+  const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0, noOfRooms: 0 }]);
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   const [isOpen, setIsOpen] = useState(false);
   const [localTotal, setLocalTotal] = useState({
     adults: 0,
@@ -18,7 +26,17 @@ const AddRoom = ({ setRooms, onTotalChange }) => {
     }
   };
 
+<<<<<<< HEAD
   const handleRemoveRoom = (index) => {
+=======
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const adultNo = Number(searchParams.get("adults"));
+  const childrenNo = Number(searchParams.get("children"));
+  const infantNo = Number(searchParams.get("infants"));
+
+  const handleRemoveRoom = (index: number) => {
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
     const updatedRooms = rooms.filter((_, i) => i !== index);
     setLocalRooms(updatedRooms);
     setRooms(updatedRooms); // Pass updated rooms to parent
@@ -39,6 +57,7 @@ const AddRoom = ({ setRooms, onTotalChange }) => {
   };
 
   const handleDone = () => {
+<<<<<<< HEAD
     // Calculate total counts when 'Done' is clicked
     const totalAdultCount = rooms.reduce((acc, room) => acc + room.adults, 0);
     const totalChildrenCount = rooms.reduce(
@@ -59,10 +78,43 @@ const AddRoom = ({ setRooms, onTotalChange }) => {
     }
 
     setIsOpen(false);
+=======
+    // Check if the current page is the home page
+    if (window.location.pathname === '/home-2') {
+      setIsOpen(false);
+      // Do nothing if on the home page
+      return;
+    }
+  
+    setIsOpen(false);
+    
+    // Calculate totals
+    const total = rooms.reduce(
+      (acc, room) => ({
+        adults: acc.adults + room.adults,
+        children: acc.children + room.children,
+        infants: acc.infants + room.infants,
+      }),
+      { adults: 0, children: 0, infants: 0 }
+    );
+    const noOfRooms = rooms.length;
+  
+    // Construct new URL with parameters
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.set("adults", total.adults);
+    searchParams.set("children", total.children);
+    searchParams.set("infants", total.infants);
+    searchParams.set("noOfRooms", noOfRooms);
+  
+    // Update URL without reloading the page
+    const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
+    window.history.pushState({ path: newUrl }, "", newUrl);
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   };
 
   return (
     <div className="relative">
+<<<<<<< HEAD
       <div
         className="border rounded-full p-3 cursor-pointer hover:bg-gray-200"
         onClick={handleOpenDropdown}
@@ -75,6 +127,14 @@ const AddRoom = ({ setRooms, onTotalChange }) => {
             } child${localTotal.children !== 1 ? "ren" : ""} - ${
               localTotal.infants
             } infant${localTotal.infants !== 1 ? "s" : ""}`
+=======
+     <div
+        className="border rounded-full p-3 cursor-pointer hover:bg-gray-200"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {rooms.length > 0
+          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.adults, adultNo)} adult${rooms.reduce((acc, room) => acc + room.adults, 0) !== 1 ? "s" : ""} - ${rooms.reduce((acc, room) => acc + room.children, childrenNo)} child${rooms.reduce((acc, room) => acc + room.children, 0) !== 1 ? "ren" : ""} - ${rooms.reduce((acc, room) => acc + room.infants, infantNo)} infant${rooms.reduce((acc, room) => acc + room.infants, 0) !== 1 ? "s" : ""}`
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
           : "0 rooms - 0 adults - 0 children - 0 infants"}
       </div>
 

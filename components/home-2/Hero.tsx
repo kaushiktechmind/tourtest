@@ -93,9 +93,15 @@ const Hero = () => {
             </button>
           </div>
 
+<<<<<<< HEAD
           {/* <div className="w-full md:w-[55%] xl:w-[27%]">
             <AddRoom setTotal={setTotal} />
           </div> */}
+=======
+          <div className="w-full md:w-[55%] xl:w-[27%]">
+            <AddRoom setTotal={setTotal} /> {/* Pass setTotal to AddRoom */}
+          </div>
+>>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 
           <button
             onClick={handleSearch} // Call the search function on click
