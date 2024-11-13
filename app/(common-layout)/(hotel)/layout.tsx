@@ -5,6 +5,7 @@ import { hotelamenities } from "@/public/data/hotelamenities";
 import { hoteltypes } from "@/public/data/hoteltypes";
 import { SearchIcon } from "@/public/data/icons";
 import { StarIcon } from "@heroicons/react/20/solid";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowPathIcon,
   ListBulletIcon,
@@ -21,6 +22,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const path = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const type = searchParams.get("type");
+  const handleLinkClick = (e) => {
+    e.preventDefault();  // Prevent the default link behavior
+    const href = e.target.closest('a').getAttribute('href'); // Access the href correctly
+    router.push(href);  // Navigate to the link
+    router.reload();  // Reload the page
+  };
   return (
     <>
       <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3 ">
@@ -176,7 +186,7 @@ export default function RootLayout({
                         <ul className="flex flex-wrap justify-end justify-content-lg-end justify-content-xl-center gap-4">
                           <li className="flex items-center gap-4"> {/* Add flexbox styling here */}
                             <Link
-                              href="/hotel-listing"
+                              href={`/hotel-listing?type=${type}`} onClick={handleLinkClick}
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotel-listing" && "text-primary"
                                 }`}
                             >
@@ -184,7 +194,7 @@ export default function RootLayout({
                             </Link>
 
                             <Link
-                              href="/hotel-listing-grid"
+                             href={`/hotel-listing-grid?type=${type}`} onClick={handleLinkClick}
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotel-listing-grid" && "text-primary"
                                 }`}
                             >

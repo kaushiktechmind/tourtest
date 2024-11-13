@@ -59,10 +59,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!name || !file) {
-      alert("Please enter an amenity name and upload an icon.");
-      return;
-    }
+  
 
     const formData = new FormData();
     formData.append("amenity_name", name);
@@ -85,6 +82,7 @@ const Page = () => {
       const result = await response.json();
       if (response.ok) {
         alert(result.message);
+        window.location.reload()
         // Safeguard: Ensure prev is an array
         setAmenities((prev) => [
           ...(Array.isArray(prev) ? prev : []), // Ensure prev is an array
@@ -229,7 +227,7 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">ID</th>
-                  <th className="py-3 lg:py-4 px-2">Amenity Name</th>
+                  <th className="py-3 lg:py-4 px-2">Attribute Name</th>
                   <th className="py-3 lg:py-4 px-2">Icon</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
@@ -281,7 +279,7 @@ const Page = () => {
               </tbody>
             </table>
           </div>
-          <Pagination />
+          {/* <Pagination /> */}
         </div>
       </section>
       <Footer />

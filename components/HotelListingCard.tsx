@@ -1,43 +1,58 @@
-"use client";
 import { HeartIconOutline } from "@/public/data/icons";
-import { HeartIcon } from "@heroicons/react/20/solid";
+import { HeartIcon, StarIcon } from "@heroicons/react/20/solid";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
 import { Tooltip } from "react-tooltip";
 
-const tooltipStyle = {
-  backgroundColor: "#3539E9",
-  color: "#fff",
-  borderRadius: "10px",
-};
-
-
-const HotelListingCard = ({ item }: { item: any }) => {
+const HotelListingCard = ({
+  item,
+  adults,
+  numChildren,
+  infants,
+  loc,
+  startdate,
+  enddate,
+  noOfRooms
+}: {
+  item: any;
+  adults: number;
+  numChildren: number;
+  infants: number;
+  loc: string;
+  startdate: string;
+  enddate: string;
+  noOfRooms: number;
+}) => {
   const [favorite, setFavorite] = useState(false);
   const {
     id,
+    hotel_id,
     banner_images,
     location_name,
     starting_price,
     highest_price,
     ratings,
     hotel_name,
-    // Extract amenities using a loop
     ...amenitiesData // This will gather all remaining properties
   } = item;
 
-   // Create an array of amenities dynamically
+  // Create an array of amenities dynamically
   const amenities = [];
-  for (let i = 1; i <= 30; i++) { // Adjust the upper limit as needed
+  for (let i = 1; i <= 30; i++) {
     const amenityName = amenitiesData[`amenity_name${i}`];
     const amenityLogo = amenitiesData[`amenity_logo${i}`];
 
-    // Push to the array if both name and logo are available
     if (amenityName && amenityLogo) {
       amenities.push({ name: amenityName, logo: amenityLogo });
     }
   }
+  const tooltipStyle = {
+    backgroundColor: "#3539E9",
+    color: "#fff",
+    borderRadius: "10px",
+  };
 
   return (
     <div className="col-span-12 md:col-span-6">
@@ -45,31 +60,27 @@ const HotelListingCard = ({ item }: { item: any }) => {
         <div className="property-card__head">
           <div className="property-card__img">
             <Image
-              width={400}
-              height={306}
-              src={banner_images[0]} // Use the first banner image
+              width={369}
+              height={400}
+              src={
+                banner_images && banner_images.length > 0
+                  ? banner_images[0]
+                  : "fallback-image-url"
+              }
               alt={hotel_name}
-              className="w-full rounded-2xl"
+              className="rounded-2xl  h-[300px]  object-cover"
             />
           </div>
-          <button
-            onClick={() => setFavorite(!favorite)}
-            className="absolute z-10 inline-block text-primary top-6 right-6 rounded-full bg-white p-2.5"
-          >
-            {favorite ? (
-              <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
-            ) : (
-              <HeartIconOutline />
-            )}
-          </button>
+
         </div>
         <div className="mt-4 p-4">
           <div className="flex justify-between mb-2">
             <Link
-              href="/componentshotel-listing-details"
-              className="block text-xl font-medium"
+              href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id
+                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
+              className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
             >
-               {hotel_name}
+              {hotel_name}
             </Link>
             <div className="flex items-center shrink-0">
               <i className="text-[var(--tertiary)] text-lg las la-star"></i>
@@ -97,7 +108,105 @@ const HotelListingCard = ({ item }: { item: any }) => {
                 />
               </div>
             </li>
+            <li>
+              <div
+                data-tooltip-id="parking"
+                className="grid place-content-center w-10 h-10 rounded-full bg-[var(--primary-light)]"
+              >
+                <Image
+                  width={24}
+                  height={24}
+                  src="/img/icon-car-parking.png"
+                  alt="image"
+                  className="w-7 h-7 object-fit-contain"
+                />
+              </div>
+            </li>
+            <li>
+              <div
+                data-tooltip-id="parking"
+                className="grid place-content-center w-10 h-10 rounded-full bg-[var(--primary-light)]"
+              >
+                <Image
+                  width={24}
+                  height={24}
+                   src="/img/icon-breakfast.png"
+                  alt="image"
+                  className="w-7 h-7 object-fit-contain"
+                />
+              </div>
+            </li>
+            <li>
+              <div
+                data-tooltip-id="parking"
+                className="grid place-content-center w-10 h-10 rounded-full bg-[var(--primary-light)]"
+              >
+                <Image
+                  width={24}
+                  height={24}
+                   src="/img/icon-room-service.png"
+                  alt="image"
+                  className="w-7 h-7 object-fit-contain"
+                />
+              </div>
+            </li>
+            <li>
+              <div
+                data-tooltip-id="parking"
+                className="grid place-content-center w-10 h-10 rounded-full bg-[var(--primary-light)]"
+              >
+                <Image
+                  width={24}
+                  height={24}
+                   src="/img/icon-fitness.png"
+                  alt="image"
+                  className="w-7 h-7 object-fit-contain"
+                />
+              </div>
+            </li>
           </ul>
+          <Tooltip
+              id="parking"
+              style={tooltipStyle}
+              offset={7}
+              content="Parking"
+            />
+            <Tooltip
+              id="restaurent"
+              style={tooltipStyle}
+              offset={7}
+              content="Restaurent"
+            />
+            <Tooltip
+              id="room"
+              style={tooltipStyle}
+              offset={7}
+              content="Room Service"
+            />
+            <Tooltip
+              id="fitness"
+              style={tooltipStyle}
+              offset={7}
+              content="Fitness"
+            />
+            <Tooltip
+              id="swimming"
+              style={tooltipStyle}
+              offset={7}
+              content="Swimming"
+            />
+            <Tooltip
+              id="laundry"
+              style={tooltipStyle}
+              offset={7}
+              content="Laundry"
+            />
+            <Tooltip
+              id="free"
+              style={tooltipStyle}
+              offset={7}
+              content="Free Internet"
+            />
         </div>
         <div className="border-b border-dash-long mx-3">
           <div className="hr-dashed"></div>
@@ -111,11 +220,12 @@ const HotelListingCard = ({ item }: { item: any }) => {
               </span>
             </span>
             <Link
-              href="/hotel-listing-details"
-              className="btn-outline text-primary"
-            >
-              Book Now
-            </Link>
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id
+                  }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
+                className="btn-outline font-semibold"
+              >
+                Book Now
+              </Link>
           </div>
         </div>
       </div>

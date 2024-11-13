@@ -3,7 +3,8 @@ import { HeartIcon, StarIcon } from "@heroicons/react/20/solid";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React from "react";
+import { Tooltip } from "react-tooltip";
 
 const HotelListingList = ({
   item,
@@ -11,20 +12,21 @@ const HotelListingList = ({
   numChildren,
   infants,
   loc,
+  type,
   startdate,
   enddate,
   noOfRooms
 }: {
   item: any;
   adults: number;
-  numChildren: number; 
+  numChildren: number;
   infants: number;
   loc: string;
+  type: string;
   startdate: string;
   enddate: string;
   noOfRooms: number;
 }) => {
-  const [favorite, setFavorite] = useState(false);
   const {
     id,
     hotel_id,
@@ -34,19 +36,39 @@ const HotelListingList = ({
     highest_price,
     ratings,
     hotel_name,
-    ...amenitiesData // This will gather all remaining properties
+    amenity_name1, amenity_logo1,
+    amenity_name2, amenity_logo2,
+    amenity_name3, amenity_logo3,
+    amenity_name4, amenity_logo4,
+    amenity_name5, amenity_logo5
   } = item;
 
-  // Create an array of amenities dynamically
-  const amenities = [];
-  for (let i = 1; i <= 30; i++) {
-    const amenityName = amenitiesData[`amenity_name${i}`];
-    const amenityLogo = amenitiesData[`amenity_logo${i}`];
-
-    if (amenityName && amenityLogo) {
-      amenities.push({ name: amenityName, logo: amenityLogo });
-    }
+  if (!loc) {
+    loc = location_name;
   }
+
+  const tooltipStyle = {
+    backgroundColor: "#3539E9",
+    color: "#fff",
+    borderRadius: "10px",
+  };
+
+  // Array of amenities
+  const amenities = [
+    { name: amenity_name1, logo: amenity_logo1 },
+    { name: amenity_name2, logo: amenity_logo2 },
+    { name: amenity_name3, logo: amenity_logo3 },
+    { name: amenity_name4, logo: amenity_logo4 },
+    { name: amenity_name5, logo: amenity_logo5 },
+  ];
+
+  // Filter out any invalid amenities
+  const validAmenities = amenities.filter(
+    (amenity) => typeof amenity.name === "string" && typeof amenity.logo === "string"
+  );
+
+  // Debugging: Log validAmenities to ensure they are strings
+  console.log("Valid Amenities:", validAmenities);
 
   return (
     <div key={id || hotel_id} className="col-span-12">
@@ -55,43 +77,29 @@ const HotelListingList = ({
           <div className="rounded-2xl">
             <Image
               width={369}
-              height={282}
+              height={400}
               src={
                 banner_images && banner_images.length > 0
                   ? banner_images[0]
                   : "fallback-image-url"
               }
               alt={hotel_name}
-              className="rounded-2xl"
+              className="rounded-2xl h-[300px] object-cover"
             />
           </div>
-          {/* <button
-            onClick={() => setFavorite(!favorite)}
-            className="absolute z-10 inline-block text-primary top-3 sm:top-6 right-3 sm:right-6 rounded-full bg-white p-2.5"
-          >
-            {favorite ? (
-              <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
-            ) : (
-              <HeartIconOutline />
-            )}
-          </button> */}
         </div>
         <div className="flex-grow p-2 sm:p-3 lg:p-4 xxl:py-6 xxl:px-8">
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${
-                  id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}&startdate=${startdate}&enddate=${enddate}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
               </Link>
               <div className="flex items-center shrink-0">
                 <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                <span className="block text-[var(--neutral-700)]">
-                  {ratings}
-                </span>
+                <span className="block text-[var(--neutral-700)]">{ratings}</span>
               </div>
             </div>
             <div className="flex justify-between mb-6">
@@ -100,11 +108,11 @@ const HotelListingList = ({
                 <span className="inline-block">{location_name}</span>
               </div>
             </div>
-            {/* <ul className="flex items-center flex-wrap gap-3">
-              {amenities.map((amenity, index) => (
+            <ul className="flex items-center flex-wrap gap-3">
+              {validAmenities.map((amenity, index) => (
                 <li key={index}>
                   <div
-                    data-tooltip-id="amenity"
+                    data-tooltip-id={amenity.name}
                     className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
                   >
                     <Image
@@ -115,114 +123,25 @@ const HotelListingList = ({
                       className="w-7 h-7 object-fit-contain"
                     />
                   </div>
-                  <span className="text-sm text-center">{amenity.name}</span>
+                  <Tooltip
+                    id={amenity.name}
+                    style={tooltipStyle}
+                    offset={7}
+                    content={amenity.name}
+                  />
                 </li>
               ))}
-            </ul> */}
-             <ul className="flex items-center flex-wrap gap-3">
-              <li>
-                <div
-                  data-tooltip-id="parking"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-car-parking.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="restaurent"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-breakfast.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="room"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-room-service.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="fitness"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-fitness.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="swimming"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-swimming-pool.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="laundry"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-laundry.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
-              <li>
-                <div
-                  data-tooltip-id="free"
-                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary">
-                  <Image
-                    width={28}
-                    height={28}
-                    src="/img/icon-glob.png"
-                    alt="image"
-                    className=" w-7 h-7 object-fit-contain"
-                  />
-                </div>
-              </li>
             </ul>
+            <div className="my-5 xl:my-7">
+              <div className="border border-dashed"></div>
+            </div>
             <div className="flex flex-wrap justify-between items-center">
               <span className="block text-xl font-medium text-primary">
-                ${starting_price}
-                <span className="inline-block font-medium text-primary">
-                  - ${highest_price}
-                </span>
+                ₹{starting_price}
+                <span className="inline-block font-medium text-primary"> - ₹{highest_price}</span>
               </span>
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${
-                  id || hotel_id
-                }&loc=${loc}&startdate=${startdate}&enddate=${enddate}&noOfRooms=${noOfRooms}`}
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}&startdate=${startdate}&enddate=${enddate}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

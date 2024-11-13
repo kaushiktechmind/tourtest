@@ -51,6 +51,7 @@ const Hero = () => {
     // Store the startDate and endDate in localStorage
     localStorage.setItem('startDate', formattedStartDate);
     localStorage.setItem('endDate', formattedEndDate);
+    localStorage.setItem('storedLocation', locationName);
 
     const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}&startdate=${encodeURIComponent(formattedStartDate)}&enddate=${encodeURIComponent(formattedEndDate)}&noOfRooms=${total.noOfRooms}`;
 
@@ -64,13 +65,15 @@ const Hero = () => {
           Welcome to Andman Mangroves
         </h1>
 
-        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center">
+        {/* <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center"> */}
+        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center w-[60%] mx-auto">
+          
           <LocationEntry
             placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
           />
 
-          <div className="relative w-full md:w-[50%] xl:w-[25%] flex items-center bg-gray-100 rounded-full p-3 border">
+          <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-gray-100 rounded-full p-3 border">
             <DatePicker
               selectsRange={true}
               startDate={startDate}
@@ -78,6 +81,8 @@ const Hero = () => {
               onChange={(update) => setDateRange(update)}
               className="w-full text-center bg-transparent outline-none"
               dateFormat="MM/dd/yyyy"
+              placeholderText="2024-11-11-2024-11-12"
+              minDate={new Date()} 
             />
             <button
               type="button"
@@ -88,9 +93,9 @@ const Hero = () => {
             </button>
           </div>
 
-          <div className="w-full md:w-[55%] xl:w-[27%]">
-            <AddRoom setTotal={setTotal} /> {/* Pass setTotal to AddRoom */}
-          </div>
+          {/* <div className="w-full md:w-[55%] xl:w-[27%]">
+            <AddRoom setTotal={setTotal} />
+          </div> */}
 
           <button
             onClick={handleSearch} // Call the search function on click

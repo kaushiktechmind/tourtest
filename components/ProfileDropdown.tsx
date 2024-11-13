@@ -127,7 +127,7 @@ export default function ProfileDropdown() {
                       } group flex gap-2 w-full items-center rounded-md px-2 py-2 text-sm`}
                   >
                     <LogOutIcon />
-                    Log out
+                    Log Out
                   </button>
                 )}
               </Menu.Item>

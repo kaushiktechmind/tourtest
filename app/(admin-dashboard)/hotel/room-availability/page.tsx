@@ -79,7 +79,6 @@ export default function DemoApp() {
   //   }
   // };
 
-
   const handleSaveRoomManagement = async () => {
     try {
       const token = localStorage.getItem('access_token');
@@ -87,20 +86,22 @@ export default function DemoApp() {
         console.error("Token not found!");
         return;
       }
-
-      // Construct payload
+  
+      // Format date without converting to UTC
+      const formatDate = (date: Date | null) =>
+        date ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}` : null;
+  
       const payload = {
         hotel_id: hotelId,
         room_id: active,
-        start_date: startDate ? startDate.toISOString().split('T')[0] : null, // Format the start date
-        end_date: endDate ? endDate.toISOString().split('T')[0] : null, // Format the end date
+        start_date: formatDate(startDate),
+        end_date: formatDate(endDate),
         room_price: roomPrice,
         no_of_rooms: noOfRooms,
         location_name: location_name,
         status,
       };
-
-      // Make the POST request
+  
       const response = await axios.post(
         'https://yrpitsolutions.com/tourism_api/api/admin/save_room_management',
         payload,
@@ -111,18 +112,17 @@ export default function DemoApp() {
           },
         }
       );
-
-      // Handle success
+  
       if (response.status === 200) {
         alert("Room management details saved successfully!");
-        closeModal(); // Close the modal on success
+        closeModal();
       }
     } catch (error) {
       console.error("Error saving room management:", error);
       alert("Failed to save room management details.");
     }
   };
-
+  
 
 
   useEffect(() => {

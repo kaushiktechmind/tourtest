@@ -87,17 +87,9 @@ export const sidenavData = [
     icon: <i className="las la-calendar-times text-2xl"></i>,
     url: "/cancel-booking",
   },
+
   {
     id: 9,
-    name: "Location",
-    icon: <i className="las la-map-marker-alt text-2xl"></i>,
-    submenus: [
-      { url: "/location/all-location", title: "All Location" },
-      { url: "/location/all-category", title: "All Category" },
-    ],
-  },
-  {
-    id: 10,
     name: "Guests",
     icon: <i className="las la-user-circle text-2xl"></i>,
     submenus: [
@@ -106,7 +98,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 11,
+    id: 10,
     name: "Agents",
     icon: <i className="las la-user-friends text-2xl"></i>,
     submenus: [
@@ -116,25 +108,25 @@ export const sidenavData = [
     ],
   },
   {
-    id: 12,
+    id: 11,
     name: "Chat",
     icon: <i className="las la-sms text-2xl"></i>,
     url: "/chat",
   },
   {
-    id: 13,
+    id: 12,
     name: "Reviews",
     icon: <i className="lar la-star text-2xl"></i>,
     url: "/reviews",
   },
   {
-    id: 14,
+    id: 13,
     name: "Coupon",
     icon: <i className="las la-ticket-alt text-2xl"></i>,
     url: "/coupon",
   },
   {
-    id: 15,
+    id: 14,
     name: "Total Earnings",
     icon: <i className="las la-hand-holding-usd text-2xl"></i>,
     submenus: [
@@ -145,7 +137,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 16,
+    id: 15,
     name: "General Settings",
     icon: <i className="las la-cog text-2xl"></i>,
     submenus: [
@@ -158,7 +150,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 17,
+    id: 16,
     name: "Payment Settings",
     icon: <i className="las la-credit-card text-2xl"></i>,
     submenus: [
@@ -169,13 +161,13 @@ export const sidenavData = [
     ],
   },
   {
-    id: 18,
+    id: 17,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",
   },
   {
-    id: 19,
+    id: 18,
     name: "Authentication",
     icon: <i className="las la-user-shield text-2xl"></i>,
     submenus: [

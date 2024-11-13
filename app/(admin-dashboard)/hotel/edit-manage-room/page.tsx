@@ -49,7 +49,9 @@ interface HotelFormData {
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hotelId = searchParams.get("hotelId"); // Get FAQ ID from URL params
+  const hotelId = searchParams.get("hotelId");
+  const roomId = searchParams.get("roomId");
+//   alert(roomId)
 
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -69,19 +71,19 @@ const Page = () => {
     agent_price: "",
     featured_images: [],
   });
-  const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  const handleCheckboxChange = (amenityId: number) => {
+  const handleCheckboxChange = (amenityName: string) => {
     setSelectedAmenities((prevSelected) => {
-      if (prevSelected.includes(amenityId)) {
-        return prevSelected.filter((item) => item !== amenityId);
+      if (prevSelected.includes(amenityName)) {
+        return prevSelected.filter((item) => item !== amenityName);
       } else {
-        return [...prevSelected, amenityId];
+        return [...prevSelected, amenityName];
       }
     });
   };
-
+  
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -103,56 +105,46 @@ const Page = () => {
     fetchAmenities();
   }, []);
 
+
   useEffect(() => {
-    const fetchRooms = async () => {
-      try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelId}/rooms`
-        );
-        if (!response.ok) {
-          const errorMessage = await response.text(); // Retrieve the error message
-          console.error("Error during image upload:", errorMessage);
-          throw new Error(`Failed to add room: ${errorMessage}`);
+    if (roomId) {
+      const fetchRoomData = async () => {
+        try {
+          const response = await fetch(
+            `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`
+          );
+          const jsonResponse = await response.json();
+          if (jsonResponse.room) { // Directly access `room` instead of `data.room`
+            const roomData = jsonResponse.room;
+            console.log("hellooooooooo", roomData);
+            // Set form data with fetched room data
+            setFormData((prevData) => ({
+              ...prevData,
+              room_name: roomData.room_name,
+              room_price: roomData.room_price,
+              extra_bed_price: roomData.extra_bed_price,
+              child_price: roomData.child_price,
+              no_of_beds: roomData.no_of_beds,
+              room_size: roomData.room_size,
+              max_adults: roomData.max_adults,
+              max_childs: roomData.max_childs,
+              max_infants: roomData.max_infants,
+              amenities: roomData.amenities,
+              status: roomData.status,
+            }));
+            setSelectedAmenities(roomData.amenities); // Set selected amenities
+          }
+        } catch (error) {
+          console.error("Error fetching room data:", error);
         }
-        const data = await response.json();
-        setRooms(data.data); // Assuming the rooms array is in data.rooms
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchRooms();
-  }, []);
-
-  const handleDelete = async (roomId: number) => {
-    const token = localStorage.getItem("access_token");
-    if (!token) {
-      console.error("No access token found");
-      return;
+      };
+  
+      fetchRoomData();
     }
+  }, [roomId]);
+  
 
-    try {
-      const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to delete room");
-      }
-
-      setRooms((prevRooms) => prevRooms.filter((room) => room.id !== roomId));
-      console.log(`Room with ID ${roomId} deleted successfully`);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
+  
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -180,52 +172,58 @@ const Page = () => {
     }));
   }, [selectedAmenities]);
 
-
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-
+    e.preventDefault();
+  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-
+  
+    // Append form fields to FormData
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
           formDataToSend.append("featured_images[]", file);
         });
-      }  else if (key === "amenities") {
-        // Append all selected amenity IDs as an array
-        selectedAmenities.forEach((amenityId) => {
-          formDataToSend.append("amenities[]", amenityId.toString()); // Use the array format "amenities[]"
+      } else if (key === "amenities") {
+        formData.amenities.forEach((amenity, index) => {
+          formDataToSend.append(`amenities[${index}]`, amenity);
         });
       } else {
-        formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
+        formDataToSend.append(
+          key,
+          formData[key as keyof HotelFormData] as string
+        );
       }
     }
   
-
+    // Add _method field to simulate PUT method in a POST request
+    formDataToSend.append("_method", "PUT");
+  
     try {
+      // Assuming `roomId` is available for updating
       const response = await fetch(
-        "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms",
+        `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
         {
-          method: "POST",
+          method: "POST",  // Keep POST method
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
-        throw new Error(`Failed to add room: ${errorMessage}`);
+        throw new Error(`Failed to update room: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
-      console.log("Room added successfully:", data);
+      console.log("Room updated successfully:", data);
     } catch (error) {
-      console.error("Error occurred during room addition:", error);
+      console.error("Error occurred during room update:", error);
     }
   };
+  
   <div className="mt-[20px]">
     <button
       type="submit"
@@ -240,7 +238,7 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Manage Room</h2>
+        <h2 className="h2 text-white">Edit Room</h2>
         <Link
           href={`/hotel/room-availability?hotelId=${hotelId}`}
           className="btn-primary"
@@ -262,7 +260,7 @@ const Page = () => {
               readOnly
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
 
-            // assuming you have a setHotelId function for updating hotelId
+              // assuming you have a setHotelId function for updating hotelId
             />
 
             <label
@@ -395,8 +393,9 @@ const Page = () => {
                   <div className="rounded-2xl flex justify-between">
                     <h3 className="h3">Attributes</h3>
                     <ChevronDownIcon
-                      className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                        }`}
+                      className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
+                        open ? "rotate-180" : ""
+                      }`}
                     />
                   </div>
                 )}
@@ -412,16 +411,26 @@ const Page = () => {
                         <li key={item.id} className="py-2">
                           <CheckboxCustom
                             label={item.amenity_name}
-                            onChange={() => handleCheckboxChange(item.id)}  // Pass amenity id here
-                            checked={selectedAmenities.includes(item.id)}  // Check if amenity id is selected
+                            // img={
+                            //   item.amenity_logo ? (
+                            //     <img
+                            //       src={item.amenity_logo}
+                            //       alt={item.amenity_name}
+                            //     />
+                            //   ) : null
+                            // }
+                            onChange={() =>
+                              handleCheckboxChange(item.amenity_name)
+                            }
+                            checked={selectedAmenities.includes(
+                              item.amenity_name
+                            )}
                           />
                         </li>
                       ))}
                     </ul>
                   )}
                 </div>
-
-
               </Accordion>
             </div>
 
@@ -453,73 +462,7 @@ const Page = () => {
             </div>
           </form>
         </div>
-
-        {/* Rooms List */}
-        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <div className="flex flex-wrap gap-3 justify-between mb-7">
-            <form className="flex flex-wrap items-center gap-3">
-              <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
-                />
-                <SearchIcon />
-              </div>
-            </form>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Name</th>
-                  <th className="py-3 lg:py-4 px-2">Price</th>
-                  <th className="py-3 lg:py-4 px-2">Status</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {(rooms ?? []).length > 0 ? (
-                  rooms.map(({ id, room_name, room_price, status }) => (
-                    <tr
-                      key={id}
-                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                    >
-                      <td className="py-3 lg:py-4 px-2">{room_name}</td>
-                      <td className="py-3 lg:py-4 px-2">{room_price}</td>
-                      <td className="py-3 lg:py-4 px-2">
-                        {status === "1" ? "Active" : "Inactive"}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                        <Link
-                          href={`/hotel/edit-manage-room?hotelId=${hotelId}&roomId=${id}`}
-                          className="text-primary"
-                        >
-                          <PencilSquareIcon className="w-5 h-5" />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(id)}
-                          className="text-[var(--secondary-500)]"
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan={4} className="text-center py-3">
-                      No rooms available
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            <Pagination />
-          </div>
-        </div>
+        
       </section>
 
       {/* Footer */}

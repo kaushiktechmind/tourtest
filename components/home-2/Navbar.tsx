@@ -76,6 +76,10 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
     };
   }, [dropdown]);
 
+  function handleLinkClick(event: MouseEvent<HTMLAnchorElement, MouseEvent>): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <li
       onMouseEnter={onMouseEnter}
@@ -106,7 +110,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
           />
         </>
       ) : (
-        <Link href={items.url as string}>{items.title}</Link>
+        <Link href={items.url as string} onClick={handleLinkClick}>{items.title}</Link>
       )}
     </li>
   );

@@ -64,53 +64,88 @@ const Page = () => {
     null
   );
 
+  const [grandTotalAdultCount, setGrandTotalAdultCount] = useState(0);
+  const [grandTotalChildrenCount, setGrandTotalChildrenCount] = useState(0);
+  const [grandTotalInfantCount, setGrandTotalInfantCount] = useState(0);
+
+  const [grandAdultTotalPrice, setGrandAdultTotalPrice] = useState(0);
+  const [grandChildTotalPrice, setGrandChildTotalPrice] = useState(0);
+  const [grandExtraBedTotalPrice, setGrandExtraBedTotalPrice] = useState(0);
+
+  const handleSelectionChange = (
+    id,
+    adultTotal,
+    childTotal,
+    extraBedTotal,
+    prevAdultTotal = 0,
+    prevChildTotal = 0,
+    prevExtraBedTotal = 0,
+    totalAdultCount = 0,
+    totalChildrenCount = 0,
+    totalInfantCount = 0,
+    prevAdultCount = 0,
+    prevChildCount = 0,
+    prevInfantCount = 0
+  ) => {
+    setGrandAdultTotalPrice((prev) => prev - prevAdultTotal + adultTotal);
+    setGrandChildTotalPrice((prev) => prev - prevChildTotal + childTotal);
+    setGrandExtraBedTotalPrice(
+      (prev) => prev - prevExtraBedTotal + extraBedTotal
+    );
+
+    // Corrected lines: use the prev*Total parameters instead of prevTotals
+    setGrandTotalAdultCount((prev) => prev - prevAdultCount + totalAdultCount);
+    setGrandTotalChildrenCount(
+      (prev) => prev - prevChildCount + totalChildrenCount
+    );
+    setGrandTotalInfantCount(
+      (prev) => prev - prevInfantCount + totalInfantCount
+    );
+  };
+
+  localStorage.setItem(
+    "grandTotalAdultCount",
+    JSON.stringify(grandTotalAdultCount)
+  );
+  localStorage.setItem(
+    "grandTotalChildrenCount",
+    JSON.stringify(grandTotalChildrenCount)
+  );
+  localStorage.setItem(
+    "grandTotalInfantCount",
+    JSON.stringify(grandTotalInfantCount)
+  );
+
+  const handleBookNowClick = (roomId: string) => {
+    // Check if the room ID is already in the selected list
+    if (!selectedRoomIds.includes(roomId)) {
+      setSelectedRoomIds((prevSelected) => [...prevSelected, roomId]); // Add the room ID if not already present
+    }
+  };
+
   const [totalSelected, setTotalSelected] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
   const [totalChildPrice, setTotalChildPrice] = useState(0);
 
-  const handleSelectionChange = (prevValue, newValue, roomPrice, childPrice, roomId) => {
-    const difference = newValue - prevValue;
-    const newTotalSelected = totalSelected + difference;
-
-    if (newTotalSelected <= noOfRooms) {
-      setTotalSelected(newTotalSelected);
-
-      // Calculate the new total cost based on room price + child price
-      setTotalCost((currentTotal) => currentTotal + difference * (roomPrice));
-
-      // // Update total child price
-      // setTotalChildPrice((currentTotalChildPrice) =>
-      //   currentTotalChildPrice + difference * childPrice
-      // );
-
-      return true;
-    }
-    return false;
-  };
-
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
+  const type = searchParams.get("type");
 
-  const adults = Number(localStorage.getItem('adults'));
+  const adults = Number(localStorage.getItem("adults"));
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
 
   const loc = searchParams.get("loc");
-  const startdate = searchParams.get("startdate");
-  const enddate = searchParams.get("enddate");
-  const noOfRooms = Number(localStorage.getItem('noOfRooms'));
+  const startdate = localStorage.getItem("startDate");
+  const enddate = localStorage.getItem("endDate");
+  const noOfRooms = Number(localStorage.getItem("noOfRooms"));
 
   const date1 = new Date(String(startdate));
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
   const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  const grandTotal = totalCost * noOfNights;
-
-  // alert(loc);
-  // alert(startdate);
-  // alert(enddate);
+  localStorage.setItem("noOfNights", String(noOfNights));
 
   const [isOpen, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
@@ -119,12 +154,19 @@ const Page = () => {
   ]);
   const [locationName, setLocationName] = useState(""); // State to hold the location name
 
+  const grandTotal =
+    (grandAdultTotalPrice + grandChildTotalPrice + grandExtraBedTotalPrice) *
+    noOfNights;
 
-
+  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>([]);
 
   useEffect(() => {
-    const storedStartDate = localStorage.getItem('startDate');
-    const storedEndDate = localStorage.getItem('endDate');
+    const storedStartDate = localStorage.getItem("startDate");
+    const storedEndDate = localStorage.getItem("endDate");
+    const date1 = new Date(String(storedStartDate));
+    const date2 = new Date(String(storedEndDate));
+    const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
+    const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
     if (storedStartDate && storedEndDate) {
       setDateRange([new Date(storedStartDate), new Date(storedEndDate)]);
@@ -141,9 +183,10 @@ const Page = () => {
     noOfRooms: 0,
   });
 
+
   const handleSearch = () => {
-    const locationName = "India";
-    if (!locationName || !startDate || !endDate) {
+    const locationName = loc;
+    if (!startDate || !endDate) {
       alert("Please fill all fields before searching.");
       return;
     }
@@ -158,20 +201,21 @@ const Page = () => {
     const formattedStartDate = formatDate(startDate);
     const formattedEndDate = formatDate(endDate);
 
+    localStorage.setItem("startDate", formattedStartDate);
+    localStorage.setItem("endDate", formattedEndDate);
+
     const searchUrl = `/hotel-listing-details?hotelDetailsId=${hotelDetailsId}&loc=${encodeURIComponent(
       locationName
     )}&startdate=${encodeURIComponent(
       formattedStartDate
     )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults
-      }&children=${total.children}&infants=${total.infants}&noOfRooms=${total.noOfRooms
+      }&children=${total.children}&infants=${total.infants}&type=${type}&noOfRooms=${total.noOfRooms
       }`;
 
     window.location.href = searchUrl;
   };
 
-  const handleRoomSelection = (price: RoomPrice) => {
-    setSelectedRoomPrice(price);
-  };
+  const [totalPrice, setTotalPrice] = useState(0);
 
   const [hotelDetails, setHotelDetails] = useState({
     id: 0,
@@ -183,6 +227,7 @@ const Page = () => {
     starting_price: "",
     highest_price: "",
     ratings: "",
+    created_at: "",
     max_adult: "",
     max_children: "",
     max_infant: "",
@@ -222,6 +267,38 @@ const Page = () => {
     amenity_name28: "",
     amenity_name29: "",
     amenity_name30: "",
+
+    amenity_logo1: "",
+    amenity_logo2: "",
+    amenity_logo3: "",
+    amenity_logo4: "",
+    amenity_logo5: "",
+    amenity_logo6: "",
+    amenity_logo7: "",
+    amenity_logo8: "",
+    amenity_logo9: "",
+    amenity_logo10: "",
+    amenity_logo11: "",
+    amenity_logo12: "",
+    amenity_logo13: "",
+    amenity_logo14: "",
+    amenity_logo15: "",
+    amenity_logo16: "",
+    amenity_logo17: "",
+    amenity_logo18: "",
+    amenity_logo19: "",
+    amenity_logo20: "",
+    amenity_logo21: "",
+    amenity_logo22: "",
+    amenity_logo23: "",
+    amenity_logo24: "",
+    amenity_logo25: "",
+    amenity_logo26: "",
+    amenity_logo27: "",
+    amenity_logo28: "",
+    amenity_logo29: "",
+    amenity_logo30: "",
+
     faq_title1: "",
     faq_description1: "",
     faq_title2: "",
@@ -320,6 +397,7 @@ const Page = () => {
               starting_price: result.data.starting_price,
               highest_price: result.data.highest_price,
               ratings: result.data.ratings,
+              created_at: result.data.created_at,
               max_adult: result.data.max_adult,
               max_children: result.data.max_children,
               max_infant: result.data.max_infant,
@@ -359,6 +437,39 @@ const Page = () => {
               amenity_name28: result.data.amenity_name28,
               amenity_name29: result.data.amenity_name29,
               amenity_name30: result.data.amenity_name30,
+
+
+              amenity_logo1: result.data.amenity_logo1,
+              amenity_logo2: result.data.amenity_logo2,
+              amenity_logo3: result.data.amenity_logo3,
+              amenity_logo4: result.data.amenity_logo4,
+              amenity_logo5: result.data.amenity_logo5,
+              amenity_logo6: result.data.amenity_logo6,
+              amenity_logo7: result.data.amenity_logo7,
+              amenity_logo8: result.data.amenity_logo8,
+              amenity_logo9: result.data.amenity_logo9,
+              amenity_logo10: result.data.amenity_logo10,
+              amenity_logo11: result.data.amenity_logo11,
+              amenity_logo12: result.data.amenity_logo12,
+              amenity_logo13: result.data.amenity_logo13,
+              amenity_logo14: result.data.amenity_logo14,
+              amenity_logo15: result.data.amenity_logo15,
+              amenity_logo16: result.data.amenity_logo16,
+              amenity_logo17: result.data.amenity_logo17,
+              amenity_logo18: result.data.amenity_logo18,
+              amenity_logo19: result.data.amenity_logo19,
+              amenity_logo20: result.data.amenity_logo20,
+              amenity_logo21: result.data.amenity_logo21,
+              amenity_logo22: result.data.amenity_logo22,
+              amenity_logo23: result.data.amenity_logo23,
+              amenity_logo24: result.data.amenity_logo24,
+              amenity_logo25: result.data.amenity_logo25,
+              amenity_logo26: result.data.amenity_logo26,
+              amenity_logo27: result.data.amenity_logo27,
+              amenity_logo28: result.data.amenity_logo28,
+              amenity_logo29: result.data.amenity_logo29,
+              amenity_logo30: result.data.amenity_logo30,
+
               faq_title1: result.data.faq_title1,
               faq_description1: result.data.faq_description1,
               faq_title2: result.data.faq_title2,
@@ -453,7 +564,7 @@ const Page = () => {
     const fetchRooms = async () => {
       try {
         let response;
-        if (loc !== "null") {
+        if (type == "null") {
           console.log("Fetching data with loc and date");
           response = await fetch(
             `https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`
@@ -475,17 +586,23 @@ const Page = () => {
         ) {
           let formattedRooms: Room[] = [];
 
-          if (loc !== "null") {
+          if (type == "null") {
             formattedRooms = result.data.map((data: any) => ({
-              id: data.id,
-              img: data.featured_images[0] || "/img/default-room.jpg",
-              title: data.room_name,
-              amenity1: data.amenities[0],
-              amenity2: data.amenities[1],
-              amenity3: data.amenities[2],
-              price: parseFloat(data.room_price),
-              child_price: parseFloat(data.child_price),
-              extra_bed_price: parseFloat(data.extra_bed_price),
+              id: data.room_management.room_id,
+              img: data.room_management.featured_images[0] || "/img/default-room.jpg",
+              title: data.room_management.room_name,
+              amenity_name1: amenities[0]?.amenity_name || '',
+              amenity_logo1: amenities[0]?.amenity_logo || '',
+              amenity_name2: amenities[1]?.amenity_name || '',
+              amenity_logo2: amenities[1]?.amenity_logo || '',
+              amenity_name3: amenities[2]?.amenity_name || '',
+              amenity_logo3: amenities[2]?.amenity_logo || '',
+              amenity_name4: amenities[3]?.amenity_name || '',
+              amenity_logo4: amenities[3]?.amenity_logo || '',
+              
+              price: parseFloat(data.room_management.room_price),
+              child_price: parseFloat(data.room_management.child_price),
+              extra_bed_price: parseFloat(data.room_management.extra_bed_price),
             }));
             console.log("Formatted rooms with loc:", formattedRooms); // Log formatted rooms
           } else {
@@ -493,9 +610,15 @@ const Page = () => {
               id: room.id,
               img: room.featured_images[0] || "/img/default-room.jpg",
               title: room.room_name,
-              amenity1: room.amenities[0],
-              amenity2: room.amenities[1],
-              amenity3: room.amenities[2],
+              amenity_name1: room.amenity_name1,
+              amenity_name2: room.amenity_name2,
+              amenity_name3: room.amenity_name3,
+              amenity_name4: room.amenity_name4,
+              amenity_logo1: room.amenity_logo1,
+              amenity_logo2: room.amenity_logo2,
+              amenity_logo3: room.amenity_logo3,
+              amenity_logo4: room.amenity_logo4,
+              
               price: parseFloat(room.room_price),
               child_price: parseFloat(room.child_price),
               extra_bed_price: parseFloat(room.extra_bed_price),
@@ -522,13 +645,25 @@ const Page = () => {
     e.preventDefault();
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
+      console.log("i am inside booking process function");
       router.push("/sign-in");
     } else {
+      const roomIdsQuery = selectedRoomIds.join(",");
       router.push(
-        `/payment-method?adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`
+        `/payment-method?totalAdultPrice=${grandAdultTotalPrice}&totalChildPrice=${grandChildTotalPrice}&totalExtraBedPrice=${grandExtraBedTotalPrice}&grandTotal=${grandTotal}&roomIds=${roomIdsQuery}`
       );
     }
   };
+
+  const amenities = [];
+  for (let i = 1; i <= 30; i++) {
+    const amenityName = hotelDetails[`amenity_name${i}`];
+    const amenityLogo = hotelDetails[`amenity_logo${i}`];
+
+    if (amenityName && amenityLogo) {
+      amenities.push({ name: amenityName, logo: amenityLogo });
+    }
+  }
 
   return (
     <main>
@@ -588,15 +723,7 @@ const Page = () => {
           </div>
         </div>
       </div>
-      {/* {selectedRoomPrice ? (
-        <div className="price-section">
-          <h5>Room Price: ${selectedRoomPrice.room_price}</h5>
-          <p>Extra Bed Price: ${selectedRoomPrice.extra_bed_price}</p>
-          <p>Child Price: ${selectedRoomPrice.child_price}</p>
-        </div>
-      ) : (
-        <p>Select a room to view pricing details</p>
-      )} */}
+
 
       <div className="bg-[var(--bg-2)] py-[30px] lg:py-[60px] px-3">
         <div className="container">
@@ -659,165 +786,206 @@ const Page = () => {
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <p className="mb-0">
-                        <span className="clr-neutral-500">Published:</span> Feb
-                        9, 23
+                        <span className="clr-neutral-500">Published : </span>
+                        {new Date(hotelDetails.created_at).toLocaleDateString("en-US", {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </p>
                     </li>
+
                   </ul>
                   <div className="border border-dashed my-8"></div>
                   <ul className="flex items-center flex-wrap gap-3">
-                    <li>
-                      <span className="block text-lg font-medium">
-                        Facilities -
-                      </span>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="parking"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-car-parking.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
+                    {amenities.map((amenity, index) => (
+                      <li key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                        {/* Tooltip trigger container */}
+                        <div
+                          data-tooltip-id={amenity.name}
+                          className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                        >
+                          <img
+                            src={amenity.logo}
+                            alt={amenity.name}
+                            style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                          />
+                        </div>
+
+                        {/* Tooltip content */}
+                        <Tooltip
+                          id={amenity.name}
+                          style={tooltipStyle}
+                          offset={7}
+                          content={amenity.name}
                         />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="restaurent"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-breakfast.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="room"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-room-service.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="fitness"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-fitness.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="swimming"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-swimming-pool.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="laundry"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-laundry.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
-                    <li>
-                      <div
-                        data-tooltip-id="free"
-                        className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-                      >
-                        <Image
-                          width={28}
-                          height={28}
-                          src="/img/icon-glob.png"
-                          alt="image"
-                          className=" w-7 h-7 object-fit-contain"
-                        />
-                      </div>
-                    </li>
+                      </li>
+                    ))}
                   </ul>
-                  <Tooltip
-                    id="parking"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Parking"
-                  />
-                  <Tooltip
-                    id="restaurent"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Restaurent"
-                  />
-                  <Tooltip
-                    id="room"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Room Service"
-                  />
-                  <Tooltip
-                    id="fitness"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Fitness"
-                  />
-                  <Tooltip
-                    id="swimming"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Swimming"
-                  />
-                  <Tooltip
-                    id="laundry"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Laundry"
-                  />
-                  <Tooltip
-                    id="free"
-                    style={tooltipStyle}
-                    offset={7}
-                    content="Free Internet"
-                  />
+
+
+
                 </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold"> Description </h4>
                   <p className="mb-5 clr-neutral-500">
                     {hotelDetails.description}
                   </p>
+
+                </div>
+
+                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
+
+
+                  <div className="relative w-full md:w-[70%] xl:w-[40%] flex items-center bg-gray-100 rounded-full p-3 border ">
+                    <DatePicker
+                      placeholderText="2024-10-30 - 2024-11-01"
+                      selectsRange={true}
+                      startDate={startDate}
+                      endDate={endDate}
+                      onChange={(update) => setDateRange(update)}
+                      className="w-full text-center bg-transparent outline-none"
+                      dateFormat="MM/dd/yyyy"
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3"
+                      onClick={() => setOpen((prev) => !prev)}
+                    >
+                      {/* <CalendarDaysIcon className="w-6 h-6 text-gray-600" /> */}
+                    </button>
+                  </div>
+
+
+                  <button
+                    onClick={handleSearch} // Call the search function on click
+                    className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
+                  >
+                    <span className="ml-2">Search Room</span>
+                  </button>
+                </div>
+
+
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
+                  <h4 className="mb-5 text-2xl font-semibold">
+                    {" "}
+                    Featured Room{" "}
+                  </h4>
+                  <ul className="flex flex-col gap-4">
+                    {roomData.map((item) => (
+                      <HotelDetailsFeaturedRoom
+                        key={item.id}
+                        item={item}
+                        noOfRooms={noOfRooms}
+                        noOfNights={noOfNights}
+                        adults={adults}
+                        onSelectionChange={handleSelectionChange}
+                        onBookNowClick={handleBookNowClick}
+                      />
+                    ))}
+                    {totalSelected > noOfRooms && (
+                      <p style={{ color: "red" }}>
+                        Combined selection exceeds allowed limit!
+                      </p>
+                    )}
+                  </ul>
+                  {selectedRoomIds.length > 0 && (
+                    <p>Selected Room IDs: {selectedRoomIds.join(", ")}</p>
+                  )}
+                </div>
+
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">
+                  <h4 className="mb-5 text-2xl font-semibold">
+                    {" "}
+                    Hotel Policies{" "}
+                  </h4>
+                  <ul className="flex flex-col gap-4 mb-5">
+                    {hotelDetails.policy_title1 &&
+                      hotelDetails.policy_description1 && (
+                        <li>
+                          <div className="flex gap-4">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">
+                              <div className="font-bold">
+                                {hotelDetails.policy_title1}
+                              </div>
+                              <span>{hotelDetails.policy_description1}</span>
+                            </span>
+                          </div>
+                        </li>
+                      )}
+
+                    {hotelDetails.policy_title2 &&
+                      hotelDetails.policy_description2 && (
+                        <li>
+                          <div className="flex gap-4">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">
+                              <div className="font-bold">
+                                {hotelDetails.policy_title2}
+                              </div>
+                              <span>{hotelDetails.policy_description2}</span>
+                            </span>
+                          </div>
+                        </li>
+                      )}
+
+                    {hotelDetails.policy_title3 &&
+                      hotelDetails.policy_description3 && (
+                        <li>
+                          <div className="flex gap-4">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">
+                              <div className="font-bold">
+                                {hotelDetails.policy_title3}
+                              </div>
+                              <span>{hotelDetails.policy_description3}</span>
+                            </span>
+                          </div>
+                        </li>
+                      )}
+
+                    {hotelDetails.policy_title4 &&
+                      hotelDetails.policy_description4 && (
+                        <li>
+                          <div className="flex gap-4">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">
+                              <div className="font-bold">
+                                {hotelDetails.policy_title4}
+                              </div>
+                              <span>{hotelDetails.policy_description4}</span>
+                            </span>
+                          </div>
+                        </li>
+                      )}
+
+                    {hotelDetails.policy_title5 &&
+                      hotelDetails.policy_description5 && (
+                        <li>
+                          <div className="flex gap-4">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">
+                              <div className="font-bold">
+                                {hotelDetails.policy_title5}
+                              </div>
+                              <span>{hotelDetails.policy_description5}</span>
+                            </span>
+                          </div>
+                        </li>
+                      )}
+                  </ul>
+
                   {/* <Link
                     href="#"
                     className="link flex items-center gap-2 text-primary">
@@ -827,355 +995,7 @@ const Page = () => {
                     <ArrowLongRightIcon className="w-5 h-5" />
                   </Link> */}
                 </div>
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold"> Attributes </h4>
-                  <div className="mb-10">
-                    <div className="grid grid-cols-12 gap-4 lg:gap-6">
-                      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <ul className="flex flex-col gap-4">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="amenities-list">
-                                {hotelDetails.amenity_name1 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name1}
-                                    </span>
-                                  </div>
-                                )}
 
-                                {hotelDetails.amenity_name2 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name2}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name3 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name13}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name4 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name4}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name5 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name5}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name6 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name6}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name7 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name7}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name8 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name8}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name9 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name9}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name10 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name10}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name11 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name11}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name12 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name12}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name13 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name13}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name14 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name14}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name15 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name15}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name16 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name16}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name17 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name17}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name18 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name18}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name19 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name19}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name20 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name20}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name21 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name21}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name22 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name22}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name23 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name23}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name24 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name24}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name25 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name25}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name26 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name26}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name27 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name28}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name28 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name28}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name29 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name29}
-                                    </span>
-                                  </div>
-                                )}
-
-                                {hotelDetails.amenity_name30 && (
-                                  <div className="flex items-center space-x-2">
-                                    <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                      <i className="las la-check text-lg text-primary"></i>
-                                    </div>
-                                    <span className="inline-block">
-                                      {hotelDetails.amenity_name30}
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                  {/* <Link href="#" className="btn-outline  font-semibold">
-                    Read More
-                  </Link> */}
-                </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold"> FAQ </h4>
                   <ul className="flex flex-col gap-4 mb-5">
@@ -1629,187 +1449,6 @@ const Page = () => {
                       </div>
                     </li>
                   </ul>
-                  {/* <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link> */}
-                </div>
-
-                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
-                  {/* <LocationEntry
-            placeholder="Location"
-            onChange={(value) => setLocationName(value)} // Set location name on change
-          /> */}
-
-                  <div className="relative w-full md:w-[60%] xl:w-[30%] flex items-center bg-gray-100 rounded-full p-3 border ">
-                    <DatePicker
-                      placeholderText="2024-10-30 - 2024-11-01"
-                      selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
-                      onChange={(update) => setDateRange(update)}
-                      className="w-full text-center bg-transparent outline-none"
-                      dateFormat="MM/dd/yyyy"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3"
-                      onClick={() => setOpen((prev) => !prev)}
-                    >
-                      {/* <CalendarDaysIcon className="w-6 h-6 text-gray-600" /> */}
-                    </button>
-                  </div>
-
-                  {/* <h1>{adults}</h1> */}
-
-                  <div className="w-[370px]">
-                    <AddRoom
-                      setTotal={setTotal}
-                      total={total}
-                      adults={defaultAdults}
-                      children={defaultChildren}
-                      infants={defaultInfants}
-                      noOfRooms={1} // or any default number of rooms
-                    />
-                  </div>
-                  <button
-                    onClick={handleSearch} // Call the search function on click
-                    className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
-                  >
-                    <span className="ml-2">Search</span>
-                  </button>
-                </div>
-
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Featured Room{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4">
-                    {roomData.map((item) => (
-                      <HotelDetailsFeaturedRoom
-                        key={item.id}
-                        item={item}
-                        noOfRooms={noOfRooms}
-                        noOfNights={noOfNights}
-                        adults={adults}
-                        // onRoomSelect={handleRoomSelection}
-                        onSelectionChange={handleSelectionChange}
-
-                      />
-                    ))}
-                    {totalSelected > noOfRooms && (
-                      <p style={{ color: "red" }}>
-                        Combined selection exceeds allowed limit!
-                      </p>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Hotel Policies{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    {hotelDetails.policy_title1 &&
-                      hotelDetails.policy_description1 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title1}
-                              </div>
-                              <span>{hotelDetails.policy_description1}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title2 &&
-                      hotelDetails.policy_description2 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title2}
-                              </div>
-                              <span>{hotelDetails.policy_description2}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title3 &&
-                      hotelDetails.policy_description3 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title3}
-                              </div>
-                              <span>{hotelDetails.policy_description3}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title4 &&
-                      hotelDetails.policy_description4 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title4}
-                              </div>
-                              <span>{hotelDetails.policy_description4}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title5 &&
-                      hotelDetails.policy_description5 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title5}
-                              </div>
-                              <span>{hotelDetails.policy_description5}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-                  </ul>
-
-                  {/* <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link> */}
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
@@ -1823,40 +1462,7 @@ const Page = () => {
                         Prev Hotel
                       </span>
                     </Link>
-                    {/* <ul className="flex flex-wrap gap-3 justify-center order-3 flex-grow md:order-2">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white"
-                        >
-                          <i className="lab text-xl la-facebook-f"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white"
-                        >
-                          <i className="lab text-xl la-twitter"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white"
-                        >
-                          <i className="lab text-xl la-linkedin-in"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white"
-                        >
-                          <i className="lab text-xl la-dribbble"></i>
-                        </Link>
-                      </li>
-                    </ul> */}
+
                     <Link
                       href="#"
                       className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2"
@@ -1881,7 +1487,7 @@ const Page = () => {
                       <p className="mb-0"> From </p>
                       <h3 className="h3 mb-0">
                         {" "}
-                        ${hotelDetails.starting_price}-
+                        ₹{hotelDetails.starting_price}-
                         {hotelDetails.highest_price}{" "}
                       </h3>
                     </div>
@@ -1963,80 +1569,49 @@ const Page = () => {
                         </div> */}
 
                         <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500">Adults: </p>
-                          <p className="mb-0 font-medium"> {adults} </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
                           <p className="mb-0 clr-neutral-500">
-                            Extra Bed Price:{" "}
+                            Total Adult Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-                            $
-                            {(() => {
-                              // Check the number of adults and calculate extra bed price
-                              const extraBedPrice =
-                                Number(adults) > 2 && Number(adults) % 2 !== 0
-                                  ? selectedRoomPrice
-                                    ? selectedRoomPrice.extra_bed_price
-                                    : 0
-                                  : 0; // Return 0 if conditions are not met
-
-                              return extraBedPrice; // Return the calculated price
-                            })()}
-                          </p>
-                        </div>
-
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">Child Price: </p>
-                          <p className="mb-0 font-medium">
-                            ${totalChildPrice}
-                            {/* {(() => {
-                              const childPrice = selectedRoomPrice
-                                ? selectedRoomPrice.child_price
-                                : 0;
-                              // Charge for children only if there are any
-                              return Number(children) > 0 ? childPrice : 0;
-                            })()} */}
+                            {" "}
+                            ₹ {grandAdultTotalPrice}{" "}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
                           <p className="mb-0 clr-neutral-500">
-                            <p>Total Cost: </p>
+                            Total Extra Bed Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-                            ${grandTotal}
-                            {/* {(() => {
-                              let x; // Declare x outside the condition
-                              if (Number(adults) === 1) {
-                                x = 1; // Assign value if 1 adult
-                              } else {
-                                x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
-                              }
-
-                              // Calculate room price
-                              const roomPrice = selectedRoomPrice
-                                ? selectedRoomPrice.room_price * x
-                                : 0;
-
-                              // Calculate extra bed price if applicable
-                              const extraBedPrice =
-                                Number(adults) > 2 && Number(adults) % 2 !== 0
-                                  ? selectedRoomPrice?.extra_bed_price || 0
-                                  : 0;
-
-                              // Get child price
-                              const childPrice =
-                                selectedRoomPrice?.child_price || 0;
-
-                              // Total price is the sum of room price, extra bed price, and child price
-                              const totalPrice =
-                                roomPrice +
-                                extraBedPrice +
-                                (Number(children) > 0 ? childPrice : 0);
-
-                              return totalPrice; // Return the total price for display
-                            })()} */}
+                            ₹
+                            {grandExtraBedTotalPrice}
                           </p>
+                        </div>
+
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="mb-0 clr-neutral-500">
+                            Total Child Price:{" "}
+                          </p>
+                          <p className="mb-0 font-medium">
+                            ₹
+                            {grandChildTotalPrice}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="mb-0 clr-neutral-500">
+                            <p>Total Price/Night </p>
+                          </p>
+                          <p className="mb-0 font-medium">
+                            ₹
+                            {grandAdultTotalPrice +
+                              grandChildTotalPrice +
+                              grandExtraBedTotalPrice}
+                          </p>
+                        </div>
+                        <div className="flex items-center justify-between mb-4">
+                          <p className="mb-0 clr-neutral-500">
+                            <p>Total Price/{noOfNights} Nights </p>
+                          </p>
+                          <p className="mb-0 font-medium">₹{grandTotal}</p>
                         </div>
 
                         <div className="hr-dashed my-4"></div>
@@ -2070,7 +1645,9 @@ const Page = () => {
                   <p></p>
 
                   <Link
-                    href={`/payment-method?adults=${adults}&children=${children}&infants=${infants}&grandTotal=${grandTotal}`}
+                    href={`/payment-method?totalAdultPrice=${grandAdultTotalPrice}&totalChildPrice=${grandChildTotalPrice}&totalExtraBedPrice=${grandExtraBedTotalPrice}&grandTotal=${grandTotal}&roomIds=${selectedRoomIds.join(
+                      ","
+                    )}`}
                     onClick={handleRestrict}
                     className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                   >
