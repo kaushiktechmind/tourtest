@@ -177,16 +177,7 @@ const Page = () => {
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
   const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-<<<<<<< HEAD
   localStorage.setItem("noOfNights", String(noOfNights));
-=======
-
-  const grandTotal = totalCost * noOfNights;
-
-  // alert(loc);
-  // alert(startdate);
-  // alert(enddate);
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 
   const [isOpen, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
@@ -682,7 +673,6 @@ const Page = () => {
     fetchRooms();
   }, [loc, startdate, enddate, hotelDetailsId]);
 
-<<<<<<< HEAD
   const handleRestrict = async (e) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("access_token");
@@ -707,8 +697,6 @@ const Page = () => {
     }
   }
 
-=======
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   return (
     <main>
       <div className="bg-[var(--bg-2)] ">
@@ -1493,189 +1481,6 @@ const Page = () => {
                       </div>
                     </li>
                   </ul>
-<<<<<<< HEAD
-=======
-                  {/* <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link> */}
-                </div>
-
-                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
-                  {/* <LocationEntry
-            placeholder="Location"
-            onChange={(value) => setLocationName(value)} // Set location name on change
-          /> */}
-
-                  <div className="relative w-full md:w-[60%] xl:w-[30%] flex items-center bg-gray-100 rounded-full p-3 border ">
-                    <DatePicker
-                      placeholderText="2024-10-30 - 2024-11-01"
-                      selectsRange={true}
-                      startDate={startDate}
-                      endDate={endDate}
-                      onChange={(update) => setDateRange(update)}
-                      className="w-full text-center bg-transparent outline-none"
-                      dateFormat="MM/dd/yyyy"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-3"
-                      onClick={() => setOpen((prev) => !prev)}
-                    >
-                      {/* <CalendarDaysIcon className="w-6 h-6 text-gray-600" /> */}
-                    </button>
-                  </div>
-
-                  {/* <h1>{adults}</h1> */}
-
-                  <div className="w-[370px]">
-                    <AddRoom
-                      setTotal={setTotal}
-                      total={total}
-                      adults={defaultAdults}
-                      defaultChildren={defaultChildren}
-                      infants={defaultInfants}
-                      noOfRooms={1} // or any default number of rooms
-                    />
-                  </div>
-                  <button
-                    onClick={handleSearch} // Call the search function on click
-                    className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
-                  >
-                    <span className="ml-2">Search</span>
-                  </button>
-                </div>
-
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Featured Room{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4">
-                    {roomData.map((item) => (
-                      <HotelDetailsFeaturedRoom
-                        key={item.id}
-                        item={item}
-                        noOfRooms={noOfRooms}
-                        noOfNights={noOfNights}
-                        adults={adults}
-                        // onRoomSelect={handleRoomSelection}
-                        onSelectionChange={handleSelectionChange}
-                      />
-                    ))}
-                    {totalSelected > noOfRooms && (
-                      <p style={{ color: "red" }}>
-                        Combined selection exceeds allowed limit!
-                      </p>
-                    )}
-                  </ul>
-                </div>
-
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Hotel Policies{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    {hotelDetails.policy_title1 &&
-                      hotelDetails.policy_description1 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title1}
-                              </div>
-                              <span>{hotelDetails.policy_description1}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title2 &&
-                      hotelDetails.policy_description2 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title2}
-                              </div>
-                              <span>{hotelDetails.policy_description2}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title3 &&
-                      hotelDetails.policy_description3 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title3}
-                              </div>
-                              <span>{hotelDetails.policy_description3}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title4 &&
-                      hotelDetails.policy_description4 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title4}
-                              </div>
-                              <span>{hotelDetails.policy_description4}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title5 &&
-                      hotelDetails.policy_description5 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title5}
-                              </div>
-                              <span>{hotelDetails.policy_description5}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-                  </ul>
-
-                  {/* <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link> */}
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
@@ -1796,34 +1601,12 @@ const Page = () => {
                         </div> */}
 
                         <div className="flex items-center justify-between mb-4 mt-6">
-<<<<<<< HEAD
                           <p className="mb-0 clr-neutral-500">
                             Total Adult Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
                             {" "}
                             ₹ {grandAdultTotalPrice}{" "}
-=======
-                          <p className="mb-0 clr-neutral-500">Adults: </p>
-                          <p className="mb-0 font-medium">
-                            {" "}
-                            {adults}
-                            {/* $
-                            {(() => {
-                              let x; // Declare x outside the condition
-                              if (Number(adults) == 1) {
-                                x = 1; // Assign value if 1 adult
-                              } else {
-                                x = Math.floor(Number(adults) / 2); // Calculate for multiple adults
-                              }
-                              const roomPrice = selectedRoomPrice
-                                ? selectedRoomPrice.room_price * x
-                                : 0;
-
-                              // Adult price is always equal to room price
-                              return roomPrice;
-                            })()} */}
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
@@ -1831,23 +1614,8 @@ const Page = () => {
                             Total Extra Bed Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-<<<<<<< HEAD
                             ₹
                             {grandExtraBedTotalPrice}
-=======
-                            $
-                            {(() => {
-                              // Check the number of adults and calculate extra bed price
-                              const extraBedPrice =
-                                Number(adults) > 2 && Number(adults) % 2 !== 0
-                                  ? selectedRoomPrice
-                                    ? selectedRoomPrice.extra_bed_price
-                                    : 0
-                                  : 0; // Return 0 if conditions are not met
-
-                              return extraBedPrice; // Return the calculated price
-                            })()}
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
                           </p>
                         </div>
 
@@ -1856,19 +1624,8 @@ const Page = () => {
                             Total Child Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-<<<<<<< HEAD
                             ₹
                             {grandChildTotalPrice}
-=======
-                            ${totalChildPrice}
-                            {/* {(() => {
-                              const childPrice = selectedRoomPrice
-                                ? selectedRoomPrice.child_price
-                                : 0;
-                              // Charge for children only if there are any
-                              return Number(children) > 0 ? childPrice : 0;
-                            })()} */}
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">

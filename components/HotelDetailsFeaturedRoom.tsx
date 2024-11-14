@@ -6,17 +6,10 @@ import { useEffect, useState, useRef } from "react";
 const HotelDetailsFeaturedRoom = ({
   item,
   onSelectionChange,
-<<<<<<< HEAD
   onBookNowClick,
-=======
-  onRoomSelect,
-  noOfRooms,
-  noOfNights,
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 }: any) => {
   const { id, img, price, title, extra_bed_price, child_price, amenity_name1, amenity_name2, amenity_name3, amenity_name4, amenity_logo1, amenity_logo2, amenity_logo3, amenity_logo4, } = item;
 
-<<<<<<< HEAD
   const [rooms, setRooms] = useState<any[]>([]);
   const prevTotals = useRef({ adultTotal: 0, childTotal: 0, extraBedTotal: 0 });
   const prevCounts = useRef({
@@ -32,17 +25,6 @@ const HotelDetailsFeaturedRoom = ({
 
   const handleTotalChange = (newTotals) => {
     setTotals(newTotals);
-=======
-  const [selectedValue, setSelectedValue] = useState(0);
-  const handleDropdownChange = (event) => {
-    const newValue = parseInt(event.target.value, 10);
-    const changeAllowed = onSelectionChange(selectedValue, newValue, price, child_price, id);
-    if (changeAllowed) {
-      setSelectedValue(newValue);
-    } else {
-      alert("Selection exceeds the allowed limit!");
-    }
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   };
   
 
@@ -64,7 +46,6 @@ const HotelDetailsFeaturedRoom = ({
 
     return { adultTotal, childTotal, extraBedTotal };
   };
-<<<<<<< HEAD
 
   // Update totals when rooms state changes
   useEffect(() => {
@@ -102,10 +83,6 @@ const HotelDetailsFeaturedRoom = ({
     // Call onBookNowClick with the room ID
     onBookNowClick(id);
   };
-=======
-  
-  
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
 
   return (
     <li key={id}>
@@ -133,21 +110,6 @@ const HotelDetailsFeaturedRoom = ({
               >
                 {title} 
               </Link>
-<<<<<<< HEAD
-=======
-              <p>{noOfNights} Nights :  </p>
-              <select
-                value={selectedValue}
-                onChange={handleDropdownChange}
-                className="mt-2 p-2 border rounded"
-              >
-                {[...Array(noOfRooms + 1)].map((_, i) => (
-                  <option key={i} value={i}>
-                    {i}
-                  </option>
-                ))}
-              </select>
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
             </div>
 
             <p className="mb-4">Free Cancellation after 5 hours of booking</p>
@@ -224,18 +186,7 @@ const HotelDetailsFeaturedRoom = ({
                 </span>
               </span>
               <button
-<<<<<<< HEAD
                 onClick={handleBookNow} // Trigger handleBookNow on button click
-=======
-                onClick={() =>
-                  onRoomSelect({
-                    room_price: price,
-                    extra_bed_price,
-                    child_price,
-                    id,
-                  })
-                }
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
                 className="btn-outline font-semibold"
               >
                 Book Now
