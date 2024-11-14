@@ -91,7 +91,7 @@ const Hero = () => {
             >
               <CalendarDaysIcon className="w-6 h-6 text-gray-600" />
             </button>
-          </div>
+          </div>z
 
 <<<<<<< HEAD
           {/* <div className="w-full md:w-[55%] xl:w-[27%]">
