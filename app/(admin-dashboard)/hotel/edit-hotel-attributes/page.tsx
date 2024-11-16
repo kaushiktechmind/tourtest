@@ -68,25 +68,27 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
+  
     if (!amenityData.amenity_name.trim()) {
       alert("Amenity name is required.");
       return;
     }
-
+  
     const token = localStorage.getItem("access_token");
-
-    const payload = {
-      amenity_name: amenityData.amenity_name,
-      amenity_logo: iconFile,
-    };
+  
     const form = new FormData();
     form.append("amenity_name", amenityData.amenity_name);
+  
+    // Send existing amenity logo if no new file is uploaded
     if (iconFile) {
       form.append("amenity_logo", iconFile);
+    } else {
+      // If no new logo is uploaded, send the existing amenity_logo URL
+      form.append("amenity_logo", amenityData.amenity_logo);
     }
+  
     form.append("_method", "PUT");
-
+  
     try {
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_amenities_by_id/${amenityId}`,
@@ -94,23 +96,20 @@ const Page = () => {
           method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
-            // "Content-Type": "multipart/form-data",
-            // Accept: "application/json",
           },
           body: form,
         }
       );
-
+  
       if (!response.ok) {
         const errorResponse = await response.json();
         console.error("Response error:", errorResponse);
         alert(
-          "Error updating amenity: " +
-            (errorResponse.message || "Unknown error")
+          "Error updating amenity: " + (errorResponse.message || "Unknown error")
         );
         return;
       }
-
+  
       const result = await response.json();
       alert("Amenity updated successfully!");
       router.push("/hotel/attributes");
@@ -118,6 +117,9 @@ const Page = () => {
       console.error("Error submitting form:", error);
     }
   };
+  
+  
+  
 
   return (
     <div className="bg-[var(--bg-2)]">

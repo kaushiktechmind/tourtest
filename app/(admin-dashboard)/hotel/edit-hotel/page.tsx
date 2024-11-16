@@ -567,6 +567,8 @@ const Page = () => {
         }
       );
       console.log("API Response:", response.data);
+      alert("Hotel Details Updated");
+      router.push("/hotel/all-hotels"); 
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error message:", error.message);
@@ -593,7 +595,7 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Edit New Hotel</h2>
+        <h2 className="h2 text-white">Edit Hotel</h2>
         <div className="flex space-x-2">
           {" "}
           {/* Use flex and space-x-2 for horizontal spacing */}
@@ -1238,15 +1240,15 @@ const Page = () => {
                       <li key={item.amenity_name} className="py-2">
                         <CheckboxCustom
                           label={item.amenity_name} // Use amenity_name for the checkbox label
-                          img={
-                            item.amenity_logo ? (
-                              <img
-                                src={item.amenity_logo}
-                                alt={item.amenity_name}
-                                className="w-5 h-5"
-                              />
-                            ) : null
-                          }
+                          // img={
+                          //   item.amenity_logo ? (
+                          //     <img
+                          //       src={item.amenity_logo}
+                          //       alt={item.amenity_name}
+                          //       className="w-5 h-5"
+                          //     />
+                          //   ) : null
+                          // }
                           onChange={() => handleCheckboxChange(item.amenity_name)} // Call the handler
                           checked={selectedAmenities.includes(item.amenity_name)} // Set checked state
                         />
@@ -1313,12 +1315,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter website"
                 />
-                <Link
-                  href="#"
-                  className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold mt-6"
-                >
-                  <span className="inline-block"> Add New </span>
-                </Link>
+                
               </div>
             </Accordion>
           </div>

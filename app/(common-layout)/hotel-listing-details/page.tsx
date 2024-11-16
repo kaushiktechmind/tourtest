@@ -127,38 +127,6 @@ const Page = () => {
   const [totalCost, setTotalCost] = useState(0);
   const [totalChildPrice, setTotalChildPrice] = useState(0);
 
-<<<<<<< HEAD
-=======
-  const handleSelectionChange = (
-    prevValue,
-    newValue,
-    roomPrice,
-    childPrice,
-    roomId
-  ) => {
-    const difference = newValue - prevValue;
-    const newTotalSelected = totalSelected + difference;
-
-    if (newTotalSelected <= noOfRooms) {
-      setTotalSelected(newTotalSelected);
-
-      // Calculate the new total cost based on room price + child price
-      setTotalCost(
-        (currentTotal) => currentTotal + difference * (roomPrice + childPrice)
-      );
-
-      // Update total child price
-      setTotalChildPrice(
-        (currentTotalChildPrice) =>
-          currentTotalChildPrice + difference * childPrice
-      );
-
-      return true;
-    }
-    return false;
-  };
-
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
@@ -217,6 +185,7 @@ const Page = () => {
 
 
   const handleSearch = () => {
+    const type = null;
     const locationName = loc;
     if (!startDate || !endDate) {
       alert("Please fill all fields before searching.");
@@ -623,15 +592,15 @@ const Page = () => {
               id: data.room_management.room_id,
               img: data.room_management.featured_images[0] || "/img/default-room.jpg",
               title: data.room_management.room_name,
-              amenity_name1: amenities[0]?.amenity_name || '',
-              amenity_logo1: amenities[0]?.amenity_logo || '',
-              amenity_name2: amenities[1]?.amenity_name || '',
-              amenity_logo2: amenities[1]?.amenity_logo || '',
-              amenity_name3: amenities[2]?.amenity_name || '',
-              amenity_logo3: amenities[2]?.amenity_logo || '',
-              amenity_name4: amenities[3]?.amenity_name || '',
-              amenity_logo4: amenities[3]?.amenity_logo || '',
-              
+              amenity_name1: data.room_management.amenities[0]?.amenity_name || '',
+              amenity_logo1: data.room_management.amenities[0]?.amenity_logo || '',
+              amenity_name2: data.room_management.amenities[1]?.amenity_name || '',
+              amenity_logo2: data.room_management.amenities[1]?.amenity_logo || '',
+              amenity_name3: data.room_management.amenities[2]?.amenity_name || '',
+              amenity_logo3: data.room_management.amenities[2]?.amenity_logo || '',
+              amenity_name4: data.room_management.amenities[3]?.amenity_name || '',
+              amenity_logo4: data.room_management.amenities[3]?.amenity_logo || '',
+
               price: parseFloat(data.room_management.room_price),
               child_price: parseFloat(data.room_management.child_price),
               extra_bed_price: parseFloat(data.room_management.extra_bed_price),
@@ -642,15 +611,14 @@ const Page = () => {
               id: room.id,
               img: room.featured_images[0] || "/img/default-room.jpg",
               title: room.room_name,
-              amenity_name1: room.amenity_name1,
-              amenity_name2: room.amenity_name2,
-              amenity_name3: room.amenity_name3,
-              amenity_name4: room.amenity_name4,
-              amenity_logo1: room.amenity_logo1,
-              amenity_logo2: room.amenity_logo2,
-              amenity_logo3: room.amenity_logo3,
-              amenity_logo4: room.amenity_logo4,
-              
+              amenity_name1: room.amenities[0]?.amenity_name || '',
+              amenity_logo1: room.amenities[0]?.amenity_logo || '',
+              amenity_name2: room.amenities[1]?.amenity_name || '',
+              amenity_logo2: room.amenities[1]?.amenity_logo || '',
+              amenity_name3: room.amenities[2]?.amenity_name || '',
+              amenity_logo3: room.amenities[2]?.amenity_logo || '',
+              amenity_name4: room.amenities[3]?.amenity_name || '',
+              amenity_logo4: room.amenities[3]?.amenity_logo || '',
               price: parseFloat(room.room_price),
               child_price: parseFloat(room.child_price),
               extra_bed_price: parseFloat(room.extra_bed_price),
@@ -901,13 +869,14 @@ const Page = () => {
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">
                     {" "}
-                    Featured Room{" "}
+                    Featured Room{" "} 
                   </h4>
                   <ul className="flex flex-col gap-4">
                     {roomData.map((item) => (
                       <HotelDetailsFeaturedRoom
                         key={item.id}
                         item={item}
+                        startdate={startdate}
                         noOfRooms={noOfRooms}
                         noOfNights={noOfNights}
                         adults={adults}
@@ -921,9 +890,9 @@ const Page = () => {
                       </p>
                     )}
                   </ul>
-                  {selectedRoomIds.length > 0 && (
+                  {/* {selectedRoomIds.length > 0 && (
                     <p>Selected Room IDs: {selectedRoomIds.join(", ")}</p>
-                  )}
+                  )} */}
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">

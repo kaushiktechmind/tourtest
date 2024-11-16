@@ -47,7 +47,7 @@ const Page = () => {
         if (response.ok) {
           // Remove the deleted hotel from the state
           setHostels((prevHostels) => prevHostels.filter((hostel) => hostel.id !== hotelIdToDelete));
-          console.log("Hotel deleted:", hotelToDelete);
+          alert("Hotel Deleted");
         } else {
           console.error("Error deleting hotel:", response.statusText);
         }
@@ -152,7 +152,7 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>

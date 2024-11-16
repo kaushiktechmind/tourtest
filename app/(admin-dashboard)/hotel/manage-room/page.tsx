@@ -148,7 +148,7 @@ const Page = () => {
       }
 
       setRooms((prevRooms) => prevRooms.filter((room) => room.id !== roomId));
-      console.log(`Room with ID ${roomId} deleted successfully`);
+      alert(`Room Deleted Successfully`);
     } catch (error) {
       console.error(error);
     }
@@ -193,7 +193,7 @@ const Page = () => {
         formData.featured_images.forEach((file) => {
           formDataToSend.append("featured_images[]", file);
         });
-      }  else if (key === "amenities") {
+      } else if (key === "amenities") {
         // Append all selected amenity IDs as an array
         selectedAmenities.forEach((amenityId) => {
           formDataToSend.append("amenities[]", amenityId.toString()); // Use the array format "amenities[]"
@@ -202,7 +202,7 @@ const Page = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-  
+
 
     try {
       const response = await fetch(
@@ -222,7 +222,8 @@ const Page = () => {
       }
 
       const data = await response.json();
-      console.log("Room added successfully:", data);
+      alert("Room added successfully");
+      window.location.reload();
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
@@ -352,6 +353,18 @@ const Page = () => {
                   />
                 </label>
               </div>
+            </div>
+            {/* Display selected images */}
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {formData.featured_images.map((file, index) => (
+                <div key={index} className="w-full h-32 bg-gray-200 rounded-lg overflow-hidden">
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Selected Image ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ))}
             </div>
 
             <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
@@ -518,7 +531,7 @@ const Page = () => {
                 )}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>

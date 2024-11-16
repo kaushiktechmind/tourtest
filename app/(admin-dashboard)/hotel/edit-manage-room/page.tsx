@@ -71,18 +71,20 @@ const Page = () => {
     agent_price: "",
     featured_images: [],
   });
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  const handleCheckboxChange = (amenityName: string) => {
+  
+  const handleCheckboxChange = (amenityId: number) => {
     setSelectedAmenities((prevSelected) => {
-      if (prevSelected.includes(amenityName)) {
-        return prevSelected.filter((item) => item !== amenityName);
+      if (prevSelected.includes(amenityId)) {
+        return prevSelected.filter((item) => item !== amenityId);
       } else {
-        return [...prevSelected, amenityName];
+        return [...prevSelected, amenityId];
       }
     });
   };
+
   
 
   useEffect(() => {
@@ -114,9 +116,14 @@ const Page = () => {
             `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`
           );
           const jsonResponse = await response.json();
+  
           if (jsonResponse.room) { // Directly access `room` instead of `data.room`
             const roomData = jsonResponse.room;
-            console.log("hellooooooooo", roomData);
+            console.log("Room Data:", roomData);
+  
+            // Map amenity IDs
+            const roomAmenityIds = roomData.amenities.map((amenity: { id: number }) => amenity.id);
+  
             // Set form data with fetched room data
             setFormData((prevData) => ({
               ...prevData,
@@ -129,10 +136,12 @@ const Page = () => {
               max_adults: roomData.max_adults,
               max_childs: roomData.max_childs,
               max_infants: roomData.max_infants,
-              amenities: roomData.amenities,
+              amenities: roomAmenityIds, // Store only IDs in form data
               status: roomData.status,
             }));
-            setSelectedAmenities(roomData.amenities); // Set selected amenities
+  
+            // Set selected amenities
+            setSelectedAmenities(roomAmenityIds);
           }
         } catch (error) {
           console.error("Error fetching room data:", error);
@@ -185,8 +194,9 @@ const Page = () => {
           formDataToSend.append("featured_images[]", file);
         });
       } else if (key === "amenities") {
-        formData.amenities.forEach((amenity, index) => {
-          formDataToSend.append(`amenities[${index}]`, amenity);
+        // Append all selected amenity IDs as an array
+        selectedAmenities.forEach((amenityId) => {
+          formDataToSend.append("amenities[]", amenityId.toString()); // Use the array format "amenities[]"
         });
       } else {
         formDataToSend.append(
@@ -218,7 +228,7 @@ const Page = () => {
       }
   
       const data = await response.json();
-      console.log("Room updated successfully:", data);
+      alert("Room updated successfully");
     } catch (error) {
       console.error("Error occurred during room update:", error);
     }
@@ -250,7 +260,7 @@ const Page = () => {
       {/* Add Room Form */}
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add Rooms</h3>
+          {/* <h3 className="border-b h3 pb-6">Add Rooms</h3> */}
           <form onSubmit={handleSubmit}>
             <p className="mt-6 mb-4 text-xl font-medium">Hotel ID :</p>
             <input
@@ -411,20 +421,8 @@ const Page = () => {
                         <li key={item.id} className="py-2">
                           <CheckboxCustom
                             label={item.amenity_name}
-                            // img={
-                            //   item.amenity_logo ? (
-                            //     <img
-                            //       src={item.amenity_logo}
-                            //       alt={item.amenity_name}
-                            //     />
-                            //   ) : null
-                            // }
-                            onChange={() =>
-                              handleCheckboxChange(item.amenity_name)
-                            }
-                            checked={selectedAmenities.includes(
-                              item.amenity_name
-                            )}
+                            onChange={() => handleCheckboxChange(item.id)}  // Pass amenity id here
+                            checked={selectedAmenities.includes(item.id)}  // Check if amenity id is selected
                           />
                         </li>
                       ))}
@@ -456,13 +454,12 @@ const Page = () => {
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>
                   {" "}
-                  Add New{" "}
+                  Update{" "}
                 </span>
               </Link>
             </div>
           </form>
         </div>
-        
       </section>
 
       {/* Footer */}

@@ -242,10 +242,10 @@ const Page = () => {
                 ) : (
                   (amenities || []).map(
                     (
-                      amenity // Use empty array if amenities is undefined
+                      amenity, index // Use empty array if amenities is undefined
                     ) => (
                       <tr key={amenity.id} className="border-b border-dashed">
-                        <td className="py-3 lg:py-4 px-2">{amenity.id}</td>
+                        <td className="py-3 lg:py-4 px-2">{index + 1}</td>
                         <td className="py-3 lg:py-4 px-2">
                           {amenity.amenity_name}
                         </td>

@@ -72,7 +72,7 @@ const Page = () => {
       );
 
       const result = await response.json();
-      console.log(result);
+      // console.log(result);
 
       // Update FAQs state
       if (result.data) {
@@ -84,7 +84,7 @@ const Page = () => {
         setFaqs((prevFaqs) => [newFaq, ...prevFaqs]); // Prepend the new FAQ
         setFaqTitle(""); // Clear the title input
         setDescription(""); // Clear the description
-      }
+      } alert("FAQ added Successfully");
     } catch (error) {
       console.error("Error adding FAQ:", error);
     }
@@ -107,7 +107,7 @@ const Page = () => {
       if (response.ok) {
         // Update state to remove the deleted FAQ
         setFaqs((prevFaqs) => prevFaqs.filter((faq) => faq.id !== id));
-        console.log("FAQ deleted successfully.");
+        alert("FAQ deleted successfully.");
       } else {
         console.error("Failed to delete FAQ:", await response.json());
       }

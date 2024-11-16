@@ -85,6 +85,7 @@ const Page = () => {
         setPolicyTitle(""); // Clear the title input
         setDescription(""); // Clear the description
       }
+      alert("Policy Added Successfully");
     } catch (error) {
       console.error("Error adding Policy:", error);
     }
@@ -105,9 +106,10 @@ const Page = () => {
       );
 
       if (response.ok) {
+        alert("Policy deleted successfully.");
+
         // Update state to remove the deleted Policy
         setPolicy((prevPolicy) => prevPolicy.filter((policy) => policy.id !== id));
-        console.log("Policy deleted successfully.");
       } else {
         console.error("Failed to delete Policy:", await response.json());
       }

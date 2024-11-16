@@ -87,6 +87,16 @@ export const sidenavData = [
     icon: <i className="las la-calendar-times text-2xl"></i>,
     url: "/cancel-booking",
   },
+  {
+  
+  id: 9,
+  name: "Location",
+  icon: <i className="las la-map-marker-alt text-2xl"></i>,
+  submenus: [
+    {url: "/location/all-location", title: "All Location"}
+  ]
+  
+},
 
   {
     id: 9,

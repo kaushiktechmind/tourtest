@@ -16,6 +16,7 @@ import CheckboxCustom from "@/components/Checkbox";
 import QuillEditor from "../../../../components/QuillEditor";
 import React, { useState, useEffect, ChangeEvent } from "react";
 import axios, { AxiosError } from "axios";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface Amenity {
   id: number;
@@ -74,6 +75,7 @@ interface HotelFormData {
 }
 
 const Page = () => {
+  const router = useRouter();
   const [description, setDescription] = useState<string>(""); // Type for description
   const [formData, setFormData] = useState<HotelFormData>({
     property_id: "",
@@ -399,6 +401,8 @@ const Page = () => {
         }
       );
       console.log("API Response:", response.data);
+      alert("Hotel added successfully!"); 
+      router.push("/hotel/all-hotels"); 
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error message:", error.message);
@@ -410,18 +414,24 @@ const Page = () => {
       }
     }
   };
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+ // Handle file change (update formData and preview images)
+ const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const files = e.target.files;
+  if (files) {
+    const fileArray = Array.from(files); // Convert FileList to array
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files; // Get the FileList object
-    if (files) {
-      const fileArray = Array.from(files); // Convert to array
-      setFormData((prevData) => ({
-        ...prevData,
-        banner_images: fileArray, // Update state with the file array
-      }));
-    }
-  };
+    // Update formData with selected files
+    setFormData((prevData) => ({
+      ...prevData,
+      banner_images: fileArray,
+    }));
 
+    // Generate previews for the selected images
+    const previews = fileArray.map((file) => URL.createObjectURL(file));
+    setSelectedImages(previews); // Update selectedImages state with previews
+  }
+};
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -1032,6 +1042,17 @@ const Page = () => {
                     />
                   </label>
                 </div>
+                <div className="flex flex-wrap gap-4">
+        {selectedImages.map((preview, index) => (
+          <div key={index} className="relative w-24 h-24">
+            <img
+              src={preview}
+              alt={`selected-image-${index}`}
+              className="object-cover w-full h-full rounded-md"
+            />
+          </div>
+        ))}
+      </div>
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
                   type="text"
@@ -1194,12 +1215,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter website"
                 />
-                <Link
-                  href="#"
-                  className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold mt-6"
-                >
-                  <span className="inline-block"> Add New </span>
-                </Link>
+                
               </div>
             </Accordion>
           </div>

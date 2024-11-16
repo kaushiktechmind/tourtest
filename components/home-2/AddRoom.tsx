@@ -2,15 +2,8 @@ import { useState, useEffect } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
 
-<<<<<<< HEAD
-const AddRoom = ({ setRooms, onTotalChange }) => {
+const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
   const [rooms, setLocalRooms] = useState([]); // Start with an empty array for 0 rooms
-=======
-
-
-const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate, adults }) => {
-  const [rooms, setRooms] = useState([{ adults: 0, children: 0, infants: 0, noOfRooms: 0 }]);
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
   const [isOpen, setIsOpen] = useState(false);
   const [localTotal, setLocalTotal] = useState({
     adults: 0,
@@ -19,24 +12,14 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate,
   });
 
   const handleAddRoom = () => {
-    if (rooms.length < 5) {
+    if (rooms.length < roomAvailableNo) {
       const newRooms = [...rooms, { adults: 0, children: 0, infants: 0 }];
       setLocalRooms(newRooms); // Update local state
       setRooms(newRooms); // Pass updated rooms to parent
     }
   };
 
-<<<<<<< HEAD
   const handleRemoveRoom = (index) => {
-=======
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const adultNo = Number(searchParams.get("adults"));
-  const childrenNo = Number(searchParams.get("children"));
-  const infantNo = Number(searchParams.get("infants"));
-
-  const handleRemoveRoom = (index: number) => {
->>>>>>> 539b3b455f5b1a085afecd8b82305fc4076464de
     const updatedRooms = rooms.filter((_, i) => i !== index);
     setLocalRooms(updatedRooms);
     setRooms(updatedRooms); // Pass updated rooms to parent
@@ -95,6 +78,7 @@ const AddRoom = ({ setTotal, locationName, formattedStartDate, formattedEndDate,
             } infant${localTotal.infants !== 1 ? "s" : ""}`
           : "0 rooms - 0 adults - 0 children - 0 infants"}
       </div>
+      {/* <h1>aaaaaaaaaaa{roomAvailableNo}</h1> */}
 
       {isOpen && (
         <div className="absolute top-full left-0 z-50">

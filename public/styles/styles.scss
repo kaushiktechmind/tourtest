@@ -19,6 +19,12 @@
  visibility: hidden;
 }
 
+.fc-past-day {
+  opacity: 0.3;  /* Reduce intensity */
+  pointer-events: none; /* Disable interaction */
+}
+
+
 .property-card {
   &-next {
     --swiper-navigation-size: 38px;
