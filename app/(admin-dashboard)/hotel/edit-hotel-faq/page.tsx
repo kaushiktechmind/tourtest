@@ -50,6 +50,10 @@ const Page = () => {
     }
 
     try {
+      const tempElement = document.createElement("div");
+      tempElement.innerHTML = description;
+      const plainTextDescription =
+      tempElement.textContent || tempElement.innerText || "";
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_faq_by_id/${faqId}`,
         {
@@ -60,7 +64,7 @@ const Page = () => {
           },
           body: JSON.stringify({
             faq_title: faqTitle,
-            faq_description: description,
+            faq_description: plainTextDescription,
           }),
         }
       );

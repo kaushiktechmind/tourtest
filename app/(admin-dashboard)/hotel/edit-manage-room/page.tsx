@@ -68,7 +68,7 @@ const Page = () => {
     max_infants: "",
     amenities: [],
     status: "",
-    agent_price: "",
+    agent_price: "1000",
     featured_images: [],
   });
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
@@ -137,7 +137,7 @@ const Page = () => {
               max_childs: roomData.max_childs,
               max_infants: roomData.max_infants,
               amenities: roomAmenityIds, // Store only IDs in form data
-              status: roomData.status,
+              status: "1",
             }));
   
             // Set selected amenities
@@ -183,9 +183,14 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const agentPrice = 1000;
+
   
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
+    formDataToSend.append("status", "1");
+    formDataToSend.append("agent_price", agentPrice.toString()); 
+
   
     // Append form fields to FormData
     for (const key in formData) {
@@ -229,6 +234,7 @@ const Page = () => {
   
       const data = await response.json();
       alert("Room updated successfully");
+      router.push(`/hotel/manage-room?hotelId=${hotelId}`);
     } catch (error) {
       console.error("Error occurred during room update:", error);
     }
@@ -432,24 +438,6 @@ const Page = () => {
               </Accordion>
             </div>
 
-            <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
-            <input
-              type="text"
-              name="status"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="Available"
-              value={formData.status}
-              onChange={handleInputChange}
-            />
-            <p className="mt-6 mb-4 text-xl font-medium">Agent Price :</p>
-            <input
-              type="text"
-              name="agent_price"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="2800"
-              value={formData.agent_price}
-              onChange={handleInputChange}
-            />
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>

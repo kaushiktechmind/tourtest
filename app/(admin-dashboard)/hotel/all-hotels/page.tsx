@@ -14,39 +14,46 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import HeadlessList from "@/components/ListBox";
 import { Dialog, Transition } from "@headlessui/react";
 
+const ITEMS_PER_PAGE = 10; // Customize the number of items per page
+
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [hotelToDelete, setHotelToDelete] = useState<string | null>(null);
-  const [hotelIdToDelete, setHotelIdToDelete] = useState<string | null>(null); // Store ID of hotel to delete
-  const [hostels, setHostels] = useState<any[]>([]); // Update the type based on your data structure
+  const [hotelIdToDelete, setHotelIdToDelete] = useState<string | null>(null);
+  const [hostels, setHostels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const openModal = (hotel: { name: string; id: string }) => {
     setHotelToDelete(hotel.name);
-    setHotelIdToDelete(hotel.id); // Set the ID of the hotel to delete
+    setHotelIdToDelete(hotel.id);
     setIsOpen(true);
   };
 
   const closeModal = () => {
     setIsOpen(false);
     setHotelToDelete(null);
-    setHotelIdToDelete(null); // Reset the ID
+    setHotelIdToDelete(null);
   };
 
   const handleDelete = async () => {
     if (hotelIdToDelete) {
-      const token = localStorage.getItem('access_token'); // Retrieve the Bearer token
+      const token = localStorage.getItem("access_token");
       try {
-        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelIdToDelete}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`, // Add the token to the headers
-          },
-        });
+        const response = await fetch(
+          `https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelIdToDelete}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.ok) {
-          // Remove the deleted hotel from the state
-          setHostels((prevHostels) => prevHostels.filter((hostel) => hostel.id !== hotelIdToDelete));
+          setHostels((prevHostels) =>
+            prevHostels.filter((hostel) => hostel.id !== hotelIdToDelete)
+          );
           alert("Hotel Deleted");
         } else {
           console.error("Error deleting hotel:", response.statusText);
@@ -54,33 +61,42 @@ const Page = () => {
       } catch (error) {
         console.error("Error deleting hotel:", error);
       } finally {
-        closeModal(); // Close the modal
+        closeModal();
       }
     }
   };
 
-  // Fetch data from the API
   useEffect(() => {
     const fetchHostels = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/hotels");
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/hotels"
+        );
         const data = await response.json();
         if (data.message === "Hostels retrieved successfully") {
-          setHostels(data.data); // Store the hostels data in state
+          setHostels(data.data);
         }
       } catch (error) {
         console.error("Error fetching hostels:", error);
       } finally {
-        setLoading(false); // Set loading to false after fetching
+        setLoading(false);
       }
     };
 
     fetchHostels();
   }, []);
 
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedHostels = hostels.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   if (loading) {
-    return <div>Loading...</div>; // Display loading state while fetching data
+    return <div>Loading...</div>;
   }
 
   return (
@@ -92,7 +108,6 @@ const Page = () => {
         </Link>
       </div>
 
-      {/* Recent bookings */}
       <section className="bg-[var(--bg-2)] px-3 lg:px-6 pb-4 lg:pb-6 relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0">
         <div className="p-3 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white relative z-[1]">
           <div className="overflow-x-auto">
@@ -100,15 +115,15 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Date</th>
+                  <th className="py-3 lg:py-4 px-2">Service Type</th>
                   <th className="py-3 lg:py-4 px-2 md:px-5">Hotel Name</th>
                   <th className="py-3 lg:py-4 px-2">Location</th>
                   <th className="py-3 lg:py-4 px-2">Review</th>
-                  <th className="py-3 lg:py-4 px-2">Status</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {hostels.map((hostel) => (
+                {paginatedHostels.map((hostel) => (
                   <tr
                     key={hostel.id}
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
@@ -116,34 +131,39 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">
                       {hostel.created_at.split("T")[0]}
                     </td>
+                    <td className="py-3 lg:py-4 px-2">
+                      {hostel.hotel_or_home_stay}
+                    </td>
                     <td className="py-3 lg:py-4 px-2 md:px-5">
                       <Link
-                          href={`/hotel/edit-hotel?hotelId=${hostel.id}`} // Adjust the URL as needed
-                        className="text-primary" // Add any other classes you want
+                        href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
+                        className="text-primary"
                       >
                         {hostel.hotel_name}
                       </Link>
                     </td>
+                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                      {hostel.full_address}
+                    </td>
 
-                    <td className="py-3 lg:py-4 px-2">{hostel.full_address}</td>
                     <td className="py-3 lg:py-4 px-2">
                       <span className="flex gap-1 items-center">
                         <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
                         {hostel.ratings}
                       </span>
                     </td>
-                    <td className={`py-3 lg:py-4 px-2`}>
-                      <div className={`w-32`}>
-                        <HeadlessList initialValue={hostel.status} />
-                      </div>
-                    </td>
                     <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a   href={`/hotel/edit-hotel?hotelId=${hostel.id}`} className="text-primary">
+                      <a
+                        href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
+                        className="text-primary"
+                      >
                         <PencilSquareIcon className="w-5 h-5" />
                       </a>
                       <button
                         className="text-[var(--secondary-500)]"
-                        onClick={() => openModal({ name: hostel.hotel_name, id: hostel.id })}
+                        onClick={() =>
+                          openModal({ name: hostel.hotel_name, id: hostel.id })
+                        }
                       >
                         <TrashIcon className="w-5 h-5" />
                       </button>
@@ -152,12 +172,18 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
-            {/* <Pagination /> */}
+
+            {/* Pagination */}
+            <Pagination
+              totalItems={hostels.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </section>
 
-      {/* Modal for deletion confirmation */}
       <Transition appear show={isOpen} as={Fragment}>
         <Dialog as="div" className="relative z-10" onClose={closeModal}>
           <Transition.Child
@@ -220,6 +246,7 @@ const Page = () => {
           </div>
         </Dialog>
       </Transition>
+
       <Footer />
     </div>
   );

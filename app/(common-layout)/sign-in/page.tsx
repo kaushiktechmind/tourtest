@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LoginImg from "@/public/img/admin-signin.png";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [login, setEmail] = useState<string>("");
@@ -10,6 +11,8 @@ const Page = () => {
   const [error, setError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false); // State for popup visibility
   const [userName, setUserName] = useState<string | null>(null);
+  const router = useRouter(); 
+  
 
   useEffect(() => {
     // Check for user's name in localStorage after login
@@ -52,6 +55,7 @@ const Page = () => {
       localStorage.setItem("id", data.user.id);
       localStorage.setItem("name", data.user.name);
       localStorage.setItem("email", data.user.email);
+      localStorage.setItem("address", data.user.address);
       localStorage.setItem("mobile_number", data.user.mobile_number);
       localStorage.setItem("profile_photo", data.user.profile_photo);
       
@@ -60,6 +64,7 @@ const Page = () => {
       // Show the popup after successful login
       setShowPopup(true);
       console.log("Login successful:", data.admin);
+      router.back();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message); // Set error message if err is an instance of Error

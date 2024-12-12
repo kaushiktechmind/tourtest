@@ -42,8 +42,12 @@ export default function ProfileDropdown() {
 
       if (response.ok) {
         // Step 4: Check if the response is successful
-        localStorage.removeItem("name"); // Clear the username
-        localStorage.removeItem("access_token"); // Clear the access token
+        localStorage.removeItem("name"); 
+        localStorage.removeItem("access_token"); 
+        localStorage.removeItem("mobile_number");
+        localStorage.removeItem("email");
+        localStorage.removeItem("noOfNights");
+        localStorage.removeItem("profile_photo");
         // Redirect or perform other actions after logout
         window.location.href = "/sign-in"; // Example: redirect to the login page
       } else {
@@ -91,9 +95,9 @@ export default function ProfileDropdown() {
                     <span className="text-gray-800 text-xl font-semibold">
                       {name}
                     </span>
-                    <span className="text-gray-600 text-sm">
+                    {/* <span className="text-gray-600 text-sm">
                       Los Angeles, CA
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </Menu.Item>

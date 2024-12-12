@@ -1,3 +1,4 @@
+"use client"
 import CardPagination from "@/components/CardPagination";
 import { featuredPackage } from "@/public/data/featuredpackage";
 import { StarIcon } from "@heroicons/react/20/solid";
@@ -24,12 +25,12 @@ const page = () => {
                 </div>
                 <div className="absolute w-[90%] top-4 left-4">
                   <div className="flex items-center justify-between">
-                    <span className="inline-block py-2 px-5 rounded-full bg-[var(--secondary)] text-neutral-900 text-sm">
+                    {/* <span className="inline-block py-2 px-5 rounded-full bg-[var(--secondary)] text-neutral-900 text-sm">
                       {place} Places
-                    </span>
-                    <span className="inline-block py-2 px-5 rounded-full bg-[var(--tertiary)] text-neutral-900 text-sm">
+                    </span> */}
+                    {/* <span className="inline-block py-2 px-5 rounded-full bg-[var(--tertiary)] text-neutral-900 text-sm">
                       {activity} Activities
-                    </span>
+                    </span> */}
                   </div>
                 </div>
               </div>
@@ -41,12 +42,12 @@ const page = () => {
                       className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
                       {title}
                     </Link>
-                    <div className="flex items-center shrink-0">
+                    {/* <div className="flex items-center shrink-0">
                       <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
                       <span className="block text-[var(--neutral-700)]">
                         {rating}
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                   <ul className="flex gap-3">
                     <li className="col-6">

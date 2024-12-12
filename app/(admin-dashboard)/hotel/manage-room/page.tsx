@@ -66,8 +66,8 @@ const Page = () => {
     max_childs: "",
     max_infants: "",
     amenities: [],
-    status: "",
-    agent_price: "",
+    status: "1",
+    agent_price: "100",
     featured_images: [],
   });
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
@@ -256,9 +256,9 @@ const Page = () => {
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
           <h3 className="border-b h3 pb-6">Add Rooms</h3>
           <form onSubmit={handleSubmit}>
-            <p className="mt-6 mb-4 text-xl font-medium">Hotel ID :</p>
+            {/* <p className="mt-6 mb-4 text-xl font-medium">Hotel ID :</p> */}
             <input
-              type="text"
+              type="hidden"
               name="hotel_id"
               value={hotelId ?? ""}
               readOnly
@@ -439,7 +439,7 @@ const Page = () => {
               </Accordion>
             </div>
 
-            <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
+            {/* <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
             <input
               type="text"
               name="status"
@@ -456,7 +456,7 @@ const Page = () => {
               placeholder="2800"
               value={formData.agent_price}
               onChange={handleInputChange}
-            />
+            /> */}
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>

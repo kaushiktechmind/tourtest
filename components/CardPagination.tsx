@@ -1,46 +1,60 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import React from "react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 
-const CardPagination = () => {
+interface CardPaginationProps {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+const CardPagination: React.FC<CardPaginationProps> = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}) => {
+  const handlePrev = () => {
+    if (currentPage > 1) onPageChange(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) onPageChange(currentPage + 1);
+  };
+
   return (
     <div className="col-span-12">
       <nav>
         <ul className="flex gap-3 justify-center">
           <li className="page-item">
-            <Link
+            <button
               className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-              href="#">
+              onClick={handlePrev}
+              disabled={currentPage === 1}
+            >
               <ChevronLeftIcon className="w-5 h-5" />
-            </Link>
+            </button>
           </li>
+          {[...Array(totalPages)].map((_, index) => (
+            <li key={index} className="page-item">
+              <button
+                className={`page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border ${
+                  currentPage === index + 1
+                    ? "bg-primary text-white"
+                    : "border-[var(--primary)] text-primary"
+                }`}
+                onClick={() => onPageChange(index + 1)}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
           <li className="page-item">
-            <Link
-              className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] bg-primary text-white"
-              href="#">
-              1
-            </Link>
-          </li>
-          <li className="page-item">
-            <Link
+            <button
               className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-              href="#">
-              2
-            </Link>
-          </li>
-          <li className="page-item">
-            <Link
-              className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-              href="#">
-              3
-            </Link>
-          </li>
-          <li className="page-item">
-            <Link
-              className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-              href="#">
+              onClick={handleNext}
+              disabled={currentPage === totalPages}
+            >
               <ChevronRightIcon className="w-5 h-5" />
-            </Link>
+            </button>
           </li>
         </ul>
       </nav>

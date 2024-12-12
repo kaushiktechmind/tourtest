@@ -15,13 +15,11 @@ export const sidenavData = [
     name: "Packages",
     icon: <i className="las la-umbrella text-2xl"></i>,
     submenus: [
-      { url: "/tour/all-tour", title: "All Packages" },
-      { url: "/tour/add-new-tour", title: "Add New Package" },
-      { url: "/tour/edit-tour", title: "Edit Package" },
-      { url: "/tour/categories", title: "Categories" },
-      { url: "/tour/attributes", title: "Package Attributes" },
-      { url: "/tour/availability", title: "Availability" },
-      { url: "/tour/booking-calendar", title: "Booking Calendar" },
+      { url: "/package/all-package", title: "All Packages" },
+      { url: "/package/package-attribute", title: "Package Attributes" },
+      { url: "/package/package-faq", title: "Package FAQs" },
+      { url: "/package/package-include", title: "Package Includes" },
+      { url: "/package/package-exclude", title: "Package Excludes" },
     ],
   },
   {
@@ -29,10 +27,9 @@ export const sidenavData = [
     name: "Activities",
     icon: <i className="las la-network-wired text-2xl"></i>,
     submenus: [
-      { url: "/space/all-space", title: "All Activities" },
-      { url: "/space/add-new-space", title: "Add New Activity" },
-      { url: "/space/attributes", title: "Activity Attributes" },
-      { url: "/space/availability", title: "Availability" },
+      { url: "/activity/all-activity", title: "All Activities" },
+      { url: "/activity/activity-attributes", title: "Activity Attributes" },
+      { url: "/activity/activity-faq", title: "Activity FAQ" },
     ],
   },
   {
@@ -85,11 +82,17 @@ export const sidenavData = [
     id: 8,
     name: "Booking",
     icon: <i className="las la-calendar-times text-2xl"></i>,
-    url: "/cancel-booking",
+    url: "/booking",
+  },
+  {
+    id: 9,
+    name: "Enquiry",
+    icon: <i className="las la-envelope text-2xl"></i>,
+    url: "/enquiry",
   },
   {
   
-  id: 9,
+  id: 10,
   name: "Location",
   icon: <i className="las la-map-marker-alt text-2xl"></i>,
   submenus: [
@@ -99,7 +102,7 @@ export const sidenavData = [
 },
 
   {
-    id: 9,
+    id: 11,
     name: "Guests",
     icon: <i className="las la-user-circle text-2xl"></i>,
     submenus: [
@@ -108,7 +111,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 10,
+    id: 12,
     name: "Agents",
     icon: <i className="las la-user-friends text-2xl"></i>,
     submenus: [
@@ -118,25 +121,25 @@ export const sidenavData = [
     ],
   },
   {
-    id: 11,
+    id: 13,
     name: "Chat",
     icon: <i className="las la-sms text-2xl"></i>,
     url: "/chat",
   },
   {
-    id: 12,
+    id: 14,
     name: "Reviews",
     icon: <i className="lar la-star text-2xl"></i>,
     url: "/reviews",
   },
   {
-    id: 13,
+    id: 15,
     name: "Coupon",
     icon: <i className="las la-ticket-alt text-2xl"></i>,
     url: "/coupon",
   },
   {
-    id: 14,
+    id: 16,
     name: "Total Earnings",
     icon: <i className="las la-hand-holding-usd text-2xl"></i>,
     submenus: [
@@ -147,7 +150,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 15,
+    id: 17,
     name: "General Settings",
     icon: <i className="las la-cog text-2xl"></i>,
     submenus: [
@@ -160,7 +163,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 16,
+    id: 18,
     name: "Payment Settings",
     icon: <i className="las la-credit-card text-2xl"></i>,
     submenus: [
@@ -171,13 +174,13 @@ export const sidenavData = [
     ],
   },
   {
-    id: 17,
+    id: 19,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",
   },
   {
-    id: 18,
+    id: 20,
     name: "Authentication",
     icon: <i className="las la-user-shield text-2xl"></i>,
     submenus: [

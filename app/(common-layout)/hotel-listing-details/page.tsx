@@ -56,72 +56,51 @@ function classNames(...classes: any[]) {
 }
 
 const Page = () => {
-  const defaultAdults = 2; // Set your default number of adults
-  const defaultChildren = 1; // Set your default number of children
-  const defaultInfants = 0; // Set your default number of infants
   const [roomData, setRoomData] = useState<Room[]>([]);
-  const [selectedRoomPrice, setSelectedRoomPrice] = useState<RoomPrice | null>(
-    null
-  );
+  const [msg, setMsg] = useState('');
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+  // const [locationName, setLocationName] = useState("");
 
-  const [grandTotalAdultCount, setGrandTotalAdultCount] = useState(0);
-  const [grandTotalChildrenCount, setGrandTotalChildrenCount] = useState(0);
-  const [grandTotalInfantCount, setGrandTotalInfantCount] = useState(0);
 
-  const [grandAdultTotalPrice, setGrandAdultTotalPrice] = useState(0);
-  const [grandChildTotalPrice, setGrandChildTotalPrice] = useState(0);
-  const [grandExtraBedTotalPrice, setGrandExtraBedTotalPrice] = useState(0);
 
-  const handleSelectionChange = (
-    id,
-    adultTotal,
-    childTotal,
-    extraBedTotal,
-    prevAdultTotal = 0,
-    prevChildTotal = 0,
-    prevExtraBedTotal = 0,
-    totalAdultCount = 0,
-    totalChildrenCount = 0,
-    totalInfantCount = 0,
-    prevAdultCount = 0,
-    prevChildCount = 0,
-    prevInfantCount = 0
-  ) => {
-    setGrandAdultTotalPrice((prev) => prev - prevAdultTotal + adultTotal);
-    setGrandChildTotalPrice((prev) => prev - prevChildTotal + childTotal);
-    setGrandExtraBedTotalPrice(
-      (prev) => prev - prevExtraBedTotal + extraBedTotal
-    );
 
-    // Corrected lines: use the prev*Total parameters instead of prevTotals
-    setGrandTotalAdultCount((prev) => prev - prevAdultCount + totalAdultCount);
-    setGrandTotalChildrenCount(
-      (prev) => prev - prevChildCount + totalChildrenCount
-    );
-    setGrandTotalInfantCount(
-      (prev) => prev - prevInfantCount + totalInfantCount
-    );
+
+
+  const storedAdultPrice = localStorage.getItem("storedAdultPrice");
+  const storedChildPrice = localStorage.getItem("storedChildPrice");
+  const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");
+  const location = localStorage.getItem("storedLocation");
+
+
+
+
+
+
+
+  const [totalPrices, setTotalPrices] = useState({
+    adultTotal: storedAdultPrice,
+    childTotal: storedChildPrice,
+    extraBedTotal: storedExtraBedPrice,
+  });
+
+  const handleTotalPricesCalculated = (prices: any) => {
+    setTotalPrices(prices);
   };
 
-  localStorage.setItem(
-    "grandTotalAdultCount",
-    JSON.stringify(grandTotalAdultCount)
-  );
-  localStorage.setItem(
-    "grandTotalChildrenCount",
-    JSON.stringify(grandTotalChildrenCount)
-  );
-  localStorage.setItem(
-    "grandTotalInfantCount",
-    JSON.stringify(grandTotalInfantCount)
-  );
+
 
   const handleBookNowClick = (roomId: string) => {
-    // Check if the room ID is already in the selected list
-    if (!selectedRoomIds.includes(roomId)) {
-      setSelectedRoomIds((prevSelected) => [...prevSelected, roomId]); // Add the room ID if not already present
-    }
+    setSelectedRoomId([roomId]);
+    localStorage.setItem("roomId", roomId);
   };
+
+
 
   const [totalSelected, setTotalSelected] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -136,29 +115,35 @@ const Page = () => {
   const children = searchParams.get("children");
   const infants = searchParams.get("infants");
 
-  const loc = searchParams.get("loc");
   const startdate = localStorage.getItem("startDate");
   const enddate = localStorage.getItem("endDate");
-  const noOfRooms = Number(localStorage.getItem("noOfRooms"));
+  const totalRooms = JSON.parse(localStorage.getItem('totalCounts') || '{}').totalRooms;
+
 
   const date1 = new Date(String(startdate));
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
-  const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  let noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   localStorage.setItem("noOfNights", String(noOfNights));
+  noOfNights = isNaN(Number(localStorage.getItem('noOfNights'))) ? 0 : Number(localStorage.getItem('noOfNights'));
+
+
+  const subTotalPrice = (Number(storedAdultPrice) + Number(storedChildPrice * noOfNights) + Number(storedExtraBedPrice * noOfNights)) / noOfNights;
+  localStorage.setItem("storedTotalPrice", subTotalPrice.toString());
+  const storedTotalPrice = Math.round(parseFloat(localStorage.getItem("storedTotalPrice")));
+  const grandTotal = isNaN(noOfNights * Number(storedTotalPrice)) ? 0 : noOfNights * Number(storedTotalPrice);
+
+
 
   const [isOpen, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     null,
     null,
   ]);
-  const [locationName, setLocationName] = useState(""); // State to hold the location name
 
-  const grandTotal =
-    (grandAdultTotalPrice + grandChildTotalPrice + grandExtraBedTotalPrice) *
-    noOfNights;
 
-  const [selectedRoomIds, setSelectedRoomIds] = useState<string[]>([]);
+
+  const [selectedRoomId, setSelectedRoomId] = useState<string[]>([]);
 
   useEffect(() => {
     const storedStartDate = localStorage.getItem("startDate");
@@ -167,6 +152,7 @@ const Page = () => {
     const date2 = new Date(String(storedEndDate));
     const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
     const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
 
     if (storedStartDate && storedEndDate) {
       setDateRange([new Date(storedStartDate), new Date(storedEndDate)]);
@@ -180,14 +166,21 @@ const Page = () => {
     adults: 0,
     children: 0,
     infants: 0,
-    noOfRooms: 0,
+    totalRooms: 0,
   });
 
 
   const handleSearch = () => {
+    localStorage.removeItem("fromHome");
+    localStorage.setItem("restrictValue", "100");
     const type = null;
-    const locationName = loc;
-    if (!startDate || !endDate) {
+    localStorage.removeItem("roomId");
+    localStorage.removeItem("storedAdultPrice");
+    localStorage.removeItem("storedChildPrice");
+    localStorage.removeItem("storedInfantPrice");
+    const totalRooms = JSON.parse(localStorage.getItem('totalCounts') || '{}').totalRooms;
+
+    if (!startDate || !endDate || !totalRooms) {
       alert("Please fill all fields before searching.");
       return;
     }
@@ -205,15 +198,11 @@ const Page = () => {
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
 
-    const searchUrl = `/hotel-listing-details?hotelDetailsId=${hotelDetailsId}&loc=${encodeURIComponent(
-      locationName
-    )}&startdate=${encodeURIComponent(
-      formattedStartDate
-    )}&enddate=${encodeURIComponent(formattedEndDate)}&adults=${total.adults
-      }&children=${total.children}&infants=${total.infants}&type=${type}&noOfRooms=${total.noOfRooms
-      }`;
+    const searchUrl = `/hotel-listing-details?hotelDetailsId=${hotelDetailsId}&type=${type}`;
 
     window.location.href = searchUrl;
+    localStorage.removeItem("noOfNights");
+
   };
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -222,8 +211,8 @@ const Page = () => {
     id: 0,
     property_id: "",
     hotel_or_home_stay: "",
-    location_name: "",
     hotel_name: "",
+    location_name: "",
     description: "",
     starting_price: "",
     highest_price: "",
@@ -391,8 +380,8 @@ const Page = () => {
             setHotelDetails({
               id: result.data.id,
               property_id: result.data.property_id,
-              hotel_or_home_stay: result.data.hotel_or_home_stay,
               location_name: result.data.location_name,
+              hotel_or_home_stay: result.data.hotel_or_home_stay,
               hotel_name: result.data.hotel_name,
               description: result.data.description,
               starting_price: result.data.starting_price,
@@ -549,8 +538,7 @@ const Page = () => {
               policy_title5: result.data.policy_title5,
               policy_description5: result.data.policy_description5,
             });
-          } else {
-            console.error("No hotel data found in response.");
+
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -561,21 +549,30 @@ const Page = () => {
     fetchHotelData();
   }, [hotelDetailsId]);
 
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  // console.log("dataaaaaaaaaaaaaaaaaaaaa", location, startdate, enddate, totalRooms);
+
   useEffect(() => {
+    const fromHome = localStorage.getItem("fromHome");
     const fetchRooms = async () => {
       try {
         let response;
-        if (type == "null") {
-          console.log("Fetching data with loc and date");
-          response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/room-management/filter/${loc}/${startdate}/${enddate}`
-          );
-        } else {
+        if (type == "Hotel" || type == "HomeStay" || fromHome == "200") {
           console.log("Fetching data with hotel id");
           response = await fetch(
             `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelDetailsId}/rooms`
           );
         }
+        else {
+          console.log("Fetching data with loc and date", location);
+          response = await fetch(
+            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${hotelDetailsId}/${location}/${startdate}/${enddate}/${totalRooms}`
+          );
+        }
+
 
         const result = await response.json();
         console.log("API result:", result); // Log the API result
@@ -583,33 +580,44 @@ const Page = () => {
         // Adjust the success message condition here
         if (
           result.message === "Data retrieved successfully" ||
-          result.message === "Rooms retrieved successfully"
+          result.message === "Rooms retrieved successfully" || result.success
         ) {
           let formattedRooms: Room[] = [];
 
-          if (type == "null") {
-            formattedRooms = result.data.map((data: any) => ({
-              id: data.room_management.room_id,
-              img: data.room_management.featured_images[0] || "/img/default-room.jpg",
-              title: data.room_management.room_name,
-              amenity_name1: data.room_management.amenities[0]?.amenity_name || '',
-              amenity_logo1: data.room_management.amenities[0]?.amenity_logo || '',
-              amenity_name2: data.room_management.amenities[1]?.amenity_name || '',
-              amenity_logo2: data.room_management.amenities[1]?.amenity_logo || '',
-              amenity_name3: data.room_management.amenities[2]?.amenity_name || '',
-              amenity_logo3: data.room_management.amenities[2]?.amenity_logo || '',
-              amenity_name4: data.room_management.amenities[3]?.amenity_name || '',
-              amenity_logo4: data.room_management.amenities[3]?.amenity_logo || '',
 
-              price: parseFloat(data.room_management.room_price),
-              child_price: parseFloat(data.room_management.child_price),
-              extra_bed_price: parseFloat(data.room_management.extra_bed_price),
-            }));
-            console.log("Formatted rooms with loc:", formattedRooms); // Log formatted rooms
+          if (type === "null" && result.rooms_by_room_id) {
+            let totalRoomPricesByRoomId: Record<string, number> = {};
+            // Flatten the rooms_by_room_id object into unique room objects
+            for (const roomId in result.rooms_by_room_id) {
+              const roomList = result.rooms_by_room_id[roomId];
+              if (roomList.length > 0) {
+                const totalPrice = roomList.reduce((sum, room) => sum + parseFloat(room.room_price || 0), 0);
+                totalRoomPricesByRoomId[roomId] = totalPrice;
+
+                const room = roomList[0]; // Take the first object for each room_id
+                formattedRooms.push({
+                  id: room.room_id,
+                  featured_images: room.featured_images || ["/img/default-room.jpg"],
+                  title: room.room_name,
+                  amenity_name1: room.amenities[0]?.amenity_name || '',
+                  amenity_logo1: room.amenities[0]?.amenity_logo || '',
+                  amenity_name2: room.amenities[1]?.amenity_name || '',
+                  amenity_logo2: room.amenities[1]?.amenity_logo || '',
+                  amenity_name3: room.amenities[2]?.amenity_name || '',
+                  amenity_logo3: room.amenities[2]?.amenity_logo || '',
+                  amenity_name4: room.amenities[3]?.amenity_name || '',
+                  amenity_logo4: room.amenities[3]?.amenity_logo || '',
+                  price: totalPrice,
+                  child_price: parseFloat(room.child_price),
+                  extra_bed_price: parseFloat(room.extra_bed_price),
+                });
+              }
+            }
+            console.log("Formatted rooms with loc:", formattedRooms);
           } else {
             formattedRooms = result.data.map((room: any) => ({
               id: room.id,
-              img: room.featured_images[0] || "/img/default-room.jpg",
+              featured_images: room.featured_images || "/img/default-room.jpg",
               title: room.room_name,
               amenity_name1: room.amenities[0]?.amenity_name || '',
               amenity_logo1: room.amenities[0]?.amenity_logo || '',
@@ -628,10 +636,7 @@ const Page = () => {
 
           setRoomData(formattedRooms);
         } else {
-          console.log(
-            "No rooms found or message not matching:",
-            result.message
-          );
+          setMsg("No Room Available for This Specific Entry");
         }
       } catch (error) {
         console.error("Error fetching room data:", error);
@@ -639,21 +644,34 @@ const Page = () => {
     };
 
     fetchRooms();
-  }, [loc, startdate, enddate, hotelDetailsId]);
+  }, [startdate, enddate, hotelDetailsId]);
 
-  const handleRestrict = async (e) => {
+  const handleRestrict = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    const roomId = localStorage.getItem("roomId");
+    const startDate = localStorage.getItem("startDate");
     const accessToken = localStorage.getItem("access_token");
-    if (!accessToken) {
-      console.log("i am inside booking process function");
-      router.push("/sign-in");
-    } else {
-      const roomIdsQuery = selectedRoomIds.join(",");
-      router.push(
-        `/payment-method?totalAdultPrice=${grandAdultTotalPrice}&totalChildPrice=${grandChildTotalPrice}&totalExtraBedPrice=${grandExtraBedTotalPrice}&grandTotal=${grandTotal}&roomIds=${roomIdsQuery}`
-      );
+
+    if (!roomId) {
+      alert("Select Room to Proceed Further");
+      return; // Exit early if no roomId is found
     }
+
+    if (!startDate) {
+      alert("Choose Date to Proceed Further");
+      return; // Exit early if no roomId is found
+    }
+
+    if (!accessToken) {
+      router.push("/sign-in");
+      return; // Exit if no accessToken is found
+    }
+
+    localStorage.setItem("grandTotal", grandTotal.toString());
+    router.push(`/payment-method?hotelId=${hotelDetailsId}`);
   };
+
 
   const amenities = [];
   for (let i = 1; i <= 30; i++) {
@@ -664,6 +682,57 @@ const Page = () => {
       amenities.push({ name: amenityName, logo: amenityLogo });
     }
   }
+
+
+
+  if (totalPrices.adultTotal !== null && totalPrices.adultTotal !== undefined) {
+    localStorage.setItem('storedAdultPrice', totalPrices.adultTotal.toString());
+  } else {
+    console.error('Adult price is null or undefined');
+  }
+
+  if (totalPrices.childTotal !== null && totalPrices.childTotal !== undefined) {
+    localStorage.setItem('storedChildPrice', totalPrices.childTotal.toString());
+  } else {
+    console.error('Child price is null or undefined');
+  }
+
+  if (totalPrices.extraBedTotal !== null && totalPrices.extraBedTotal !== undefined) {
+    localStorage.setItem('storedExtraBedPrice', totalPrices.extraBedTotal.toString());
+  } else {
+    console.error('Extra bed price is null or undefined');
+  }
+
+
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert("Enquiry submitted successfully!");
+        setFormData({ name: "", phone: "", email: "", message: "" });
+      } else {
+        alert("Failed to submit enquiry. Please try again.");
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+
+
+
+
 
   return (
     <main>
@@ -764,7 +833,7 @@ const Page = () => {
                     <li>
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-5 h-5 text-[var(--secondary-500)]" />
-                        <p className="mb-0"> {hotelDetails.location_name}</p>
+                        <p className="mb-0"> {location}</p>
                       </div>
                     </li>
                     <li className="text-primary text-lg">•</li>
@@ -779,10 +848,15 @@ const Page = () => {
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <div className="flex items-center gap-1">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <p className="mb-0"> {hotelDetails.ratings} </p>
+                        {Array.from({ length: hotelDetails.ratings }, (_, index) => (
+                          <StarIcon
+                            key={index}
+                            className="w-5 h-5 text-[var(--tertiary)]"
+                          />
+                        ))}
                       </div>
                     </li>
+
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <p className="mb-0">
@@ -826,20 +900,31 @@ const Page = () => {
 
 
                 </div>
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold"> Description </h4>
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
+                  <h4 className="mb-5 text-2xl font-semibold">Description</h4>
                   <p className="mb-5 clr-neutral-500">
-                    {hotelDetails.description}
+                    {showFullDescription
+                      ? hotelDetails.description
+                      : `${hotelDetails.description.slice(0, 450)}...`}
                   </p>
-
+                  {hotelDetails.description.length > 150 && (
+                    <button
+                      onClick={toggleDescription}
+                      className="text-blue-500 underline"
+                    >
+                      {showFullDescription ? "Read Less" : "Read More"}
+                    </button>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
+                  {/* <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-gray-100 rounded-full p-3 border "> */}
+                  <AddRoom />
+                  {/* </div> */}
 
-
-                  <div className="relative w-full md:w-[70%] xl:w-[40%] flex items-center bg-gray-100 rounded-full p-3 border ">
+                  <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-gray-100 rounded-full p-3 border ">
                     <DatePicker
-                      placeholderText="2024-10-30 - 2024-11-01"
+                      placeholderText="Select Date"
                       selectsRange={true}
                       startDate={startDate}
                       endDate={endDate}
@@ -861,7 +946,7 @@ const Page = () => {
                     onClick={handleSearch} // Call the search function on click
                     className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
                   >
-                    <span className="ml-2">Search Room</span>
+                    <span className="ml-2">Search</span>
                   </button>
                 </div>
 
@@ -869,22 +954,21 @@ const Page = () => {
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">
                     {" "}
-                    Featured Room{" "} 
+                    Featured Room{" "}
                   </h4>
+                  <p>{msg}</p>
                   <ul className="flex flex-col gap-4">
                     {roomData.map((item) => (
                       <HotelDetailsFeaturedRoom
+                        startdate={startdate}
                         key={item.id}
                         item={item}
-                        startdate={startdate}
-                        noOfRooms={noOfRooms}
-                        noOfNights={noOfNights}
-                        adults={adults}
-                        onSelectionChange={handleSelectionChange}
+                        type={type}
                         onBookNowClick={handleBookNowClick}
+                        onTotalPricesCalculated={handleTotalPricesCalculated}
                       />
                     ))}
-                    {totalSelected > noOfRooms && (
+                    {totalSelected > totalRooms && (
                       <p style={{ color: "red" }}>
                         Combined selection exceeds allowed limit!
                       </p>
@@ -1486,13 +1570,14 @@ const Page = () => {
                     <div className="flex gap-3 items-center">
                       <i className="las la-tag text-2xl"></i>
                       <p className="mb-0"> From </p>
+                      <h6 className="line-through text-gray-500">₹{hotelDetails.starting_price}</h6>
                       <h3 className="h3 mb-0">
                         {" "}
-                        ₹{hotelDetails.starting_price}-
-                        {hotelDetails.highest_price}{" "}
+
+                        ₹{hotelDetails.highest_price}{" "}
                       </h3>
                     </div>
-                    <i className="las la-info-circle text-2xl"></i>
+
                   </div>
 
                   <Tab.Group>
@@ -1516,128 +1601,126 @@ const Page = () => {
                           )
                         }
                       >
-                        Equiry Form
+                        Enquiry Form
                       </Tab>
                     </Tab.List>
                     <Tab.Panels className="tab-content mb-6 lg:mb-8">
                       <Tab.Panel>
-                        <div className="grid grid-cols-1 gap-3">
-                          {/* <div className="col-span-1">
-                            <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="w-[80%] md:w-[90%] focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Checkin"
-                              />
-                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-calendar-alt"></i>
-                              </span>
-                            </div>
-                          </div> */}
-                          {/* <div className="col-span-1">
-                            <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="w-[80%] md:w-[90%] focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Checkout"
-                              />
-                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-clock"></i>
-                              </span>
-                            </div>
-                          </div> */}
-                        </div>
-
-                        {/* <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500">Adult Price</p>
-                          <p className="mb-0 font-medium">
-                            ${selectedRoomPrice?.room_price || "N/A"}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center justify-between mb-4 mt-6 pl-8">
                           <p className="mb-0 clr-neutral-500">
-                            Extra Bed Price
-                          </p>
-                          <p className="mb-0 font-medium">
-                            ${selectedRoomPrice?.extra_bed_price || "N/A"}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">Child Price</p>$
-                          {selectedRoomPrice
-                            ? selectedRoomPrice.child_price * 2
-                            : 0}
-                        </div> */}
-
-                        <div className="flex items-center justify-between mb-4 mt-6">
-                          <p className="mb-0 clr-neutral-500">
-                            Total Adult Price:{" "}
+                            Room Price:{" "}
                           </p>
                           <p className="mb-0 font-medium">
                             {" "}
-                            ₹ {grandAdultTotalPrice}{" "}
+                            ₹{storedAdultPrice || 0}{" "}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">
-                            Total Extra Bed Price:{" "}
-                          </p>
-                          <p className="mb-0 font-medium">
-                            ₹
-                            {grandExtraBedTotalPrice}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="relative group">
+                              <i className="las la-info-circle text-2xl clr-neutral-500"></i>
+                              <span className="absolute left-0 -top-6 text-xs bg-blue-500 text-white py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity w-[200px]">
+                                Extra Mattress for Adult / Child
+                              </span>
+                            </div>
+                            <p className="mb-0 clr-neutral-500">Extra Bed Price:</p>
+                          </div>
+                          <p className="mb-0 font-medium">₹{storedExtraBedPrice * noOfNights || 0}</p>
+                        </div>
+
+
+
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <div className="relative group">
+                              <i className="las la-info-circle text-2xl clr-neutral-500"></i>
+                              <span className="absolute left-0 -top-6 text-xs bg-blue-500 text-white py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity w-[150px]">
+                                Child Without Mattress
+                              </span>
+                            </div>
+                            <p className="mb-0 clr-neutral-500">Child Price:</p>
+                          </div>
+                          <p className="mb-0 font-medium">₹{storedChildPrice * noOfNights || 0}</p>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
+                          <div className="flex items-center gap-2">
+                            <div className="relative group">
+                              <i className="las la-info-circle text-2xl clr-neutral-500"></i>
+                              <span className="absolute left-0 -top-6 text-xs bg-blue-500 text-white py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity w-[100px]">
+                                Per night price
+                              </span>
+                            </div>
+                            <p className="mb-0 clr-neutral-500">Sub Total:</p>
+                          </div>
+                          <p className="mb-0 font-medium">₹{storedTotalPrice || 0}</p>
+                        </div>
+                        <div className="flex items-center justify-between mb-4 mt-6 pl-8">
                           <p className="mb-0 clr-neutral-500">
-                            Total Child Price:{" "}
+                            No Of Nights:{" "}
                           </p>
                           <p className="mb-0 font-medium">
-                            ₹
-                            {grandChildTotalPrice}
+                            {" "}
+                            {noOfNights || 0}{" "}
                           </p>
                         </div>
                         <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">
-                            <p>Total Price/Night </p>
-                          </p>
-                          <p className="mb-0 font-medium">
-                            ₹
-                            {grandAdultTotalPrice +
-                              grandChildTotalPrice +
-                              grandExtraBedTotalPrice}
-                          </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500">
-                            <p>Total Price/{noOfNights} Nights </p>
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="relative group">
+                              <i className="las la-info-circle text-2xl clr-neutral-500"></i>
+                              <span className="absolute left-0 -top-6 text-xs bg-blue-500 text-white py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity w-[110px]">
+                                Inclusive of GST
+                              </span>
+                            </div>
+                            <p className="mb-0 clr-neutral-500 bold font-extrabold">Grand Total</p>
+                          </div>
                           <p className="mb-0 font-medium">₹{grandTotal}</p>
                         </div>
+
 
                         <div className="hr-dashed my-4"></div>
                         <div className="flex items-center justify-between"></div>
                       </Tab.Panel>
                       <Tab.Panel>
-                        <form className="flex flex-col gap-5">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                           <input
                             type="text"
+                            name="name"
                             placeholder="Name..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
+                            required
+                          />
+                          <input
+                            type="number"
+                            name="phone"
+                            placeholder="Phone..."
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <input
                             type="email"
+                            name="email"
                             placeholder="Email..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <textarea
-                            rows={6}
+                            name="message"
                             placeholder="Message..."
-                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.message}
+                            onChange={handleChange}
+                            rows={6}
+                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                           ></textarea>
-                          <CheckboxCustom label="I agree with Terms of Service and Privacy Statement" />
+                          <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded-full">
+                            Submit
+                          </button>
                         </form>
                       </Tab.Panel>
                     </Tab.Panels>
@@ -1646,9 +1729,7 @@ const Page = () => {
                   <p></p>
 
                   <Link
-                    href={`/payment-method?totalAdultPrice=${grandAdultTotalPrice}&totalChildPrice=${grandChildTotalPrice}&totalExtraBedPrice=${grandExtraBedTotalPrice}&grandTotal=${grandTotal}&roomIds=${selectedRoomIds.join(
-                      ","
-                    )}`}
+                    href={`/payment-method?hotelId=${hotelDetailsId}`}
                     onClick={handleRestrict}
                     className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                   >

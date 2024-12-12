@@ -1,73 +1,48 @@
 import Image from "next/image";
 import Link from "next/link";
-import AddRoom from "@/components/home-2/AddRoom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+
+const restrictValue = localStorage.getItem("restrictValue");
 
 const HotelDetailsFeaturedRoom = ({
   item,
   startdate,
-  onSelectionChange,
   onBookNowClick,
+  onTotalPricesCalculated,
 }: any) => {
-  const { id, img, title, extra_bed_price, child_price, amenity_name1, amenity_name2, amenity_name3, amenity_name4, amenity_logo1, amenity_logo2, amenity_logo3, amenity_logo4, } = item;
+  const { id, featured_images, price, type, title, extra_bed_price, child_price, amenity_name1, amenity_logo1, amenity_name2, amenity_logo2, amenity_name3, amenity_logo3, amenity_name4, amenity_logo4, } = item;
 
-  const [rooms, setRooms] = useState<any[]>([]);
-  const [price, setPrice] = useState<number | null>(null);
+  const [baseRoomPrice, setBaseRoomPrice] = useState<string | null>(null);
+  // if (type == 'null') {
+  //   const [price, setPrice] = useState<number | null>(null);
+  // }
   const [status, setStatus] = useState<number | null>(null);
-  const [roomAvailableNo, setroomAvailbleNo] = useState<number | null>(null);
+  const [roomAvailableNo, setRoomAvailableNo] = useState<number>(5);
+
+  // State for calculated prices
+  const [totalPrices, setTotalPrices] = useState({
+    adultTotal: 0,
+    childTotal: 0,
+    extraBedTotal: 0,
+  });
+
   useEffect(() => {
-    if (!id || !startdate) {
-      console.error("Room ID or startdate is missing");
-      return;
-    }
-  
-    const fetchRoomPrice = async () => {
+    const fetchRoomDetails = async () => {
       try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/get_data_by_room_id_start_date/${id}/${startdate}`
-        );
+        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${id}`);
         const data = await response.json();
-  
-        // Check if data exists and contains room_price
-        if (data && data.data && data.data.room_price) {
-          const fetchedPrice = parseFloat(data.data.room_price); // Access room_price from the data field
-  
-          if (!isNaN(fetchedPrice)) {
-            setPrice(fetchedPrice); // Update price if valid
-          } else {
-            setPrice(null); // Set price to null if not a valid number
-          }
-        } else {
-          setPrice(null); // Set price to null if room_price is missing
-        }
-        setroomAvailbleNo(data.data.no_of_rooms);
-        setStatus(data.data.status);
+        setBaseRoomPrice(data.room.room_price); // Extract room_price from the API response
       } catch (error) {
-        console.error("Error fetching room price:", error);
-        setPrice(null); // Set price to null in case of an error
+        console.error('Error fetching room details:', error);
       }
     };
-  
-    fetchRoomPrice();
-  }, [id, startdate]);  // Re-fetch if id or startdate changes
-  
-  
-  const prevTotals = useRef({ adultTotal: 0, childTotal: 0, extraBedTotal: 0 });
-  const prevCounts = useRef({
-    totalAdultCount: 0,
-    totalChildrenCount: 0,
-    totalInfantCount: 0,
-  });
-  const [totals, setTotals] = useState({
-    totalAdultCount: 0,
-    totalChildrenCount: 0,
-    totalInfantCount: 0,
-  });
 
-  const handleTotalChange = (newTotals) => {
-    setTotals(newTotals);
-  };
-
+    fetchRoomDetails();
+  }, []);
 
   // Calculate total prices for adults, children, and extra beds
   const calculateTotalPrices = () => {
@@ -75,76 +50,110 @@ const HotelDetailsFeaturedRoom = ({
     let childTotal = 0;
     let extraBedTotal = 0;
 
-    rooms.forEach((room) => {
-      if (room.adults === 1 || room.adults === 2) {
+    // Retrieve added rooms from localStorage
+    const addedRooms = JSON.parse(localStorage.getItem('addedRooms') || '[]');
+
+    addedRooms.forEach((room: any) => {
+      // Calculate the total price for adults and extra beds
+      if (room.adults == 1 || room.adults == 2) {
         adultTotal += price;
-      } else if (room.adults >= 3) {
+      }
+      if (room.adults == 3) {
         adultTotal += price;
-        extraBedTotal += extra_bed_price;
+        extraBedTotal += extra_bed_price; // Assuming extra bed for adults >= 3
       }
       childTotal += child_price * room.children;
     });
 
-    return { adultTotal, childTotal, extraBedTotal };
+    setTotalPrices({ adultTotal, childTotal, extraBedTotal });
+    onTotalPricesCalculated({ adultTotal, childTotal, extraBedTotal });
   };
-
-  // Update totals when rooms state changes
-  useEffect(() => {
-    const { adultTotal, childTotal, extraBedTotal } = calculateTotalPrices();
-    const { totalAdultCount, totalChildrenCount, totalInfantCount } = totals;
-
-    onSelectionChange(
-      id,
-      adultTotal,
-      childTotal,
-      extraBedTotal,
-      prevTotals.current.adultTotal,
-      prevTotals.current.childTotal,
-      prevTotals.current.extraBedTotal,
-      totals.totalAdultCount,
-      totals.totalChildrenCount,
-      totals.totalInfantCount,
-      prevCounts.current.totalAdultCount,
-      prevCounts.current.totalChildrenCount,
-      prevCounts.current.totalInfantCount
-    );
-
-    prevTotals.current = { adultTotal, childTotal, extraBedTotal };
-
-    prevCounts.current = {
-      totalAdultCount,
-      totalChildrenCount,
-      totalInfantCount,
-    };
-  }, [rooms, totals]);
-
-  const { adultTotal, childTotal, extraBedTotal } = calculateTotalPrices();
 
   const handleBookNow = () => {
-    // Call onBookNowClick with the room ID
-    onBookNowClick(id);
+    const restrictValue = localStorage.getItem("restrictValue"); 
+    if (startdate == null) {
+      alert("Choose Date and Search To Proceed");
+    }else if (!restrictValue) {
+       alert("search for this enrty");
+    }
+    else {
+    calculateTotalPrices(); // Update the total prices when 'Book Now' is clicked
+    onBookNowClick(id); // Call onBookNowClick with the room ID
+    }
+    
   };
-  if (status == 0) {
+
+
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  const slideInterval = 3000; // 2 seconds interval
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext(); // Auto-slide to the next image
+    }, slideInterval);
+
+    return () => clearInterval(interval); // Clean up on component unmount
+  }, [currentIndex]);
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % featured_images.length);
+  };
+
+  const handlePrev = () => {
+    setCurrentIndex(
+      (prevIndex) => (prevIndex - 1 + featured_images.length) % featured_images.length
+    );
+  };
+
+  if (status === 0) {
     return null; // Render nothing if status is 0
   }
 
   return (
     <li key={id}>
+      {/* loop to show all images that is in featured_images */}
+
       <div className="p-2 rounded-2xl flex flex-col md:flex-row bg-[var(--bg-2)]">
-        <div className="relative" style={{ height: "300px", width: "348px" }}>
-          <div className="rounded-2xl overflow-hidden h-full w-full">
-            <Image
-              src={img}
-              alt="image"
-              layout="fill" // Ensures the image takes the size of the container
-              objectFit="cover" // Ensures the image scales within the container without distortion
-              className="rounded-2xl"
-            />
+        <div className="relative overflow-hidden" style={{ height: "300px", width: "348px" }}>
+          <div
+            className="flex transition-transform duration-500 ease-in-out"
+            style={{
+              transform: `translateX(-${currentIndex * 100}%)`,
+            }}
+          >
+            {featured_images.map((image: string, index: number) => (
+              <div
+                key={index}
+                style={{ minWidth: "100%", height: "300px", position: "relative" }}
+              >
+                <Image
+                  src={image}
+                  alt={`Image ${index + 1}`}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-2xl"
+                />
+              </div>
+            ))}
           </div>
+
+          {/* Arrows for manual control */}
+          <button
+            className="absolute top-1/2 left-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 z-10"
+            onClick={handlePrev}
+          >
+            <span className="text-2xl">{`<`}</span> {/* Left Arrow */}
+          </button>
+
+          <button
+            className="absolute top-1/2 right-4 transform -translate-y-1/2 bg-black bg-opacity-50 text-white rounded-full p-2 z-10"
+            onClick={handleNext}
+          >
+            <span className="text-2xl">{`>`}</span> {/* Right Arrow */}
+          </button>
         </div>
-        {/* <h1>aaaaaaaaaaaa{startdate}</h1> */}
-
-
         <div className="p-2 sm:p-4 flex-grow">
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
@@ -156,7 +165,7 @@ const HotelDetailsFeaturedRoom = ({
               </Link>
             </div>
 
-            <p className="mb-4">Free Cancellation after 5 hours of booking</p>
+            <p className="mb-4">Free Cancellation after 24 hours of booking</p>
             <ul className="columns-1 sm:columns-2">
               {amenity_name1 && amenity_logo1 && (
                 <li className="py-2 sm:py-3">
@@ -220,15 +229,6 @@ const HotelDetailsFeaturedRoom = ({
 
             </ul>
           </div>
-
-          {/* Pass `rooms` and `setRooms` as props to AddRoom */}
-          <AddRoom
-            rooms={rooms}
-            setRooms={setRooms}
-            roomAvailableNo={roomAvailableNo}
-            onTotalChange={handleTotalChange}
-          />
-
           <div className="property-card__body py-0 pt-4">
             <div className="hr-dashed"></div>
           </div>
@@ -237,18 +237,23 @@ const HotelDetailsFeaturedRoom = ({
           <div className="property-card__body">
             <div className="flex flex-wrap justify-between items-center">
               <span className="block text-xl font-medium text-primary">
-                ₹{price}
-                <span className="inline-block text-gray-600 text-base font-normal">
-                  /per night
-                </span>
+                ₹{baseRoomPrice}
+                <span className="inline-block text-gray-600 text-base font-normal"></span>
               </span>
               <button
-                onClick={handleBookNow} // Trigger handleBookNow on button click
+                onClick={handleBookNow}
                 className="btn-outline font-semibold"
               >
                 Book Now
               </button>
             </div>
+
+            {/* Display total prices */}
+            {/* <div className="mt-4">
+              <div>Total Adult Price: ₹{totalPrices.adultTotal}</div>
+              <div>Total Child Price: ₹{totalPrices.childTotal}</div>
+              <div>Total Extra Bed Price: ₹{totalPrices.extraBedTotal}</div>
+            </div> */}
           </div>
         </div>
       </div>

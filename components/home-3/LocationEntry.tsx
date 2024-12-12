@@ -56,7 +56,7 @@ const LocationEntry: React.FC<LocationEntryProps> = ({
   };
 
   return (
-    <div className="relative w-full md:w-[60%] xl:w-[40%] shrink-0">
+    <div className="relative w-full md:w-[60%] xl:w-[60%] shrink-0">
       <div
         className="relative w-full cursor-pointer overflow-hidden rounded-full sm:text-sm bg-[var(--bg-1)] border focus:outline-none"
         onClick={() => setDropdownOpen(!dropdownOpen)}

@@ -1,66 +1,94 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { useRouter, useSearchParams } from "next/navigation";
 
-const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
-  const [rooms, setLocalRooms] = useState([]); // Start with an empty array for 0 rooms
+const AddRoom = () => {
+  const [rooms, setRooms] = useState(() => {
+    // Initialize rooms state from localStorage if available
+    const savedRooms = localStorage.getItem("addedRooms");
+    return savedRooms ? JSON.parse(savedRooms) : [];
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [localTotal, setLocalTotal] = useState({
-    adults: 0,
+    adults: 1,
     children: 0,
     infants: 0,
   });
 
+  // Calculate totals from initial localStorage data
+  useEffect(() => {
+    const calculateTotals = () => {
+      const totalAdultCount = rooms.reduce((acc, room) => acc + room.adults, 0);
+      const totalChildrenCount = rooms.reduce(
+        (acc, room) => acc + room.children,
+        0
+      );
+      const totalInfantCount = rooms.reduce((acc, room) => acc + room.infants, 0);
+
+      setLocalTotal({
+        adults: totalAdultCount,
+        children: totalChildrenCount,
+        infants: totalInfantCount,
+      });
+    };
+
+    calculateTotals();
+  }, [rooms]);
+
   const handleAddRoom = () => {
-    if (rooms.length < roomAvailableNo) {
-      const newRooms = [...rooms, { adults: 0, children: 0, infants: 0 }];
-      setLocalRooms(newRooms); // Update local state
-      setRooms(newRooms); // Pass updated rooms to parent
+    if (rooms.length < 5) {
+      setRooms([...rooms, { adults: 1, children: 0, infants: 0 }]);
+    } else {
+      alert("You can only add up to 5 rooms if available.");
     }
   };
 
   const handleRemoveRoom = (index) => {
-    const updatedRooms = rooms.filter((_, i) => i !== index);
-    setLocalRooms(updatedRooms);
-    setRooms(updatedRooms); // Pass updated rooms to parent
+    setRooms(rooms.filter((_, i) => i !== index));
   };
 
   const handleChange = (index, type, value) => {
     const updatedRooms = [...rooms];
     updatedRooms[index][type] = value;
-    setLocalRooms(updatedRooms); // Update local state
-    setRooms(updatedRooms); // Pass updated rooms to parent
+    setRooms(updatedRooms);
   };
 
   const handleOpenDropdown = () => {
     setIsOpen(!isOpen);
     if (rooms.length === 0) {
-      setLocalRooms([{ adults: 0, children: 0, infants: 0 }]);
+      setRooms([{ adults: 1, children: 0, infants: 0 }]);
     }
   };
 
   const handleDone = () => {
-    // Calculate total counts when 'Done' is clicked
+    localStorage.removeItem("restrictValue");
     const totalAdultCount = rooms.reduce((acc, room) => acc + room.adults, 0);
     const totalChildrenCount = rooms.reduce(
       (acc, room) => acc + room.children,
       0
     );
     const totalInfantCount = rooms.reduce((acc, room) => acc + room.infants, 0);
+    const totalExtraBeds = rooms.reduce((acc, room) => acc + (room.adults > 2 ? 1 : 0), 0);
 
-    setLocalTotal({
+    const totals = {
+      totalRooms: rooms.length,
       adults: totalAdultCount,
       children: totalChildrenCount,
       infants: totalInfantCount,
-    });
+      extraBeds: totalExtraBeds,
+    };
 
-    // Trigger the parent callback with updated total counts
-    if (onTotalChange) {
-      onTotalChange({ totalAdultCount, totalChildrenCount, totalInfantCount });
-    }
+    setLocalTotal(totals);
+
+    // Save the room details and totals in localStorage
+    localStorage.setItem("addedRooms", JSON.stringify(rooms));
+    localStorage.removeItem("roomId");
+    localStorage.setItem("totalCounts", JSON.stringify(totals));
+
 
     setIsOpen(false);
   };
+
 
   return (
     <div className="relative">
@@ -69,16 +97,12 @@ const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
         onClick={handleOpenDropdown}
       >
         {rooms.length > 0
-          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${
-              localTotal.adults
-            } adult${localTotal.adults !== 1 ? "s" : ""} - ${
-              localTotal.children
-            } child${localTotal.children !== 1 ? "ren" : ""} - ${
-              localTotal.infants
-            } infant${localTotal.infants !== 1 ? "s" : ""}`
+          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${localTotal.adults
+          } adult${localTotal.adults !== 1 ? "s" : ""} - ${localTotal.children
+          } child${localTotal.children !== 1 ? "ren" : ""} - ${localTotal.infants
+          } infant${localTotal.infants !== 1 ? "s" : ""}`
           : "0 rooms - 0 adults - 0 children - 0 infants"}
       </div>
-      {/* <h1>aaaaaaaaaaa{roomAvailableNo}</h1> */}
 
       {isOpen && (
         <div className="absolute top-full left-0 z-50">
@@ -88,7 +112,7 @@ const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
                 <div className="flex gap-4 items-center mb-3">
                   <div className="flex-1">
                     <label>Adults Age</label>
-                    <p>Age(13+)</p>
+                    <p>Age(12+)</p>
                     <select
                       value={room.adults}
                       onChange={(e) =>
@@ -96,7 +120,6 @@ const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
                       }
                       className="w-full border rounded p-1"
                     >
-                      <option value={0}>0</option>
                       <option value={1}>1</option>
                       <option value={2}>2</option>
                       <option value={3}>3</option>
@@ -104,15 +127,11 @@ const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
                   </div>
                   <div className="flex-1">
                     <label>Children</label>
-                    <p>Age(6-5)</p>
+                    <p>Age(6-12)</p>
                     <select
                       value={room.children}
                       onChange={(e) =>
-                        handleChange(
-                          index,
-                          "children",
-                          parseInt(e.target.value)
-                        )
+                        handleChange(index, "children", parseInt(e.target.value))
                       }
                       className="w-full border rounded p-1"
                     >
@@ -134,12 +153,15 @@ const AddRoom = ({ setRooms, onTotalChange, roomAvailableNo }) => {
                       <option value={1}>1</option>
                     </select>
                   </div>
-                  <button
-                    onClick={() => handleRemoveRoom(index)}
-                    className="text-red-500 ml-4"
-                  >
-                    <TrashIcon className="w-5 h-5" />
-                  </button>
+                  {rooms.length > 1 && (
+                    <button
+                      onClick={() => handleRemoveRoom(index)}
+                      className="text-red-500 ml-4"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  )}
+
                 </div>
               </div>
             ))}

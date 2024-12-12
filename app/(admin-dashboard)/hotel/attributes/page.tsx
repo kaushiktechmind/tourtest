@@ -13,7 +13,8 @@ import CheckboxCustom from "@/components/Checkbox";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
+import { Dialog, Transition } from "@headlessui/react";
 
 // Define the type for amenity data
 interface Amenity {
@@ -26,9 +27,27 @@ const Page = () => {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 5;
+
   // New states for the form
   const [name, setName] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
+
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
+  const [filteredAmenities, setFilteredAmenities] = useState<Amenity[]>([]); // State for filtered amenities
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [amenityToDelete, setAmenityToDelete] = useState<number | null>(null);
+  const openDialog = (id: number) => {
+    setAmenityToDelete(id);
+    setIsOpen(true);
+  };
+
+  const closeDialog = () => {
+    setIsOpen(false);
+    setAmenityToDelete(null);
+  };
+
 
   // Fetch data from API
   useEffect(() => {
@@ -48,6 +67,34 @@ const Page = () => {
     fetchAmenities();
   }, []);
 
+
+
+  // Filter amenities based on the search query
+  useEffect(() => {
+    if (searchQuery === "") {
+      setFilteredAmenities(amenities);
+    } else {
+      const filtered = amenities.filter((amenity) =>
+        amenity.amenity_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredAmenities(filtered);
+    }
+  }, [searchQuery, amenities]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAmenities.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page on search
+  };
+
+
   // Function to handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -59,7 +106,7 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-  
+
 
     const formData = new FormData();
     formData.append("amenity_name", name);
@@ -105,18 +152,14 @@ const Page = () => {
     }
   };
 
-  // Function to handle amenity deletion
-  const handleDelete = async (id: number) => {
-    const confirmDelete = confirm(
-      "Are you sure you want to delete this amenity?"
-    );
-    if (!confirmDelete) return;
+  const handleDelete = async () => {
+    if (amenityToDelete === null) return;
 
     const accessToken = localStorage.getItem("access_token");
 
     try {
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_amenities_by_id/${id}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/delete_amenities_by_id/${amenityToDelete}`,
         {
           method: "DELETE",
           headers: {
@@ -127,7 +170,7 @@ const Page = () => {
 
       if (response.ok) {
         setAmenities((prev) =>
-          Array.isArray(prev) ? prev.filter((amenity) => amenity.id !== id) : []
+          Array.isArray(prev) ? prev.filter((amenity) => amenity.id !== amenityToDelete) : []
         );
         alert("Amenity deleted successfully.");
       } else {
@@ -137,8 +180,11 @@ const Page = () => {
     } catch (error) {
       console.error("Error deleting amenity:", error);
       alert("An error occurred while deleting the amenity.");
+    } finally {
+      closeDialog(); // Close the dialog after deletion
     }
   };
+
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -216,6 +262,8 @@ const Page = () => {
                 <input
                   type="text"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                 />
                 <SearchIcon />
@@ -240,46 +288,77 @@ const Page = () => {
                     </td>
                   </tr>
                 ) : (
-                  (amenities || []).map(
-                    (
-                      amenity, index // Use empty array if amenities is undefined
-                    ) => (
-                      <tr key={amenity.id} className="border-b border-dashed">
-                        <td className="py-3 lg:py-4 px-2">{index + 1}</td>
-                        <td className="py-3 lg:py-4 px-2">
-                          {amenity.amenity_name}
-                        </td>
-                        <td className="py-3 lg:py-4 px-2">
-                          <Image
-                            src={`${amenity.amenity_logo}`}
-                            alt={amenity.amenity_name}
-                            width={40}
-                            height={40}
-                            className="rounded-full"
-                          />
-                        </td>
-                        <td className="py-3 lg:py-4 px-2 flex items-center space-x-2">
-                          <Link
-                            href={`/hotel/edit-hotel-attributes?amenityId=${amenity.id}`}
-                          >
-                            <PencilSquareIcon className="w-5 h-5 text-primary" />
-                          </Link>
+                  currentItems.map((amenity, index) => (
+                    <tr key={amenity.id} className="border-b border-dashed">
+                      <td className="py-3 lg:py-4 px-2">{indexOfFirstItem + index + 1}</td>
+                      <td className="py-3 lg:py-4 px-2">{amenity.amenity_name}</td>
+                      <td className="py-3 lg:py-4 px-2">
+                        <Image
+                          src={amenity.amenity_logo}
+                          alt={amenity.amenity_name}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
+                        />
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex items-center space-x-2">
+                        <Link href={`/hotel/edit-hotel-attributes?amenityId=${amenity.id}`}>
+                          <PencilSquareIcon className="w-5 h-5 text-primary" />
+                        </Link>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() => openDialog(amenity.id)} // Open dialog with amenity id
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
 
-                          <button
-                            className="text-[var(--secondary-500)]"
-                            onClick={() => handleDelete(amenity.id)}
-                          >
-                            <TrashIcon className="w-5 h-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    )
-                  )
+                      </td>
+                    </tr>
+                  ))
                 )}
               </tbody>
             </table>
           </div>
-          {/* <Pagination /> */}
+          <Pagination
+            totalItems={filteredAmenities.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
+         <Transition appear show={isOpen} as={Fragment}>
+  <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeDialog}>
+    <div className="min-h-screen px-4 text-center flex items-center justify-center">
+      <Dialog.Overlay className="fixed inset-0 bg-black opacity-50" />
+      <span className="inline-block h-screen align-middle" aria-hidden="true">
+        &#8203;
+      </span>
+      <div className="inline-block w-full max-w-md p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-lg">
+        <Dialog.Title className="text-2xl font-semibold text-gray-900 mb-4">
+          Are you sure to delete this attribute?
+        </Dialog.Title>
+        
+        <div className="flex justify-between">
+          <button
+            type="button"
+            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md text-lg font-medium hover:bg-gray-400 transition duration-300"
+            onClick={closeDialog}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            className="px-6 py-2 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </Dialog>
+</Transition>
+
+
         </div>
       </section>
       <Footer />

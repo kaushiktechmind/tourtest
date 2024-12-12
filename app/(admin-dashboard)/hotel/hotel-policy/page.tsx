@@ -1,19 +1,19 @@
 "use client";
+
 import {
   EllipsisVerticalIcon,
   EyeIcon,
   PencilSquareIcon,
-  CloudArrowUpIcon,
-  InformationCircleIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
-import dynamic from "next/dynamic";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import QuillEditor from "../../../../components/QuillEditor";
+import { Dialog, Transition } from "@headlessui/react";
+
 
 interface Policy {
   id: number;
@@ -22,19 +22,25 @@ interface Policy {
 }
 
 const Page = () => {
-  const [description, setDescription] = useState<string>(""); // Type for description
-  const [policyTitle, setPolicyTitle] = useState<string>(""); // Type for Policy title
-  const [policy, setPolicy] = useState<Policy[]>([]); // Specify type for Policys
+  const [description, setDescription] = useState<string>("");
+  const [policyTitle, setPolicyTitle] = useState<string>("");
+  const [policy, setPolicy] = useState<Policy[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // New state for search query
+  const [filteredPolicies, setFilteredPolicies] = useState<Policy[]>([]); // New state for filtered policies
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 6;
+  const [isOpen, setIsOpen] = useState(false);
+  const [policyToDelete, setPolicyToDelete] = useState<number | null>(null);
 
-  // Fetch Policys from the API
   useEffect(() => {
     const fetchPolicy = async () => {
       try {
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/admin/get_policy"
         );
-        const data: Policy[] = await response.json(); // Type assertion for the fetched data
+        const data: Policy[] = await response.json();
         setPolicy(data);
+        setFilteredPolicies(data); // Initialize filtered policies with all policies
       } catch (error) {
         console.error("Error fetching Policy:", error);
       }
@@ -43,18 +49,38 @@ const Page = () => {
     fetchPolicy();
   }, []);
 
-  // Handle form submission
+  // Handle search query change
+  useEffect(() => {
+    if (searchQuery) {
+      const filtered = policy.filter((p) =>
+        p.policy_title.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredPolicies(filtered);
+    } else {
+      setFilteredPolicies(policy); // Reset to all policies when search query is empty
+    }
+    setCurrentPage(1); // Reset to the first page
+  }, [searchQuery, policy]);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPolicies = filteredPolicies.slice(
+    indexOfFirstItem,
+    indexOfLastItem
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
   const handleAddPolicy = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); // Prevent default form submission
-
+    event.preventDefault();
     const accessToken = localStorage.getItem("access_token");
-
     try {
-      // Create a temporary DOM element to convert HTML to plain text
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
-        tempElement.textContent || tempElement.innerText || ""; // Extract plain text
+        tempElement.textContent || tempElement.innerText || "";
 
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/save_policy",
@@ -62,28 +88,27 @@ const Page = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`, // Add the access token here
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             policy_title: policyTitle,
-            policy_decription: plainTextDescription, // Use plain text description
+            policy_decription: plainTextDescription,
           }),
         }
       );
 
       const result = await response.json();
-      console.log(result);
 
-      // Update Policys state
       if (result.data) {
         const newPolicy: Policy = {
           id: result.data.id,
           policy_title: result.data.policy_title,
           created_at: result.data.created_at,
         };
-        setPolicy((prevPolicy) => [newPolicy, ...prevPolicy]); // Prepend the new Policy
-        setPolicyTitle(""); // Clear the title input
-        setDescription(""); // Clear the description
+        setPolicy((prevPolicy) => [newPolicy, ...prevPolicy]);
+        setFilteredPolicies((prevPolicies) => [newPolicy, ...prevPolicies]);
+        setPolicyTitle("");
+        setDescription("");
       }
       alert("Policy Added Successfully");
     } catch (error) {
@@ -91,32 +116,51 @@ const Page = () => {
     }
   };
 
-  const handleDeletePolicy = async (id: number) => {
-    const accessToken = localStorage.getItem("access_token");
+  const openModal = (id: number) => {
+    setPolicyToDelete(id);
+    setIsOpen(true);
+  };
 
+  const closeModal = () => {
+    setIsOpen(false);
+    setPolicyToDelete(null);
+  };
+
+
+  const handleDeletePolicy = async () => {
+    if (policyToDelete === null) return;
+    console.log("Deleting policy with id:", policyToDelete);  // Ensure it's correct here
+    const accessToken = localStorage.getItem("access_token");
+  
     try {
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_policy_by_id/${id}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/delete_policy_by_id/${policyToDelete}`,
         {
           method: "DELETE",
           headers: {
-            Authorization: `Bearer ${accessToken}`, // Include access token here
+            Authorization: `Bearer ${accessToken}`,
           },
         }
       );
-
+  
       if (response.ok) {
         alert("Policy deleted successfully.");
-
-        // Update state to remove the deleted Policy
-        setPolicy((prevPolicy) => prevPolicy.filter((policy) => policy.id !== id));
+        setPolicy((prevPolicy) =>
+          prevPolicy.filter((policy) => policy.id !== policyToDelete)
+        );
+        setFilteredPolicies((prevPolicies) =>
+          prevPolicies.filter((policy) => policy.id !== policyToDelete)
+        );
       } else {
         console.error("Failed to delete Policy:", await response.json());
       }
     } catch (error) {
       console.error("Error deleting Policy:", error);
+    } finally {
+      closeModal();
     }
   };
+  
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -126,7 +170,6 @@ const Page = () => {
           <EyeIcon className="w-5 h-5" /> View All Hotel
         </Link>
       </div>
-      {/* statistics */}
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
           <h3 className="border-b h3 pb-6">Add Policy</h3>
@@ -137,7 +180,7 @@ const Page = () => {
               className="w-full border p-2 focus:outline-none rounded-md text-base"
               placeholder="Policy"
               value={policyTitle}
-              onChange={(e) => setPolicyTitle(e.target.value)} // Update title state
+              onChange={(e) => setPolicyTitle(e.target.value)}
               required
             />
             <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
@@ -157,6 +200,8 @@ const Page = () => {
                   type="text"
                   placeholder="Search"
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
+                  value={searchQuery} // Bind search query state
+                  onChange={(e) => setSearchQuery(e.target.value)} // Update search query
                 />
                 <SearchIcon />
               </div>
@@ -172,7 +217,7 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {policy.slice(0, 6).map(({ id, policy_title, created_at }) => (
+                {currentPolicies.map(({ id, policy_title, created_at }) => (
                   <tr
                     key={id}
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
@@ -180,7 +225,9 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">
                       {new Date(created_at).toLocaleDateString()}
                     </td>
-                    <td className="py-3 lg:py-4 px-2">{policy_title}</td>
+                    <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
+                      {policy_title}
+                    </td>
                     <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                       <Link
                         href={`/hotel/edit-hotel-policy?policyId=${id}`}
@@ -188,10 +235,8 @@ const Page = () => {
                       >
                         <PencilSquareIcon className="w-5 h-5" />
                       </Link>
-                      <button
-                        onClick={() => handleDeletePolicy(id)} // Attach delete handler
-                        className="text-[var(--secondary-500)]"
-                      >
+                      <button onClick={() => openModal(id)} className="text-[var(--secondary-500)]">
+
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     </td>
@@ -199,12 +244,76 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
-            <Pagination />
           </div>
+          <Transition appear show={isOpen} as={Fragment}>
+            <Dialog as="div" className="relative z-10" onClose={closeModal}>
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0"
+                enterTo="opacity-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100"
+                leaveTo="opacity-0"
+              >
+                <div className="fixed inset-0 bg-black bg-opacity-25" />
+              </Transition.Child>
+
+              <div className="fixed inset-0 overflow-y-auto">
+                <div className="flex min-h-full items-center justify-center p-4 text-center">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="ease-out duration-300"
+                    enterFrom="opacity-0 scale-95"
+                    enterTo="opacity-100 scale-100"
+                    leave="ease-in duration-200"
+                    leaveFrom="opacity-100 scale-100"
+                    leaveTo="opacity-0 scale-95"
+                  >
+                    <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                      <Dialog.Title
+                        as="h3"
+                        className="text-lg font-medium leading-6 text-gray-900"
+                      >
+                        Confirm Deletion
+                      </Dialog.Title>
+                      <div className="mt-2">
+                        <p className="text-sm text-gray-500">
+                          Are you sure you want to delete this policy? This action cannot
+                          be undone.
+                        </p>
+                      </div>
+                      <div className="mt-4 flex justify-end gap-4">
+                        <button
+                          type="button"
+                          className="btn-secondary"
+                          onClick={closeModal}
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="button"
+                          className="btn-primary"
+                          onClick={handleDeletePolicy}
+                        >
+                          Yes, Delete
+                        </button>
+                      </div>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
+
+          <Pagination
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredPolicies.length}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
       </section>
-
-      {/* Footer */}
       <Footer />
     </div>
   );

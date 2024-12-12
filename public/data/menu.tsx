@@ -18,7 +18,7 @@ export const menus = [
   {
     // title: "Home",
         title: "Packages",
-        url: "/tour-listing",
+        url: "/package-listing",
   },
   {
     // title: "Home",

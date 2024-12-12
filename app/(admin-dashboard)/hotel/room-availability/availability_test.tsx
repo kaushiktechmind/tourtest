@@ -39,17 +39,17 @@ export default function DemoApp() {
         console.error("Token not found!");
         return;
       }
-  
+
       // Format date without converting to UTC
       const formatDate = (date: Date | null) =>
         date
           ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(
-              date.getDate()
-            ).padStart(2, "0")}`
+            date.getDate()
+          ).padStart(2, "0")}`
           : null;
-  
+
       const formattedStartDate = formatDate(startDate);
-  
+
       const payload = {
         hotel_id: hotelId,
         room_id: active,
@@ -60,7 +60,7 @@ export default function DemoApp() {
         location_name: location_name,
         status,
       };
-  
+
       // Fetch room details with fallback logic
       let fetchedRoomDetails = [];
       try {
@@ -68,7 +68,7 @@ export default function DemoApp() {
           `https://yrpitsolutions.com/tourism_api/api/admin/get_room_management_by_room_id/${active}`
         );
         const firstData = await firstResponse.json();
-  
+
         if (firstData.length > 0) {
           console.log("Data from first API:", firstData);
           fetchedRoomDetails = firstData;
@@ -78,7 +78,7 @@ export default function DemoApp() {
             `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${active}`
           );
           const secondData = await secondResponse.json();
-  
+
           if (secondData?.room) {
             console.log("Data from second API:", secondData);
             fetchedRoomDetails = [secondData.room]; // Wrap in array for consistency
@@ -89,10 +89,10 @@ export default function DemoApp() {
         alert("Failed to fetch room details.");
         return;
       }
-  
+
       // Debugging fetched room details
       console.log("Fetched roomDetails:", JSON.stringify(fetchedRoomDetails, null, 2));
-  
+
       // Adjust logic for finding existing room
       const existingRoom = fetchedRoomDetails?.find((room: any) => {
         const roomStartDate = room.start_date?.split(" ")[0]; // Extract date part
@@ -101,9 +101,9 @@ export default function DemoApp() {
         );
         return room.room_id === active && roomStartDate === formattedStartDate;
       });
-  
+
       console.log("existingRoom:", existingRoom);
-  
+
       let response;
       if (existingRoom) {
         // If room management data already exists, call the update API
@@ -130,7 +130,7 @@ export default function DemoApp() {
           }
         );
       }
-  
+
       if (response.status === 200) {
         alert(
           existingRoom
@@ -157,7 +157,7 @@ export default function DemoApp() {
             `https://yrpitsolutions.com/tourism_api/api/admin/get_room_management_by_room_id/${active}`
           );
           const data = await response.json();
-  
+
           if (data.length > 0) {
             const matchingRoom = data.find(
               (room: any) => room.start_date.split(" ")[0] === formattedStartDate
@@ -180,13 +180,13 @@ export default function DemoApp() {
         }
       }
     };
-  
+
     fetchRoomDetailsForDate();
   }, [active, startDate]);
-  
-  
-  
-  
+
+
+
+
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -211,7 +211,7 @@ export default function DemoApp() {
           `https://yrpitsolutions.com/tourism_api/api/admin/get_room_management_by_room_id/${active}`
         );
         const data = await response.json();
-  
+
         if (data.length > 0) {
           // If data exists from the first API
           console.log("Data from first API:", data);
@@ -224,7 +224,7 @@ export default function DemoApp() {
             `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${active}`
           );
           const fallbackData = await fallbackResponse.json();
-  
+
           if (fallbackData?.room) {
             console.log("Data from second API:", fallbackData);
             setRoomDetails([fallbackData.room]); // Store room details in array format for consistency
@@ -236,16 +236,16 @@ export default function DemoApp() {
       }
     }
   };
-  
+
   // useEffect to call fetchRoomDetails when 'active' changes
   useEffect(() => {
     fetchRoomDetails();
   }, [active]);
-  
+
 
   function closeModal() {
     setIsOpen(false);
-    
+
   }
 
   function openModal() {
@@ -255,20 +255,20 @@ export default function DemoApp() {
 
   function dayRender(dayRenderInfo: any) {
     const dateString = dayRenderInfo.date.toLocaleDateString('en-CA'); // Format the date in 'YYYY-MM-DD' format
-  
+
     // Ensure roomDetails is an array and then find matching room
     const matchingRoom = Array.isArray(roomDetails) && roomDetails.length > 0
       ? roomDetails.find((room: any) => {
-          // Convert room start date to the same timezone as dayRenderInfo.date
-          const startDate = new Date(room.start_date).toLocaleDateString('en-CA');
-          return startDate === dateString;
-        })
+        // Convert room start date to the same timezone as dayRenderInfo.date
+        const startDate = new Date(room.start_date).toLocaleDateString('en-CA');
+        return startDate === dateString;
+      })
       : null;
-  
+
     // If there's a matching room and status is 0, disable the cell
     if (matchingRoom) {
       const isDisabled = matchingRoom.status === "0"; // Check if status is 0
-  
+
       return (
         <div className={`flex flex-col justify-center ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}>
           <h2 className="h2 my-4 text-center leading-tight">
@@ -285,7 +285,7 @@ export default function DemoApp() {
         </div>
       );
     }
-  
+
     // Default rendering if no matching room found
     return (
       <div className="flex flex-col justify-center">
@@ -295,17 +295,17 @@ export default function DemoApp() {
       </div>
     );
   }
-  
+
   function handleDateClick(arg: any) {
     const clickedDate = new Date(arg.dateStr); // The clicked date
     const endDate = new Date(clickedDate); // Set endDate to 1 day after the clicked date
     endDate.setDate(clickedDate.getDate() + 1); // Add 1 day to the clicked date
-  
+
     setStartDate(clickedDate); // Set the clicked date as start date
     setEndDate(endDate); // Set the calculated end date
     openModal(); // Open the modal to display the date picker
   }
-  
+
 
 
 
@@ -317,7 +317,7 @@ export default function DemoApp() {
     dateClick: handleDateClick,
     dayRender: dayRender,
   };
-  
+
 
   return (
     <div className="">
@@ -372,45 +372,45 @@ export default function DemoApp() {
                         leaveFrom="opacity-100 scale-100"
                         leaveTo="opacity-0 scale-95"
                       >
-                       <Dialog.Panel className="w-full max-w-md transform overflow-hidden lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
-    <div className="mt-2 flex justify-between items-center border-b pb-3">
-        <h3 className="h3">Date Information</h3>
-        <XMarkIcon onClick={closeModal} className="w-5 h-5 cursor-pointer" />
-    </div>
+                        <Dialog.Panel className="w-full max-w-md transform overflow-hidden lg:min-w-[768px] rounded-2xl bg-white p-6 lg:p-10 text-left align-middle shadow-xl transition-all">
+                          <div className="mt-2 flex justify-between items-center border-b pb-3">
+                            <h3 className="h3">Date Information</h3>
+                            <XMarkIcon onClick={closeModal} className="w-5 h-5 cursor-pointer" />
+                          </div>
 
-    <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
-        {/* Removed Hotel ID and Room ID input fields */}
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-            <label className="text-xl font-medium" htmlFor="date-range">
-                Date Ranges :
-            </label>
-            <DatePicker
-                placeholderText="03/08/2023 - 05/08/2023"
-                selectsRange={true}
-                startDate={startDate}
-                endDate={endDate}
-                onChange={(update) => {
-                    setStartDate(update[0]);
-                    setEndDate(update[1]);
-                }}
-                className="w-full p-3 border rounded focus:outline-none"
-            />
-        </div>
+                          <div className="mt-4 grid grid-cols-2 gap-4 lg:gap-6">
+                            {/* Removed Hotel ID and Room ID input fields */}
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label className="text-xl font-medium" htmlFor="date-range">
+                                Date Ranges :
+                              </label>
+                              <DatePicker
+                                placeholderText="03/08/2023 - 05/08/2023"
+                                selectsRange={true}
+                                startDate={startDate}
+                                endDate={endDate}
+                                onChange={(update) => {
+                                  setStartDate(update[0]);
+                                  setEndDate(update[1]);
+                                }}
+                                className="w-full p-3 border rounded focus:outline-none"
+                              />
+                            </div>
 
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-            <label className="text-xl font-medium" htmlFor="status">
-                Status :
-            </label>
-            <input
-                type="text"
-                value={status}
-                onChange={(e) => setStatus(e.target.value)}
-                
-                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-            />
-        </div>
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label className="text-xl font-medium" htmlFor="status">
+                                Status :
+                              </label>
+                              <input
+                                type="text"
+                                value={status}
+                                onChange={(e) => setStatus(e.target.value)}
 
-        {/* <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+                              />
+                            </div>
+
+                            {/* <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
             <label className="text-xl font-medium" htmlFor="location">
                 Location :
             </label>
@@ -422,39 +422,39 @@ export default function DemoApp() {
             />
         </div> */}
 
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-            <label className="text-xl font-medium" htmlFor="room-price">
-                Room Price :
-            </label>
-            <input
-                type="text"
-                value={roomPrice}
-                onChange={(e) => setRoomPrice(e.target.value)}
-                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-            />
-        </div>
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label className="text-xl font-medium" htmlFor="room-price">
+                                Room Price :
+                              </label>
+                              <input
+                                type="text"
+                                value={roomPrice}
+                                onChange={(e) => setRoomPrice(e.target.value)}
+                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+                              />
+                            </div>
 
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
-            <label className="text-xl font-medium" htmlFor="no-of-rooms">
-                Number of Rooms :
-            </label>
-            <input
-                type="text"
-                value={noOfRooms}
-                onChange={(e) => setNoOfRooms(e.target.value)}
-                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
-            />
-        </div>
-    </div>
-    <div className="flex gap-3 flex-wrap mt-6 lg:mt-10">
-        <button className="btn-primary" onClick={handleSaveRoomManagement}>
-            Save Changes
-        </button>
-        <button className="btn-outline" onClick={closeModal}>
-            Cancel
-        </button>
-    </div>
-</Dialog.Panel>
+                            <div className="col-span-2 lg:col-span-1 flex flex-col gap-3">
+                              <label className="text-xl font-medium" htmlFor="no-of-rooms">
+                                Number of Rooms :
+                              </label>
+                              <input
+                                type="text"
+                                value={noOfRooms}
+                                onChange={(e) => setNoOfRooms(e.target.value)}
+                                className="border py-[10px] px-2 rounded focus:outline-none focus:border-primary focus:border"
+                              />
+                            </div>
+                          </div>
+                          <div className="flex gap-3 flex-wrap mt-6 lg:mt-10">
+                            <button className="btn-primary" onClick={handleSaveRoomManagement}>
+                              Save Changes
+                            </button>
+                            <button className="btn-outline" onClick={closeModal}>
+                              Cancel
+                            </button>
+                          </div>
+                        </Dialog.Panel>
 
                       </Transition.Child>
                     </div>

@@ -3,12 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import LoginImg from "@/public/img/admin-signin.png";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const Page = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false); // State for popup visibility
+  const router = useRouter()
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent default form submission
@@ -40,6 +42,9 @@ const Page = () => {
 
       // Save the token (You can also store admin info as needed)
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("name", data.admin.name);
+      localStorage.setItem("email", data.admin.email);
+      router.push("/admin-dashboard")
 
       // Show the popup after successful login
       setShowPopup(true);
@@ -61,7 +66,7 @@ const Page = () => {
   };
 
   return (
-    <div className="py-[30px] lg:py-[60px] signup-section">
+    <div className="py-[30px] lg:py-[60px] signup-section h-screen flex items-center justify-center overflow-hidden ">
       <div className="container bg-green">
         <div className="grid grid-cols-2 gap-6 md:gap-8 mx-3 mt-[100px]">
           <div className="col-span-2 lg:col-span-1">
@@ -103,25 +108,10 @@ const Page = () => {
                       id="enter-password"
                       required
                     />
-                    <Link
-                      href="signup"
-                      className="link block text-sm text-primary :clr-primary-400 text-end"
-                    >
-                      Forget password
-                    </Link>
+                    
                   </div>
                   {error && <div className="text-red-500 mb-3">{error}</div>}
-                  <div className="col-span-12">
-                    <p className="mb-0">
-                      Don&apos;t have an account?{" "}
-                      <Link
-                        href="signup"
-                        className="link font-semibold text-primary"
-                      >
-                        Signup
-                      </Link>
-                    </p>
-                  </div>
+                  
                   <div className="col-span-12">
                     <button
                       type="submit"

@@ -92,14 +92,17 @@ const HotelListingList = ({
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}&startdate=${startdate}&enddate=${enddate}`}
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
               </Link>
               <div className="flex items-center shrink-0">
-                <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                <span className="block text-[var(--neutral-700)]">{ratings}</span>
+                <div className="flex">
+                  {Array.from({ length: Math.round(ratings) }, (_, index) => (
+                    <StarIcon key={index} className="w-5 h-5 text-[var(--tertiary)]" />
+                  ))}
+                </div>
               </div>
             </div>
             <div className="flex justify-between mb-6">
@@ -136,12 +139,12 @@ const HotelListingList = ({
               <div className="border border-dashed"></div>
             </div>
             <div className="flex flex-wrap justify-between items-center">
-              <span className="block text-xl font-medium text-primary">
+              <span className="block  font-medium line-through">
                 ₹{starting_price}
-                <span className="inline-block font-medium text-primary"> - ₹{highest_price}</span>
+                <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
               </span>
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}&startdate=${startdate}&enddate=${enddate}`}
+                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

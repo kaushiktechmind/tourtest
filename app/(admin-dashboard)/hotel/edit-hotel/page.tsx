@@ -225,7 +225,7 @@ const Page = () => {
       </div>
     ));
   };
-  
+
 
   const handleCheckboxChange = (label: string) => {
     setSelectedAmenities((prevSelected) => {
@@ -370,7 +370,7 @@ const Page = () => {
         for (let i = 1; i <= 30; i++) {
           const policyTitle = hotelData.data[`policy_title${i}`];
           const policyDescription = hotelData.data[`policy_description${i}`];
-  
+
           if (policyTitle) {
             policyArray.push({
               id: i, // Using index as id for unique key
@@ -386,7 +386,7 @@ const Page = () => {
           const educationName = hotelData.data[`education_name${i}`];
           const educationContent = hotelData.data[`education_content${i}`];
           const educationDistance = hotelData.data[`education_distance${i}`];
-  
+
           if (educationName) {
             educationFieldsArray.push({
               name: educationName,
@@ -396,13 +396,13 @@ const Page = () => {
           }
         }
 
-        
+
         const healthFieldsArray = [];
         for (let i = 1; i <= 5; i++) {
           const healthName = hotelData.data[`health_name${i}`];
           const healthContent = hotelData.data[`health_content${i}`];
           const healthDistance = hotelData.data[`health_distance${i}`];
-  
+
           if (healthName) {
             healthFieldsArray.push({
               name: healthName,
@@ -417,7 +417,7 @@ const Page = () => {
           const transportName = hotelData.data[`transport_name${i}`];
           const transportContent = hotelData.data[`transport_content${i}`];
           const transportDistance = hotelData.data[`transport_distance${i}`];
-  
+
           if (transportName) {
             transportFieldsArray.push({
               name: transportName,
@@ -428,8 +428,8 @@ const Page = () => {
         }
 
 
-        
-  
+
+
         // Set the prefilled education fields
         setEducationFields(educationFieldsArray);
         setHealthFields(healthFieldsArray);
@@ -537,7 +537,7 @@ const Page = () => {
     // Append selected policies
     selectedPolicies.forEach((policy, index) => {
       formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
-      formDataToSend.append(`policy_decription${index + 1}`, policy.policy_decription);
+      formDataToSend.append(`policy_description${index + 1}`, policy.policy_decription);
     });
 
     // Append selected FAQs
@@ -568,7 +568,7 @@ const Page = () => {
       );
       console.log("API Response:", response.data);
       alert("Hotel Details Updated");
-      router.push("/hotel/all-hotels"); 
+      // router.push("/hotel/all-hotels"); 
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error message:", error.message);
@@ -612,7 +612,7 @@ const Page = () => {
       </div>
       {/* statisticts */}
       <form
-        onSubmit={handleSubmit}
+
         className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0"
       >
         <div className="col-span-12 lg:col-span-6">
@@ -633,7 +633,7 @@ const Page = () => {
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <div className="border-t pt-4">
-                <p className="mt-6 mb-4 text-xl font-medium">Property ID :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Property ID : <span className="astrick">*</span></p>
                 <input
                   type="text"
                   name="property_id"
@@ -642,7 +642,7 @@ const Page = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="Enter ID"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Type:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Type: <span className="astrick">*</span></p>
                 <div className="flex space-x-4">
                   <div className="flex items-center">
                     <input
@@ -674,7 +674,7 @@ const Page = () => {
                   </div>
                 </div>
 
-                <p className="mt-6 mb-4 text-xl font-medium">Name:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Name: <span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="hotel_name"
@@ -684,7 +684,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Price:  <span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="starting_price"
@@ -694,7 +694,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Sale Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Sale Price: <span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="highest_price"
@@ -706,7 +706,7 @@ const Page = () => {
                 />
                 {/* <CustomRangeSlider /> */}
 
-                <p className="mt-6 mb-4 text-xl font-medium">People</p>
+                <p className="mt-6 mb-4 text-xl font-medium">People <span className="astrick">*</span></p>
                 <div className="flex space-x-4">
                   <div className="w-full flex flex-col">
                     <label htmlFor="adults" className="text-base">
@@ -763,9 +763,9 @@ const Page = () => {
                   </div>
                 </div>
 
-                <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Description : <span className="astrick">*</span></p>
                 <QuillEditor onChange={setDescription} value={description} />
-                <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :</p>
+                <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :<span className="astrick">*</span></p>
                 <select
                   id="ratings"
                   name="ratings"
@@ -783,15 +783,7 @@ const Page = () => {
                   <option value="1">1</option>
                 </select>
 
-                {/* <SelectUI
-                  options={[
-                    { name: "1" },
-                    { name: "2" },
-                    { name: "3" },
-                    { name: "4" },
-                    { name: "5" },
-                  ]}
-                /> */}
+               
               </div>
             </div>
           </Accordion>
@@ -812,7 +804,7 @@ const Page = () => {
             initialOpen={true}
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className="mb-4 text-xl font-medium">Bedrooms:</p>
+              <p className="mb-4 text-xl font-medium">Bedrooms: <span className="astrick">*</span></p>
               <input
                 type="text"
                 id="no_of_bedrooms"
@@ -826,7 +818,7 @@ const Page = () => {
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
               // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
               /> */}
-              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :<span className="astrick">*</span></p>
               <input
                 type="text"
                 id="no_of_bathrooms"
@@ -840,7 +832,7 @@ const Page = () => {
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
               /> */}
 
-              <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Room Size :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="room_size"
@@ -851,7 +843,7 @@ const Page = () => {
                 placeholder="06"
               />
 
-              <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="no_of_beds"
@@ -861,7 +853,7 @@ const Page = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="06"
               />
-              <p className="mt-6 mb-4 text-xl font-medium">Parking :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Parking :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="parking"
@@ -873,80 +865,80 @@ const Page = () => {
             </div>
           </Accordion>
 
-          <Accordion 
-  buttonContent={(open) => (
-    <div
-      className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
-    >
-      <h3 className="h3">Hotel Policy</h3>
-      <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
-    </div>
-  )}
-  initialOpen={true}
->
-  <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-    {policies.length > 0 ? (
-      <div className="mb-4">
-        <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
-          Select a Policy
-        </label>
-        <select
-          id="policyDropdown"
-          className="w-full border p-2 rounded-md"
-          onChange={(e) => {
-            const selectedPolicy = policies.find(
-              (policy) => policy.id === parseInt(e.target.value)
-            );
-            if (
-              selectedPolicy &&
-              !selectedPolicies.some((p) => p.id === selectedPolicy.id)
-            ) {
-              setSelectedPolicies((prev) => [...prev, selectedPolicy]);
-            }
-          }}
-        >
-          <option value="" disabled selected>
-            Select a policy...
-          </option>
-          {policies.map((policy) => (
-            <option key={policy.id} value={policy.id}>
-              {policy.policy_title}
-            </option>
-          ))}
-        </select>
-      </div>
-    ) : (
-      <p>No policies available</p>
-    )}
+          <Accordion
+            buttonContent={(open) => (
+              <div
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                onClick={(e) => e.preventDefault()}       >
+                <h3 className="h3">Hotel Policy</h3>
+                <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
+              </div>
+            )}
+            initialOpen={true}
+          >
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {policies.length > 0 ? (
+                <div className="mb-4">
+                  <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+                    Select a Policy
+                  </label>
+                  <select
+                    id="policyDropdown"
+                    className="w-full border p-2 rounded-md"
+                    onChange={(e) => {
+                      const selectedPolicy = policies.find(
+                        (policy) => policy.id === parseInt(e.target.value)
+                      );
+                      if (
+                        selectedPolicy &&
+                        !selectedPolicies.some((p) => p.id === selectedPolicy.id)
+                      ) {
+                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                      }
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select a policy...
+                    </option>
+                    {policies.map((policy) => (
+                      <option key={policy.id} value={policy.id}>
+                        {policy.policy_title}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <p>No policies available</p>
+              )}
 
-    {/* Render input fields for each selected policy */}
-    {selectedPolicies.map((policy) => (
-      <div key={policy.id} className="mb-4">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            className="w-1/2 border p-2 rounded-md"
-            value={policy.policy_title}
-            readOnly
-          />
-          <input
-            type="text"
-            className="w-1/2 border p-2 rounded-md"
-            value={policy.policy_description} // Use 'policy_description' directly
-            onChange={(e) => {
-              const updatedPolicies = selectedPolicies.map((p) =>
-                p.id === policy.id
-                  ? { ...p, policy_description: e.target.value }
-                  : p
-              );
-              setSelectedPolicies(updatedPolicies);
-            }}
-          />
-        </div>
-      </div>
-    ))}
-  </div>
-</Accordion>
+              {/* Render input fields for each selected policy */}
+              {selectedPolicies.map((policy) => (
+                <div key={policy.id} className="mb-4">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.policy_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.policy_description} // Use 'policy_description' directly
+                      onChange={(e) => {
+                        const updatedPolicies = selectedPolicies.map((p) =>
+                          p.id === policy.id
+                            ? { ...p, policy_decription: e.target.value }
+                            : p
+                        );
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Accordion>
 
 
           <Accordion
@@ -1001,61 +993,60 @@ const Page = () => {
             )}
             initialOpen={true}
           >
-           <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-  {/* Education Section */}
-  <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
-  {renderInputRows(educationFields, setEducationFields)}
-  {educationFields.length < 5 && (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        handleAddRow(educationFields, setEducationFields);
-      }}
-      className="text-blue-500 hover:underline"
-    >
-      + Add Item
-    </button>
-  )}
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {/* Education Section */}
+              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
+              {renderInputRows(educationFields, setEducationFields)}
+              {educationFields.length < 5 && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(educationFields, setEducationFields);
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  + Add Item
+                </button>
+              )}
 
-  {/* Health Section */}
-  <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
-  {renderInputRows(healthFields, setHealthFields)}
-  {healthFields.length < 5 && (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        handleAddRow(healthFields, setHealthFields);
-      }}
-      className="text-blue-500 hover:underline"
-    >
-      + Add Item
-    </button>
-  )}
+              {/* Health Section */}
+              <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
+              {renderInputRows(healthFields, setHealthFields)}
+              {healthFields.length < 5 && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(healthFields, setHealthFields);
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  + Add Item
+                </button>
+              )}
 
-  {/* Transportation Section */}
-  <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
-  {renderInputRows(transportationFields, setTransportationFields)}
-  {transportationFields.length < 5 && (
-    <button
-      onClick={(e) => {
-        e.preventDefault();
-        handleAddRow(transportationFields, setTransportationFields);
-      }}
-      className="text-blue-500 hover:underline"
-    >
-      + Add Item
-    </button>
-  )}
-</div>
+              {/* Transportation Section */}
+              <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
+              {renderInputRows(transportationFields, setTransportationFields)}
+              {transportationFields.length < 5 && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleAddRow(transportationFields, setTransportationFields);
+                  }}
+                  className="text-blue-500 hover:underline"
+                >
+                  + Add Item
+                </button>
+              )}
+            </div>
 
           </Accordion>
 
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
+          {/* <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
             <div className="">
               <p className=" mb-3 text-xl font-medium">Status:</p>
               <div className="flex flex-col gap-2">
                 {" "}
-                {/* Change to flex-col for vertical stacking */}
                 <div className="flex items-center">
                   <input
                     type="radio"
@@ -1082,7 +1073,7 @@ const Page = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <Link href="#" className="btn-primary font-semibold mt-6">
             <span className="inline-block" onClick={handleSubmit}>
@@ -1122,20 +1113,7 @@ const Page = () => {
                       <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                         Select Files
                       </span>
-                      <span className="flex items-center justify-center flex-wrap gap-5">
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum allowed file size is 9.00 MB
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum 10 files are allowed
-                          </span>
-                        </span>
-                      </span>
+                      
                     </span>
                     <input
                       type="file"
@@ -1153,7 +1131,7 @@ const Page = () => {
                     </div>
                   </label>
                 </div>
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   name="video_link"
@@ -1171,7 +1149,7 @@ const Page = () => {
                   </div>
                 </div> */}
                 <p className="mt-6 mb-4 text-xl font-medium">
-                  Map Address (Script) :
+                  Map Address (Script) :<span className="astrick">*</span>
                 </p>
                 <input
                   type="text"
@@ -1181,7 +1159,7 @@ const Page = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="3"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Full Address :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="full_address"
@@ -1192,7 +1170,7 @@ const Page = () => {
                   placeholder="Enter Address"
                 />
 
-                <p className="mt-6 mb-4 text-xl font-medium">Location :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>
 
                 <select
                   id="location_name"
@@ -1275,7 +1253,7 @@ const Page = () => {
               initialOpen={true}
             >
               <div className="pt-6">
-                <p className="mb-4 text-xl font-medium">Zip/Post Code :</p>
+                <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="zipcode"
@@ -1285,7 +1263,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="4"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Phone :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Phone :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="phone"
@@ -1295,7 +1273,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Number"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Email :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Email :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="email"
@@ -1305,7 +1283,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Email"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Website :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Website :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="company_website"
@@ -1315,7 +1293,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter website"
                 />
-                
+
               </div>
             </Accordion>
           </div>

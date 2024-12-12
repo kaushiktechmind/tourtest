@@ -50,6 +50,11 @@ const Page = () => {
     }
 
     try {
+      const tempElement = document.createElement("div");
+      tempElement.innerHTML = description;
+      const plainTextDescription =
+        tempElement.textContent || tempElement.innerText || "";
+
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_policy_by_id/${policyId}`,
         {
@@ -60,7 +65,7 @@ const Page = () => {
           },
           body: JSON.stringify({
             policy_title: policyTitle,
-            policy_decription: description,
+            policy_decription: plainTextDescription,
           }),
         }
       );

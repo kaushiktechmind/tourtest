@@ -1,862 +1,176 @@
 "use client";
 import {
-  ChevronDownIcon,
-  CloudArrowUpIcon,
+  EllipsisVerticalIcon,
   EyeIcon,
+  PencilSquareIcon,
+  CloudArrowUpIcon,
   InformationCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import dynamic from 'next/dynamic';
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import CustomRangeSlider from "@/components/RangeSlider";
-import Accordion from "@/components/Accordion";
-import SelectUI from "@/components/SelectUI";
-import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
-const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
-import React, { useState, useEffect, ChangeEvent } from "react";
+import { SearchIcon } from "@/public/data/icons";
+import Pagination from "@/components/vendor-dashboard/Pagination";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 
+// Define the type for amenity data
 interface Amenity {
   id: number;
-  amenity_name: string; // Update the property name to match the API response
+  amenity_name: string;
+  amenity_logo: string;
 }
-
-interface Policy {
-  id: number; // Change to the actual type (string or number) based on your API response
-  policy_title: string;
-  policy_decription: string; // Assuming the correct spelling is 'policy_description'
-}
-
-
-interface FAQ {
-  id: number; // Change to the actual type (string or number) based on your API response
-  faq_title: string;
-  faq_description: string; // Assuming the correct spelling is 'policy_description'
-}
-
-interface Location {
-  location_name: string;
-}
-
-interface Field {
-  name: string;
-  content: string;
-  distance: string;
-}
-
 
 const Page = () => {
-  const [hotelData, setHotelData] = useState({
-    property_id: '',
-    hotel_or_home_stay: '',
-    hotel_name: '',
-    description: '',
-    starting_price: '',
-    highest_price: '',
-    ratings: '',
-    max_adult: '',
-    max_children: '',
-    max_infant: '',
-    no_of_bedrooms: '',
-    no_of_bathrooms: '',
-    no_of_beds: '',
-    room_size: '',
-    parking: '',
-    banner_images: '',
-    video_link: '',
-    full_address: '',
-    i_frame_link: '',
-    zipcode: '',
-    phone: '',
-    email: '',
-    company_website: '',
-    policy_title: '',
-    policy_description: '',
-    status: '',
-    seo_status: '',
-    seo_title: '',
-    seo_description: '',
-    featured_image: '',
-    // Add amenities, education, health, transport fields here
-  });
-
-  const [locations, setLocations] = useState<{
-    location_name: any; name: string
-  }[]>([]);
-  const [maxAdults, setMaxAdults] = useState('');
-  const [maxChildren, setMaxChildren] = useState('');
-  const [maxInfants, setMaxInfants] = useState('');
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
-
-  const [description, setDescription] = useState("");
-  const [policies, setPolicies] = useState<Policy[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
-
-  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
   const [amenities, setAmenities] = useState<Amenity[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const [educationFields, setEducationFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
-  const [healthFields, setHealthFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([{ name: "", content: "", distance: "" }]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 5;
 
-  // Handler to add new input row (max 5)
-  const handleAddRow = (fields: Field[], setFields: React.Dispatch<React.SetStateAction<Field[]>>) => {
-    if (fields.length < 5) {
-      setFields([...fields, { name: "", content: "", distance: "" }]);
-    }
-  };
+  // New states for the form
+  const [name, setName] = useState<string>("");
+  const [file, setFile] = useState<File | null>(null);
+  const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
+  const [filteredAmenities, setFilteredAmenities] = useState<Amenity[]>([]); // State for filtered amenities
 
-
-  // Handler to update input fields
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number,
-    sectionFields: Field[],
-    setSectionFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    const { name, value } = e.target;
-    const updatedFields = [...sectionFields];
-    updatedFields[index][name as keyof Field] = value;
-    setSectionFields(updatedFields);
-  };
-
-  // Render input rows
-  const renderInputRows = (fields: Field[], setFields: React.Dispatch<React.SetStateAction<Field[]>>) => {
-    return fields.map((field, index) => (
-      <div key={index} className="flex gap-4 mb-4">
-        <input
-          type="text"
-          name="name"
-          value={field.name}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Name"
-        />
-        <input
-          type="text"
-          name="content"
-          value={field.content}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Content"
-        />
-        <input
-          type="text"
-          name="distance"
-          value={field.distance}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Distance"
-        />
-      </div>
-    ));
-  };
-
-
-  const handleCheckboxChange = (label: string) => {
-    setSelectedAmenities((prevSelected) => {
-      if (prevSelected.includes(label)) {
-        return prevSelected.filter((item) => item !== label); // Unselect
-      } else {
-        return [...prevSelected, label]; // Select
-      }
-    });
-  };
-
-
-  useEffect(() => {
-    const fetchLocations = async () => {
-      try {
-        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/admin/get_location');
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        // Assuming the API returns an array of locations
-        setLocations(data); // Adjust based on the actual structure of the API response
-      } catch (error) {
-        console.error('Failed to fetch locations:', error);
-      }
-    };
-
-    fetchLocations();
-  }, []);
-
-
+  // Fetch data from API
   useEffect(() => {
     const fetchAmenities = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_amenities");
-        const jsonResponse = await response.json();
-
-        console.log(jsonResponse); // Log the response data
-        // Check if data is present in the response
-        if (jsonResponse.data) {
-          setAmenities(jsonResponse.data); // Set the amenities using the correct property
-        }
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_amenities"
+        );
+        const data = await response.json();
+        setAmenities(data.data || []);
+        setFilteredAmenities(data.data || []); // Initialize filtered amenities
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching amenities:", error);
+        alert("Failed to fetch amenities. Please try again later.");
       }
     };
-
     fetchAmenities();
   }, []);
 
+  // Filter amenities based on the search query
   useEffect(() => {
-    const fetchPolicies = async () => {
-      try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_policy");
-        const data: Policy[] = await response.json();
-        setPolicies(data);
-      } catch (error) {
-        console.error("Error fetching policies:", error);
-      }
-    };
-    fetchPolicies();
-  }, []);
+    if (searchQuery === "") {
+      setFilteredAmenities(amenities);
+    } else {
+      const filtered = amenities.filter((amenity) =>
+        amenity.amenity_name.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+      setFilteredAmenities(filtered);
+    }
+  }, [searchQuery, amenities]);
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredAmenities.slice(indexOfFirstItem, indexOfLastItem);
 
-
-
-  useEffect(() => {
-    const fetchFAQs = async () => {
-      try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_faq");
-        const data: FAQ[] = await response.json();
-        setFAQs(data);
-      } catch (error) {
-        console.error("Error fetching FAQs:", error);
-      }
-    };
-
-    fetchFAQs();
-  }, [])
-
-
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHotelData({
-      ...hotelData,
-      [e.target.name]: e.target.value,
-    });
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
-
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const token = localStorage.getItem('access-token');
-    if (!token) {
-      console.error('No access token found');
-      return;
-    }
-
-    try {
-      const response = await fetch('https://yrpitsolutions.com/tourism_api/api/admin/hotels', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(hotelData),
-      });
-
-      if (response.ok) {
-        const result = await response.json();
-        console.log('Hotel added successfully:', result);
-        // Handle success (e.g., show a success message or reset form)
-      } else {
-        console.error('Failed to add hotel:', response.statusText);
-        // Handle error (e.g., show an error message)
-      }
-    } catch (error) {
-      console.error('Error adding hotel:', error);
-    }
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page on search
   };
-
 
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Add New Hotel</h2>
-        <div className="flex space-x-2"> {/* Use flex and space-x-2 for horizontal spacing */}
-          <Link href="/hotel/all-hotels" className="btn-primary">
-            <EyeIcon className="w-5 h-5" /> View All Hotel
-          </Link>
-        </div>
-
+        <h2 className="h2 text-white">Hotel Attributes</h2>
+        <Link href="/hotel/all-hotels" className="btn-primary">
+          <EyeIcon className="w-5 h-5" /> View All Hotel
+        </Link>
       </div>
-      {/* statisticts */}
-      <form className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
-        <div className="col-span-12 lg:col-span-6">
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                <h3 className="h3">Hotel Content </h3>
-                <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                    }`}
-                />
-              </div>
-            )}
-            initialOpen={true}>
 
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <div className="border-t pt-4">
-                <p className="mt-6 mb-4 text-xl font-medium">Property ID :</p>
-                <input
-                  type="text"
-                  name="property_id"
-                  value={hotelData.property_id}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="Enter ID"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Type:</p>
-                <div className="flex space-x-4">
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="hotel"
-                      name="hotel_or_home_stay"
-                      value="hotel"
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <label htmlFor="hotel" className="text-base">Hotel</label>
-                  </div>
-                  <div className="flex items-center">
-                    <input
-                      type="radio"
-                      id="homestay"
-                      name="hotel_or_home_stay"
-                      value="homestay"
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    <label htmlFor="homestay" className="text-base">Homestay</label>
-                  </div>
-                </div>
-
-
-                <p className="mt-6 mb-4 text-xl font-medium">Name:</p>
-                <input
-                  type="text"
-                  id="hotel_name"
-                  name="hotel_name"
-                  value={hotelData.hotel_name}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Name of Hotel"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Starting Price:</p>
-                <CustomRangeSlider />
-
-
-                <p className="mt-6 mb-4 text-xl font-medium">People</p>
-                <div className="flex space-x-4">
-                  <div className="w-full flex flex-col">
-                    <label htmlFor="adults" className="text-base">Max Adults:</label>
-                    <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
-                    />
-                  </div>
-                  <div className="w-full flex flex-col">
-                    <label htmlFor="children" className="text-base">Max Children:</label>
-                    <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
-
-                    />
-                  </div>
-                  <div className="w-full flex flex-col">
-                    <label htmlFor="infants" className="text-base">Max Infants:</label>
-                    <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
-
-                    />
-                  </div>
-                </div>
-
-
-                <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
-                <QuillEditor onChange={setDescription} value={description} />
-                <p className="mt-3 mb-4 text-xl font-medium">
-                  Hotel Rating :
-                </p>
-                <SelectUI
-                  options={[
-                    { name: "1" },
-                    { name: "2" },
-                    { name: "3" },
-                    { name: "4" },
-                    { name: "5" },
-                  ]}
-                />
-
-              </div>
-            </div>
-          </Accordion>
-
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}>
-                <h3 className="h3">Hotel  Details </h3>
-                <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                    }`}
-                />
-              </div>
-            )}
-            initialOpen={true}>
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className="mb-4 text-xl font-medium">Bedrooms:</p>
-              <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-                // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
-              />
-              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
-              <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              />
-
-              <p className="mt-6 mb-4 text-xl font-medium">Room Size (sq ft) :</p>
-              <input
-                type="text"
-                name="room-size"
-                value={hotelData.room_size}
-                id="room_size"
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
-
-
-              <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :</p>
-              <input
-                type="text"
-                name="no_of_beds"
-                id="no_of_beds"
-                value={hotelData.no_of_beds}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="06"
-              />
-              <p className="mt-6 mb-4 text-xl font-medium">Parking :</p>
-              <input
-                type="text"
-                name="parking"
-                value={hotelData.parking}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="3"
-              />
-
-
-            </div>
-          </Accordion>
-
-          <Accordion
-            buttonContent={(open) => (
-              <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                <h3 className="h3">Hotel Policy</h3>
-                <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {policies.length > 0 ? (
-                <div className="mb-4">
-                  <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">Select a Policy</label>
-                  <select
-                    id="policyDropdown"
-                    className="w-full border p-2 rounded-md"
-                    onChange={(e) => {
-                      const selectedPolicy = policies.find((policy) => policy.id === parseInt(e.target.value));
-                      if (selectedPolicy && !selectedPolicies.some(p => p.id === selectedPolicy.id)) {
-                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>Select a policy...</option>
-                    {policies.map((policy) => (
-                      <option key={policy.id} value={policy.id}>
-                        {policy.policy_title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <p>No policies available</p>
-              )}
-
-              {/* Render input fields for each selected policy */}
-              {selectedPolicies.map((policy) => (
-                <div key={policy.id} className="mb-4">
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_title}
-                      readOnly
-                    />
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_decription}
-                      onChange={(e) => {
-                        const updatedPolicies = selectedPolicies.map((p) =>
-                          p.id === policy.id ? { ...p, policy_decription: e.target.value } : p
-                        );
-                        setSelectedPolicies(updatedPolicies);
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Accordion>
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
-              >
-                <h3 className="h3">Hotel FAQ</h3>
-                <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-                />
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {faqs.length > 0 ? (
-                <div className="mb-4">
-                  <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">Select a FAQ</label>
-                  <select
-                    id="faqDropdown"
-                    className="w-full border p-2 rounded-md"
-                    onChange={(e) => {
-                      const selectedFAQ = faqs.find((faq) => faq.id === parseInt(e.target.value));
-                      if (selectedFAQ && !selectedFAQs.some(f => f.id === selectedFAQ.id)) {
-                        setSelectedFAQs((prev) => [...prev, selectedFAQ]);
-                      }
-                    }}
-                  >
-                    <option value="" disabled selected>Select a FAQ...</option>
-                    {faqs.map((faq) => (
-                      <option key={faq.id} value={faq.id}>
-                        {faq.faq_title}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <p>No FAQs available</p>
-              )}
-
-              {/* Render input fields for each selected FAQ */}
-              {selectedFAQs.map((faq) => (
-                <div key={faq.id} className="mb-4">
-                  <div className="flex gap-4">
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={faq.faq_title}
-                      readOnly
-                    />
-                    <input
-                      type="text"
-                      className="w-1/2 border p-2 rounded-md"
-                      value={faq.faq_description}
-                      onChange={(e) => {
-                        const updatedFAQs = selectedFAQs.map((f) =>
-                          f.id === faq.id ? { ...f, faq_description: e.target.value } : f
-                        );
-                        setSelectedFAQs(updatedFAQs);
-                      }}
-                    />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </Accordion>
-
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
-              >
-                <h3 className="h3">Sorroundings</h3>
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {/* Education Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
-              {renderInputRows(educationFields, setEducationFields)}
-              {educationFields.length < 5 && (
-                <button
-                  onClick={(e) =>{
-                    e.preventDefault();
-                    handleAddRow(educationFields, setEducationFields)} }
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Health Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
-              {renderInputRows(healthFields, setHealthFields)}
-              {healthFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(healthFields, setHealthFields)}}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Transportation Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
-              {renderInputRows(transportationFields, setTransportationFields)}
-              {transportationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(transportationFields, setTransportationFields)}}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-            </div>
-          </Accordion>
-
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <div className="">
-              <p className=" mb-3 text-xl font-medium">Status:</p>
-              <div className="flex flex-col gap-2"> {/* Change to flex-col for vertical stacking */}
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="hotel"
-                    name="accommodation"
-                    value="hotel"
-                    className="mr-2"
-                  />
-                  <label htmlFor="hotel" className="text-base">Publish</label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="homestay"
-                    name="accommodation"
-                    value="homestay"
-                    className="mr-2"
-                  />
-                  <label htmlFor="homestay" className="text-base">Draft</label>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Link href="#" className="btn-primary font-semibold mt-6">
-            <span className="inline-block"> Save & Preview </span>
-          </Link>
+      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
+          <h3 className="border-b h3 pb-6">Add Attributes</h3>
+          {/* Form for adding attributes */}
         </div>
-        <div className="col-span-12 lg:col-span-6">
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
-            <Accordion
-              buttonContent={(open) => (
-                <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
-                  <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
-                  />
-                </div>
-              )}
-              initialOpen={true}>
-              <div className="pt-6">
-                <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
-                  <label
-                    htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
-                    <span className="flex flex-col items-center justify-center py-12">
-                      <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                        Drag & Drop
-                      </span>
-                      <span className="block text-center mb-6 clr-neutral-500">
-                        OR
-                      </span>
-                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
-                        Select Files
-                      </span>
-                      <span className="flex items-center justify-center flex-wrap gap-5">
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum allowed file size is 9.00 MB
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum 10 files are allowed
-                          </span>
-                        </span>
-                      </span>
-                    </span>
-                    <input type="file" id="dropzone-file" className="hidden" />
-                  </label>
-                </div>
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
-                <input
-                  type="text"
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Any type video link"
-                />
-                <div className="mt-6">
-                  <div className="h-[400px]">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2233.5934788396344!2d89.78232001463437!3d23.836268639364576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1688381345276!5m2!1sen!2sbd"></iframe>
-                  </div>
-                </div>
-                <p className="mt-6 mb-4 text-xl font-medium">Map Address (Script) :</p>
-                <input
-                  type="text"
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Address"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
-                <input
-                  type="text"
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Address"
-                />
 
-                <p className="mt-6 mb-4 text-xl font-medium">Location :</p>
-                <SelectUI
-                  options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
+        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
+          <div className="flex flex-wrap gap-3 justify-between mb-7">
+            <form className="flex flex-wrap items-center gap-3">
+              <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                 />
+                <SearchIcon />
               </div>
-            </Accordion>
+            </form>
           </div>
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <Accordion
-              buttonContent={(open) => (
-                <div className="rounded-2xl flex justify-between">
-                  <h3 className="h3">Attributes</h3>
-                  <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-                  />
-                </div>
-              )}
-              initialOpen={true}>
-              <div className="pt-6">
-                <p className="text-xl font-medium">Features:</p>
-                {amenities.length === 0 ? (
-                  <p>No amenities available</p>
-                ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
-                    {amenities.map((item) => (
-                      <li key={item.id} className="py-2">
-                        <CheckboxCustom
-                          label={item.amenity_name}
-                          // onChange={() => handleCheckboxChange(item.amenity_name)} // Pass the change handler
+          <div className="overflow-x-auto">
+            <table className="w-full whitespace-nowrap">
+              <thead>
+                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                  <th className="py-3 lg:py-4 px-2">ID</th>
+                  <th className="py-3 lg:py-4 px-2">Attribute Name</th>
+                  <th className="py-3 lg:py-4 px-2">Icon</th>
+                  <th className="py-3 lg:py-4 px-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loading ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4">
+                      Loading...
+                    </td>
+                  </tr>
+                ) : currentItems.length > 0 ? (
+                  currentItems.map((amenity, index) => (
+                    <tr key={amenity.id} className="border-b border-dashed">
+                      <td className="py-3 lg:py-4 px-2">{indexOfFirstItem + index + 1}</td>
+                      <td className="py-3 lg:py-4 px-2">{amenity.amenity_name}</td>
+                      <td className="py-3 lg:py-4 px-2">
+                        <Image
+                          src={amenity.amenity_logo}
+                          alt={amenity.amenity_name}
+                          width={40}
+                          height={40}
+                          className="rounded-full"
                         />
-                      </li>
-                    ))}
-                  </ul>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex items-center space-x-2">
+                        <Link href={`/hotel/edit-hotel-attributes?amenityId=${amenity.id}`}>
+                          <PencilSquareIcon className="w-5 h-5 text-primary" />
+                        </Link>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() => handleDelete(amenity.id)}
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4">
+                      No matching attributes found.
+                    </td>
+                  </tr>
                 )}
-              </div>
-            </Accordion>
+              </tbody>
+            </table>
           </div>
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <Accordion
-              buttonContent={(open) => (
-                <div className="rounded-2xl flex justify-between">
-                  <h3 className="h3">Contact Information </h3>
-                  <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
-                  />
-                </div>
-              )}
-              initialOpen={true}>
-              <div className="pt-6">
-                <p className="mb-4 text-xl font-medium">Zip/Post Code :</p>
-                <input
-                  type="text"
-                  id="zipcode"
-                  name="zipcode"
-                  value={hotelData.zipcode}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="4"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Phone :</p>
-                <input
-                  type="text"
-                  id="phone"
-                  name="phone"
-                  value={hotelData.phone}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Number"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Email :</p>
-                <input
-                  type="text"
-                  id="email"
-                  name="email"
-                  value={hotelData.email}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Email"
-                />
-                <p className="mt-6 mb-4 text-xl font-medium">Website :</p>
-                <input
-                  type="text"
-                  id="company_website"
-                  name="company_website"
-                  value={hotelData.company_website}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter website"
-                />
-                <Link
-                  href="#"
-                  className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold mt-6">
-                  <span className="inline-block"> Add New </span>
-                </Link>
-              </div>
-            </Accordion>
-          </div>
-
-
-
-
+          <Pagination
+            totalItems={filteredAmenities.length}
+            itemsPerPage={itemsPerPage}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+          />
         </div>
-      </form>
-
-      {/* Footer */}
+      </section>
       <Footer />
     </div>
   );

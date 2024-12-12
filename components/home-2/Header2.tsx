@@ -17,13 +17,26 @@ const Header2 = () => {
   const isHomePage = pathname === "/"; // Check if the current route is the home page
 
   useEffect(() => {
-    // Check if access_token exists in localStorage
-    const token = localStorage.getItem("access_token");
-    setIsLoggedIn(!!token); // Set isLoggedIn based on token presence
+    // Function to check token presence in localStorage
+    const checkLoginStatus = () => {
+      const token = localStorage.getItem("access_token");
+      setIsLoggedIn(!!token); // Update state based on token presence
+    };
+
+    checkLoginStatus(); // Initial check
+
+    // Listen to storage changes for real-time login/logout detection
+    const handleStorageChange = () => {
+      checkLoginStatus();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
 
     if (!isHomePage) {
       setScrolled(true);
-      return;
+      return () => {
+        window.removeEventListener("storage", handleStorageChange);
+      };
     }
 
     const handleScroll = () => {
@@ -34,15 +47,14 @@ const Header2 = () => {
     document.addEventListener("scroll", handleScroll);
     return () => {
       document.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("storage", handleStorageChange);
     };
   }, [isHomePage]);
 
   return (
     <header
       className={`z-30 fixed w-full ${
-        scrolled || !isHomePage
-          ? "z-50 shadow-md bg-[#091E43]"
-          : "bg-transparent"
+        scrolled || !isHomePage ? "z-50 shadow-md bg-[#fff]" : "bg-white"
       } duration-300`}
     >
       <div className="container flex justify-between items-center relative px-3 py-2 lg:py-0 lg:px-0">

@@ -188,14 +188,7 @@ const Page = () => {
                       <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                         Select Files
                       </span>
-                      <span className="flex items-center justify-center flex-wrap gap-5">
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum allowed file size is 9.00 MB
-                          </span>
-                        </span>
-                      </span>
+                     
                     </span>
                     <input
                       type="file"

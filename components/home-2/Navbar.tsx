@@ -77,6 +77,18 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
   }, [dropdown]);
 
   function handleLinkClick(event: MouseEvent<HTMLAnchorElement, MouseEvent>): void {
+  
+     localStorage.removeItem("startDate");
+     localStorage.removeItem("endDate");
+     localStorage.removeItem("roomId");
+     localStorage.removeItem("noOfNights");
+     localStorage.removeItem("addedRooms");
+     localStorage.removeItem("storedAdultPrice");
+     localStorage.removeItem("storedChildPrice");
+     localStorage.removeItem("storedExtraBedPrice");
+     localStorage.removeItem("storedTotalPrice");
+     localStorage.removeItem("totalCounts");
+     localStorage.removeItem("fromHome");
     throw new Error("Function not implemented.");
   }
 
@@ -110,7 +122,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
           />
         </>
       ) : (
-        <Link href={items.url as string} onClick={handleLinkClick}>{items.title}</Link>
+        <Link href={items.url as string} className="text-[#6c6c6c] hover:text-gray-900 font-bold font-montserrat" onClick={handleLinkClick}>{items.title}</Link>
       )}
     </li>
   );

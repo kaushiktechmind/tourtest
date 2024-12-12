@@ -11,7 +11,6 @@ import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
-import { propertyAmenities } from "@/public/data/addpropertyAmenities";
 import CheckboxCustom from "@/components/Checkbox";
 import QuillEditor from "../../../../components/QuillEditor";
 import React, { useState, useEffect, ChangeEvent } from "react";
@@ -343,7 +342,7 @@ const Page = () => {
     // Append selected amenities
     selectedAmenities.forEach((amenity, index) => {
       formDataToSend.append(`amenity_name${index + 1}`, amenity.amenity_name);
-    formDataToSend.append(`amenity_logo${index + 1}`, amenity.amenity_logo);
+      formDataToSend.append(`amenity_logo${index + 1}`, amenity.amenity_logo);
     });
 
     // Append Education Fields
@@ -401,8 +400,8 @@ const Page = () => {
         }
       );
       console.log("API Response:", response.data);
-      alert("Hotel added successfully!"); 
-      router.push("/hotel/all-hotels"); 
+      alert("Hotel added successfully!");
+      router.push("/hotel/all-hotels");
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error("Axios error message:", error.message);
@@ -415,23 +414,23 @@ const Page = () => {
     }
   };
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
- // Handle file change (update formData and preview images)
- const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  const files = e.target.files;
-  if (files) {
-    const fileArray = Array.from(files); // Convert FileList to array
+  // Handle file change (update formData and preview images)
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      const fileArray = Array.from(files); // Convert FileList to array
 
-    // Update formData with selected files
-    setFormData((prevData) => ({
-      ...prevData,
-      banner_images: fileArray,
-    }));
+      // Update formData with selected files
+      setFormData((prevData) => ({
+        ...prevData,
+        banner_images: fileArray,
+      }));
 
-    // Generate previews for the selected images
-    const previews = fileArray.map((file) => URL.createObjectURL(file));
-    setSelectedImages(previews); // Update selectedImages state with previews
-  }
-};
+      // Generate previews for the selected images
+      const previews = fileArray.map((file) => URL.createObjectURL(file));
+      setSelectedImages(previews); // Update selectedImages state with previews
+    }
+  };
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -453,15 +452,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Content </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -469,7 +466,7 @@ const Page = () => {
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <div className="border-t pt-4">
-                <p className="mt-6 mb-4 text-xl font-medium">Property ID :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Property ID:<span className="astrick">*</span></p>
                 <input
                   type="text"
                   name="property_id"
@@ -478,7 +475,7 @@ const Page = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="Enter ID"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Type:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Type:<span className="astrick">*</span></p>
                 <div className="flex space-x-4">
                   <div className="flex items-center">
                     <input
@@ -510,7 +507,7 @@ const Page = () => {
                   </div>
                 </div>
 
-                <p className="mt-6 mb-4 text-xl font-medium">Name:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Name:<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="hotel_name"
@@ -520,42 +517,42 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Name of Hotel"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Price:<span className="astrick">*</span></p>
                 <input
-                  type="text"
+                  type="number"
                   id="starting_price"
                   name="starting_price"
                   value={formData.starting_price}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Name of Hotel"
+                  placeholder="10000"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Sale Price:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Sale Price:<span className="astrick">*</span></p>
                 <input
-                  type="text"
+                  type="number"
                   id="highest_price"
                   name="highest_price"
                   value={formData.highest_price}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Name of Hotel"
+                  placeholder="12000"
                 />
                 {/* <CustomRangeSlider /> */}
 
-                <p className="mt-6 mb-4 text-xl font-medium">People</p>
+                <p className="mt-6 mb-4 text-xl font-medium">People<span className="astrick">*</span></p>
                 <div className="flex space-x-4">
                   <div className="w-full flex flex-col">
                     <label htmlFor="adults" className="text-base">
                       Max Adults:
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       id="max_adult"
                       name="max_adult"
                       value={formData.max_adult}
                       onChange={handleChange}
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
-                      placeholder="Name of Hotel"
+                      placeholder="3"
                     />
                     {/* <SelectUI
                       options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
@@ -566,13 +563,13 @@ const Page = () => {
                       Max Children:
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       id="max_children"
                       name="max_children"
                       value={formData.max_children}
                       onChange={handleChange}
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
-                      placeholder="Name of Hotel"
+                      placeholder="2"
                     />
                     {/* <SelectUI
                       options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
@@ -584,13 +581,13 @@ const Page = () => {
                       Max Infants:
                     </label>
                     <input
-                      type="text"
+                      type="number"
                       id="max_infant"
                       name="max_infant"
                       value={formData.max_infant}
                       onChange={handleChange}
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
-                      placeholder="Name of Hotel"
+                      placeholder="2"
                     />
                     {/* <SelectUI
                       options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
@@ -599,9 +596,9 @@ const Page = () => {
                   </div>
                 </div>
 
-                <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Description :<span className="astrick">*</span></p>
                 <QuillEditor onChange={setDescription} value={description} />
-                <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :</p>
+                <p className="mt-3 mb-4 text-xl font-medium">Hotel Rating :<span className="astrick">*</span></p>
                 <select
                   id="ratings"
                   name="ratings"
@@ -619,15 +616,7 @@ const Page = () => {
                   <option value="1">1</option>
                 </select>
 
-                {/* <SelectUI
-                  options={[
-                    { name: "1" },
-                    { name: "2" },
-                    { name: "3" },
-                    { name: "4" },
-                    { name: "5" },
-                  ]}
-                /> */}
+
               </div>
             </div>
           </Accordion>
@@ -635,22 +624,20 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Details </h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
             initialOpen={true}
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className="mb-4 text-xl font-medium">Bedrooms:</p>
+              <p className="mb-4 text-xl font-medium">Bedrooms: <span className="astrick">*</span></p>
               <input
                 type="text"
                 id="no_of_bedrooms"
@@ -664,7 +651,7 @@ const Page = () => {
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
               // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
               /> */}
-              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :<span className="astrick">*</span></p>
               <input
                 type="text"
                 id="no_of_bathrooms"
@@ -678,7 +665,7 @@ const Page = () => {
                 options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
               /> */}
 
-              <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Room Size :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="room_size"
@@ -689,7 +676,7 @@ const Page = () => {
                 placeholder="06"
               />
 
-              <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="no_of_beds"
@@ -699,14 +686,14 @@ const Page = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="06"
               />
-              <p className="mt-6 mb-4 text-xl font-medium">Parking :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Parking :<span className="astrick">*</span></p>
               <input
                 type="text"
                 name="parking"
                 value={formData.parking}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="3"
+                placeholder="yes/no"
               />
             </div>
           </Accordion>
@@ -714,15 +701,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel Policy</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -804,15 +789,13 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel FAQ</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                    open ? "rotate-180" : ""
-                  }`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -888,9 +871,8 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${
-                  open ? "rounded-t-2xl" : "rounded-2xl"
-                } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
                 <h3 className="h3">Sorroundings</h3>
               </div>
@@ -945,12 +927,11 @@ const Page = () => {
             </div>
           </Accordion>
 
-          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
+          {/* <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
             <div className="">
               <p className=" mb-3 text-xl font-medium">Status:</p>
               <div className="flex flex-col gap-2">
                 {" "}
-                {/* Change to flex-col for vertical stacking */}
                 <div className="flex items-center">
                   <input
                     type="radio"
@@ -977,7 +958,7 @@ const Page = () => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <Link href="#" className="btn-primary font-semibold mt-6">
             <span className="inline-block" onClick={handleSubmit}>
@@ -991,11 +972,10 @@ const Page = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
+                  <h3 className="h3">Banner Images and Videos <span className="astrick">*</span></h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
@@ -1018,20 +998,6 @@ const Page = () => {
                       <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                         Select Files
                       </span>
-                      <span className="flex items-center justify-center flex-wrap gap-5">
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum allowed file size is 9.00 MB
-                          </span>
-                        </span>
-                        <span className="flex items-center gap-2">
-                          <InformationCircleIcon className="w-5 h-5" />
-                          <span className="block mb-0 clr-neutral-500">
-                            Maximum 10 files are allowed
-                          </span>
-                        </span>
-                      </span>
                     </span>
                     <input
                       type="file"
@@ -1043,17 +1009,17 @@ const Page = () => {
                   </label>
                 </div>
                 <div className="flex flex-wrap gap-4">
-        {selectedImages.map((preview, index) => (
-          <div key={index} className="relative w-24 h-24">
-            <img
-              src={preview}
-              alt={`selected-image-${index}`}
-              className="object-cover w-full h-full rounded-md"
-            />
-          </div>
-        ))}
-      </div>
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
+                  {selectedImages.map((preview, index) => (
+                    <div key={index} className="relative w-24 h-24">
+                      <img
+                        src={preview}
+                        alt={`selected-image-${index}`}
+                        className="object-cover w-full h-full rounded-md"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   name="video_link"
@@ -1071,7 +1037,7 @@ const Page = () => {
                   </div>
                 </div> */}
                 <p className="mt-6 mb-4 text-xl font-medium">
-                  Map Address (Script) :
+                  Map Address (Script) :<span className="astrick">*</span>
                 </p>
                 <input
                   type="text"
@@ -1081,7 +1047,7 @@ const Page = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="3"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Full Address :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="full_address"
@@ -1092,7 +1058,7 @@ const Page = () => {
                   placeholder="Enter Address"
                 />
 
-                <p className="mt-6 mb-4 text-xl font-medium">Location :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>
 
                 <select
                   id="location_name"
@@ -1123,41 +1089,40 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Attributes</h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
               initialOpen={true}
             >
-           <div className="pt-6">
-    <p className="text-xl font-medium">Features:</p>
-    {amenities.length === 0 ? (
-      <p>No amenities available</p>
-    ) : (
-      <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
-        {amenities.map((item) => (
-          <li key={item.id} className="py-2 flex items-center">
-            <CheckboxCustom
-              label={item.amenity_name}
-              onChange={() => handleCheckboxChange(item)}
-              checked={selectedAmenities.some(
-                (amenity) => amenity.id === item.id
-              )}
-            />
-            {/* {item.amenity_logo && (
+              <div className="pt-6">
+                <p className="text-xl font-medium">Features:</p>
+                {amenities.length === 0 ? (
+                  <p>No amenities available</p>
+                ) : (
+                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                    {amenities.map((item) => (
+                      <li key={item.id} className="py-2 flex items-center">
+                        <CheckboxCustom
+                          label={item.amenity_name}
+                          onChange={() => handleCheckboxChange(item)}
+                          checked={selectedAmenities.some(
+                            (amenity) => amenity.id === item.id
+                          )}
+                        />
+                        {/* {item.amenity_logo && (
               <img
                 src={item.amenity_logo}
                 alt={item.amenity_name}
                 className="ml-2 w-6 h-6"
               />
             )} */}
-          </li>
-        ))}
-      </ul>
-    )}
-  </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </Accordion>
           </div>
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
@@ -1166,16 +1131,15 @@ const Page = () => {
                 <div className="rounded-2xl flex justify-between">
                   <h3 className="h3">Contact Information </h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                      open ? "rotate-180" : ""
-                    }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
                   />
                 </div>
               )}
               initialOpen={true}
             >
               <div className="pt-6">
-                <p className="mb-4 text-xl font-medium">Zip/Post Code :</p>
+                <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="zipcode"
@@ -1185,7 +1149,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="4"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Phone :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Phone :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="phone"
@@ -1195,7 +1159,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Number"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Email :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Email :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="email"
@@ -1205,7 +1169,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Email"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Website :</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Website :<span className="astrick">*</span></p>
                 <input
                   type="text"
                   id="company_website"
@@ -1215,7 +1179,7 @@ const Page = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter website"
                 />
-                
+
               </div>
             </Accordion>
           </div>

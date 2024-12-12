@@ -159,9 +159,9 @@ const VendorListingList = ({ item }: any) => {
           <div className="flex flex-wrap gap-2 justify-between items-center">
             <span className="block text-xl font-medium text-primary">
               ${price}
-              <span className="inline-block text-neutral-500 text-base font-normal">
+              {/* <span className="inline-block text-neutral-500 text-base font-normal">
                 /per night
-              </span>
+              </span> */}
             </span>
             <div className="flex flex-wrap gap-3">
               <Link href="/hotel-listing-details" className="btn-outline">
