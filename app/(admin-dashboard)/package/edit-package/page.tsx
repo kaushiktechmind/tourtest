@@ -306,13 +306,8 @@ const Page = () => {
           banner_image: data.banner_image || "",
 
 
-
-
-          faqs: data.faqs || [] // Assuming 'faqs' is an array in the response
+          // Add other fields as necessary
         }));
-        if (data.faqs && data.faqs.length > 0) {
-          setSelectedFAQs(data.faqs); // Populate selectedFAQs with the fetched FAQ data
-        }
       } catch (error) {
         console.error("Error fetching package data:", error);
       }
@@ -792,6 +787,7 @@ const Page = () => {
 
 
 
+
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
                   type="text"
@@ -918,15 +914,23 @@ const Page = () => {
               <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
                 {faqs.length > 0 ? (
                   <div className="mb-4">
-                    <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">
+                    <label
+                      htmlFor="faqDropdown"
+                      className="text-lg font-bold mb-2 block"
+                    >
                       Select a FAQ
                     </label>
                     <select
                       id="faqDropdown"
                       className="w-full border p-2 rounded-md"
                       onChange={(e) => {
-                        const selectedFAQ = faqs.find((faq) => faq.id === parseInt(e.target.value));
-                        if (selectedFAQ && !selectedFAQs.some((f) => f.id === selectedFAQ.id)) {
+                        const selectedFAQ = faqs.find(
+                          (faq) => faq.id === parseInt(e.target.value)
+                        );
+                        if (
+                          selectedFAQ &&
+                          !selectedFAQs.some((f) => f.id === selectedFAQ.id)
+                        ) {
                           setSelectedFAQs((prev) => [...prev, selectedFAQ]);
                         }
                       }}
@@ -972,7 +976,6 @@ const Page = () => {
                   </div>
                 ))}
               </div>
-
             </Accordion>
           </div>
 
