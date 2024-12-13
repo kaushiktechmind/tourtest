@@ -7,6 +7,7 @@ import Accordion from "@/components/Accordion";
 import QuillEditor from "@/components/QuillEditor";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
@@ -22,6 +23,7 @@ interface Amenity {
 
 
 const Page = () => {
+  const router = useRouter();
   const [itineraries, setItineraries] = useState([
     { day: "", title: "", description: "" }
   ]);
@@ -37,16 +39,42 @@ const Page = () => {
     tour_min_people: "",
     tour_max_people: "",
     pickup_point: "",
+    person_type_description1: "",
+    person_type_price1: "",
+    person_min1: "",
+    person_max1: "",
+    person_type_name1: "",
+    person_type_description2: "",
+    person_type_price2: "",
+    person_min2: "",
+    person_max2: "",
+    person_type_name2: "",
     person_type_description3: "",
     person_type_price3: "",
-    person_max3: "",
     person_min3: "",
+    person_max3: "",
     person_type_name3: "",
+    person_type_description4: "",
+    person_type_price4: "",
+    person_min4: "",
+    person_max4: "",
+    person_type_name4: "",
+    person_type_description5: "",
+    person_type_price5: "",
+    person_min5: "",
+    person_max5: "",
+    person_type_name5: "",
+    person_type_description6: "",
+    person_type_price6: "",
+    person_min6: "",
+    person_max6: "",
+    person_type_name6: "",
     itinerary: "",
     banner_image: "",
     location_name: "",
     itinerary_images: [],
   });
+
   const [locations, setLocations] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
@@ -245,11 +273,43 @@ const Page = () => {
       formDataToSend.append("tour_min_people", formData.tour_min_people);
       formDataToSend.append("tour_max_people", formData.tour_max_people);
       formDataToSend.append("pickup_point", formData.pickup_point);
+
+      formDataToSend.append("person_type_description1", formData.person_type_description1);
+      formDataToSend.append("person_type_price1", formData.person_type_price1);
+      formDataToSend.append("person_max1", formData.person_max1);
+      formDataToSend.append("person_min1", formData.person_min1);
+      formDataToSend.append("person_type_name1", formData.person_type_name1);
+
+      formDataToSend.append("person_type_description2", formData.person_type_description2);
+      formDataToSend.append("person_type_price2", formData.person_type_price2);
+      formDataToSend.append("person_max2", formData.person_max2);
+      formDataToSend.append("person_min2", formData.person_min2);
+      formDataToSend.append("person_type_name2", formData.person_type_name2);
+
       formDataToSend.append("person_type_description3", formData.person_type_description3);
       formDataToSend.append("person_type_price3", formData.person_type_price3);
       formDataToSend.append("person_max3", formData.person_max3);
       formDataToSend.append("person_min3", formData.person_min3);
       formDataToSend.append("person_type_name3", formData.person_type_name3);
+
+      formDataToSend.append("person_type_description4", formData.person_type_description4);
+      formDataToSend.append("person_type_price4", formData.person_type_price4);
+      formDataToSend.append("person_max4", formData.person_max4);
+      formDataToSend.append("person_min4", formData.person_min4);
+      formDataToSend.append("person_type_name4", formData.person_type_name4);
+
+      formDataToSend.append("person_type_description5", formData.person_type_description5);
+      formDataToSend.append("person_type_price5", formData.person_type_price5);
+      formDataToSend.append("person_max5", formData.person_max5);
+      formDataToSend.append("person_min5", formData.person_min5);
+      formDataToSend.append("person_type_name5", formData.person_type_name5);
+
+      formDataToSend.append("person_type_description6", formData.person_type_description6);
+      formDataToSend.append("person_type_price6", formData.person_type_price6);
+      formDataToSend.append("person_max6", formData.person_max6);
+      formDataToSend.append("person_min6", formData.person_min6);
+      formDataToSend.append("person_type_name6", formData.person_type_name6);
+
       formDataToSend.append("location_name", formData.location_name);
       formDataToSend.append("status", formData.status);
 
@@ -263,16 +323,30 @@ const Page = () => {
       }));
       formDataToSend.append("package_faqs", JSON.stringify(faqsData));
 
-      // Append banner images to FormData
-      bannerImages.forEach((file) => {
-        formDataToSend.append("banner_image[]", file); // 'banner_image[]' to send multiple files
-      });
-
-      itineraries.forEach((itinerary, index) => {
-        itinerary.itinerary_images.forEach((file) => {
-          formDataToSend.append(`itinerary_images[${index}]`, file); // Append each file under the specific itinerary
+      // Check if bannerImages is defined and is an array before using forEach
+      if (Array.isArray(bannerImages)) {
+        bannerImages.forEach((file) => {
+          formDataToSend.append("banner_image[]", file);
         });
-      });
+      } else {
+        console.error('bannerImages is not defined or not an array');
+      }
+
+      // Check if itineraries is defined and is an array before using forEach
+      if (Array.isArray(itineraries)) {
+        itineraries.forEach((itinerary, index) => {
+          if (Array.isArray(itinerary.itinerary_images)) {
+            itinerary.itinerary_images.forEach((file) => {
+              formDataToSend.append(`itinerary_images[${index}]`, file);
+            });
+          } else {
+            console.error(`itinerary_images for itinerary ${index} is not defined or not an array`);
+          }
+        });
+      } else {
+        console.error('itineraries is not defined or not an array');
+      }
+
 
 
       const formattedItineraries = itineraries.map((itinerary, index) => ({
@@ -298,7 +372,7 @@ const Page = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Package saved successfully!");
-        console.log(data);
+        router.push("/package/all-package");
       } else {
         alert("Failed to save package.");
       }
@@ -491,42 +565,27 @@ const Page = () => {
                 <thead>
                   <tr className="bg-gray-100 text-left">
                     <th className="border border-gray-200 px-4 py-2">Person Type</th>
+                    <th className="border border-gray-200 px-4 py-2">Description</th>
                     <th className="border border-gray-200 px-4 py-2">Min</th>
                     <th className="border border-gray-200 px-4 py-2">Max</th>
                     <th className="border border-gray-200 px-4 py-2">Price</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { type: "Adult", min: "1", max: "4", price: "1000" },
-                    { type: "Child", min: "0", max: "2", price: "300" },
-                    { type: "Infant", min: "0", max: "1", price: "200" },
-                  ].map((row, index) => (
+                  {[...Array(6)].map((_, index) => (
                     <tr key={index}>
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="text"
-                          name={`personType_${index}`}
-                          value={row.type}
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                        <p className="text-xs text-gray-500">{row.age}</p>
-                      </td>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="number"
-                          name={`min_${index}`}
-                          value={row.min}
+                          name={`person_type_name${index + 1}`}  // person_type_name1, person_type_name2, etc.
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
                       </td>
                       <td className="border border-gray-200 px-4 py-2">
                         <input
-                          type="number"
-                          name={`max_${index}`}
-                          value={row.max}
+                          type="text"
+                          name={`person_type_description${index + 1}`}  // person_type_description1, person_type_description2, etc.
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -534,8 +593,23 @@ const Page = () => {
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="number"
-                          name={`price_${index}`}
-                          value={row.price}
+                          name={`person_min${index + 1}`}  // person_min1, person_min2, etc.
+                          onChange={handleChange}
+                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                        />
+                      </td>
+                      <td className="border border-gray-200 px-4 py-2">
+                        <input
+                          type="number"
+                          name={`person_max${index + 1}`}  // person_max1, person_max2, etc.
+                          onChange={handleChange}
+                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                        />
+                      </td>
+                      <td className="border border-gray-200 px-4 py-2">
+                        <input
+                          type="number"
+                          name={`person_type_price${index + 1}`}  // person_type_price1, person_type_price2, etc.
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -545,6 +619,8 @@ const Page = () => {
                 </tbody>
               </table>
             </div>
+
+
           </Accordion>
         </div>
         <div className="col-span-12 lg:col-span-6">
@@ -561,36 +637,53 @@ const Page = () => {
               )}
               initialOpen={true}>
               <div className="pt-6">
-                <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
-                  <label
-                    htmlFor="dropzone-file"
-                    className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
-                    <span className="flex flex-col items-center justify-center py-12">
-                      <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                      <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                        Drag & Drop
+                <div>
+                  <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
+                    <label
+                      htmlFor="dropzone-file"
+                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
+                    >
+                      <span className="flex flex-col items-center justify-center py-12">
+                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
+                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
+                          Drag & Drop
+                        </span>
+                        <span className="block text-center mb-6 clr-neutral-500">OR</span>
+                        <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
+                          Select Files
+                        </span>
+                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
+                          Select Minimum 6 Files
+                        </span>
                       </span>
-                      <span className="block text-center mb-6 clr-neutral-500">
-                        OR
-                      </span>
-                      <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
-                        Select Files
-                      </span>
-                      <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
-                        Select Minimum 6 Files
-                      </span>
-                    </span>
-                    <input
-                      type="file"
-                      id="dropzone-file"
-                      className="hidden"
-                      multiple // Allow multiple files
-                      onChange={handleFileChange}
-                    />
-                  </label>
+                      <input
+                        type="file"
+                        id="dropzone-file"
+                        className="hidden"
+                        multiple
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </div>
+
+                  {/* Display the selected images */}
+                  {bannerImages.length > 0 && (
+                    <div className="mt-6">
+                      <h3 className="text-lg font-semibold">Selected Images</h3>
+                      <div className="grid grid-cols-3 gap-4 mt-4">
+                        {bannerImages.map((image, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={URL.createObjectURL(image)} // Display image from local file
+                              alt={`Selected Image ${index + 1}`}
+                              className="w-full h-[100px] object-cover rounded-lg" // Set same size for all images
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
-
-
 
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
@@ -920,4 +1013,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default Page;  

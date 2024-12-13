@@ -11,7 +11,7 @@ import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { SearchIcon } from "@/public/data/icons";
 
-interface Payment {
+interface Enquiry {
   id: number;
   invoice_id: string;
   service_type: string;
@@ -19,47 +19,47 @@ interface Payment {
   childs: string;
   infants: string;
   customer_id: number;
-  customer_name: string;
-  customer_email: string;
-  customer_mobile_number: string;
+  name: string;
+  email: string;
+  phone: string;
   amount: string;
-  payment_method: string;
+  enquiry_method: string;
   invoice_pdf: string;
   created_at: string;
   updated_at: string;
 }
 
 const Page = () => {
-  const [payments, setPayments] = useState<Payment[]>([]);
+  const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Define items per page
 
-  const fetchPayments = async () => {
+  const fetchEnquiries = async () => {
     try {
       const response = await fetch(
-        "https://yrpitsolutions.com/tourism_api/api/admin/get_all_payments"
+        "https://yrpitsolutions.com/tourism_api/api/get_all_enquiry"
       );
       const data = await response.json();
-      if (data.message) {
-        setPayments(data.data);
+      if (data) {
+        setEnquiries(data);
       }
     } catch (error) {
-      console.error("Error fetching payments:", error);
+      console.error("Error fetching enquiries:", error);
     }
   };
 
   useEffect(() => {
-    fetchPayments();
+    fetchEnquiries();
   }, []);
 
-  // Filtered and paginated payments
-  const filteredPayments = payments.filter((payment) =>
-    payment.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredEnquiries = enquiries.filter((enquiry) =>
+    enquiry.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  
 
-  const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
-  const paginatedPayments = filteredPayments.slice(
+  const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
+  const paginatedEnquiries = filteredEnquiries.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -71,10 +71,7 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Booking</h2>
-        <Link href="#" className="btn-primary">
-          <PlusCircleIcon className="w-5 h-5" /> View all booking
-        </Link>
+        <h2 className="h2 text-white">Enquiry</h2>
       </div>
 
       {/* Recent bookings */}
@@ -99,54 +96,31 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Booking ID</th>
                   <th className="py-3 lg:py-4 px-2">Name</th>
-                  <th className="py-3 lg:py-4 px-2">Mobile</th>
-                  <th className="py-3 lg:py-4 px-2">Details</th>
-                  <th className="py-3 lg:py-4 px-2">Total Price</th>
-                  <th className="py-3 lg:py-4 px-2">Transaction ID</th>
-                  <th className="py-3 lg:py-4 px-2">Invoice</th>
+                  <th className="py-3 lg:py-4 px-2">Email</th>
+                  <th className="py-3 lg:py-4 px-2">Mobile Number</th>
+                  <th className="py-3 lg:py-4 px-2">Message</th>
                 </tr>
               </thead>
               <tbody>
-                {paginatedPayments.map((payment) => (
+                {paginatedEnquiries.map((enquiry) => (
                   <tr
-                    key={payment.id}
+                    key={enquiry.id}
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                   >
                     <td className="py-3 lg:py-4 px-2">
-                      {new Date(payment.created_at).toLocaleDateString()}
+                      {new Date(enquiry.created_at).toLocaleDateString()}
                     </td>
-                    <td className="py-3 lg:py-4 px-2">{payment.booking_id}</td>
-                    <td className="py-3 lg:py-4 px-2">{payment.customer_name}</td>
-                    <td className="py-3 lg:py-4 px-2">{payment.customer_mobile_number}</td>
-                    <td className="py-3 lg:py-4 px-2">{payment.hotel_name}</td>
-                    <td className="py-3 lg:py-4 px-2">₹{payment.amount}/-</td>
-                    <td className="py-3 lg:py-4 px-2">{payment.invoice_id}</td>
-                    <td className="py-3 lg:py-4 px-2">
-                      <a
-                        href={payment.invoice_pdf}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline flex items-center space-x-2"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          className="w-5 h-5 text-black-500"
-                        >
-                          <path d="M19 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V6l-5-4zM13 9h-2v6h2v-2h2v-2h-2V9zm-7 8H5v-2h1v2zm0-4H5v-2h1v2zm0-4H5V7h1v2zm12 9H8V4h5v5h5v10z" />
-                        </svg>
-                        <span className="sr-only">View Invoice</span> {/* For accessibility */}
-                      </a>
-                    </td>
+                    <td className="py-3 lg:py-4 px-2">{enquiry.name}</td>
+                    <td className="py-3 lg:py-4 px-2">{enquiry.email}</td>
+                    <td className="py-3 lg:py-4 px-2">{enquiry.phone}</td>
+                    <td className="py-3 lg:py-4 px-2">{enquiry.message}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
             <Pagination
-              totalItems={filteredPayments.length}
+              totalItems={filteredEnquiries.length}
               itemsPerPage={itemsPerPage}
               currentPage={currentPage}
               onPageChange={handlePageChange}
