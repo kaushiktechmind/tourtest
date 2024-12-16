@@ -8,6 +8,24 @@ import { useEffect, useState } from "react";
 import RazorpayPkgBtn from "@/components/RazorpayPkgBtn";
 RazorpayPkgBtn;
 
+
+interface PaymentData {
+  id: number;
+  booking_id: string;
+  invoice_id: string;
+  service_type: string;
+  adults: string;
+  childs: string;
+  infants: string;
+  customer_id: number;
+  customer_name: string;
+  customer_email: string;
+  customer_mobile_number: string;
+  address: string;
+  passport_no: string;
+}
+
+
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
@@ -40,6 +58,7 @@ const Page = () => {
   const [packageItem, setPackageItem] = useState<any>(null);
 
   const [bookingID, setBookingID] = useState('');
+  const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
@@ -50,7 +69,6 @@ const Page = () => {
 
   const [address, setAddress] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("India");
-  const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [mobile_number, setMobileNumber] = useState(localStorage.getItem("mobile_number") || "");
@@ -64,18 +82,58 @@ const Page = () => {
 
 
 
+  const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
+
+  if (storedPackageData.length === 0) {
+    console.error("No package data found in localStorage");
+    return; // Exit if no data is found
+  }
+  
+  // Access the first object in the array
+  const { 
+    adult, adultPrice,
+    child1, child2, child3, childPrice1, childPrice2, childPrice3,
+    infant1, infant2, infantPrice1, infantPrice2, date 
+  } = storedPackageData[0];
+    
+
+  useEffect(() => {
+    const fetchPaymentData = async () => {
+      const customerId = localStorage.getItem("id");
+      if (!customerId) {
+        console.error("Customer ID not found in local storage");
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://yrpitsolutions.com/tourism_api/api/user/get_payment_by_customer_id/${customerId}`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log("API Response:", data); // Debugging the response
+        if (data?.data) {
+          setPaymentData(data.data); // Extract and set the data array
+        } else {
+          console.error("Unexpected API response:", data);
+        }
+      } catch (error) {
+        console.error("Error fetching payment data:", error);
+      }
+    };
+
+    fetchPaymentData();
+  }, []);
+
+
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(e.target.value);
   };
 
-  useEffect(() => {
-    if (selectedCountry !== "India") {
-      setPassportNumber(""); // Clear passport number field if the country is India
-    }
-  }, [selectedCountry]);
 
-  const passport = selectedCountry !== "India" ? passportNumber : "N/A";
 
 
   useEffect(() => {
@@ -87,7 +145,7 @@ const Page = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setPackageItem(data); // Assuming `data.data` holds the package details
+          setPackageItem(data); 
         } else {
           alert("Failed to fetch package details.");
         }
@@ -109,13 +167,8 @@ const Page = () => {
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6 w-full">
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
-                  <p className="mb-0 h3 text-right">{bookingID}</p>
                 </div>
-
-                <div className="border border-dashed my-6"></div>
-
-                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                  <div className="col-span-12 md:col-span-3">
+                <div className="col-span-12 md:col-span-2 mt-[20px]">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -125,28 +178,57 @@ const Page = () => {
                       <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+
+                <div className="border border-dashed my-6"></div>
+
+                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
+                 
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Adults</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Adults (12+)</span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{adult}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Children</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Children (9-11)</span>
                       </div>
-                      <p className="mb-0 text-lg font-medium">{child}</p>
+                      <p className="mb-0 text-lg font-medium">{child1}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Infants</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Children (6-8)</span>
                       </div>
-                      <p className="mb-0 text-lg font-medium">{infant}</p>
+                      <p className="mb-0 text-lg font-medium">{child2}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Children (3-5)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{child3}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Infants (1+)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{infant1}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Infants (0)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{infant2}</p>
                     </div>
                   </div>
                 </div>
@@ -215,72 +297,42 @@ const Page = () => {
               </div>
 
 
-              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-                <h4 className="mb-3 text-2xl font-semibold">Billing address</h4>
-                <div className="border border-dashed my-6"></div>
-                <div className="grid grid-cols-12 gap-4 lg:gap-6">
-                  <div className="col-span-12 md:col-span-6">
-                    <input
-                      type="text"
-                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
-                      placeholder="Enter Name"
-                      value={name}
-                      onChange={handleNameChange}
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <input
-                      type="email"
-                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
-                      placeholder="Enter Email"
-                      value={email}
-                      onChange={handleEmailChange}
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <input
-                      type="text"
-                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
-                      placeholder="Enter Phone Number"
-                      value={mobile_number}
-                      onChange={handleMobileChange}
-                    />
-                  </div>
-                  <div className="col-span-12 md:col-span-6">
-                    <div className="rounded-full border bg-[var(--bg-1)] pr-4">
-                      <select
-                        className="w-full bg-transparent px-5 py-3 focus:outline-none"
-                        value={selectedCountry}
-                        onChange={handleCountryChange}
-                      >
-                        <option value="India">India</option>
-                        <option value="USA">USA</option>
-                        <option value="New York">New York</option>
-                        <option value="Chicago">Chicago</option>
-                        <option value="Atlanta">Atlanta</option>
-                      </select>
-                    </div>
-                  </div>
-                  {selectedCountry !== "India" && (
-                    <div className="col-span-12">
-                      <input
-                        type="text"
-                        className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
-                        placeholder="Enter Passport Number"
-                      />
-                    </div>
-                  )}
-                  <div className="col-span-12">
-                    <textarea
-                      rows={5}
-                      className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
-                      placeholder="Enter Address"
-                      value={address} // Set value from state
-                      onChange={handleAddressChange} // Update state on change
-                    ></textarea>
-                  </div>
+              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6 flex-1">
+            <h4 className="mb-3 text-2xl font-semibold">Billing Address</h4>
+            <div className="border border-dashed my-6"></div>
+            <div className="grid grid-cols-12 gap-4 lg:gap-6">
+              <div className="col-span-12 md:col-span-6">
+                <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">
+                  {paymentData[0]?.customer_name || ""}
+                </p>
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">{paymentData[0]?.customer_email || ""}</p>
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">  {paymentData[0]?.customer_mobile_number || ""}</p>
+              </div>
+              <div className="col-span-12 md:col-span-6">
+                <div className="rounded-full border bg-[var(--bg-1)] pr-4">
+                  <p className="w-full bg-transparent px-5 py-3">{paymentData[0]?.country || ""}</p>
                 </div>
               </div>
+              <div className="col-span-12">
+                {paymentData[0]?.passport_no !== "N/A" ? (
+                  <input
+                    type="text"
+                    value={paymentData[0]?.passport_no || ""}
+                    readOnly
+                    className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl py-3 px-6"
+                  />
+                ) : null}
+              </div>
+
+              <div className="col-span-12">
+                <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl py-3 px-6"> {paymentData[0]?.address || ""}</p>
+              </div>
+            </div>
+          </div>
             </div>
           </div>
           <div className="col-span-12 lg:col-span-4">
@@ -289,39 +341,47 @@ const Page = () => {
               <div className="border border-dashed my-8"></div>
               <ul className="flex flex-col gap-4">
                 <li className="grid grid-cols-2 items-center">
-                  <p className="mb-0">Adult Price</p>
+                  <p className="mb-0">Adult Price(12+)</p>
                   <p className="mb-0 font-medium text-right">₹{adultPrice}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
-                    <p className="mb-0">Child Price</p>
+                    <p className="mb-0">Child Price (9-11)</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{childPrice}</p>
+                  <p className="mb-0 font-medium text-right">₹{childPrice1}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
-                    <p className="mb-0">Infant Price</p>
+                    <p className="mb-0">Child Price (6-8)</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{infantPrice}</p>
+                  <p className="mb-0 fofnt-medium text-right">₹{childPrice2}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Child Price (3-5)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{childPrice3}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Infant Price (1+)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{infantPrice1}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Infant Price(0)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{infantPrice2}</p>
                 </li>
               </ul>
 
               <div className="border border-dashed my-8"></div>
               <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0">Total Price</p>
+              <p className="mb-0 font-bold">Total Price</p>
+
                 <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
               </div>
-              <RazorpayPkgBtn
-                totalPrice={Number(totalPrice) * 100}
-                currency="INR"
-                name={name}
-                email={email}
-                mobile_number={mobile_number}
-                address={address}
-                passport={passport}
-              >
-                {Number(child)}
-              </RazorpayPkgBtn>
             </div>
           </div>
 

@@ -7,7 +7,7 @@ import Accordion from "@/components/Accordion";
 import QuillEditor from "@/components/QuillEditor";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
@@ -29,7 +29,7 @@ const Page = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const packageId = searchParams.get("packageId"); // Get FAQ ID from URL params
+  const packageId = searchParams.get("packageId");
 
   const [description, setDescription] = useState<string>("");
   const [formData, setFormData] = useState({
@@ -82,10 +82,11 @@ const Page = () => {
   const [locations, setLocations] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [bannerImages, setBannerImages] = useState<File[]>([]);
+  const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
 
-  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+
+  const [faqs, setFAQs] = useState<FAQ[]>([]);
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
   const [inclusions, setInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [exclusions, setExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
@@ -98,7 +99,12 @@ const Page = () => {
       try {
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_include");
         const data = await response.json();
-        setInclusions(data);
+        console.log("Inclusions fetched:", data); // Debug: Log the inclusions data
+        if (Array.isArray(data)) {
+          setInclusions(data); // Ensure the data is an array and set it to state
+        } else {
+          console.error("Invalid data format for inclusions:", data);
+        }
       } catch (error) {
         console.error("Failed to fetch inclusions:", error);
       }
@@ -253,6 +259,63 @@ const Page = () => {
       try {
         const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_by_id/${packageId}`);
         const data = await response.json();
+
+        setBannerImages(data.banner_image || []);
+
+        if (data.package_faqs) {
+          const parsedFAQs = JSON.parse(data.package_faqs).map((faq: any) => ({
+            package_faq_title: faq.question,
+            package_faq_description: faq.answer,
+          }));
+          setSelectedFAQs(parsedFAQs);
+        }
+
+        const parsedItineraries = JSON.parse(data.itinerary);
+        setItineraries(
+          parsedItineraries.map((item: any) => ({
+            day: item.day,
+            title: item.title,
+            description: item.description,
+            image: item.image
+          }))
+        );
+
+        if (data.package_content) {
+          setDescription(data.package_content); // Set the description from the API
+        }
+
+        if (data.amenities) {
+          const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
+          setSelectedAmenities(parsedAmenities); // Prefill selected amenities
+        }
+
+        // Handling inclusions
+        if (data.package_includes) {
+          const packageIncludes = JSON.parse(data.package_includes);
+          console.log("Parsed package_includes:", packageIncludes);
+
+          const preFilledInclusions = inclusions.filter((inc) =>
+            packageIncludes.includes(inc.include_title)
+          );
+          console.log("Pre-filled inclusions:", preFilledInclusions);
+
+          setSelectedInclusions(preFilledInclusions);
+        }
+
+        // Handling exclusions
+        if (data.package_excludes) {
+          const packageExcludes = JSON.parse(data.package_excludes);
+          console.log("Parsed package_excludes:", packageExcludes);
+
+          // Pre-fill exclusions based on the fetched package data
+          const preFilledExclusions = exclusions.filter((ex) =>
+            packageExcludes.includes(ex.exclude_title)
+          );
+          console.log("Pre-filled exclusions:", preFilledExclusions);
+
+          setSelectedExclusions(preFilledExclusions);
+        }
+
         // Prefill formData with the API response
         setFormData((prevState) => ({
           ...prevState,
@@ -303,9 +366,6 @@ const Page = () => {
           person_max6: data.person_max6 || "",
           person_type_price6: data.person_type_price6 || "",
 
-          banner_image: data.banner_image || "",
-
-
           // Add other fields as necessary
         }));
       } catch (error) {
@@ -314,8 +374,7 @@ const Page = () => {
     };
 
     fetchPackageData();
-  }, []);
-
+  }, [packageId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
 
 
 
@@ -397,13 +456,13 @@ const Page = () => {
       }));
       formDataToSend.append("package_faqs", JSON.stringify(faqsData));
 
-      // Check if bannerImages is defined and is an array before using forEach
-      if (Array.isArray(bannerImages)) {
+      // If new files are selected, add them; otherwise, send an empty array
+      if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image[]", file);
         });
       } else {
-        console.error('bannerImages is not defined or not an array');
+        formDataToSend.append("banner_image[]", ""); // Clear existing images if no new ones are provided
       }
 
       // Check if itineraries is defined and is an array before using forEach
@@ -445,7 +504,8 @@ const Page = () => {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Package Update successfully!");
+        alert("Package Updated successfully!");
+        router.push("/package/all-package");
         console.log(data);
       } else {
         alert("Failed to Update package.");
@@ -727,16 +787,12 @@ const Page = () => {
                     >
                       <span className="flex flex-col items-center justify-center py-12">
                         <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                          Drag & Drop
-                        </span>
+                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
                         <span className="block text-center mb-6 clr-neutral-500">OR</span>
                         <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                           Select Files
                         </span>
-                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
-                          Select Minimum 6 Files
-                        </span>
+                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
                       </span>
                       <input
                         type="file"
@@ -748,42 +804,43 @@ const Page = () => {
                     </label>
                   </div>
 
-                  {/* Display the selected images */}
-                  {bannerImages.length > 0 && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold">Selected Images</h3>
-                      <div className="grid grid-cols-3 gap-4 mt-4">
-                        {bannerImages.map((image, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={URL.createObjectURL(image)} // Display image from local file
-                              alt={`Selected Image ${index + 1}`}
-                              className="w-[150px] h-[150px] object-cover rounded-lg" // Set same size for all images
-                            />
+                  <div>
+                    {bannerImages.length > 0 &&
+                      (bannerImages[0] instanceof File ? (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Selected Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={URL.createObjectURL(image as File)}
+                                  alt={`Selected Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                        </div>
+                      ) : (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Existing Banner Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={image as string}
+                                  alt={`Banner Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
 
-                  {/* Display prefilled banner images if they exist */}
-                  {formData.banner_image && formData.banner_image.length > 0 && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold">Existing Banner Images</h3>
-                      <div className="grid grid-cols-3 gap-4 mt-4">
-                        {formData.banner_image.map((image, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={image} // Prefilled banner image from API
-                              alt={`Banner Image ${index + 1}`}
-                              className="w-[150px] h-[150px] object-cover rounded-lg" // Set size for all images
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
+
 
 
 
@@ -819,6 +876,7 @@ const Page = () => {
                 <select
                   name="include_title"
                   onChange={handleAddInclusion}
+                  value="" // Ensures the select shows "Select an Inclusion" by default
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -830,17 +888,24 @@ const Page = () => {
                     </option>
                   ))}
                 </select>
-
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={inclusion.include_title}
-                      onChange={(e) => handleEditInclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={inclusion.include_title}
+                        onChange={(e) => handleEditInclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      {/* <button
+                        type="button"
+                        onClick={() => setSelectedInclusions((prev) => prev.filter((_, i) => i !== index))}
+                        className="text-red-500"
+                      >
+                        Remove
+                      </button> */}
+                    </div>
                   ))}
                 </div>
               </div>
@@ -865,6 +930,7 @@ const Page = () => {
                 <select
                   name="exclude_title"
                   onChange={handleAddExclusion}
+                  value="" // Ensures the select shows "Select an Exclusion" by default
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -877,19 +943,29 @@ const Page = () => {
                   ))}
                 </select>
 
+                {/* Render selected exclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={exclusion.exclude_title}
-                      onChange={(e) => handleEditExclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={exclusion.exclude_title}
+                        onChange={(e) => handleEditExclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      {/* Optionally add a remove button */}
+                      {/* <button
+          type="button"
+          onClick={() => setSelectedExclusions((prev) => prev.filter((_, i) => i !== index))}
+          className="text-red-500"
+        >
+          Remove
+        </button> */}
+                    </div>
                   ))}
                 </div>
-
               </div>
+
             </Accordion>
           </div>
 
@@ -1007,8 +1083,8 @@ const Page = () => {
                       <li key={item.id} className="py-2 flex items-center">
                         <CheckboxCustom
                           label={item.package_attribute_name}
-                          onChange={() => handleCheckboxChange(item.package_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.package_attribute_name)} // Check if selected
+                          onChange={() => handleCheckboxChange(item.package_attribute_name)} // Handle checkbox change
+                          checked={selectedAmenities.includes(item.package_attribute_name)} // Prefill based on selectedAmenities
                         />
                       </li>
                     ))}

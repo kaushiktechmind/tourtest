@@ -1019,6 +1019,10 @@ const Page = () => {
                     </div>
                   ))}
                 </div>
+
+
+
+                
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
                 <input
                   type="text"
@@ -1028,14 +1032,7 @@ const Page = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="3"
                 />
-                {/* <div className="mt-6">
-                  <div className="h-[400px]">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2233.5934788396344!2d89.78232001463437!3d23.836268639364576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1688381345276!5m2!1sen!2sbd"></iframe>
-                  </div>
-                </div> */}
+                
                 <p className="mt-6 mb-4 text-xl font-medium">
                   Map Address (Script) :<span className="astrick">*</span>
                 </p>

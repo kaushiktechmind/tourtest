@@ -31,6 +31,8 @@ interface Payment {
 
 const Page = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [tourName, setTourName] = useState<string | null>(null); 
+
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10; // Define items per page
@@ -67,6 +69,25 @@ const Page = () => {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
+
+
+  useEffect(() => {
+    if (payments.length > 0) {
+      // Find the first non-null value among the fields
+      const tourName = 
+        payments[0]?.hotel_name || 
+        payments[0]?.package_name || 
+        payments[0]?.activity_name || 
+        payments[0]?.cab_name;
+  
+        if (tourName) {
+          setTourName(tourName); // Set the value in state
+        } else {
+          setTourName(null); // Or handle if none found
+        }
+    }
+  }, [payments]);
+  
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -120,7 +141,7 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">{payment.booking_id}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_name}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_mobile_number}</td>
-                    <td className="py-3 lg:py-4 px-2">{payment.hotel_name}</td>
+                    <td className="py-3 lg:py-4 px-2">{tourName}</td>
                     <td className="py-3 lg:py-4 px-2">₹{payment.amount}/-</td>
                     <td className="py-3 lg:py-4 px-2">{payment.invoice_id}</td>
                     <td className="py-3 lg:py-4 px-2">

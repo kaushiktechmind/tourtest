@@ -58,9 +58,27 @@ const Page = () => {
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => setMobileNumber(e.target.value);
+  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassportNumber(e.target.value);
   const handleAddressChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAddress(e.target.value);
   };
+
+
+
+  const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
+
+  if (storedPackageData.length === 0) {
+    console.error("No package data found in localStorage");
+    return; // Exit if no data is found
+  }
+  
+  // Access the first object in the array
+  const { 
+    adult, adultPrice,
+    child1, child2, child3, childPrice1, childPrice2, childPrice3,
+    infant1, infant2, infantPrice1, infantPrice2, date 
+  } = storedPackageData[0];
+    
 
 
 
@@ -87,7 +105,7 @@ const Page = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setPackageItem(data); // Assuming `data.data` holds the package details
+          setPackageItem(data); 
         } else {
           alert("Failed to fetch package details.");
         }
@@ -110,11 +128,7 @@ const Page = () => {
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
                 </div>
-
-                <div className="border border-dashed my-6"></div>
-
-                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                  <div className="col-span-12 md:col-span-3">
+                <div className="col-span-12 md:col-span-2 mt-[20px]">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -124,28 +138,57 @@ const Page = () => {
                       <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+
+                <div className="border border-dashed my-6"></div>
+
+                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
+                 
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Adults</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Adults (12+)</span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{adult}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Children</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Children (9-11)</span>
                       </div>
-                      <p className="mb-0 text-lg font-medium">{child}</p>
+                      <p className="mb-0 text-lg font-medium">{child1}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Infants</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Children (6-8)</span>
                       </div>
-                      <p className="mb-0 text-lg font-medium">{infant}</p>
+                      <p className="mb-0 text-lg font-medium">{child2}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Children (3-5)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{child3}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Infants (1+)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{infant1}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-2">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Infants (0)</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{infant2}</p>
                     </div>
                   </div>
                 </div>
@@ -266,6 +309,8 @@ const Page = () => {
                         type="text"
                         className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
                         placeholder="Enter Passport Number"
+                        value={passportNumber} 
+                        onChange={handlePassportChange}
                       />
                     </div>
                   )}
@@ -288,38 +333,59 @@ const Page = () => {
               <div className="border border-dashed my-8"></div>
               <ul className="flex flex-col gap-4">
                 <li className="grid grid-cols-2 items-center">
-                  <p className="mb-0">Adult Price</p>
+                  <p className="mb-0">Adult Price(12+)</p>
                   <p className="mb-0 font-medium text-right">₹{adultPrice}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
-                    <p className="mb-0">Child Price</p>
+                    <p className="mb-0">Child Price (9-11)</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{childPrice}</p>
+                  <p className="mb-0 font-medium text-right">₹{childPrice1}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
-                    <p className="mb-0">Infant Price</p>
+                    <p className="mb-0">Child Price (6-8)</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{infantPrice}</p>
+                  <p className="mb-0 font-medium text-right">₹{childPrice2}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Child Price (3-5)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{childPrice3}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Infant Price (1+)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{infantPrice1}</p>
+                </li>
+                <li className="grid grid-cols-2 items-center">
+                  <div className="flex items-center gap-2">
+                    <p className="mb-0">Infant Price(0)</p>
+                  </div>
+                  <p className="mb-0 font-medium text-right">₹{infantPrice2}</p>
                 </li>
               </ul>
 
               <div className="border border-dashed my-8"></div>
               <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0">Total Price</p>
+              <p className="mb-0 font-bold">Total Price</p>
+
                 <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
               </div>
               <RazorpayPkgBtn
-                totalPrice={Number(totalPrice) * 100}
+                grandTotal={Number(totalPrice) * 100}
                 currency="INR"
                 name={name}
                 email={email}
                 mobile_number={mobile_number}
                 address={address}
+                bookingID={bookingID}
+                packageId={packageId}
                 passport={passport}
+                country={selectedCountry}
               >
-                {Number(child)}
               </RazorpayPkgBtn>
             </div>
           </div>

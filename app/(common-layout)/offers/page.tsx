@@ -19,6 +19,8 @@ interface PaymentData {
 const Page = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  const [tourName, setTourName] = useState<string | null>(null); 
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -84,6 +86,24 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
+  useEffect(() => {
+    if (paymentData.length > 0) {
+      // Find the first non-null value among the fields
+      const tourName = 
+        paymentData[0]?.hotel_name || 
+        paymentData[0]?.package_name || 
+        paymentData[0]?.activity_name || 
+        paymentData[0]?.cab_name;
+  
+        if (tourName) {
+          setTourName(tourName); // Set the value in state
+        } else {
+          setTourName(null); // Or handle if none found
+        }
+    }
+  }, [paymentData]);
+  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6  mt-[40px]">
@@ -114,7 +134,7 @@ const Page = () => {
                   <th className="border p-2">Date</th>
                   <th className="border p-2">Booking ID</th>
                   <th className="border p-2">Customer Name</th>
-                  <th className="border p-2">Hotel Name</th>
+                  <th className="border p-2">Tour Name</th>
                   <th className="border p-2">Transaction ID</th>
                   <th className="border p-2">Amount</th>
                   <th className="border p-2">Invoice</th>
@@ -132,7 +152,7 @@ const Page = () => {
                     </td>
                     <td className="border p-2">{payment.booking_id}</td>  
                     <td className="border p-2">{payment.customer_name}</td>
-                    <td className="border p-2">{payment.hotel_name}</td>
+                    <td className="border p-2">{tourName}</td>
                     <td className="border p-2">{payment.invoice_id}</td>
                     <td className="border p-2">₹{payment.amount}/-</td>
                     <td className="border p-2">

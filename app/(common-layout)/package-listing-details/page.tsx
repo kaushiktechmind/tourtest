@@ -43,9 +43,13 @@ interface PackageData {
 
 
 const Page = () => {
-  const [selectedAdults, setSelectedAdults] = useState(1);
-  const [selectedChildren, setSelectedChildren] = useState(0);
-  const [selectedInfants, setSelectedInfants] = useState(0);
+  const [selectedAdults, setSelectedAdults] = useState(0);
+  const [selectedChildren1, setSelectedChildren1] = useState(0);
+  const [selectedChildren2, setSelectedChildren2] = useState(0);
+  const [selectedChildren3, setSelectedChildren3] = useState(0);
+  const [selectedInfants1, setSelectedInfants1] = useState(0);
+  const [selectedInfants2, setSelectedInfants2] = useState(0);
+
 
 
   const [packageData, setPackageData] = useState<PackageData | null>(null);
@@ -87,6 +91,24 @@ const Page = () => {
         const itinerary = JSON.parse(data.itinerary || "[]");
         setPackageData(data);
         setItineraryData(itinerary); // Set the parsed itinerary data
+
+        const min1 = Number(data.person_min1 || 0);
+        setSelectedAdults(min1);
+
+        const min2 = Number(data.person_min2 || 0);
+        setSelectedChildren1(min2);
+
+        const min3 = Number(data.person_min3 || 0);
+        setSelectedChildren2(min3);
+
+        const min4 = Number(data.person_min4 || 0);
+        setSelectedChildren3(min4);
+
+        const min5 = Number(data.person_min5 || 0);
+        setSelectedInfants1(min5);
+
+        const min6 = Number(data.person_min6 || 0);
+        setSelectedInfants2(min6);
       } catch (error) {
         console.error("Error fetching package data:", error);
       }
@@ -110,44 +132,86 @@ const Page = () => {
 
   // Calculate the total price based on the selections
   const calculateTotalPrice = () => {
-    const adultPrice = 1000;
-    const childPrice = 300;
-    const infantPrice = 200;
+    const adultPrice = packageData.person_type_price1;
+    const childPrice1 = packageData.person_type_price2;
+    const childPrice2 = packageData.person_type_price3;
+    const childPrice3 = packageData.person_type_price4;
+    const infantPrice1 = packageData.person_type_price5;
+    const infantPrice2 = packageData.person_type_price6;
 
-    return (selectedAdults * adultPrice) + (selectedChildren * childPrice) + (selectedInfants * infantPrice);
+    return (selectedAdults * adultPrice) + (selectedChildren1 * childPrice1) + (selectedChildren2 * childPrice2) + (selectedChildren3 * childPrice3) + (selectedInfants1 * infantPrice1) + (selectedInfants2 * infantPrice2);
   };
 
 
   const handleBookingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault(); // Prevent the default anchor navigation behavior
+  
+    const accessToken = localStorage.getItem("access_token");
+  
     if (!isDateSelected) {
       alert("Select Date 1st");
-      e.preventDefault(); // Prevent navigation if date is not selected
-      return;  // Stop execution here if date is not selected
+      return; // Stop execution here if date is not selected
     }
   
-    const adultPrice = 1000;
-    const childPrice = 300;
-    const infantPrice = 200;
-
+    if (!accessToken) {
+      router.push("/sign-in"); // Redirect to sign-in page if access token is missing
+      return; // Stop execution here if access token is not found
+    }
   
-    const formattedDate = selectedDate.toISOString().split('T')[0];
-  
-    // Create the package data object
-    const packageData = {
+    // Calculate package data and store it in localStorage
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    const newPackageData = {
       date: formattedDate,
       adult: selectedAdults.toString(),
-      child: selectedChildren.toString(),
-      infant: selectedInfants.toString(),
-      adultPrice: adultPrice * selectedAdults,
-      childPrice: childPrice * selectedChildren,
-      infantPrice: infantPrice * selectedInfants,
+      child1: selectedChildren1.toString(),
+      child2: selectedChildren2.toString(),
+      child3: selectedChildren3.toString(),
+      infant1: selectedInfants1.toString(),
+      infant2: selectedInfants2.toString(),
+      adultPrice: packageData.person_type_price1 * selectedAdults,
+      childPrice1: packageData.person_type_price2 * selectedChildren1,
+      childPrice2: packageData.person_type_price3 * selectedChildren2,
+      childPrice3: packageData.person_type_price4 * selectedChildren3,
+      infantPrice1: packageData.person_type_price5 * selectedInfants1,
+      infantPrice2: packageData.person_type_price6 * selectedInfants2,
       totalPrice: calculateTotalPrice(),
     };
   
-    // Replace the existing package data with the new data
-    localStorage.setItem("packageData", JSON.stringify([packageData]));
+    localStorage.setItem("packageData", JSON.stringify([newPackageData]));
+    router.push(`/package-payment?packageId=${packageId}`); // Navigate to the next page
   };
   
+  const min1 = Number(packageData.person_min1);
+  const max1 = Number(packageData.person_max1);
+  const min2 = Number(packageData.person_min2);
+  const max2 = Number(packageData.person_max2);
+  const min3 = Number(packageData.person_min3);
+  const max3 = Number(packageData.person_max3);
+  const min4 = Number(packageData.person_min4);
+  const max4 = Number(packageData.person_max4);
+  const min5 = Number(packageData.person_min5);
+  const max5 = Number(packageData.person_max5);
+  const min6 = Number(packageData.person_min6);
+  const max6 = Number(packageData.person_max6);
+
+  // console.log(min1, min2, min3, min4, min5, min6, max1, max2, max3, max4, max5, max6);
+
+
+  const handleRestrict = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const accessToken = localStorage.getItem("access_token");
+
+  
+    if (!accessToken) {
+      router.push("/sign-in");
+      return; // Exit if no accessToken is found
+    }
+
+    router.push(`/package-payment?packageId=${packageId}`);
+  };
+
+
 
 
 
@@ -161,17 +225,19 @@ const Page = () => {
               <div className="col-span-12 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12">
+                  <div className="col-span-12 h-[288px]">
                     <Link
-                      href="/img/tour-details-img-1.jpg"
+                      href="/img/tour-details-img-4.jpg"
                       className="link property-gallery">
                       <Image
                         width={610}
                         height={288}
                         src={packageData.banner_image[0]}
                         alt="image"
-                        className="  rounded-2xl"
+                        className="w-full h-full object-cover rounded-2xl"
                       />
                     </Link>
+                  </div>
                   </div>
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative">
                     <Link
@@ -186,7 +252,7 @@ const Page = () => {
                       <Image
                         width={610}
                         height={681}
-                        src={packageData.banner_image[0]}
+                        src={packageData.banner_image[1]}
                         alt="image"
                         className=" w-full rounded-2xl"
                       />
@@ -201,7 +267,7 @@ const Page = () => {
                   <Image
                     width={610}
                     height={288}
-                    src={packageData.banner_image[0]}
+                    src={packageData.banner_image[2]}
                     alt="image"
                     className=" w-full h-full object-fit-cover rounded-2xl"
                   />
@@ -209,19 +275,20 @@ const Page = () => {
               </div>
               <div className="col-span-12 md:col-span-6 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
-                  <div className="col-span-12">
+                  <div className="col-span-12 h-[288px]">
                     <Link
                       href="/img/tour-details-img-4.jpg"
                       className="link property-gallery">
                       <Image
                         width={610}
                         height={288}
-                        src={packageData.banner_image[0]}
+                        src={packageData.banner_image[3]}
                         alt="image"
-                        className=" w-full rounded-2xl"
+                        className="w-full h-full object-cover rounded-2xl"
                       />
                     </Link>
                   </div>
+
                   <div className="col-span-12 sm:col-span-6 h-80">
                     <Link
                       href="/img/tour-details-img-5.jpg"
@@ -229,7 +296,7 @@ const Page = () => {
                       <Image
                         width={293}
                         height={384}
-                        src={packageData.banner_image[0]}
+                        src={packageData.banner_image[4]}
                         alt="image"
                         className="w-full h-full rounded-2xl object-cover"
                       />
@@ -242,7 +309,7 @@ const Page = () => {
                       <Image
                         width={293}
                         height={384}
-                        src={packageData.banner_image[0]}
+                        src={packageData.banner_image[5]}
                         alt="image"
                         className="w-full h-full rounded-2xl object-cover"
                       />
@@ -841,11 +908,11 @@ const Page = () => {
                           <div className="mb-6">
                             <div className="space-y-4">
                               <div>
-                                <p className="text-gray-500 text-sm">Age: 18+</p>
+                                <p className="text-gray-500 text-sm">Age: 12+</p>
                                 <div className="flex items-center justify-between">
                                   <div>
                                     <p className="text-gray-600 font-medium">Adult</p>
-                                    <p className="text-sm text-gray-400">1000 per person</p>
+                                    <p className="text-sm text-gray-400"> {packageData.person_type_price1} per person</p>
                                   </div>
                                   <div className="relative">
                                     <select
@@ -853,9 +920,44 @@ const Page = () => {
                                       value={selectedAdults}
                                       onChange={(e) => setSelectedAdults(Number(e.target.value))}
                                     >
-                                      <option>1</option>
-                                      <option>2</option>
-                                      <option>3</option>
+
+                                      {Array.from(
+                                        { length: max1 - min1 + 1 },
+                                        (_, index) => index + min1
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
+                                    </select>
+
+                                    <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Child Price */}
+                              <div>
+                                <p className="text-gray-500 text-sm">Age: 9-11</p>
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="text-gray-600 font-medium">Child</p>
+                                    <p className="text-sm text-gray-400">{packageData.person_type_price2} per person</p>
+                                  </div>
+                                  <div className="relative">
+                                    <select
+                                      className="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                      value={selectedChildren1}
+                                      onChange={(e) => setSelectedChildren1(Number(e.target.value))}
+                                    >
+                                      {Array.from(
+                                        { length: max2 - min2 + 1 },
+                                        (_, index) => index + min2
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
                                     </select>
                                     <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                                   </div>
@@ -864,44 +966,110 @@ const Page = () => {
 
                               {/* Child Price */}
                               <div>
-                                <p className="text-gray-500 text-sm">Age: 6-17</p>
+                                <p className="text-gray-500 text-sm">Age: 6-8</p>
                                 <div className="flex items-center justify-between">
                                   <div>
                                     <p className="text-gray-600 font-medium">Child</p>
-                                    <p className="text-sm text-gray-400">300 per person</p>
+                                    <p className="text-sm text-gray-400">{packageData.person_type_price3} per person</p>
                                   </div>
                                   <div className="relative">
                                     <select
                                       className="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                                      value={selectedChildren}
-                                      onChange={(e) => setSelectedChildren(Number(e.target.value))}
+                                      value={selectedChildren2}
+                                      onChange={(e) => setSelectedChildren2(Number(e.target.value))}
                                     >
-                                      <option>0</option>
-                                      <option>1</option>
-                                      <option>2</option>
+                                      {Array.from(
+                                        { length: max3 - min3 + 1 },
+                                        (_, index) => index + min3
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
                                     </select>
                                     <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                                   </div>
                                 </div>
                               </div>
 
-                              {/* Infant Price */}
+                              {/* Child Price */}
                               <div>
-                                <p className="text-gray-500 text-sm">Age: 0-5</p>
+                                <p className="text-gray-500 text-sm">Age: 3-5</p>
                                 <div className="flex items-center justify-between">
                                   <div>
-                                    <p className="text-gray-600 font-medium">Infant</p>
-                                    <p className="text-sm text-gray-400">200 per person</p>
+                                    <p className="text-gray-600 font-medium">Child</p>
+                                    <p className="text-sm text-gray-400">{packageData.person_type_price4} per person</p>
                                   </div>
                                   <div className="relative">
                                     <select
                                       className="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
-                                      value={selectedInfants}
-                                      onChange={(e) => setSelectedInfants(Number(e.target.value))}
+                                      value={selectedChildren3}
+                                      onChange={(e) => setSelectedChildren3(Number(e.target.value))}
                                     >
-                                      <option>0</option>
-                                      <option>1</option>
-                                      <option>2</option>
+                                      {Array.from(
+                                        { length: max4 - min4 + 1 },
+                                        (_, index) => index + min4
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                                  </div>
+                                </div>
+                              </div>
+
+
+
+                              <div>
+                                <p className="text-gray-500 text-sm">Age: 1+</p>
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="text-gray-600 font-medium">Infant</p>
+                                    <p className="text-sm text-gray-400">{packageData.person_type_price5} per person</p>
+                                  </div>
+                                  <div className="relative">
+                                    <select
+                                      className="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                      value={selectedInfants1}
+                                      onChange={(e) => setSelectedInfants1(Number(e.target.value))}
+                                    >
+                                      {Array.from(
+                                        { length: max5 - min5 + 1 },
+                                        (_, index) => index + min5
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
+                                    </select>
+                                    <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div>
+                                <p className="text-gray-500 text-sm">Age: 0-1</p>
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <p className="text-gray-600 font-medium">Infant</p>
+                                    <p className="text-sm text-gray-400">{packageData.person_type_price6} per person</p>
+                                  </div>
+                                  <div className="relative">
+                                    <select
+                                      className="appearance-none bg-white border border-gray-300 rounded-md py-2 px-4 pr-8 text-gray-600 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                                      value={selectedInfants2}
+                                      onChange={(e) => setSelectedInfants2(Number(e.target.value))}
+                                    >
+                                      {Array.from(
+                                        { length: max6 - min6 + 1 },
+                                        (_, index) => index + min6
+                                      ).map((value) => (
+                                        <option key={value} value={value}>
+                                          {value}
+                                        </option>
+                                      ))}
                                     </select>
                                     <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"></i>
                                   </div>
@@ -911,7 +1079,7 @@ const Page = () => {
                             </div>
                           </div>
 
-                       
+
 
                           {/* Total Price */}
                           <div className="flex items-center justify-between">
