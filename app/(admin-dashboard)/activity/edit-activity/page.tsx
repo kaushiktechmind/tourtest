@@ -30,6 +30,10 @@ interface Field {
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const activityId = searchParams.get("activityId");
+
+
   const [tickets, setTickets] = useState([
     { code: "", name: "", price: "", number: "" }
   ]);
@@ -49,14 +53,14 @@ const Page = () => {
     full_address: "",
     i_frame_link: "",
     ticket: "",
-    banner_image_multiple: "",
+    banner_image_multiple_multiple: "",
     location_name: "",
   });
 
   const [locations, setLocations] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [activity_attribute, setAmenities] = useState<Amenity[]>([]);
-  const [bannerImages, setBannerImages] = useState<File[]>([]);
+  const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
 
   const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
@@ -244,6 +248,77 @@ const Page = () => {
 
 
 
+  useEffect(() => {
+    const fetchActivityData = async () => {
+      try {
+        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_id/${activityId}`);
+        const data = await response.json();
+
+        setBannerImages(data.banner_image_multiple || []);
+
+        // if (data.faqs) {
+        //   const parsedFAQs = JSON.parse(data.faqs).map((faq: any) => ({
+        //     faq_title: faq.question,
+        //     faq_description: faq.answer,
+        //   }));
+        //   setSelectedFAQs(parsedFAQs);
+        // }
+
+        // const parsedItineraries = JSON.parse(data.itinerary);
+        // setItineraries(
+        //   parsedItineraries.map((item: any) => ({
+        //     day: item.day,
+        //     title: item.title,
+        //     description: item.description,
+        //     image: item.image
+        //   }))
+        // );
+
+        if (data.activity_content) {
+          setDescription(data.activity_content); // Set the description from the API
+        }
+
+        if (data.amenities) {
+          const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
+          setSelectedAmenities(parsedAmenities); // Prefill selected amenities
+        }
+
+
+
+
+        // Prefill formData with the API response
+        setFormData((prevState) => ({
+          ...prevState,
+          activity_title: data.activity_title || "",
+          activity_content: data.activity_content || "",
+          price: data.price || "",
+          sale_price: data.sale_price || "",
+          youtube_video_image: data.youtube_video_image || "",
+          duration: data.duration || "",
+          pickup_point: data.pickup_point || "",
+          location_name: data.location_name || "",
+          start_time: data.start_time || "",
+          full_address: data.full_address || "",
+          i_frame_link: data.i_frame_link || "",
+
+
+
+          // Add other fields as necessary
+        }));
+      } catch (error) {
+        console.error("Error fetching activity data:", error);
+      }
+    };
+
+    fetchActivityData();
+  }, [activityId]);
+
+
+
+
+
+
+
 
   const handleSubmit = async () => {
     const token = localStorage.getItem("access_token");
@@ -272,6 +347,10 @@ const Page = () => {
       formDataToSend.append("full_address", formData.full_address);
       formDataToSend.append("i_frame_link", formData.i_frame_link);
 
+      formDataToSend.append("_method", "PUT");
+
+
+
 
 
 
@@ -288,14 +367,17 @@ const Page = () => {
       selectedFAQs.forEach((faq) => {
         formDataToSend.append("faqs[]", JSON.stringify({ title: faq.faq_title, description: faq.faq_description }));
       });
-      // Check if bannerImages is defined and is an array before using forEach
-      if (Array.isArray(bannerImages)) {
+
+
+      // If new files are selected, add them; otherwise, send an empty array
+      if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image_multiple[]", file);
         });
       } else {
-        console.error('bannerImages is not defined or not an array');
+        formDataToSend.append("banner_image_multiple[]", ""); // Clear existing images if no new ones are provided
       }
+
 
 
       // Append Education Fields
@@ -338,7 +420,7 @@ const Page = () => {
       });
 
       // Send the request with FormData
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_activity", {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_activity_by_id/${activityId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -349,7 +431,7 @@ const Page = () => {
       console.log("responseeeeeee", response)
       if (response.ok) {
         const data = await response.json();
-        alert("Activity saved successfully!");
+        alert("Activity Updated successfully!");
         router.push("/activity/all-activity");
       } else {
         alert("Failed to save activity.");
@@ -548,7 +630,7 @@ const Page = () => {
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               {/* Education Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
+              <p className=" mb-4 text-xl font-medium">Education:</p>
               {renderInputRows(educationFields, setEducationFields)}
               {educationFields.length < 5 && (
                 <button
@@ -608,53 +690,68 @@ const Page = () => {
               )}
               initialOpen={true}>
               <div className="pt-6">
-                <div>
-                  <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
-                    >
-                      <span className="flex flex-col items-center justify-center py-12">
-                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                          Drag & Drop
-                        </span>
-                        <span className="block text-center mb-6 clr-neutral-500">OR</span>
-                        <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
-                          Select Files
-                        </span>
-                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
-                          Select Minimum 6 Files
-                        </span>
-                      </span>
-                      <input
-                        type="file"
-                        id="dropzone-file"
-                        className="hidden"
-                        multiple
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                  </div>
-
-                  {/* Display the selected images */}
-                  {bannerImages.length > 0 && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold">Selected Images</h3>
-                      <div className="grid grid-cols-3 gap-4 mt-4">
-                        {bannerImages.map((image, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={URL.createObjectURL(image)} // Display image from local file
-                              alt={`Selected Image ${index + 1}`}
-                              className="w-full h-[100px] object-cover rounded-lg" // Set same size for all images
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
+                 <div>
+                                  <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
+                                    <label
+                                      htmlFor="dropzone-file"
+                                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
+                                    >
+                                      <span className="flex flex-col items-center justify-center py-12">
+                                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
+                                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
+                                        <span className="block text-center mb-6 clr-neutral-500">OR</span>
+                                        <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
+                                          Select Files
+                                        </span>
+                                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
+                                      </span>
+                                      <input
+                                        type="file"
+                                        id="dropzone-file"
+                                        className="hidden"
+                                        multiple
+                                        onChange={handleFileChange}
+                                      />
+                                    </label>
+                                  </div>
+                
+                                  <div>
+                                    {bannerImages.length > 0 &&
+                                      (bannerImages[0] instanceof File ? (
+                                        <div className="mt-6">
+                                          <h3 className="text-lg font-semibold">Selected Images</h3>
+                                          <div className="grid grid-cols-3 gap-4 mt-4">
+                                            {bannerImages.map((image, index) => (
+                                              <div key={index} className="relative">
+                                                <img
+                                                  src={URL.createObjectURL(image as File)}
+                                                  alt={`Selected Image ${index + 1}`}
+                                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                                />
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ) : (
+                                        <div className="mt-6">
+                                          <h3 className="text-lg font-semibold">Existing Banner Images</h3>
+                                          <div className="grid grid-cols-3 gap-4 mt-4">
+                                            {bannerImages.map((image, index) => (
+                                              <div key={index} className="relative">
+                                                <img
+                                                  src={image as string}
+                                                  alt={`Banner Image ${index + 1}`}
+                                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                                />
+                                              </div>
+                                            ))}
+                                          </div>
+                                        </div>
+                                      ))}
+                                  </div>
+                
+                                </div>
+                
 
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
@@ -812,7 +909,7 @@ const Page = () => {
             {tickets.map((ticket, index) => (
               <div key={index} className="mb-6 p-4 border rounded-md">
                 <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/5 flex flex-col">
+                  <div className="w-full md:w-1/6 flex flex-col">
                     <div>
                       <label className="block text-sm font-medium mb-2">Code</label>
                       <textarea
@@ -823,7 +920,7 @@ const Page = () => {
                       />
                     </div>
                   </div>
-                  <div className="w-full md:w-1/3">
+                  <div className="w-full md:w-1/5">
                     <label className="block text-sm font-medium mb-2">Name</label>
                     <textarea
                       value={ticket.name}
@@ -832,7 +929,7 @@ const Page = () => {
                       placeholder="Name"
                     />
                   </div>
-                  <div className="w-full md:w-1/3">
+                  <div className="w-full md:w-1/5">
                     <label className="block text-sm font-medium mb-2">Price</label>
                     <textarea
                       value={ticket.price}
@@ -841,7 +938,7 @@ const Page = () => {
                       placeholder="Price"
                     />
                   </div>
-                  <div className="w-full md:w-1/4">
+                  <div className="w-full md:w-1/6">
                     <label className="block text-sm font-medium mb-2">Number</label>
                     <textarea
                       value={ticket.number}
@@ -851,7 +948,7 @@ const Page = () => {
                     />
                   </div>
                   {tickets.length > 1 && (
-                    <div className="w-full md:w-1/6 flex items-center justify-end">
+                    <div className="w-full md:w-1/5">
                       <button
                         type="button"
                         onClick={() => deleteTicket(index)}

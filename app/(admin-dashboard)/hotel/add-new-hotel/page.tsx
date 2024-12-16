@@ -159,6 +159,8 @@ const Page = () => {
     updatedFields[index] = { ...updatedFields[index], [name]: value };
     setFields(updatedFields);
   };
+
+  
   const formatDataForApi = () => {
     const formattedData: any = {};
 
