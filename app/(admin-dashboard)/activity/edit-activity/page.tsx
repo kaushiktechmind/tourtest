@@ -49,11 +49,10 @@ const Page = () => {
     duration: "",
     start_time: "",
     tour_max_people: "",
-    pickup_point: "",
     full_address: "",
     i_frame_link: "",
     ticket: "",
-    banner_image_multiple_multiple: "",
+    banner_image_multiple: "",
     location_name: "",
   });
 
@@ -62,18 +61,18 @@ const Page = () => {
   const [activity_attribute, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
 
-  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+  const [faqs, setFAQs] = useState<FAQ[]>([]);
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
 
-  const [educationFields, setEducationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [healthFields, setHealthFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
+  // const [educationFields, setEducationFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
+  // const [healthFields, setHealthFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
+  // const [transportationFields, setTransportationFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
 
 
 
@@ -118,6 +117,7 @@ const Page = () => {
     }
   };
 
+
   const handleAddRow = (
     fields: Field[],
     setFields: React.Dispatch<React.SetStateAction<Field[]>>
@@ -144,64 +144,63 @@ const Page = () => {
 
 
 
-  const formatDataForApi = () => {
-    const formattedData: any = {};
+  // const formatDataForApi = () => {
+  //   const formattedData: any = {};
 
-    educationFields.forEach((field, index) => {
-      formattedData[`education_name${index + 1}`] = field.name;
-      formattedData[`education_content${index + 1}`] = field.content;
-      formattedData[`education_distance${index + 1}`] = field.distance;
-    });
+  //   educationFields.forEach((field, index) => {
+  //     formattedData[`education_name${index + 1}`] = field.name;
+  //     formattedData[`education_content${index + 1}`] = field.content;
+  //     formattedData[`education_distance${index + 1}`] = field.distance;
+  //   });
 
-    healthFields.forEach((field, index) => {
-      formattedData[`health_name${index + 1}`] = field.name;
-      formattedData[`health_content${index + 1}`] = field.content;
-      formattedData[`health_distance${index + 1}`] = field.distance;
-    });
+  //   healthFields.forEach((field, index) => {
+  //     formattedData[`health_name${index + 1}`] = field.name;
+  //     formattedData[`health_content${index + 1}`] = field.content;
+  //     formattedData[`health_distance${index + 1}`] = field.distance;
+  //   });
 
-    transportationFields.forEach((field, index) => {
-      formattedData[`transport_name${index + 1}`] = field.name;
-      formattedData[`transport_content${index + 1}`] = field.content;
-      formattedData[`transport_distance${index + 1}`] = field.distance;
-    });
+  //   transportationFields.forEach((field, index) => {
+  //     formattedData[`transport_name${index + 1}`] = field.name;
+  //     formattedData[`transport_content${index + 1}`] = field.content;
+  //     formattedData[`transport_distance${index + 1}`] = field.distance;
+  //   });
 
-    return formattedData;
-  };
+  //   return formattedData;
+  // };
 
-  // Render input rows
-  const renderInputRows = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    return fields.map((field, index) => (
-      <div key={index} className="flex gap-4 mb-4">
-        <input
-          type="text"
-          name="name"
-          value={field.name}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Name"
-        />
-        <input
-          type="text"
-          name="content"
-          value={field.content}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Content"
-        />
-        <input
-          type="text"
-          name="distance"
-          value={field.distance}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Distance"
-        />
-      </div>
-    ));
-  };
+  // const renderInputRows = (
+  //   fields: Field[],
+  //   setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  // ) => {
+  //   return fields.map((field, index) => (
+  //     <div key={index} className="flex gap-4 mb-4">
+  //       <input
+  //         type="text"
+  //         name="name"
+  //         value={field.name}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Name"
+  //       />
+  //       <input
+  //         type="text"
+  //         name="content"
+  //         value={field.content}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Content"
+  //       />
+  //       <input
+  //         type="text"
+  //         name="distance"
+  //         value={field.distance}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Distance"
+  //       />
+  //     </div>
+  //   ));
+  // };
 
 
 
@@ -247,32 +246,18 @@ const Page = () => {
 
 
 
-
   useEffect(() => {
     const fetchActivityData = async () => {
       try {
         const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_id/${activityId}`);
         const data = await response.json();
 
+
+
         setBannerImages(data.banner_image_multiple || []);
 
-        // if (data.faqs) {
-        //   const parsedFAQs = JSON.parse(data.faqs).map((faq: any) => ({
-        //     faq_title: faq.question,
-        //     faq_description: faq.answer,
-        //   }));
-        //   setSelectedFAQs(parsedFAQs);
-        // }
 
-        // const parsedItineraries = JSON.parse(data.itinerary);
-        // setItineraries(
-        //   parsedItineraries.map((item: any) => ({
-        //     day: item.day,
-        //     title: item.title,
-        //     description: item.description,
-        //     image: item.image
-        //   }))
-        // );
+
 
         if (data.activity_content) {
           setDescription(data.activity_content); // Set the description from the API
@@ -283,8 +268,33 @@ const Page = () => {
           setSelectedAmenities(parsedAmenities); // Prefill selected amenities
         }
 
+        if (data.faqs) {
+          const parsedFAQs = data.faqs.map((faq: string, index: number) => {
+            try {
+              const parsed = JSON.parse(faq);
+              return { id: index + 1, faq_title: parsed.title, faq_description: parsed.description };
+            } catch (error) {
+              console.error("Error parsing FAQ:", faq, error);
+              return null;
+            }
+          }).filter((faq) => faq !== null);
+
+          setSelectedFAQs(parsedFAQs);
+        }
 
 
+        // Filter and set only the tickets with available data
+        const ticketData = [
+          { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
+          { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
+          { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
+          { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
+          { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
+        ];
+
+        // Filter out tickets with empty fields
+        const filteredTicketData = ticketData.filter(ticket => ticket.code || ticket.name || ticket.price || ticket.number);
+        setTickets(filteredTicketData); // Set filtered tickets
 
         // Prefill formData with the API response
         setFormData((prevState) => ({
@@ -295,16 +305,65 @@ const Page = () => {
           sale_price: data.sale_price || "",
           youtube_video_image: data.youtube_video_image || "",
           duration: data.duration || "",
-          pickup_point: data.pickup_point || "",
           location_name: data.location_name || "",
           start_time: data.start_time || "",
           full_address: data.full_address || "",
           i_frame_link: data.i_frame_link || "",
 
 
+          tickets: Array.from({ length: 5 }, (_, index) => ({
+            code: data[`ticket_code${index + 1}`] || "",
+            name: data[`ticket_name${index + 1}`] || "",
+            price: data[`ticket_price${index + 1}`] || "",
+            number: data[`no_of_available_tickets${index + 1}`] || ""
+          }))
+
 
           // Add other fields as necessary
         }));
+
+
+        // Prefill the fields for education, health, and transportation
+        const prefilledEducationFields = [];
+        const prefilledHealthFields = [];
+        const prefilledTransportationFields = [];
+
+        for (let i = 1; i <= 5; i++) {
+          if (data[`education_name${i}`]) {
+            prefilledEducationFields.push({
+              name: data[`education_name${i}`] || "",
+              content: data[`education_content${i}`] || "",
+              distance: data[`education_distance${i}`] || "",
+            });
+          }
+          if (data[`health_name${i}`]) {
+            prefilledHealthFields.push({
+              name: data[`health_name${i}`] || "",
+              content: data[`health_content${i}`] || "",
+              distance: data[`health_distance${i}`] || "",
+            });
+          }
+          if (data[`transport_name${i}`]) {
+            prefilledTransportationFields.push({
+              name: data[`transport_name${i}`] || "",
+              content: data[`transport_content${i}`] || "",
+              distance: data[`transport_distance${i}`] || "",
+            });
+          }
+        }
+
+        // Set the fields state with the prefilled data
+        // setEducationFields(prefilledEducationFields);
+        // setHealthFields(prefilledHealthFields);
+        // setTransportationFields(prefilledTransportationFields);
+
+
+
+        if (data.activity_attribute && Array.isArray(data.activity_attribute)) {
+          setSelectedAmenities(data.activity_attribute);
+        }
+
+
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -343,7 +402,6 @@ const Page = () => {
       formDataToSend.append("youtube_video_image", formData.youtube_video_image);
       formDataToSend.append("duration", formData.duration);
       formDataToSend.append("start_time", formData.start_time);
-      formDataToSend.append("pickup_point", formData.pickup_point);
       formDataToSend.append("full_address", formData.full_address);
       formDataToSend.append("i_frame_link", formData.i_frame_link);
 
@@ -368,38 +426,32 @@ const Page = () => {
         formDataToSend.append("faqs[]", JSON.stringify({ title: faq.faq_title, description: faq.faq_description }));
       });
 
-
       // If new files are selected, add them; otherwise, send an empty array
       if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image_multiple[]", file);
         });
-      } else {
-        formDataToSend.append("banner_image_multiple[]", ""); // Clear existing images if no new ones are provided
       }
 
 
 
-      // Append Education Fields
-      educationFields.forEach((field, index) => {
-        formDataToSend.append(`education_name${index + 1}`, field.name);
-        formDataToSend.append(`education_content${index + 1}`, field.content);
-        formDataToSend.append(`education_distance${index + 1}`, field.distance);
-      });
+      // educationFields.forEach((field, index) => {
+      //   formDataToSend.append(`education_name${index + 1}`, field.name);
+      //   formDataToSend.append(`education_content${index + 1}`, field.content);
+      //   formDataToSend.append(`education_distance${index + 1}`, field.distance);
+      // });
 
-      // Append Health Fields
-      healthFields.forEach((field, index) => {
-        formDataToSend.append(`health_name${index + 1}`, field.name);
-        formDataToSend.append(`health_content${index + 1}`, field.content);
-        formDataToSend.append(`health_distance${index + 1}`, field.distance);
-      });
+      // healthFields.forEach((field, index) => {
+      //   formDataToSend.append(`health_name${index + 1}`, field.name);
+      //   formDataToSend.append(`health_content${index + 1}`, field.content);
+      //   formDataToSend.append(`health_distance${index + 1}`, field.distance);
+      // });
 
-      // Append Transportation Fields
-      transportationFields.forEach((field, index) => {
-        formDataToSend.append(`transport_name${index + 1}`, field.name);
-        formDataToSend.append(`transport_content${index + 1}`, field.content);
-        formDataToSend.append(`transport_distance${index + 1}`, field.distance);
-      });
+      // transportationFields.forEach((field, index) => {
+      //   formDataToSend.append(`transport_name${index + 1}`, field.name);
+      //   formDataToSend.append(`transport_content${index + 1}`, field.content);
+      //   formDataToSend.append(`transport_distance${index + 1}`, field.distance);
+      // });
 
 
 
@@ -428,7 +480,6 @@ const Page = () => {
         },
         body: formDataToSend, // Send the FormData object
       });
-      console.log("responseeeeeee", response)
       if (response.ok) {
         const data = await response.json();
         alert("Activity Updated successfully!");
@@ -567,7 +618,7 @@ const Page = () => {
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Start Time :</p>
               <input
-                type="number"
+                type="text"
                 name="start_time"
                 value={formData.start_time}
                 onChange={handleChange}
@@ -581,15 +632,6 @@ const Page = () => {
                 type="text"
                 name="duration"
                 value={formData.duration}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
-              <p className="mt-6 mb-4 text-xl font-medium">Pickup Point :</p>
-              <input
-                type="text"
-                name="pickup_point"
-                value={formData.pickup_point}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
@@ -620,6 +662,85 @@ const Page = () => {
           <Accordion
             buttonContent={(open) => (
               <div
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}>
+                <h3 className="h3">Tickets</h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                />
+              </div>
+            )}
+            initialOpen={true}>
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {tickets.map((ticket, index) => (
+                <div key={index} className="mb-6 p-4 border rounded-md">
+                  <div className="flex flex-wrap gap-4 items-start">
+                    <div className="w-full md:w-1/6 flex flex-col">
+                      <div>
+                        <label className="block text-sm font-medium mb-2">Code</label>
+                        <input
+                          value={ticket.code}
+                          onChange={(e) => handleInputChange(index, "code", e.target.value)}
+                          className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                          placeholder="Code"
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full md:w-1/5">
+                      <label className="block text-sm font-medium mb-2">Name</label>
+                      <input
+                        value={ticket.name}
+                        onChange={(e) => handleInputChange(index, "name", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Name"
+                      />
+                    </div>
+                    <div className="w-full md:w-1/5">
+                      <label className="block text-sm font-medium mb-2">Price</label>
+                      <input
+                        value={ticket.price}
+                        onChange={(e) => handleInputChange(index, "price", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Price"
+                      />
+                    </div>
+                    <div className="w-full md:w-1/6">
+                      <label className="block text-sm font-medium mb-2">Number</label>
+                      <input
+                        value={ticket.number}
+                        onChange={(e) => handleInputChange(index, "number", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Number"
+                      />
+                    </div>
+                    {tickets.length > 1 && (
+                      <div className="w-full md:w-1/5">
+                        <button
+                          type="button"
+                          onClick={() => deleteTicket(index)}
+                          className="text-red-500"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addNewTicket}
+                className="text-blue-500"
+                disabled={tickets.length >= 5}
+              >
+                Add New
+              </button>
+            </div>
+
+          </Accordion>
+
+          {/* <Accordion
+            buttonContent={(open) => (
+              <div
                 className={`${open ? "rounded-t-2xl" : "rounded-2xl"
                   } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
               >
@@ -629,7 +750,6 @@ const Page = () => {
             initialOpen={true}
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {/* Education Section */}
               <p className=" mb-4 text-xl font-medium">Education:</p>
               {renderInputRows(educationFields, setEducationFields)}
               {educationFields.length < 5 && (
@@ -644,7 +764,6 @@ const Page = () => {
                 </button>
               )}
 
-              {/* Health Section */}
               <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
               {renderInputRows(healthFields, setHealthFields)}
               {healthFields.length < 5 && (
@@ -659,7 +778,6 @@ const Page = () => {
                 </button>
               )}
 
-              {/* Transportation Section */}
               <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
               {renderInputRows(transportationFields, setTransportationFields)}
               {transportationFields.length < 5 && (
@@ -674,7 +792,7 @@ const Page = () => {
                 </button>
               )}
             </div>
-          </Accordion>
+          </Accordion> */}
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -690,68 +808,70 @@ const Page = () => {
               )}
               initialOpen={true}>
               <div className="pt-6">
-                 <div>
-                                  <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
-                                    <label
-                                      htmlFor="dropzone-file"
-                                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
-                                    >
-                                      <span className="flex flex-col items-center justify-center py-12">
-                                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
-                                        <span className="block text-center mb-6 clr-neutral-500">OR</span>
-                                        <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
-                                          Select Files
-                                        </span>
-                                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
-                                      </span>
-                                      <input
-                                        type="file"
-                                        id="dropzone-file"
-                                        className="hidden"
-                                        multiple
-                                        onChange={handleFileChange}
-                                      />
-                                    </label>
-                                  </div>
-                
-                                  <div>
-                                    {bannerImages.length > 0 &&
-                                      (bannerImages[0] instanceof File ? (
-                                        <div className="mt-6">
-                                          <h3 className="text-lg font-semibold">Selected Images</h3>
-                                          <div className="grid grid-cols-3 gap-4 mt-4">
-                                            {bannerImages.map((image, index) => (
-                                              <div key={index} className="relative">
-                                                <img
-                                                  src={URL.createObjectURL(image as File)}
-                                                  alt={`Selected Image ${index + 1}`}
-                                                  className="w-[150px] h-[150px] object-cover rounded-lg"
-                                                />
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div className="mt-6">
-                                          <h3 className="text-lg font-semibold">Existing Banner Images</h3>
-                                          <div className="grid grid-cols-3 gap-4 mt-4">
-                                            {bannerImages.map((image, index) => (
-                                              <div key={index} className="relative">
-                                                <img
-                                                  src={image as string}
-                                                  alt={`Banner Image ${index + 1}`}
-                                                  className="w-[150px] h-[150px] object-cover rounded-lg"
-                                                />
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      ))}
-                                  </div>
-                
-                                </div>
-                
+                <div>
+                  <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
+                    <label
+                      htmlFor="dropzone-file"
+                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed"
+                    >
+                      <span className="flex flex-col items-center justify-center py-12">
+                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
+                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
+                        <span className="block text-center mb-6 clr-neutral-500">OR</span>
+                        <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
+                          Select Files
+                        </span>
+                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
+                      </span>
+                      <input
+                        type="file"
+                        id="dropzone-file"
+                        className="hidden"
+                        multiple
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </div>
+
+                  <div>
+                    {bannerImages.length > 0 &&
+                      (bannerImages[0] instanceof File ? (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Selected Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={URL.createObjectURL(image as File)}
+                                  alt={`Selected Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Existing Banner Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={image as string}
+                                  alt={`Banner Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
+                </div>
+
+
+
 
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
@@ -893,86 +1013,6 @@ const Page = () => {
         </div>
       </section>
 
-      <div className="rounded-2xl bg-white border m-6 p-6">
-        <Accordion
-          buttonContent={(open) => (
-            <div
-              className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-              <h3 className="h3">Tickets</h3>
-              <ChevronDownIcon
-                className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-              />
-            </div>
-          )}
-          initialOpen={true}>
-          <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-            {tickets.map((ticket, index) => (
-              <div key={index} className="mb-6 p-4 border rounded-md">
-                <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/6 flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Code</label>
-                      <textarea
-                        value={ticket.code}
-                        onChange={(e) => handleInputChange(index, "code", e.target.value)}
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                        placeholder="Code"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/5">
-                    <label className="block text-sm font-medium mb-2">Name</label>
-                    <textarea
-                      value={ticket.name}
-                      onChange={(e) => handleInputChange(index, "name", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Name"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/5">
-                    <label className="block text-sm font-medium mb-2">Price</label>
-                    <textarea
-                      value={ticket.price}
-                      onChange={(e) => handleInputChange(index, "price", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Price"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/6">
-                    <label className="block text-sm font-medium mb-2">Number</label>
-                    <textarea
-                      value={ticket.number}
-                      onChange={(e) => handleInputChange(index, "number", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Number"
-                    />
-                  </div>
-                  {tickets.length > 1 && (
-                    <div className="w-full md:w-1/5">
-                      <button
-                        type="button"
-                        onClick={() => deleteTicket(index)}
-                        className="text-red-500"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addNewTicket}
-              className="text-blue-500"
-              disabled={tickets.length >= 5}
-            >
-              Add New
-            </button>
-          </div>
-
-        </Accordion>
-      </div>
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
         Save & Preview
       </button>

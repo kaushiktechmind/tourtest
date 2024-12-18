@@ -28,7 +28,7 @@ export const menus = [
   {
     // title: "Home",
         title: "Activities",
-        url: "/home-2",
+        url: "/activity-listing",
   },
   {
     // title: "Home",

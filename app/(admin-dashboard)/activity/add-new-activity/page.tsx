@@ -45,7 +45,6 @@ const Page = () => {
     duration: "",
     start_time: "",
     tour_max_people: "",
-    pickup_point: "",
     full_address: "",
     i_frame_link: "",
     ticket: "",
@@ -61,15 +60,15 @@ const Page = () => {
   const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
 
-  const [educationFields, setEducationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [healthFields, setHealthFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
+  // const [educationFields, setEducationFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
+  // const [healthFields, setHealthFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
+  // const [transportationFields, setTransportationFields] = useState<Field[]>([
+  //   { name: "", content: "", distance: "" },
+  // ]);
 
 
 
@@ -114,90 +113,90 @@ const Page = () => {
     }
   };
 
-  const handleAddRow = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    if (fields.length < 5) {
-      setFields([...fields, { name: "", content: "", distance: "" }]);
-    }
-  };
+  // const handleAddRow = (
+  //   fields: Field[],
+  //   setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  // ) => {
+  //   if (fields.length < 5) {
+  //     setFields([...fields, { name: "", content: "", distance: "" }]);
+  //   }
+  // };
 
   // Handler to update input fields
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    const { name, value } = e.target;
-    const updatedFields = [...fields];
-    updatedFields[index] = { ...updatedFields[index], [name]: value };
-    setFields(updatedFields);
-  };
+  // const handleFieldChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   index: number,
+  //   fields: Field[],
+  //   setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  // ) => {
+  //   const { name, value } = e.target;
+  //   const updatedFields = [...fields];
+  //   updatedFields[index] = { ...updatedFields[index], [name]: value };
+  //   setFields(updatedFields);
+  // };
 
 
 
 
 
-  const formatDataForApi = () => {
-    const formattedData: any = {};
+  // const formatDataForApi = () => {
+  //   const formattedData: any = {};
 
-    educationFields.forEach((field, index) => {
-      formattedData[`education_name${index + 1}`] = field.name;
-      formattedData[`education_content${index + 1}`] = field.content;
-      formattedData[`education_distance${index + 1}`] = field.distance;
-    });
+  //   educationFields.forEach((field, index) => {
+  //     formattedData[`education_name${index + 1}`] = field.name;
+  //     formattedData[`education_content${index + 1}`] = field.content;
+  //     formattedData[`education_distance${index + 1}`] = field.distance;
+  //   });
 
-    healthFields.forEach((field, index) => {
-      formattedData[`health_name${index + 1}`] = field.name;
-      formattedData[`health_content${index + 1}`] = field.content;
-      formattedData[`health_distance${index + 1}`] = field.distance;
-    });
+  //   healthFields.forEach((field, index) => {
+  //     formattedData[`health_name${index + 1}`] = field.name;
+  //     formattedData[`health_content${index + 1}`] = field.content;
+  //     formattedData[`health_distance${index + 1}`] = field.distance;
+  //   });
 
-    transportationFields.forEach((field, index) => {
-      formattedData[`transport_name${index + 1}`] = field.name;
-      formattedData[`transport_content${index + 1}`] = field.content;
-      formattedData[`transport_distance${index + 1}`] = field.distance;
-    });
+  //   transportationFields.forEach((field, index) => {
+  //     formattedData[`transport_name${index + 1}`] = field.name;
+  //     formattedData[`transport_content${index + 1}`] = field.content;
+  //     formattedData[`transport_distance${index + 1}`] = field.distance;
+  //   });
 
-    return formattedData;
-  };
+  //   return formattedData;
+  // };
 
-  // Render input rows
-  const renderInputRows = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    return fields.map((field, index) => (
-      <div key={index} className="flex gap-4 mb-4">
-        <input
-          type="text"
-          name="name"
-          value={field.name}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Name"
-        />
-        <input
-          type="text"
-          name="content"
-          value={field.content}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Content"
-        />
-        <input
-          type="text"
-          name="distance"
-          value={field.distance}
-          onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Distance"
-        />
-      </div>
-    ));
-  };
+
+  // const renderInputRows = (
+  //   fields: Field[],
+  //   setFields: React.Dispatch<React.SetStateAction<Field[]>>
+  // ) => {
+  //   return fields.map((field, index) => (
+  //     <div key={index} className="flex gap-4 mb-4">
+  //       <input
+  //         type="text"
+  //         name="name"
+  //         value={field.name}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Name"
+  //       />
+  //       <input
+  //         type="text"
+  //         name="content"
+  //         value={field.content}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Content"
+  //       />
+  //       <input
+  //         type="text"
+  //         name="distance"
+  //         value={field.distance}
+  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
+  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+  //         placeholder="Distance"
+  //       />
+  //     </div>
+  //   ));
+  // };
 
 
 
@@ -268,7 +267,6 @@ const Page = () => {
       formDataToSend.append("youtube_video_image", formData.youtube_video_image);
       formDataToSend.append("duration", formData.duration);
       formDataToSend.append("start_time", formData.start_time);
-      formDataToSend.append("pickup_point", formData.pickup_point);
       formDataToSend.append("full_address", formData.full_address);
       formDataToSend.append("i_frame_link", formData.i_frame_link);
 
@@ -298,26 +296,26 @@ const Page = () => {
       }
 
 
-      // Append Education Fields
-      educationFields.forEach((field, index) => {
-        formDataToSend.append(`education_name${index + 1}`, field.name);
-        formDataToSend.append(`education_content${index + 1}`, field.content);
-        formDataToSend.append(`education_distance${index + 1}`, field.distance);
-      });
+      // // Append Education Fields
+      // educationFields.forEach((field, index) => {
+      //   formDataToSend.append(`education_name${index + 1}`, field.name);
+      //   formDataToSend.append(`education_content${index + 1}`, field.content);
+      //   formDataToSend.append(`education_distance${index + 1}`, field.distance);
+      // });
 
-      // Append Health Fields
-      healthFields.forEach((field, index) => {
-        formDataToSend.append(`health_name${index + 1}`, field.name);
-        formDataToSend.append(`health_content${index + 1}`, field.content);
-        formDataToSend.append(`health_distance${index + 1}`, field.distance);
-      });
+      // // Append Health Fields
+      // healthFields.forEach((field, index) => {
+      //   formDataToSend.append(`health_name${index + 1}`, field.name);
+      //   formDataToSend.append(`health_content${index + 1}`, field.content);
+      //   formDataToSend.append(`health_distance${index + 1}`, field.distance);
+      // });
 
-      // Append Transportation Fields
-      transportationFields.forEach((field, index) => {
-        formDataToSend.append(`transport_name${index + 1}`, field.name);
-        formDataToSend.append(`transport_content${index + 1}`, field.content);
-        formDataToSend.append(`transport_distance${index + 1}`, field.distance);
-      });
+      // // Append Transportation Fields
+      // transportationFields.forEach((field, index) => {
+      //   formDataToSend.append(`transport_name${index + 1}`, field.name);
+      //   formDataToSend.append(`transport_content${index + 1}`, field.content);
+      //   formDataToSend.append(`transport_distance${index + 1}`, field.distance);
+      // });
 
 
 
@@ -485,7 +483,7 @@ const Page = () => {
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Start Time :</p>
               <input
-                type="number"
+                type="text"
                 name="start_time"
                 value={formData.start_time}
                 onChange={handleChange}
@@ -503,15 +501,7 @@ const Page = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
               />
-              <p className="mt-6 mb-4 text-xl font-medium">Pickup Point :</p>
-              <input
-                type="text"
-                name="pickup_point"
-                value={formData.pickup_point}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
+              
               <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
               <input
                 type="text"
@@ -535,7 +525,87 @@ const Page = () => {
             </div>
           </Accordion>
 
+
           <Accordion
+                      buttonContent={(open) => (
+                        <div
+                          className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}>
+                          <h3 className="h3">Tickets</h3>
+                          <ChevronDownIcon
+                            className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                          />
+                        </div>
+                      )}
+                      initialOpen={true}>
+                      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                        {tickets.map((ticket, index) => (
+                          <div key={index} className="mb-6 p-4 border rounded-md">
+                            <div className="flex flex-wrap gap-4 items-start">
+                              <div className="w-full md:w-1/6 flex flex-col">
+                                <div>
+                                  <label className="block text-sm font-medium mb-2">Code</label>
+                                  <input
+                                    value={ticket.code}
+                                    onChange={(e) => handleInputChange(index, "code", e.target.value)}
+                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                    placeholder="Code"
+                                  />
+                                </div>
+                              </div>
+                              <div className="w-full md:w-1/5">
+                                <label className="block text-sm font-medium mb-2">Name</label>
+                                <input
+                                  value={ticket.name}
+                                  onChange={(e) => handleInputChange(index, "name", e.target.value)}
+                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                  placeholder="Name"
+                                />
+                              </div>
+                              <div className="w-full md:w-1/5">
+                                <label className="block text-sm font-medium mb-2">Price</label>
+                                <input
+                                  value={ticket.price}
+                                  onChange={(e) => handleInputChange(index, "price", e.target.value)}
+                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                  placeholder="Price"
+                                />
+                              </div>
+                              <div className="w-full md:w-1/6">
+                                <label className="block text-sm font-medium mb-2">Number</label>
+                                <input
+                                  value={ticket.number}
+                                  onChange={(e) => handleInputChange(index, "number", e.target.value)}
+                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                  placeholder="Number"
+                                />
+                              </div>
+                              {tickets.length > 1 && (
+                                <div className="w-full md:w-1/5">
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteTicket(index)}
+                                    className="text-red-500"
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                        <button
+                          type="button"
+                          onClick={addNewTicket}
+                          className="text-blue-500"
+                          disabled={tickets.length >= 5}
+                        >
+                          Add New
+                        </button>
+                      </div>
+          
+                    </Accordion>
+
+          {/* <Accordion
             buttonContent={(open) => (
               <div
                 className={`${open ? "rounded-t-2xl" : "rounded-2xl"
@@ -547,8 +617,7 @@ const Page = () => {
             initialOpen={true}
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {/* Education Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
+              <p className="mb-4 text-xl font-medium">Education:</p>
               {renderInputRows(educationFields, setEducationFields)}
               {educationFields.length < 5 && (
                 <button
@@ -562,7 +631,6 @@ const Page = () => {
                 </button>
               )}
 
-              {/* Health Section */}
               <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
               {renderInputRows(healthFields, setHealthFields)}
               {healthFields.length < 5 && (
@@ -577,7 +645,6 @@ const Page = () => {
                 </button>
               )}
 
-              {/* Transportation Section */}
               <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
               {renderInputRows(transportationFields, setTransportationFields)}
               {transportationFields.length < 5 && (
@@ -592,7 +659,7 @@ const Page = () => {
                 </button>
               )}
             </div>
-          </Accordion>
+          </Accordion> */}
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -796,86 +863,7 @@ const Page = () => {
         </div>
       </section>
 
-      <div className="rounded-2xl bg-white border m-6 p-6">
-        <Accordion
-          buttonContent={(open) => (
-            <div
-              className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-              <h3 className="h3">Tickets</h3>
-              <ChevronDownIcon
-                className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-              />
-            </div>
-          )}
-          initialOpen={true}>
-          <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-            {tickets.map((ticket, index) => (
-              <div key={index} className="mb-6 p-4 border rounded-md">
-                <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/5 flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Code</label>
-                      <textarea
-                        value={ticket.code}
-                        onChange={(e) => handleInputChange(index, "code", e.target.value)}
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                        placeholder="Code"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
-                    <label className="block text-sm font-medium mb-2">Name</label>
-                    <textarea
-                      value={ticket.name}
-                      onChange={(e) => handleInputChange(index, "name", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Name"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/3">
-                    <label className="block text-sm font-medium mb-2">Price</label>
-                    <textarea
-                      value={ticket.price}
-                      onChange={(e) => handleInputChange(index, "price", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Price"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/4">
-                    <label className="block text-sm font-medium mb-2">Number</label>
-                    <textarea
-                      value={ticket.number}
-                      onChange={(e) => handleInputChange(index, "number", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Number"
-                    />
-                  </div>
-                  {tickets.length > 1 && (
-                    <div className="w-full md:w-1/6 flex items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => deleteTicket(index)}
-                        className="text-red-500"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addNewTicket}
-              className="text-blue-500"
-              disabled={tickets.length >= 5}
-            >
-              Add New
-            </button>
-          </div>
-
-        </Accordion>
-      </div>
+      
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
         Save & Preview
       </button>

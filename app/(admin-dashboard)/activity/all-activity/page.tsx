@@ -136,7 +136,7 @@ const Page = () => {
                     </td>
                     <td className="py-3 lg:py-4 px-2 md:px-5">
                       <Link
-                        href={`/activity/edit-ax?activityId=${act.id}`}
+                        href={`/activity/edit-activity?activityId=${act.id}`}
                         className="text-primary"
                       >
                         {act.activity_title}

@@ -6,24 +6,26 @@ import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Package {
+interface Activity {
   id: number;
-  banner_image: string[];
+  banner_image_multiple: string[];
   location_name: string;
-  package_title: string;
-  duration: string;
+  activity_title: string;
+  start_time: string;
+  price: string;
   sale_price: number;
 }
 
 const page = () => {
-  const [packages, setPackages] = useState<Package[]>([]);
+  const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchPackages = async () => {
+    const fetchActivities = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_package",
+          // "https://yrpitsolutions.com/tourism_api/api/admin/get_activity",
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_all_activity",
           {
             method: "GET",
             headers: {
@@ -32,18 +34,18 @@ const page = () => {
           }
         );
         if (!response.ok) {
-          throw new Error("Failed to fetch packages");
+          throw new Error("Failed to fetch activities");
         }
         const data = await response.json();
-        setPackages(data);
+        setActivities(data);
       } catch (error) {
-        console.error("Error fetching packages:", error);
+        console.error("Error fetching activities:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPackages();
+    fetchActivities();
   }, []);
 
   if (loading) {
@@ -52,8 +54,8 @@ const page = () => {
 
   return (
     <>
-      {packages.map(
-        ({ id, banner_image, location_name, package_title, duration, sale_price }) => (
+      {activities.map(
+        ({ id, banner_image_multiple, location_name, activity_title, start_time, price, sale_price }) => (
           <div key={id} className="col-span-12 ">
             <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
               <div className="relative">
@@ -61,8 +63,8 @@ const page = () => {
                   <Image
                     width={386}
                     height={224}
-                    src={banner_image[0]}
-                    alt="Package Image"
+                    src={banner_image_multiple[0]}
+                    alt="Activity Image"
                     className="rounded-2xl h-[300px] object-cover"
                   />
                 </div>
@@ -71,9 +73,9 @@ const page = () => {
                 <div className="property-card__body ">
                   <div className="flex justify-between mb-2">
                     <Link
-                     href={`/package-listing-details?packageId=${id}`}
+                      href={`/activity-listing-details?activityId=${id}`}
                       className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
-                      {package_title}
+                      {activity_title}
                     </Link>
                   </div>
                   <div className="flex justify-between mb-6">
@@ -86,7 +88,7 @@ const page = () => {
                     <li className="col-6">
                       <div className="flex items-center gap-2">
                         <ClockIcon className="w-5 h-5 text-[var(--secondary-500)]" />
-                        <span className="block text-sm">{duration}</span>
+                        <span className="block text-sm">{start_time}</span>
                       </div>
                     </li>
                   </ul>
@@ -96,14 +98,12 @@ const page = () => {
                 </div>
                 <div className="py-3">
                   <div className="flex flex-wrap justify-between items-center">
-                    <span className="block text-xl font-medium text-primary">
-                    ₹{sale_price}
-                      <span className="inline-block text-gray-500 text-base font-normal">
-                        /Pax
-                      </span>
+                    <span className="block  font-medium line-through">
+                      ₹ {price}
+                      <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
                     </span>
                     <Link
-                     href={`/package-listing-details?packageId=${id}`}
+                      href={`/activity-listing-details?activityId=${id}`}
                       className="btn-outline py-2 text-primary font-semibold">
                       Book Now
                     </Link>

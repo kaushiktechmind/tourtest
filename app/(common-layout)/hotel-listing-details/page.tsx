@@ -1577,7 +1577,6 @@ const Page = () => {
                         ₹{hotelDetails.highest_price}{" "}
                       </h3>
                     </div>
-
                   </div>
 
                   <Tab.Group>
