@@ -1110,13 +1110,6 @@ const Page = () => {
                             (amenity) => amenity.id === item.id
                           )}
                         />
-                        {/* {item.amenity_logo && (
-              <img
-                src={item.amenity_logo}
-                alt={item.amenity_name}
-                className="ml-2 w-6 h-6"
-              />
-            )} */}
                       </li>
                     ))}
                   </ul>

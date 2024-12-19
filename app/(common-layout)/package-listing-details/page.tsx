@@ -214,30 +214,28 @@ const Page = () => {
 
 
 
-
-
   return (
     <main>
       <div className="bg-[var(--bg-2)]">
-        <div className="py-4">
+      <div className="py-4">
           <div className="px-3">
             <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[70px]">
               <div className="col-span-12 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12">
-                  <div className="col-span-12 h-[288px]">
-                    <Link
-                      href="/img/tour-details-img-4.jpg"
-                      className="link property-gallery">
-                      <Image
-                        width={610}
-                        height={288}
-                        src={packageData.banner_image[0]}
-                        alt="image"
-                        className="w-full h-full object-cover rounded-2xl"
-                      />
-                    </Link>
-                  </div>
+                    <div className="col-span-12 h-[230px]">
+                      <Link
+                        href="/img/tour-details-img-4.jpg"
+                        className="link property-gallery">
+                        <Image
+                          width={610}
+                          height={288}
+                          src={packageData.banner_image[0]}
+                          alt="image"
+                          className="w-full h-full object-cover rounded-2xl"
+                        />
+                      </Link>
+                    </div>
                   </div>
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative">
                     <Link
@@ -254,7 +252,7 @@ const Page = () => {
                         height={681}
                         src={packageData.banner_image[1]}
                         alt="image"
-                        className=" w-full rounded-2xl"
+                        className="w-full h-full object-cover rounded-2xl"
                       />
                     </Link>
                   </div>

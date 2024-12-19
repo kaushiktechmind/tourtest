@@ -2,15 +2,18 @@
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 // Import Swiper styles
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "swiper/css";
 import "swiper/css/navigation";
 import { Navigation } from "swiper";
 import Link from "next/link";
 import ModalVideo from "react-modal-video";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import {
   ArrowLongLeftIcon,
+  ArrowRightIcon,
   ArrowLongRightIcon,
   ArrowsRightLeftIcon,
   CalendarDaysIcon,
@@ -34,31 +37,114 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+interface CabDetails {
+  location: string;
+  cab_name: string;
+  description: string;
+  price: number;
+  sale_price: number;
+  min_passenger: number;
+  max_passenger: number;
+  inclusions: string;
+  exclusions: string;
+  // Add more fields as needed from the API response
+}
+
+
 const Page = () => {
+  const [cabDetails, setCabDetails] = useState<CabDetails | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const isDateSelected = selectedDate !== null;
+
+
   const [isOpen, setOpen] = useState(false);
   const [playing, setPlaying] = useState(false);
-  
 
-  const Play = () => {
-    return (
-      <span
-        onClick={() => setPlaying(true)}
-        className="bg-[var(--tertiary)] w-14 grid place-items-center h-14 rounded-full z-50 cursor-pointer relative">
-        <PlayIcon />
-      </span>
-    );
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const toggleExpand = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault(); // Prevent the default link behavior
+    setIsExpanded(!isExpanded);
   };
+
+  const getShortDescription = (content: string, limit: number) => {
+    return content.split(" ").length > limit
+      ? content.split(" ").slice(0, limit).join(" ") + "..."
+      : content;
+  };
+
+
+
+
+
+  useEffect(() => {
+    const fetchCabDetails = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/cab-main-forms/48"
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch cab details");
+        }
+        const data = await response.json();
+        setCabDetails(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCabDetails();
+  }, []);
+
+
+  // Process inclusions
+  const inclusions = cabDetails?.inclusion
+    ? JSON.parse(cabDetails.inclusion[0]).map((item: string) => item.trim())
+    : [];
+
+  // Process exclusions
+  const exclusions = cabDetails?.exclusion
+    ? JSON.parse(cabDetails.exclusion[0]).map((item: string) => item.trim())
+    : [];
+
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric", // Use full numeric year
+    }).format(date);
+  };
+
+
+  if (loading) {
+    return <div>Loading cab details...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  if (!cabDetails) {
+    return <div>No cab details available.</div>;
+  }
+
+
+
   return (
     <>
-      <section>
-        <ModalVideo
-          channel="youtube"
-          isOpen={isOpen}
-          videoId="L61p2uyiMSo"
-          onClose={() => setOpen(false)}
-        />
-        <div>
-          <div>
+    <section className="">
+     
+      <div >
+        <div >
+          {/* Only render the Swiper if cabDetails and banner_image_multiple are available */}
+          {cabDetails?.banner_image_multiple?.length > 0 && (
             <Swiper
               loop={true}
               slidesPerView="auto"
@@ -81,60 +167,25 @@ const Page = () => {
                 },
               }}
               modules={[Navigation]}
-              className="swiper property-gallery-slider">
+              className="swiper property-gallery-slider"
+            >
               <div className="swiper-wrapper property-gallery-slider">
-                <SwiperSlide className="swiper-slide">
-                  <Link
-                    href="/img/cab-gallery-1.jpg"
-                    className="link property-gallery">
-                    <Image
-                      width={618}
-                      height={600}
-                      src="/img/cab-gallery-1.jpg"
-                      alt="image"
-                      className=""
-                    />
-                  </Link>
-                </SwiperSlide>
-                <SwiperSlide className="swiper-slide">
-                  <Link
-                    href="/img/cab-gallery-2.jpg"
-                    className="link property-gallery">
-                    <Image
-                      width={618}
-                      height={600}
-                      src="/img/cab-gallery-2.jpg"
-                      alt="image"
-                      className=""
-                    />
-                  </Link>
-                </SwiperSlide>
-                <SwiperSlide className="swiper-slide">
-                  <Link
-                    href="/img/cab-gallery-3.jpg"
-                    className="link property-gallery">
-                    <Image
-                      width={618}
-                      height={600}
-                      src="/img/cab-gallery-3.jpg"
-                      alt="image"
-                      className=""
-                    />
-                  </Link>
-                </SwiperSlide>
-                <SwiperSlide className="swiper-slide">
-                  <Link
-                    href="/img/cab-gallery-3.jpg"
-                    className="link property-gallery">
-                    <Image
-                      width={618}
-                      height={600}
-                      src="/img/cab-gallery-3.jpg"
-                      alt="image"
-                      className=""
-                    />
-                  </Link>
-                </SwiperSlide>
+                {/* Dynamically render SwiperSlide from banner_image_multiple */}
+                {cabDetails.banner_image_multiple.map((image, index) => (
+                  <SwiperSlide key={index} className="swiper-slide">
+                    <Link href={image} className="link property-gallery">
+                      <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}> {/* Fixed height for all images */}
+                        <Image
+                          layout="fill"  // Ensures the image fills the parent container
+                          objectFit="cover" // Maintains aspect ratio while covering the container
+                          src={image}
+                          alt={`cab-gallery-${index + 1}`}
+                          className=""
+                        />
+                      </div>
+                    </Link>
+                  </SwiperSlide>
+                ))}
               </div>
               <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
                 <ChevronLeftIcon className="w-5 h-5" />
@@ -143,9 +194,10 @@ const Page = () => {
                 <ChevronRightIcon className="w-5 h-5" />
               </button>
             </Swiper>
-          </div>
+          )}
         </div>
-      </section>
+      </div>
+    </section>
 
       <div className="bg-[var(--bg-2)] pt-10 lg:pt-14 px-3">
         <div className="container">
@@ -153,64 +205,36 @@ const Page = () => {
             <div className="col-span-12 xl:col-span-8">
               <div className="bg-white p-5 rounded-2xl mb-10">
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <div className="flex items-center justify-between flex-wrap gap-3">
-                    <h5 className="text-primary font-semibold text-xl inline-block mb-0">
-                      For Rent
-                    </h5>
-                    <ul className="flex gap-3 items-center">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white">
-                          <HeartIcon className="h-5 w-5" />
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white">
-                          <ArrowsRightLeftIcon className="w-5 h-5" />
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white">
-                          <ShareIcon className="w-5 h-5" />
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <h2 className="mt-4 mb-8 h2"> BMW 3 Series </h2>
+
+                  <h2 className="mt-4 mb-8 h2"> {cabDetails.cab_name}</h2>
                   <ul className="flex flex-wrap items-center justify-between gap-4 gap-md-0">
                     <li>
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-5 h-5 text-[var(--secondary-500)]" />
-                        <p className="mb-0"> 3890 Poplar Dr. </p>
+                        <p className="mb-0"> {cabDetails.location}</p>
                       </div>
                     </li>
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <p className="mb-0">
-                        ID: <span className="text-primary">12546</span>
+                        Min Passanger <span className="text-primary"> {cabDetails.min_passenger}</span>
                       </p>
                     </li>
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <div className="flex items-center gap-1">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <p className="mb-0"> 4.5(66) </p>
+                        Max Passanger <span className="text-primary"> {cabDetails.max_passenger}</span>
                       </div>
                     </li>
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <p className="mb-0">
-                        <span className="clr-neutral-500">Published:</span> Feb
-                        9, 23
+                        <span className="clr-neutral-500">Published:</span>{" "}
+                        {formatDate(cabDetails.created_at)}
                       </p>
                     </li>
                   </ul>
-                  <div className="border border-dashed my-8"></div>
+                  {/* <div className="border border-dashed my-8"></div>
                   <ul className="flex flex-wrap items-center justify-between gap-4 gap-md-0">
                     <li>
                       <div className="flex items-center gap-2">
@@ -246,119 +270,67 @@ const Page = () => {
                         <p className="mb-0"> 9 Bags </p>
                       </div>
                     </li>
-                  </ul>
+                  </ul> */}
                 </div>
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold"> Description </h4>
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                  <h4 className="mb-5 text-2xl font-semibold">Description</h4>
                   <p className="mb-5 clr-neutral-500">
-                    The BMW 3 Series is a popular luxury compact car model from
-                    the German automaker BMW. It was first introduced in 1975
-                    and has since become one of the brand&apos;s best-selling
-                    models. The BMW 3 Series is known for its sporty handling,
-                    powerful engines, and luxurious features.
+                    {isExpanded
+                      ? cabDetails.description
+                      : getShortDescription(cabDetails.description, 50)} {/* Adjust limit as needed */}
                   </p>
                   <Link
                     href="#"
-                    className="link flex items-center gap-2 text-primary">
+                    onClick={toggleExpand}
+                    className="link flex items-center gap-2 text-primary"
+                  >
                     <span className="font-semibold inline-block">
-                      Read More
+                      {isExpanded ? "Read Less" : "Read More"}
                     </span>
-                    <ArrowLongRightIcon className="w-5 h-5 " />
+                    <ArrowRightIcon className="w-5 h-5" />
                   </Link>
                 </div>
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Inclusion & Exclusion{" "}
-                  </h4>
-                  <div className="mb-10">
-                    <div className="grid grid-cols-12 gap-4 lg:gap-6">
-                      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <ul className="flex flex-col gap-4">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block"> State tax </span>
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                  <h4 className="mb-0 text-2xl font-semibold">Inclusions & Exclusions</h4>
+                  <div className="border border-dashed my-5"></div>
+
+                  {/* Inclusions */}
+                  <h6 className="mb-4 font-semibold">Inclusions</h6>
+                  <ul className="flex flex-col gap-4 mb-10">
+                    {inclusions.length > 0 ? (
+                      inclusions.map((item, index) => (
+                        <li key={index}>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
                             </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block">
-                                Driver Allowance
-                              </span>
+                            <span className="inline-block">{item}</span>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Not Available</li>
+                    )}
+                  </ul>
+
+                  {/* Exclusions */}
+                  <h6 className="mb-4 font-semibold">Exclusions</h6>
+                  <ul className="flex flex-col gap-4 mb-10">
+                    {exclusions.length > 0 ? (
+                      exclusions.map((item, index) => (
+                        <li key={index}>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
+                              <i className="las la-times text-xl text-[#9C742B]"></i>
                             </div>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <ul className="flex flex-col gap-4">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block">Toll charge</span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block">
-                                Pickup and drop
-                              </span>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <ul className="flex flex-col gap-4">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block"> Internet </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block">Car Parking</span>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-span-12 md:col-span-4 lg:col-span-3">
-                        <ul className="flex flex-col gap-4">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
-                                <i className="las la-times text-lg text-[#9C742B]"></i>
-                              </div>
-                              <span className="inline-block"> Alarm </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
-                                <i className="las la-times text-lg text-[#9C742B]"></i>
-                              </div>
-                              <span className="inline-block"> Pets Allow </span>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
+                            <span className="inline-block">{item}</span>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Not Available</li>
+                    )}
+                  </ul>
                 </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">
@@ -428,88 +400,19 @@ const Page = () => {
                   </Link>
                 </div>
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold"> Cab Video </h4>
-                  <div className="bg-white p-1 rounded-2xl overflow-hidden relative h-[462px] z-[1]">
-                    <ReactPlayer
-                      url="https://www.youtube.com/watch?v=s8ucXNArjps&ab_channel=NavaRealtyGroup"
-                      controls
-                      light="/img/cab-video.jpg"
-                      playIcon={<Play />}
-                      className={`react-player z-30 relative `}
-                      playing
-                      width="100%"
-                      height="100%"
-                    />
-                  </div>
-                </div>
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Safety Guidelines{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
-                        </div>
-                        <span className="inline-block">
-                          Verify your ride: Before entering a cab, verify that
-                          the car and driver match the details of your ride
-                          booking. Check the license plate number and driver
-                          photo on the app and match it with the car and driver
-                          in front of you.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
-                        </div>
-                        <span className="inline-block">
-                          Sit in the back seat: Always sit in the back seat of
-                          the cab. This will give you more personal space and
-                          distance from the driver.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
-                        </div>
-                        <span className="inline-block">
-                          Wear your seatbelt: Always wear your seatbelt during
-                          the ride. This is not only required by law in most
-                          places, but it is also an important safety measure in
-                          case of an accident.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
-                        </div>
-                        <span className="inline-block">
-                          Avoid distractions: Avoid using your phone or other
-                          electronic devices during the ride. This will help you
-                          stay alert and aware of your surroundings.
-                        </span>
-                      </div>
-                    </li>
-                  </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link>
+
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                  <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
+                  <div className="hr-dashed my-5"></div>
+
+
+                  <div className="mb-6">
+                    <h6 className="font-semibold mb-2">sdss</h6>
+                    <p>sdsdsd</p>
+                  </div>
+
+
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
@@ -839,9 +742,13 @@ const Page = () => {
                     <div className="flex gap-3 items-center">
                       <i className="las la-tag text-2xl"></i>
                       <p className="mb-0"> From </p>
-                      <h3 className="h3 mb-0"> $399 </h3>
+                      <h6 className="line-through text-gray-500">₹{cabDetails.price}</h6>
+                      <h3 className="h3 mb-0">
+                        {" "}
+
+                        ₹{cabDetails.sale_price}{" "}
+                      </h3>
                     </div>
-                    <i className="las la-info-circle text-2xl"></i>
                   </div>
 
                   <Tab.Group>
@@ -874,72 +781,53 @@ const Page = () => {
                               <input
                                 type="text"
                                 className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full py-3 px-5"
-                                placeholder="Pickup Location"
+                                placeholder="Hotel Name"
                               />
                               <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
                                 <i className="las text-2xl la-map-marker-alt"></i>
                               </span>
                             </div>
                           </div>
+
+                           <div className="col-span-1">
+                                                    <div className="w-full flex">
+                                                      <DatePicker
+                                                        placeholderText="Select Date"
+                                                        selected={selectedDate}
+                                                        dateFormat="dd-MM-yyyy"
+                                                        onChange={(date) => setSelectedDate(date)}
+                                                        className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
+                                                      />
+                                                      <span className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0">
+                                                        <i className="las text-2xl la-calendar-alt"></i>
+                                                      </span>
+                                                    </div>
+                                                  </div>
                           <div className="col-span-1">
                             <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Drop Location"
-                              />
+                              <select
+                                className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500 appearance-none"
+                                defaultValue=""
+                              >
+
+                                {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+                                  <option key={num} value={num}>
+                                    {num}
+                                  </option>
+                                ))}
+                              </select>
                               <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-map-marker-alt"></i>
+                                <i className="las text-2xl la-users"></i>
                               </span>
                             </div>
                           </div>
-                          <div className="col-span-1">
-                            <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Pickup Date"
-                              />
-                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-calendar-alt"></i>
-                              </span>
-                            </div>
-                          </div>
-                          <div className="col-span-1">
-                            <div className="w-full flex">
-                              <input
-                                type="text"
-                                className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5"
-                                placeholder="Pickup Time"
-                              />
-                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                                <i className="las text-2xl la-clock"></i>
-                              </span>
-                            </div>
-                          </div>
+
+
                         </div>
-                        <div className="flex items-center justify-between my-4">
-                          <p className="mb-0 clr-neutral-500"> Base Price </p>
-                          <p className="mb-0 font-medium"> $360 </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> State Tax </p>
-                          <p className="mb-0 font-medium"> $70 </p>
-                        </div>
-                        <div className="flex items-center justify-between mb-4">
-                          <p className="mb-0 clr-neutral-500"> Night Charge </p>
-                          <p className="mb-0 font-medium"> $170 </p>
-                        </div>
-                        <div className="flex items-center justify-between">
-                          <p className="mb-0 clr-neutral-500">
-                            {" "}
-                            Convenience Fee{" "}
-                          </p>
-                          <p className="mb-0 font-medium"> $15 </p>
-                        </div>
+
                         <div className="hr-dashed my-4"></div>
                         <div className="flex items-center justify-between">
-                          <p className="mb-0 clr-neutral-500"> Total </p>
+                          <p className="mb-0 clr-neutral-500"> Total Price </p>
                           <p className="mb-0 font-medium"> $1025 </p>
                         </div>
                       </Tab.Panel>
@@ -1012,7 +900,7 @@ const Page = () => {
                   </ul>
                 </div>
               </div>
-              <div className="bg-white rounded-2xl py-8 px-6">
+              {/* <div className="bg-white rounded-2xl py-8 px-6">
                 <div className="w-32 h-32 border border-[var(--primary)] rounded-full bg-white p-4 grid place-content-center relative mx-auto mb-10">
                   <Image
                     width={96}
@@ -1110,7 +998,7 @@ const Page = () => {
                     See Host Profile
                   </Link>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

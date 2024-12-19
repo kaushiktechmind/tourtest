@@ -43,12 +43,6 @@ interface ActivityData {
 
 
 const Page = () => {
-  // const [selectedAdults, setSelectedAdults] = useState(0);
-  // const [selectedChildren1, setSelectedChildren1] = useState(0);
-  // const [selectedChildren2, setSelectedChildren2] = useState(0);
-  // const [selectedChildren3, setSelectedChildren3] = useState(0);
-  // const [selectedInfants1, setSelectedInfants1] = useState(0);
-  // const [selectedInfants2, setSelectedInfants2] = useState(0);
 
   const [selectedTickets, setSelectedTickets] = useState({
     ticket1: 0,
@@ -126,23 +120,7 @@ const Page = () => {
           console.log("No amenities data available");
         }
 
-        // const min1 = Number(data.person_min1 || 0);
-        // setSelectedAdults(min1);
-
-        // const min2 = Number(data.person_min2 || 0);
-        // setSelectedChildren1(min2);
-
-        // const min3 = Number(data.person_min3 || 0);
-        // setSelectedChildren2(min3);
-
-        // const min4 = Number(data.person_min4 || 0);
-        // setSelectedChildren3(min4);
-
-        // const min5 = Number(data.person_min5 || 0);
-        // setSelectedInfants1(min5);
-
-        // const min6 = Number(data.person_min6 || 0);
-        // setSelectedInfants2(min6);
+        
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -227,7 +205,12 @@ const Page = () => {
       grandTotal: totalPrice, // Total calculated price
     };
   
-    localStorage.setItem("activityData", JSON.stringify(newActivityData));
+    localStorage.setItem("storedActivityData", JSON.stringify(newActivityData));
+
+    if(totalPrice==0){
+      alert("Choose Ticket");
+      return;
+    }
   
     router.push(`/activity-payment?activityId=${activityId}`);
   };
@@ -261,7 +244,7 @@ const Page = () => {
               <div className="col-span-12 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12">
-                    <div className="col-span-12 h-[288px]">
+                    <div className="col-span-12 h-[230px]">
                       <Link
                         href="/img/tour-details-img-4.jpg"
                         className="link property-gallery">
@@ -290,7 +273,7 @@ const Page = () => {
                         height={681}
                         src={activityData.banner_image_multiple[1]}
                         alt="image"
-                        className=" w-full rounded-2xl"
+                        className="w-full h-full object-cover rounded-2xl"
                       />
                     </Link>
                   </div>
@@ -450,115 +433,7 @@ const Page = () => {
                     </div>
                   </div>
 
-                  {/* <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                    <h4 className="mb-6 text-2xl font-semibold"> Itinerary </h4>
-                    <div>
-                      {itineraryData.length > 0 && (
-                        <ul className="flex flex-col gap-6">
-                          {itineraryData.map(({ day, title, description, image }, index) => (
-                            <li
-                              key={index}
-                              className="relative md:before:absolute before:top-[120px] before:bottom-[-14px] before:left-[52px] before:w-[1px] md:before:border-l before:border-dashed before:border-[var(--primary)]"
-                            >
-                              <div className="flex flex-col md:flex-row gap-6 md:gap-10">
-                                <div className="grid place-content-center ml-3 md:ml-0 relative w-28 h-28 rounded-full bg-primary after:scale-[1.18] text-white shrink-0 after:w-full after:h-full after:absolute after:border-dashed after:border after:border-[var(--primary)] after:rounded-full">
-                                  <div className="text-center">
-                                    <p className="text-lg mb-0">Day</p>
-                                    <h2 className="mb-0 text-white">{day}</h2>
-                                  </div>
-                                </div>
-                                <div className="flex-grow rounded-2xl bg-white shadow-lg p-3 sm:p-4 lg:p-6">
-                                  <h5 className="font-semibold text-xl">{title}</h5>
-                                  <p className="mb-0 clr-neutral-500">{description}</p>
-                                  <div className="border border-dashed my-6"></div>
-                                  <div className="flex flex-col lg:flex-row md:items-center gap-5">
-                                    <Link href="tour-listing-details" className="link block shrink-0 w-full lg:w-auto">
-                                      <Image
-                                        width={241}
-                                        height={153}
-                                        src={image}
-                                        alt="image"
-                                        className="rounded-2xl object-fit-cover"
-                                      />
-                                    </Link>
-                                    <div className="flex-grow">
-                                      <Link href="tour-listing-details" className="link block text-lg text-[var(--neutral-700)] hover:text-primary mb-2">
-                                        {title}
-                                      </Link>
-                                      <p className="mb-0 clr-neutral-500 text-sm">{description}</p>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                    <Link
-                      href="#"
-                      className="link flex items-center gap-2 text-primary mt-8">
-                      <span className="font-semibold inline-block">
-                        Book Now
-                      </span>
-                      <ArrowRightIcon className="w-5 h-5" />
-                    </Link>
-                  </div> */}
-                  {/* <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10"> */}
-                  {/* <h4 className="mb-0 text-2xl font-semibold">
-                      Inclusions & Exclusions
-                    </h4> */}
-                  {/* <div className="border border-dashed my-5"></div> */}
-
-                  {/* Inclusions */}
-                  {/* <h6 className="mb-4 font-semibold">Inclusions</h6> */}
-                  {/* <ul className="flex flex-col gap-4 mb-10">
-                      {(inclusions || []).length > 0 ? (
-                        inclusions.map((item, index) => (
-                          <li key={index}>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block">{item}</span>
-                            </div>
-                          </li>
-                        ))
-                      ) : (
-                        <li>Not Available</li>
-                      )}
-                    </ul> */}
-
-
-                  {/* Exclusions */}
-                  {/* <h6 className="mb-4 font-semibold">Exclusions</h6> */}
-                  {/* <ul className="flex flex-col gap-4 mb-10">
-                      {(exclusions || []).length > 0 ? (
-                        exclusions.map((item, index) => (
-                          <li key={index}>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
-                                <i className="las la-times text-xl text-[#9C742B]"></i>
-                              </div>
-                              <span className="inline-block">{item}</span>
-                            </div>
-                          </li>
-                        ))
-                      ) : (
-                        <li>Not Available</li>
-                      )}
-                    </ul> */}
-
-
-                  {/* <Link
-                      href="#"
-                      className="link flex items-center gap-2 text-primary mt-8">
-                      <span className="font-semibold inline-block">
-                        Read More
-                      </span>
-                      <ArrowRightIcon className="w-5 h-5" />
-                    </Link> */}
-                  {/* </div> */}
+               
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
                     <div className="hr-dashed my-5"></div>

@@ -50,10 +50,11 @@ export const sidenavData = [
     name: "Cab",
     icon: <i className="las la-taxi text-2xl"></i>,
     submenus: [
-      { url: "/cab/all-cab", title: "All Cab" },
-      { url: "/cab/add-new-cab", title: "Add New Cab" },
-      { url: "/cab/attributes", title: "Attributes" },
-      { url: "/cab/availability", title: "Availablility" },
+      { url: "/cab/all-cab", title: "All Cabs" },
+      { url: "/cab/cab-attribute", title: "Cab Attributes" },
+      { url: "/cab/cab-faq", title: "Cab FAQs" },
+      { url: "/cab/cab-include", title: "Cab Includes" },
+      { url: "/cab/cab-exclude", title: "Cab Excludes" },
     ],
   },
   {

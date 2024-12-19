@@ -23,10 +23,14 @@ interface Amenity {
 
 
 const Page = () => {
-  const router = useRouter();
   const [itineraries, setItineraries] = useState([
     { day: "", title: "", description: "" }
   ]);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const packageId = searchParams.get("packageId");
+
   const [description, setDescription] = useState<string>("");
   const [formData, setFormData] = useState({
     package_title: "",
@@ -78,10 +82,11 @@ const Page = () => {
   const [locations, setLocations] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [bannerImages, setBannerImages] = useState<File[]>([]);
+  const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
 
-  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+
+  const [faqs, setFAQs] = useState<FAQ[]>([]);
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
   const [inclusions, setInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [exclusions, setExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
@@ -94,7 +99,12 @@ const Page = () => {
       try {
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_include");
         const data = await response.json();
-        setInclusions(data);
+        console.log("Inclusions fetched:", data); // Debug: Log the inclusions data
+        if (Array.isArray(data)) {
+          setInclusions(data); // Ensure the data is an array and set it to state
+        } else {
+          console.error("Invalid data format for inclusions:", data);
+        }
       } catch (error) {
         console.error("Failed to fetch inclusions:", error);
       }
@@ -244,6 +254,127 @@ const Page = () => {
   };
 
 
+  useEffect(() => {
+    const fetchPackageData = async () => {
+      try {
+        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_by_id/${packageId}`);
+        const data = await response.json();
+
+        setBannerImages(data.banner_image || []);
+
+        if (data.package_faqs) {
+          const parsedFAQs = JSON.parse(data.package_faqs).map((faq: any) => ({
+            package_faq_title: faq.question,
+            package_faq_description: faq.answer,
+          }));
+          setSelectedFAQs(parsedFAQs);
+        }
+
+        const parsedItineraries = JSON.parse(data.itinerary);
+        setItineraries(
+          parsedItineraries.map((item: any) => ({
+            day: item.day,
+            title: item.title,
+            description: item.description,
+            image: item.image
+          }))
+        );
+
+        if (data.package_content) {
+          setDescription(data.package_content); // Set the description from the API
+        }
+
+        if (data.amenities) {
+          const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
+          setSelectedAmenities(parsedAmenities); // Prefill selected amenities
+        }
+
+        // Handling inclusions
+        if (data.package_includes) {
+          const packageIncludes = JSON.parse(data.package_includes);
+          console.log("Parsed package_includes:", packageIncludes);
+
+          const preFilledInclusions = inclusions.filter((inc) =>
+            packageIncludes.includes(inc.include_title)
+          );
+          console.log("Pre-filled inclusions:", preFilledInclusions);
+
+          setSelectedInclusions(preFilledInclusions);
+        }
+
+        // Handling exclusions
+        if (data.package_excludes) {
+          const packageExcludes = JSON.parse(data.package_excludes);
+          console.log("Parsed package_excludes:", packageExcludes);
+
+          // Pre-fill exclusions based on the fetched package data
+          const preFilledExclusions = exclusions.filter((ex) =>
+            packageExcludes.includes(ex.exclude_title)
+          );
+          console.log("Pre-filled exclusions:", preFilledExclusions);
+
+          setSelectedExclusions(preFilledExclusions);
+        }
+
+        // Prefill formData with the API response
+        setFormData((prevState) => ({
+          ...prevState,
+          package_title: data.package_title || "",
+          package_content: data.package_content || "",
+          tour_price: data.tour_price || "",
+          sale_price: data.sale_price || "",
+          youtube_video_link: data.youtube_video_link || "",
+          duration: data.duration || "",
+          tour_min_people: data.tour_min_people || "",
+          tour_max_people: data.tour_max_people || "",
+          pickup_point: data.pickup_point || "",
+          location_name: data.location_name || "",
+
+          person_type_name1: data.person_type_name1 || "",
+          person_type_description1: data.person_type_description1 || "",
+          person_min1: data.person_min1 || "",
+          person_max1: data.person_max1 || "",
+          person_type_price1: data.person_type_price1 || "",
+
+          person_type_name2: data.person_type_name2 || "",
+          person_type_description2: data.person_type_description2 || "",
+          person_min2: data.person_min2 || "",
+          person_max2: data.person_max2 || "",
+          person_type_price2: data.person_type_price2 || "",
+
+          person_type_name3: data.person_type_name3 || "",
+          person_type_description3: data.person_type_description3 || "",
+          person_min3: data.person_min3 || "",
+          person_max3: data.person_max3 || "",
+          person_type_price3: data.person_type_price3 || "",
+
+          person_type_name4: data.person_type_name4 || "",
+          person_type_description4: data.person_type_description4 || "",
+          person_min4: data.person_min4 || "",
+          person_max4: data.person_max4 || "",
+          person_type_price4: data.person_type_price4 || "",
+
+          person_type_name5: data.person_type_name5 || "",
+          person_type_description5: data.person_type_description5 || "",
+          person_min5: data.person_min5 || "",
+          person_max5: data.person_max5 || "",
+          person_type_price5: data.person_type_price5 || "",
+
+          person_type_name6: data.person_type_name6 || "",
+          person_type_description6: data.person_type_description6 || "",
+          person_min6: data.person_min6 || "",
+          person_max6: data.person_max6 || "",
+          person_type_price6: data.person_type_price6 || "",
+
+          // Add other fields as necessary
+        }));
+      } catch (error) {
+        console.error("Error fetching package data:", error);
+      }
+    };
+
+    fetchPackageData();
+  }, [packageId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
 
 
 
@@ -317,19 +448,21 @@ const Page = () => {
       formDataToSend.append("package_excludes", JSON.stringify(selectedExclusions.map((exc) => exc.exclude_title)));
       formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
 
+      formDataToSend.append("_method", "PUT");
+
       const faqsData = selectedFAQs.map((faq) => ({
         question: faq.package_faq_title,
         answer: faq.package_faq_description,
       }));
       formDataToSend.append("package_faqs", JSON.stringify(faqsData));
 
-      // Check if bannerImages is defined and is an array before using forEach
-      if (Array.isArray(bannerImages)) {
+      // If new files are selected, add them; otherwise, send an empty array
+      if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image[]", file);
         });
       } else {
-        console.error('bannerImages is not defined or not an array');
+        formDataToSend.append("banner_image[]", ""); // Clear existing images if no new ones are provided
       }
 
       // Check if itineraries is defined and is an array before using forEach
@@ -360,7 +493,7 @@ const Page = () => {
       formDataToSend.append("itinerary", JSON.stringify(formattedItineraries));
 
       // Send the request with FormData
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_package", {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_package_by_id/${packageId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -371,13 +504,14 @@ const Page = () => {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Package saved successfully!");
+        alert("Package Updated successfully!");
         router.push("/package/all-package");
+        console.log(data);
       } else {
-        alert("Failed to save package.");
+        alert("Failed to Update package.");
       }
     } catch (error) {
-      console.error("Error saving package:", error);
+      console.error("Error Update package:", error);
     }
   };
 
@@ -572,50 +706,58 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...Array(6)].map((_, index) => (
-                    <tr key={index}>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="text"
-                          name={`person_type_name${index + 1}`}  // person_type_name1, person_type_name2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                      </td>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="text"
-                          name={`person_type_description${index + 1}`}  // person_type_description1, person_type_description2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                      </td>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="number"
-                          name={`person_min${index + 1}`}  // person_min1, person_min2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                      </td>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="number"
-                          name={`person_max${index + 1}`}  // person_max1, person_max2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                      </td>
-                      <td className="border border-gray-200 px-4 py-2">
-                        <input
-                          type="number"
-                          name={`person_type_price${index + 1}`}  // person_type_price1, person_type_price2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                        />
-                      </td>
-                    </tr>
-                  ))}
+                  {[...Array(6)].map((_, index) => {
+                    const personIndex = index + 1;
+                    return (
+                      <tr key={index}>
+                        <td className="border border-gray-200 px-4 py-2">
+                          <input
+                            type="text"
+                            name={`person_type_name${personIndex}`}
+                            value={formData[`person_type_name${personIndex}`] || ""}
+                            onChange={handleChange}
+                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          />
+                        </td>
+                        <td className="border border-gray-200 px-4 py-2">
+                          <input
+                            type="text"
+                            name={`person_type_description${personIndex}`}
+                            value={formData[`person_type_description${personIndex}`] || ""}
+                            onChange={handleChange}
+                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          />
+                        </td>
+                        <td className="border border-gray-200 px-4 py-2">
+                          <input
+                            type="number"
+                            name={`person_min${personIndex}`}
+                            value={formData[`person_min${personIndex}`] || ""}
+                            onChange={handleChange}
+                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          />
+                        </td>
+                        <td className="border border-gray-200 px-4 py-2">
+                          <input
+                            type="number"
+                            name={`person_max${personIndex}`}
+                            value={formData[`person_max${personIndex}`] || ""}
+                            onChange={handleChange}
+                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          />
+                        </td>
+                        <td className="border border-gray-200 px-4 py-2">
+                          <input
+                            type="number"
+                            name={`person_type_price${personIndex}`}
+                            value={formData[`person_type_price${personIndex}`] || ""}
+                            onChange={handleChange}
+                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -645,16 +787,12 @@ const Page = () => {
                     >
                       <span className="flex flex-col items-center justify-center py-12">
                         <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">
-                          Drag & Drop
-                        </span>
+                        <span className="h3 clr-neutral-500 text-center mt-4 mb-3">Drag & Drop</span>
                         <span className="block text-center mb-6 clr-neutral-500">OR</span>
                         <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                           Select Files
                         </span>
-                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
-                          Select Minimum 6 Files
-                        </span>
+                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
                       </span>
                       <input
                         type="file"
@@ -666,24 +804,46 @@ const Page = () => {
                     </label>
                   </div>
 
-                  {/* Display the selected images */}
-                  {bannerImages.length > 0 && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold">Selected Images</h3>
-                      <div className="grid grid-cols-3 gap-4 mt-4">
-                        {bannerImages.map((image, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={URL.createObjectURL(image)} // Display image from local file
-                              alt={`Selected Image ${index + 1}`}
-                              className="w-full h-[100px] object-cover rounded-lg" // Set same size for all images
-                            />
+                  <div>
+                    {bannerImages.length > 0 &&
+                      (bannerImages[0] instanceof File ? (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Selected Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={URL.createObjectURL(image as File)}
+                                  alt={`Selected Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+                        </div>
+                      ) : (
+                        <div className="mt-6">
+                          <h3 className="text-lg font-semibold">Existing Banner Images</h3>
+                          <div className="grid grid-cols-3 gap-4 mt-4">
+                            {bannerImages.map((image, index) => (
+                              <div key={index} className="relative">
+                                <img
+                                  src={image as string}
+                                  alt={`Banner Image ${index + 1}`}
+                                  className="w-[150px] h-[150px] object-cover rounded-lg"
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+
                 </div>
+
+
+
+
 
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
@@ -701,7 +861,8 @@ const Page = () => {
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Inclusion</h3>
                   <ChevronDownIcon
@@ -715,7 +876,7 @@ const Page = () => {
                 <select
                   name="include_title"
                   onChange={handleAddInclusion}
-                  value=""  // Add value attribute to ensure no default selection
+                  value="" // Ensures the select shows "Select an Inclusion" by default
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -727,28 +888,35 @@ const Page = () => {
                     </option>
                   ))}
                 </select>
-
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={inclusion.include_title}
-                      onChange={(e) => handleEditInclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={inclusion.include_title}
+                        onChange={(e) => handleEditInclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      {/* <button
+                        type="button"
+                        onClick={() => setSelectedInclusions((prev) => prev.filter((_, i) => i !== index))}
+                        className="text-red-500"
+                      >
+                        Remove
+                      </button> */}
+                    </div>
                   ))}
                 </div>
               </div>
             </Accordion>
-
           </div>
           <div className="rounded-2xl bg-white border mt-6">
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Exclusion</h3>
                   <ChevronDownIcon
@@ -762,7 +930,7 @@ const Page = () => {
                 <select
                   name="exclude_title"
                   onChange={handleAddExclusion}
-                  value=""  // Add value attribute to prevent default selection
+                  value="" // Ensures the select shows "Select an Exclusion" by default
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -775,20 +943,30 @@ const Page = () => {
                   ))}
                 </select>
 
+                {/* Render selected exclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={exclusion.exclude_title}
-                      onChange={(e) => handleEditExclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-2">
+                      <input
+                        type="text"
+                        value={exclusion.exclude_title}
+                        onChange={(e) => handleEditExclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      {/* Optionally add a remove button */}
+                      {/* <button
+          type="button"
+          onClick={() => setSelectedExclusions((prev) => prev.filter((_, i) => i !== index))}
+          className="text-red-500"
+        >
+          Remove
+        </button> */}
+                    </div>
                   ))}
                 </div>
               </div>
-            </Accordion>
 
+            </Accordion>
           </div>
 
 
@@ -905,8 +1083,8 @@ const Page = () => {
                       <li key={item.id} className="py-2 flex items-center">
                         <CheckboxCustom
                           label={item.package_attribute_name}
-                          onChange={() => handleCheckboxChange(item.package_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.package_attribute_name)} // Check if selected
+                          onChange={() => handleCheckboxChange(item.package_attribute_name)} // Handle checkbox change
+                          checked={selectedAmenities.includes(item.package_attribute_name)} // Prefill based on selectedAmenities
                         />
                       </li>
                     ))}

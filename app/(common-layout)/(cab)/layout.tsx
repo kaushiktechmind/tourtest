@@ -1,35 +1,36 @@
 "use client";
+
 import CheckboxCustom from "@/components/Checkbox";
 import CustomRangeSlider from "@/components/RangeSlider";
-import { cabdeparturetimes } from "@/public/data/cabdeparturetime";
-import { cabtypes } from "@/public/data/cablistingcartypes";
+import { SearchIcon } from "@/public/data/icons";
+import { placeTypes } from "@/public/data/placeTypes";
+import { tourtypes } from "@/public/data/tourtypes";
+import { StarIcon } from "@heroicons/react/20/solid";
 import {
   ArrowPathIcon,
   ListBulletIcon,
-  MagnifyingGlassIcon,
   MapPinIcon,
   Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-type RadioOption = "rent" | "buy" | "sell";
-export default function Layout({ children }: { children: React.ReactNode }) {
-  const [Option, setOption] = useState<RadioOption>("rent");
-  const handleOptionChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setOption(event.target.value as RadioOption);
-  };
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const path = usePathname();
   return (
     <>
-      <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
-        <div className="container">
+      <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3 ">
+        <div className="container mt-[30px]">
           <div className="grid grid-cols-12 gap-4 lg:gap-6">
             <div className="col-span-12 lg:col-span-4 order-2 lg:order-1">
-              <div className="p-4 lg:py-6 lg:px-8 bg-white rounded-2xl shadow-lg">
+              <div className="p-3 sm:p-4 lg:py-6 lg:px-8 bg-white rounded-2xl shadow-lg">
                 <h4 className="mb-0 text-2xl font-semibold"> Filter </h4>
                 <div className="border-t border-dashed my-6"></div>
-                <div className="flex items-center justify-between rounded-full border border-neutral-40 bg-[var(--bg-2)] px-5 py-2">
+                <div className="flex items-center justify-between rounded-full border border-neutral-40 bg-[var(--bg-2)] px-5 py-3">
                   <input
                     type="text"
                     className="w-full bg-transparent border-0 focus:outline-none"
@@ -38,78 +39,20 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   <button
                     type="button"
                     className="border-0 bg-transparent p-0 lh-1">
-                    <MagnifyingGlassIcon className="w-5 h-5" />
+                    <SearchIcon />
                   </button>
                 </div>
                 <div className="border-t border-dashed my-6"></div>
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Category
-                </p>
-                <ul className="flex flex-wrap items-center gap-6">
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <input
-                        className="accent-[var(--primary)] scale-125"
-                        type="radio"
-                        name="property-type"
-                        id="rent-category"
-                        value={"rent"}
-                        onChange={handleOptionChange}
-                        checked={Option === "rent"}
-                      />
-                      <label
-                        className="inline-block text-lg font-medium cursor-pointer"
-                        htmlFor="rent-category">
-                        Rent
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <input
-                        className="accent-[var(--primary)] scale-125"
-                        type="radio"
-                        name="property-type"
-                        id="buy-category"
-                        value={"buy"}
-                        onChange={handleOptionChange}
-                        checked={Option === "buy"}
-                      />
-                      <label
-                        className="inline-block text-lg font-medium cursor-pointer"
-                        htmlFor="buy-category">
-                        Buy
-                      </label>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <input
-                        className="accent-[var(--primary)] scale-125"
-                        type="radio"
-                        name="property-type"
-                        id="sell-category"
-                        value={"sell"}
-                        onChange={handleOptionChange}
-                        checked={Option === "sell"}
-                      />
-                      <label
-                        className="inline-block text-lg font-medium cursor-pointer"
-                        htmlFor="sell-category">
-                        Sell
-                      </label>
-                    </div>
-                  </li>
-                </ul>
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium shrink-0">
-                  Car Types
+                  Types of Tour
                 </p>
                 <ul className="flex flex-col gap-3">
-                  {cabtypes.map(({ id, number, title }) => (
-                    <li key={id} className="flex justify-between items-center">
-                      <CheckboxCustom label={title} />
-                      <span>{number}</span>
+                  {tourtypes.map((tour) => (
+                    <li
+                      key={tour.id}
+                      className="flex justify-between items-center">
+                      <CheckboxCustom label={tour.title} />
+                      <span>{tour.number}</span>
                     </li>
                   ))}
                 </ul>
@@ -120,54 +63,73 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <CustomRangeSlider />
                 <div className="border-t border-dashed my-6"></div>
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Departure Time
+                  Types of Places
                 </p>
                 <ul className="flex flex-col gap-3">
-                  {cabdeparturetimes.map(({ id, time, title }) => (
-                    <li key={id} className="flex justify-between items-center">
-                      <CheckboxCustom label={title} />
-                      <span>{time}</span>
+                  {placeTypes.map((place) => (
+                    <li
+                      className="flex justify-between items-center"
+                      key={place.id}>
+                      <CheckboxCustom label={place.title} />
+                      <span>{place.number}</span>
                     </li>
                   ))}
                 </ul>
                 <div className="border-t border-dashed my-6"></div>
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Bags
+                  Star Category
                 </p>
                 <ul className="flex flex-col gap-3">
-                  <li className="flex justify-between items-center gap-3">
-                    <CheckboxCustom label="1 to 2 bags" />
-                    <span>122</span>
+                  <li className="flex justify-between items-center">
+                    <CheckboxCustom
+                      label="5 Star"
+                      img={
+                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                      }
+                    />
+                    <span>425</span>
                   </li>
-                  <li className="flex justify-between items-center gap-3">
-                    <CheckboxCustom label="3 to 4 bags" />
+                  <li className="flex justify-between items-center">
+                    <CheckboxCustom
+                      label="4 Star"
+                      img={
+                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                      }
+                    />
+                    <span>325</span>
+                  </li>
+                  <li className="flex justify-between items-center">
+                    <CheckboxCustom
+                      label="3 Star"
+                      img={
+                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                      }
+                    />
+                    <span>205</span>
+                  </li>
+                  <li className="flex justify-between items-center">
+                    <CheckboxCustom
+                      label="2 Star"
+                      img={
+                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                      }
+                    />
                     <span>65</span>
                   </li>
-                  <li className="flex justify-between items-center gap-3">
-                    <CheckboxCustom label="5 or more" />
-                    <span>147</span>
+                  <li className="flex justify-between items-center">
+                    <CheckboxCustom
+                      label="1 Star"
+                      img={
+                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                      }
+                    />
+                    <span>21</span>
                   </li>
                 </ul>
                 <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Payment type
-                </p>
-                <div className="grid grid-cols-12 gap-4">
-                  <div className="col-span-12">
-                    <ul className="flex flex-col gap-4">
-                      <li className="flex items-center justify-between">
-                        <CheckboxCustom label="Pay Now" />
-                      </li>
-                      <li className="flex items-center justify-between">
-                        <CheckboxCustom label="Pay at Counter" />
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-                <div className="border-t border-dashed my-6"></div>
                 <Link
                   href="#"
-                  className="btn-outline flex justify-center gap-2 items-center text-primary font-semibold">
+                  className="btn-outline  w-full flex justify-center items-center text-primary gap-2">
                   <ArrowPathIcon className="w-5 h-5" />
                   Reset Filters
                 </Link>
@@ -210,9 +172,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                               </span>
                             </Link>
                           </li>
-                          <li>
+                          {/* <li>
                             <Link
-                              href="cab-listing-map"
+                              href="/tour-listing-map"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
                                 path === "/cab-listing-map" && "text-primary"
                               }`}>
@@ -221,7 +183,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                                 Map
                               </span>
                             </Link>
-                          </li>
+                          </li> */}
                         </ul>
                       </li>
                       <li className="hidden lg:flex items-center">

@@ -1,108 +1,118 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import CardPagination from "@/components/CardPagination";
-import { carlistings } from "@/public/data/carlisting";
-import { StarIcon } from "@heroicons/react/24/solid";
+import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
 
+interface Activity {
+  id: number;
+  banner_image_multiple: string[];
+  location: string;
+  cab_name: string;
+  start_time: string;
+  price: string;
+  sale_price: number;
+}
+
 const page = () => {
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/cab-main-forms",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch activities");
+        }
+        const data = await response.json();
+        setActivities(data);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
-      {carlistings.map(({ id, img, price, title }) => (
-        <div key={id} className="col-span-12">
-          <div className="flex flex-col md:flex-row rounded-2xl p-2 bg-white">
-            <div className="bg-[#F5F6FF] rounded-2xl shrink">
-              <Image
-                width={200}
-                height={260}
-                src={img}
-                alt="image"
-                className="rounded-2xl w-full h-auto"
-              />
-            </div>
-
-            <div className="p-3 overflow-hidden flex-grow">
-              <div className="property-card__body">
-                <div className="grid grid-cols-12 gap-4 lg:gap-6 justify-between">
-                  <div className="col-span-12 xl:col-span-8">
-                    <div className="flex gap-6 mb-2">
-                      <Link
-                        href="/cab-listing-details"
-                        className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
-                        {title}
-                      </Link>
-                      <div className="flex items-center shrink-0">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <span className="block text-[var(--neutral-700)]">
-                          4.5
-                        </span>
-                      </div>
-                    </div>
-                    <ul className="columns-1 lg:columns-2 ml-4 list-disc flex-wrap gap-3 md:ps-2">
-                      <li className="py-2"> Cancel anytime </li>
-                      <li className="py-2"> Discount Price </li>
-                      <li className="py-2"> Confirmation </li>
-                      <li className="py-2"> Liability Insured </li>
-                    </ul>
+      {activities.map(
+        ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price }) => (
+          <div key={id} className="col-span-12 ">
+            <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
+              <div className="relative">
+                <div className="rounded-2xl">
+                  <Image
+                    width={386}
+                    height={224}
+                    src={banner_image_multiple[0]}
+                    alt="Activity Image"
+                    className="rounded-2xl h-[300px] object-cover"
+                  />
+                </div>
+              </div>
+              <div className="flex-grow h-full p-3 sm:p-4">
+                <div className="property-card__body ">
+                  <div className="flex justify-between mb-2">
+                    <Link
+                      href={`/cab-listing-details?cabId=${id}`}
+                      className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
+                      {cab_name}
+                    </Link>
                   </div>
-                  <div className="col-span-12 xl:col-span-4 xl:text-end">
-                    <span className="block mb-1">
-                      <span className="clr-tertiary-500">20% off</span>
-                      <span className="clr-neutral-500">Par day</span>
-                    </span>
-                    <span className="block mb-5">
-                      <span className="text-gray-700 font-medium text-xl">
-                        ${price}
-                      </span>{" "}
-                      <span className="text-gray-400">$332</span>
+                  <div className="flex justify-between mb-6">
+                    <div className="flex items-center gap-1">
+                      <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
+                      <span className="inline-block">{location}</span>
+                    </div>
+                  </div>
+                  {/* <ul className="flex gap-3">
+                    <li className="col-6">
+                      <div className="flex items-center gap-2">
+                        <ClockIcon className="w-5 h-5 text-[var(--secondary-500)]" />
+                        <span className="block text-sm">{start_time}</span>
+                      </div>
+                    </li>
+                  </ul> */}
+                </div>
+                <div className="my-4">
+                  <div className="border border-dashed"></div>
+                </div>
+                <div className="py-3">
+                  <div className="flex flex-wrap justify-between items-center">
+                    <span className="block  font-medium line-through">
+                      ₹ {price}
+                      <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
                     </span>
                     <Link
-                      href="cab-listing-details"
-                      className="btn-outline  font-semibold">
+                      href={`/cab-listing-details?cabId=${id}`}
+                      className="btn-outline py-2 text-primary font-semibold">
                       Book Now
                     </Link>
                   </div>
                 </div>
-                <ul className="flex divide-x divide-dashed mt-8 bg-[#F5FCF8] overflow-x-auto">
-                  <li className="p-6 m-0 text-center flex-grow">
-                    <i className="las text-[#279155] la-user-friends text-[32px] inline-block mb-1"></i>
-                    <span className="block text-sm max-width mx-auto">
-                      8 Pass
-                    </span>
-                  </li>
-                  <li className="p-6 m-0 text-center flex-grow">
-                    <i className="las text-[#279155] la-shopping-bag text-[32px] inline-block mb-1"></i>
-                    <span className="block text-sm max-width mx-auto">
-                      {" "}
-                      5 Bag{" "}
-                    </span>
-                  </li>
-                  <li className="p-6 m-0 text-center flex-grow">
-                    <i className="las text-[#279155] la-tachometer-alt text-[32px] inline-block mb-1"></i>
-                    <span className="block text-sm max-width mx-auto">
-                      {" "}
-                      100km{" "}
-                    </span>
-                  </li>
-                  <li className="p-6 m-0 text-center flex-grow">
-                    <i className="las text-[#279155] la-gas-pump text-[32px] inline-block mb-1"></i>
-                    <span className="block text-sm max-width mx-auto">
-                      Petrol
-                    </span>
-                  </li>
-                  <li className="p-6 m-0 text-center flex-grow">
-                    <i className="las text-[#279155] la-cog text-[32px] inline-block mb-1"></i>
-                    <span className="block text-sm max-width mx-auto">
-                      {" "}
-                      Auto{" "}
-                    </span>
-                  </li>
-                </ul>
               </div>
             </div>
           </div>
-        </div>
-      ))}
-
+        )
+      )}
       <CardPagination />
     </>
   );

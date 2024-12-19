@@ -1573,7 +1573,6 @@ const Page = () => {
                       <h6 className="line-through text-gray-500">₹{hotelDetails.starting_price}</h6>
                       <h3 className="h3 mb-0">
                         {" "}
-
                         ₹{hotelDetails.highest_price}{" "}
                       </h3>
                     </div>

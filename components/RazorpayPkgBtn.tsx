@@ -16,8 +16,8 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
   const router = useRouter();
   // const [packageDetails, setPackageDetails] = useState<{ servicePackage: string; package_name: string } | null>(null);
   const [packageName, setPackageName] = useState<string | null>(null);
- 
-   useEffect(() => {
+
+  useEffect(() => {
     const fetchPackageName = async () => {
       const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_by_id/${packageId}`);
       const data = await response.json();
@@ -74,7 +74,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
       document.body.removeChild(script);
     };
   }, []);
-  
+
 
 
   const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
@@ -83,16 +83,16 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
     console.error("No package data found in localStorage");
     return; // Exit if no data is found
   }
-  
+
   // Access the first object in the array
-  const { 
+  const {
     adult, adultPrice,
     child1, child2, child3, childPrice1, childPrice2, childPrice3,
-    infant1, infant2, infantPrice1, infantPrice2, date 
+    infant1, infant2, infantPrice1, infantPrice2, date
   } = storedPackageData[0];
-    
 
-      console.log("adult and date is", adult, date, adultPrice);
+
+  console.log("adult and date is", adult, date, adultPrice);
   const storedChildPrice = localStorage.getItem("storedChildPrice");
   const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");
   const startDate = localStorage.getItem("startDate");
@@ -131,7 +131,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
           localStorage.setItem("address", address);
           // Navigate to receipt page with query parameters
           router.push(`/package-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&packageId=${packageId}`);
-          
+
           // Create payment data
           const paymentData = {
             invoice_id: response.razorpay_payment_id,
@@ -147,16 +147,16 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
 
 
             adults: adult,
-            child_count1: child1, 
+            child_count1: child1,
             child_count2: child2,
-            child_count3: child3, 
-            child_price1: childPrice1, 
+            child_count3: child3,
+            child_price1: childPrice1,
             child_price2: childPrice2,
             child_price3: childPrice3,
             infant_count1: infant1,
             infant_count2: infant2,
-            infant_price1: infantPrice1, 
-            infant_price2: infantPrice2, 
+            infant_price1: infantPrice1,
+            infant_price2: infantPrice2,
 
 
             payment_method: 'Razorpay',
@@ -170,7 +170,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
             country: country,
             razorpay_payment_id: response.razorpay_payment_id,
           };
-      
+
           // Store payment details via API
           await axios.post(
             'https://yrpitsolutions.com/tourism_api/api/user/store_payment',
@@ -181,23 +181,23 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
               },
             }
           );
-      
+
           console.log('Payment data stored successfully');
-      
+
           // Call packages_minus API
-          const packagesMinusURL = `https://yrpitsolutions.com/tourism_api/api/packages_minus/${packageId}/${location}/${packageId}/${startDate}/${endDate}/${totalPackages}`;
-          await axios.get(packagesMinusURL, {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          });
-      
+          // const packagesMinusURL = `https://yrpitsolutions.com/tourism_api/api/packages_minus/${packageId}/${location}/${packageId}/${startDate}/${endDate}/${totalPackages}`;
+          // await axios.get(packagesMinusURL, {
+          //   headers: {
+          //     Authorization: `Bearer ${accessToken}`,
+          //   },
+          // });
+
           console.log('Packages minus API called successfully');
         } catch (error) {
           console.error('Error during post-payment processing:', error);
         }
       },
-      
+
       prefill: {
         name: name || 'Customer Name',
         email: email || 'customer@example.com',
