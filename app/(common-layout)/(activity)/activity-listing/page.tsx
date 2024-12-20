@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import CardPagination from "@/components/CardPagination";
 import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import 'font-awesome/css/font-awesome.min.css';
 import Image from "next/image";
 import Link from "next/link";
 
@@ -12,6 +13,7 @@ interface Activity {
   location_name: string;
   activity_title: string;
   start_time: string;
+  duration: string;
   price: string;
   sale_price: number;
 }
@@ -55,7 +57,7 @@ const page = () => {
   return (
     <>
       {activities.map(
-        ({ id, banner_image_multiple, location_name, activity_title, start_time, price, sale_price }) => (
+        ({ id, banner_image_multiple, location_name, activity_title, start_time, duration, price, sale_price }) => (
           <div key={id} className="col-span-12 ">
             <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
               <div className="relative">
@@ -89,6 +91,12 @@ const page = () => {
                       <div className="flex items-center gap-2">
                         <ClockIcon className="w-5 h-5 text-[var(--secondary-500)]" />
                         <span className="block text-sm">{start_time}</span>
+                      </div>
+                    </li>
+                    <li className="col-6">
+                      <div className="flex items-center gap-2">
+                      <i className="fa fa-hourglass-half text-xl text-[#22804A]"></i>
+                        <span className="block text-sm">{duration}</span>
                       </div>
                     </li>
                   </ul>

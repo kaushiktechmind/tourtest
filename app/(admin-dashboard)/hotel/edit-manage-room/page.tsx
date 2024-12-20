@@ -270,7 +270,7 @@ const Page = () => {
           <form onSubmit={handleSubmit}>
             <p className="mt-6 mb-4 text-xl font-medium">Hotel ID :</p>
             <input
-              type="text"
+              type="hidden"
               name="hotel_id"
               value={hotelId ?? ""}
               readOnly

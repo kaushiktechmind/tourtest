@@ -92,7 +92,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
   } = storedPackageData[0];
 
 
-  console.log("adult and date is", adult, date, adultPrice);
+  // console.log("adult and date is", adult, date, adultPrice);
   const storedChildPrice = localStorage.getItem("storedChildPrice");
   const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");
   const startDate = localStorage.getItem("startDate");
@@ -100,6 +100,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
   const location = localStorage.getItem("storedLocation");
 
   const handlePayment = async () => {
+
     const accessToken = localStorage.getItem('access_token');
     const customerId = localStorage.getItem('id');
 
@@ -107,6 +108,11 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
       router.push('/sign-in');
       return;
     }
+    if (address=="") {
+      alert("Enter All Fields")
+      return;
+    }
+
 
     const response = await fetch('/api/create-order', {
       method: 'POST',

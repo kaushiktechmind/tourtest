@@ -56,6 +56,14 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const isDateSelected = selectedDate !== null;
 
@@ -136,68 +144,96 @@ const Page = () => {
   }
 
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert("Enquiry submitted successfully!");
+        setFormData({ name: "", phone: "", email: "", message: "" });
+      } else {
+        alert("Failed to submit enquiry. Please try again.");
+      }
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  };
+
+
+
 
   return (
     <>
-    <section className="">
-     
-      <div >
+      <section className="">
+
         <div >
-          {/* Only render the Swiper if cabDetails and banner_image_multiple are available */}
-          {cabDetails?.banner_image_multiple?.length > 0 && (
-            <Swiper
-              loop={true}
-              slidesPerView="auto"
-              spaceBetween={16}
-              centeredSlides={true}
-              centeredSlidesBounds={true}
-              navigation={{
-                nextEl: ".btn-next",
-                prevEl: ".btn-prev",
-              }}
-              breakpoints={{
-                576: {
-                  slidesPerView: 2.25,
-                },
-                768: {
-                  slidesPerView: 2.5,
-                },
-                1200: {
-                  slidesPerView: 3.25,
-                },
-              }}
-              modules={[Navigation]}
-              className="swiper property-gallery-slider"
-            >
-              <div className="swiper-wrapper property-gallery-slider">
-                {/* Dynamically render SwiperSlide from banner_image_multiple */}
-                {cabDetails.banner_image_multiple.map((image, index) => (
-                  <SwiperSlide key={index} className="swiper-slide">
-                    <Link href={image} className="link property-gallery">
-                      <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}> {/* Fixed height for all images */}
-                        <Image
-                          layout="fill"  // Ensures the image fills the parent container
-                          objectFit="cover" // Maintains aspect ratio while covering the container
-                          src={image}
-                          alt={`cab-gallery-${index + 1}`}
-                          className=""
-                        />
-                      </div>
-                    </Link>
-                  </SwiperSlide>
-                ))}
-              </div>
-              <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                <ChevronLeftIcon className="w-5 h-5" />
-              </button>
-              <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                <ChevronRightIcon className="w-5 h-5" />
-              </button>
-            </Swiper>
-          )}
+          <div >
+            {/* Only render the Swiper if cabDetails and banner_image_multiple are available */}
+            {cabDetails?.banner_image_multiple?.length > 0 && (
+              <Swiper
+                loop={true}
+                slidesPerView="auto"
+                spaceBetween={16}
+                centeredSlides={true}
+                centeredSlidesBounds={true}
+                navigation={{
+                  nextEl: ".btn-next",
+                  prevEl: ".btn-prev",
+                }}
+                breakpoints={{
+                  576: {
+                    slidesPerView: 2.25,
+                  },
+                  768: {
+                    slidesPerView: 2.5,
+                  },
+                  1200: {
+                    slidesPerView: 3.25,
+                  },
+                }}
+                modules={[Navigation]}
+                className="swiper property-gallery-slider"
+              >
+                <div className="swiper-wrapper property-gallery-slider">
+                  {/* Dynamically render SwiperSlide from banner_image_multiple */}
+                  {cabDetails.banner_image_multiple.map((image, index) => (
+                    <SwiperSlide key={index} className="swiper-slide">
+                      <Link href={image} className="link property-gallery">
+                        <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}> {/* Fixed height for all images */}
+                          <Image
+                            layout="fill"  // Ensures the image fills the parent container
+                            objectFit="cover" // Maintains aspect ratio while covering the container
+                            src={image}
+                            alt={`cab-gallery-${index + 1}`}
+                            className=""
+                          />
+                        </div>
+                      </Link>
+                    </SwiperSlide>
+                  ))}
+                </div>
+                <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                  <ChevronLeftIcon className="w-5 h-5" />
+                </button>
+                <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                  <ChevronRightIcon className="w-5 h-5" />
+                </button>
+              </Swiper>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
       <div className="bg-[var(--bg-2)] pt-10 lg:pt-14 px-3">
         <div className="container">
@@ -333,72 +369,67 @@ const Page = () => {
                   </ul>
                 </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Driver and Cab details{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
+                  <h4 className="mb-5 text-2xl font-semibold">{cabDetails.cab_name}</h4>
+
+                  <div className="overflow-x-auto">
+                    <table className="w-full whitespace-nowrap">
+                      <thead>
+                        <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                          <th className="py-3 px-2">Pax</th>
+                          <th className="py-3 px-2">Car</th>
+                          <th className="py-3 px-2">Cargo</th>
+                          <th className="py-3 px-2">Cost</th>
+                          <th className="py-3 px-2">Select</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {/* You can map your rows here */}
+                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
+                          <td className="py-3 px-2">2</td>
+                          <td className="py-3 px-2">Maruti Swift</td>
+                          <td className="py-3 px-2">1</td>
+                          <td className="py-3 px-2">20</td>
+                          <td className="py-3 px-2">
+                            <div className="col-span-12">
+                          <Link href="#" className="btn-primary">
+                            Book
+                          </Link>
                         </div>
-                        <span className="inline-block">
-                          Driver Name and Photo: We&apos;ve the driver&apos;s
-                          name and photo, so you don&apos;t afraid arrive tour.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
+                          </td>
+                        </tr>
+                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
+                          <td className="py-3 px-2">4</td>
+                          <td className="py-3 px-2">Maruti Alto</td>
+                          <td className="py-3 px-2">2</td>
+                          <td className="py-3 px-2">15</td>
+                          <td className="py-3 px-2">
+                            <div className="col-span-12">
+                          <Link href="#" className="btn-primary">
+                            Book
+                          </Link>
                         </div>
-                        <span className="inline-block">
-                          License plate number and car model: You will receive
-                          the license plate number and car model of your
-                          driver&apos;s vehicle. This will help you identify the
-                          correct cab and ensure that you are getting into the
-                          right car.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
+                          </td>
+                        </tr>
+                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
+                          <td className="py-3 px-2">4</td>
+                          <td className="py-3 px-2">Maruti Alto</td>
+                          <td className="py-3 px-2">2</td>
+                          <td className="py-3 px-2">15</td>
+                          <td className="py-3 px-2">
+                            <div className="col-span-12">
+                          <Link href="#" className="btn-primary">
+                            Book
+                          </Link>
                         </div>
-                        <span className="inline-block">
-                          Driver rating: You will also be able to view your
-                          driver&apos;s rating from other passengers. This
-                          rating is based on their driving and customer service
-                          skills and can help you determine the quality of your
-                          ride.
-                        </span>
-                      </div>
-                    </li>
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                          <i className="las la-check text-lg text-primary"></i>
-                        </div>
-                        <span className="inline-block">
-                          Contact information: You will be provided with the
-                          driver&apos;s phone number, so you can contact them if
-                          needed.
-                        </span>
-                      </div>
-                    </li>
-                  </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link>
+                          </td>
+                        </tr>
+                        {/* More rows can be added here */}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
+
 
 
 
@@ -789,20 +820,20 @@ const Page = () => {
                             </div>
                           </div>
 
-                           <div className="col-span-1">
-                                                    <div className="w-full flex">
-                                                      <DatePicker
-                                                        placeholderText="Select Date"
-                                                        selected={selectedDate}
-                                                        dateFormat="dd-MM-yyyy"
-                                                        onChange={(date) => setSelectedDate(date)}
-                                                        className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
-                                                      />
-                                                      <span className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0">
-                                                        <i className="las text-2xl la-calendar-alt"></i>
-                                                      </span>
-                                                    </div>
-                                                  </div>
+                          <div className="col-span-1">
+                            <div className="w-full flex">
+                              <DatePicker
+                                placeholderText="Select Date"
+                                selected={selectedDate}
+                                dateFormat="dd-MM-yyyy"
+                                onChange={(date) => setSelectedDate(date)}
+                                className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
+                              />
+                              <span className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0">
+                                <i className="las text-2xl la-calendar-alt"></i>
+                              </span>
+                            </div>
+                          </div>
                           <div className="col-span-1">
                             <div className="w-full flex">
                               <select
@@ -832,24 +863,45 @@ const Page = () => {
                         </div>
                       </Tab.Panel>
                       <Tab.Panel>
-                        <form className="flex flex-col gap-5">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                           <input
                             type="text"
+                            name="name"
                             placeholder="Name..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
+                            required
+                          />
+                          <input
+                            type="number"
+                            name="phone"
+                            placeholder="Phone..."
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <input
                             type="email"
+                            name="email"
                             placeholder="Email..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <textarea
-                            rows={6}
+                            name="message"
                             placeholder="Message..."
-                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"></textarea>
-                          <CheckboxCustom label="I agree with Terms of Service and Privacy Statement" />
+                            value={formData.message}
+                            onChange={handleChange}
+                            rows={6}
+                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
+                          ></textarea>
+                          <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded-full">
+                            Submit
+                          </button>
                         </form>
                       </Tab.Panel>
                     </Tab.Panels>

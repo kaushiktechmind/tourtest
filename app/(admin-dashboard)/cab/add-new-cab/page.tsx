@@ -273,22 +273,44 @@ const Page = () => {
         selectedExclusions.map((inc) => inc.cab_exclusion_title)
       );
 
-      const firstSelectedAmenity = selectedAmenities[0]; // Assuming the first selected amenity
+
+      // Add selected amenities as dynamic fields
+      selectedAmenities.forEach((amenityName, index) => {
+        const attributeNumber = index + 1; // Starts from 1
+        const amenity = amenities.find((a) => a.cab_attribute_name === amenityName);
+
+        if (amenity) {
+          const attributeNameKey = `attribute_name${attributeNumber}`;
+          const attributeLogoKey = `attribute_logo${attributeNumber}`;
+
+          formDataToSend.append(attributeNameKey, amenity.cab_attribute_name);
+          formDataToSend.append(attributeLogoKey, amenity.cab_attribute_logo);
+        }
+      });
+
+      // Debug: Log all FormData entries
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(`${key}: ${value}`);
+      }
+
+
+
+      // const firstSelectedAmenity = selectedAmenities[0]; // Assuming the first selected amenity
       // if (firstSelectedAmenity) {
       //   // Append the name of the first selected attribute
       //   formDataToSend.append('attribute_name1', firstSelectedAmenity);
-  
+
       //   // Find the corresponding logo for the selected amenity
       //   const selectedAmenity = amenities.find(
       //     (item) => item.cab_attribute_name === firstSelectedAmenity
       //   );
-  
+
       //   // If we found the selected amenity, append its logo as well
       //   if (selectedAmenity) {
       //     formDataToSend.append('attribute_logo1', selectedAmenity.cab_attribute_logo);
       //   }
       // }
-  
+
       // selectedAmenities.forEach((label, index) => {
       //   if (index < 15) { // Limit to 15 items
       //     const selectedAmenity = amenities.find(
@@ -302,9 +324,6 @@ const Page = () => {
       //   }
       // });
 
-
-      // formDataToSend.append("inclusion", JSON.stringify(selectedInclusions.map((inc) => inc.cab_inclusion_title)));
-      // formDataToSend.append("exclusion", JSON.stringify(selectedExclusions.map((exc) => exc.cab_exclusion_title)));
       // // formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
 
       const faqsData = selectedFAQs.map((faq) => ({
@@ -449,7 +468,18 @@ const Page = () => {
             )}
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className="mb-4 text-xl font-medium">Max Passenger :</p>
+
+            <p className=" mb-4 text-xl font-medium">Min Passenger :</p>
+              <input
+                type="number"
+                name="min_passenger"
+                value={formData.min_passenger}
+                onChange={handleChange}
+                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                placeholder="0"
+              />
+
+              <p className="mt-6 mb-4 text-xl font-medium">Max Passenger :</p>
               <input
                 type="number"
                 name="max_passenger"
@@ -459,15 +489,7 @@ const Page = () => {
                 placeholder="0"
               />
 
-              <p className="mt-6 mb-4 text-xl font-medium">Min Passenger :</p>
-              <input
-                type="number"
-                name="min_passenger"
-                value={formData.min_passenger}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
+             
 
 
             </div>
@@ -757,12 +779,14 @@ const Page = () => {
               </div>
             </Accordion>
           </div>
+          <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
+            Save & Preview
+          </button>
         </div>
+
       </section>
 
-      <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
-        Save & Preview
-      </button>
+
 
       <Footer />
     </div>

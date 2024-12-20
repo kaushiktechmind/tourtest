@@ -11,37 +11,32 @@ import { useSearchParams, useRouter } from "next/navigation";
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
-  package_faq_title: string;
-  package_faq_description: string; // Assuming the correct spelling is 'package_faq_description'
+  cab_faq_title: string;
+  cab_faq_description: string; // Assuming the correct spelling is 'cab_faq_description'
 }
 
 interface Amenity {
   id: number;
-  package_attribute_name: string; // Ensure this matches your API response
-  package_attribute_logo: string; // Add this if the API returns a logo
+  cab_attribute_name: string; // Ensure this matches your API response
+  cab_attribute_logo: string; // Add this if the API returns a logo
 }
 
 
 const Page = () => {
-  const [itineraries, setItineraries] = useState([
-    { day: "", title: "", description: "" }
-  ]);
-
   const router = useRouter();
   const searchParams = useSearchParams();
-  const packageId = searchParams.get("packageId");
+  const cabId = searchParams.get("cabId");
 
   const [description, setDescription] = useState<string>("");
   const [formData, setFormData] = useState({
-    package_title: "",
-    package_content: "",
-    tour_price: "",
+    cab_name: "",
+    description: "",
+    price: "",
     sale_price: "",
     status: "1",
-    youtube_video_link: "",
     duration: "",
-    tour_min_people: "",
-    tour_max_people: "",
+    min_passenger: "",
+    max_passenger: "",
     pickup_point: "",
     person_type_description1: "",
     person_type_price1: "",
@@ -73,38 +68,30 @@ const Page = () => {
     person_min6: "",
     person_max6: "",
     person_type_name6: "",
-    itinerary: "",
-    banner_image: "",
+    banner_image_multiple: "",
     location_name: "",
-    itinerary_images: [],
   });
 
   const [locations, setLocations] = useState([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
-  const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
+  const [bannerImages, setBannerImages] = useState<File[]>([]);
 
-
-  const [faqs, setFAQs] = useState<FAQ[]>([]);
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
-  const [inclusions, setInclusions] = useState<{ id: number; include_title: string }[]>([]);
-  const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; include_title: string }[]>([]);
-  const [exclusions, setExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
-  const [selectedExclusions, setSelectedExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
+  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+  const [inclusions, setInclusions] = useState<{ id: number; cab_inclusion_title: string }[]>([]);
+  const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; cab_inclusion_title: string }[]>([]);
+  const [exclusions, setExclusions] = useState<{ id: number; cab_exclusion_title: string }[]>([]);
+  const [selectedExclusions, setSelectedExclusions] = useState<{ id: number; cab_exclusion_title: string }[]>([]);
 
 
   useEffect(() => {
     // Fetch inclusions from the API
     const fetchInclusions = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_include");
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_inclusion");
         const data = await response.json();
-        console.log("Inclusions fetched:", data); // Debug: Log the inclusions data
-        if (Array.isArray(data)) {
-          setInclusions(data); // Ensure the data is an array and set it to state
-        } else {
-          console.error("Invalid data format for inclusions:", data);
-        }
+        setInclusions(data);
       } catch (error) {
         console.error("Failed to fetch inclusions:", error);
       }
@@ -117,7 +104,7 @@ const Page = () => {
 
     const fetchExclusions = async () => {
       try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_exclude");
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_exclusion");
         const data = await response.json();
         setExclusions(data); // Assuming API response is an array
       } catch (error) {
@@ -133,7 +120,7 @@ const Page = () => {
     const fetchFAQs = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_package_faq"
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_cab_faq"
         );
         const data: FAQ[] = await response.json();
         setFAQs(data);
@@ -170,14 +157,7 @@ const Page = () => {
   };
 
 
-  const handleImageChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const updatedItineraries = [...itineraries];
-      updatedItineraries[index].itinerary_images = Array.from(files); // Store the files in itinerary_images
-      setItineraries(updatedItineraries);
-    }
-  };
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -200,7 +180,7 @@ const Page = () => {
     const fetchAmenities = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_package_attribute"
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_cab_attribute"
         );
         const jsonResponse = await response.json();
 
@@ -218,7 +198,7 @@ const Page = () => {
 
   const handleAddInclusion = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTitle = e.target.value;
-    const inclusion = inclusions.find((inc) => inc.include_title === selectedTitle);
+    const inclusion = inclusions.find((inc) => inc.cab_inclusion_title === selectedTitle);
 
     if (inclusion && !selectedInclusions.some((inc) => inc.id === inclusion.id)) {
       setSelectedInclusions((prev) => [...prev, inclusion]);
@@ -230,14 +210,14 @@ const Page = () => {
 
   const handleEditInclusion = (index: number, value: string) => {
     setSelectedInclusions((prev) =>
-      prev.map((inc, i) => (i === index ? { ...inc, include_title: value } : inc))
+      prev.map((inc, i) => (i === index ? { ...inc, cab_inclusion_title: value } : inc))
     );
   };
 
 
   const handleAddExclusion = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTitle = e.target.value;
-    const exclusion = exclusions.find((inc) => inc.exclude_title === selectedTitle);
+    const exclusion = exclusions.find((inc) => inc.cab_exclusion_title === selectedTitle);
 
     if (exclusion && !selectedExclusions.some((inc) => inc.id === exclusion.id)) {
       setSelectedExclusions((prev) => [...prev, exclusion]);
@@ -249,132 +229,132 @@ const Page = () => {
 
   const handleEditExclusion = (index: number, value: string) => {
     setSelectedExclusions((prev) =>
-      prev.map((inc, i) => (i === index ? { ...inc, exclude_title: value } : inc))
+      prev.map((inc, i) => (i === index ? { ...inc, cab_exclusion_title: value } : inc))
     );
   };
 
 
+
+
+
+
   useEffect(() => {
-    const fetchPackageData = async () => {
+    const fetchCabData = async () => {
       try {
-        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_by_id/${packageId}`);
+        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`);
         const data = await response.json();
+        console.log("sssssssssss", data)
 
-        setBannerImages(data.banner_image || []);
+        // setBannerImages(data.banner_image || []);
+        setBannerImages(data.banner_image_multiple || []);
 
-        if (data.package_faqs) {
-          const parsedFAQs = JSON.parse(data.package_faqs).map((faq: any) => ({
-            package_faq_title: faq.question,
-            package_faq_description: faq.answer,
-          }));
-          setSelectedFAQs(parsedFAQs);
+
+        // if (data.cab_faqs) {
+        //   const parsedFAQs = JSON.parse(data.cab_faqs).map((faq: any) => ({
+        //     cab_faq_title: faq.question,
+        //     cab_faq_description: faq.answer,
+        //   }));
+        //   setSelectedFAQs(parsedFAQs);
+        // }
+
+
+
+        if (data.description) {
+          setDescription(data.description); // Set the description from the API
         }
 
-        const parsedItineraries = JSON.parse(data.itinerary);
-        setItineraries(
-          parsedItineraries.map((item: any) => ({
-            day: item.day,
-            title: item.title,
-            description: item.description,
-            image: item.image
-          }))
-        );
+        // if (data.amenities) {
+        //   const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
+        //   setSelectedAmenities(parsedAmenities); // Prefill selected amenities
+        // }
 
-        if (data.package_content) {
-          setDescription(data.package_content); // Set the description from the API
-        }
+        // if (data.inclusion) {
+        //   const cabIncludes = JSON.parse(data.inclusion);
+        //   console.log("Parsed cab_includes:", cabIncludes);
 
-        if (data.amenities) {
-          const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
-          setSelectedAmenities(parsedAmenities); // Prefill selected amenities
-        }
+        //   const preFilledInclusions = inclusions.filter((inc) =>
+        //     cabIncludes.includes(inc.inclusion)
+        //   );
+        //   console.log("Pre-filled inclusions:", preFilledInclusions);
 
-        // Handling inclusions
-        if (data.package_includes) {
-          const packageIncludes = JSON.parse(data.package_includes);
-          console.log("Parsed package_includes:", packageIncludes);
+        //   setSelectedInclusions(preFilledInclusions);
+        // }
 
-          const preFilledInclusions = inclusions.filter((inc) =>
-            packageIncludes.includes(inc.include_title)
-          );
-          console.log("Pre-filled inclusions:", preFilledInclusions);
+        // if (data.cab_excludes) {
+        //   const cabExcludes = JSON.parse(data.cab_excludes);
+        //   console.log("Parsed cab_excludes:", cabExcludes);
 
-          setSelectedInclusions(preFilledInclusions);
-        }
+        //   // Pre-fill exclusions based on the fetched cab data
+        //   const preFilledExclusions = exclusions.filter((ex) =>
+        //     cabExcludes.includes(ex.exclude_title)
+        //   );
+        //   console.log("Pre-filled exclusions:", preFilledExclusions);
 
-        // Handling exclusions
-        if (data.package_excludes) {
-          const packageExcludes = JSON.parse(data.package_excludes);
-          console.log("Parsed package_excludes:", packageExcludes);
+        //   setSelectedExclusions(preFilledExclusions);
+        // }
 
-          // Pre-fill exclusions based on the fetched package data
-          const preFilledExclusions = exclusions.filter((ex) =>
-            packageExcludes.includes(ex.exclude_title)
-          );
-          console.log("Pre-filled exclusions:", preFilledExclusions);
+      // Process inclusion field
+      const rawInclusion = data.inclusion && data.inclusion[0] ? data.inclusion[0] : "";
+      const inclusions = rawInclusion
+        .replace(/^\[/, "") // Remove leading square bracket
+        .replace(/\]$/, "") // Remove trailing square bracket
+        .split(",") // Split items by comma
+        .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
 
-          setSelectedExclusions(preFilledExclusions);
-        }
+      // Map parsed inclusions to selectedInclusions format
+      const prefilledInclusions = inclusions.map((title: string, index: number) => ({
+        id: index + 1, // Temporary unique ID
+        cab_inclusion_title: title,
+      }));
+
+      // Set inclusions in the state
+      setSelectedInclusions(prefilledInclusions);
+
+
+
+
+       // Process inclusion field
+       const rawExclusion = data.exclusion && data.exclusion[0] ? data.exclusion[0] : "";
+       const exclusions = rawExclusion
+         .replace(/^\[/, "") // Remove leading square bracket
+         .replace(/\]$/, "") // Remove trailing square bracket
+         .split(",") // Split items by comma
+         .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
+ 
+       // Map parsed inclusions to selectedInclusions format
+       const prefilledExclusions = exclusions.map((title: string, index: number) => ({
+         id: index + 1, // Temporary unique ID
+         cab_exclusion_title: title,
+       }));
+ 
+       // Set inclusions in the state
+       setSelectedExclusions(prefilledExclusions);
+ 
 
         // Prefill formData with the API response
         setFormData((prevState) => ({
           ...prevState,
-          package_title: data.package_title || "",
-          package_content: data.package_content || "",
-          tour_price: data.tour_price || "",
+          cab_name: data.cab_name || "",
+          description: data.description || "",
+          price: data.price || "",
           sale_price: data.sale_price || "",
           youtube_video_link: data.youtube_video_link || "",
           duration: data.duration || "",
-          tour_min_people: data.tour_min_people || "",
-          tour_max_people: data.tour_max_people || "",
-          pickup_point: data.pickup_point || "",
-          location_name: data.location_name || "",
+          min_passenger: data.min_passenger || "",
+          max_passenger: data.max_passenger || "",
+          location_name: data.location || "",
 
-          person_type_name1: data.person_type_name1 || "",
-          person_type_description1: data.person_type_description1 || "",
-          person_min1: data.person_min1 || "",
-          person_max1: data.person_max1 || "",
-          person_type_price1: data.person_type_price1 || "",
-
-          person_type_name2: data.person_type_name2 || "",
-          person_type_description2: data.person_type_description2 || "",
-          person_min2: data.person_min2 || "",
-          person_max2: data.person_max2 || "",
-          person_type_price2: data.person_type_price2 || "",
-
-          person_type_name3: data.person_type_name3 || "",
-          person_type_description3: data.person_type_description3 || "",
-          person_min3: data.person_min3 || "",
-          person_max3: data.person_max3 || "",
-          person_type_price3: data.person_type_price3 || "",
-
-          person_type_name4: data.person_type_name4 || "",
-          person_type_description4: data.person_type_description4 || "",
-          person_min4: data.person_min4 || "",
-          person_max4: data.person_max4 || "",
-          person_type_price4: data.person_type_price4 || "",
-
-          person_type_name5: data.person_type_name5 || "",
-          person_type_description5: data.person_type_description5 || "",
-          person_min5: data.person_min5 || "",
-          person_max5: data.person_max5 || "",
-          person_type_price5: data.person_type_price5 || "",
-
-          person_type_name6: data.person_type_name6 || "",
-          person_type_description6: data.person_type_description6 || "",
-          person_min6: data.person_min6 || "",
-          person_max6: data.person_max6 || "",
-          person_type_price6: data.person_type_price6 || "",
 
           // Add other fields as necessary
         }));
       } catch (error) {
-        console.error("Error fetching package data:", error);
+        console.error("Error fetching cab data:", error);
       }
     };
 
-    fetchPackageData();
-  }, [packageId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
+    fetchCabData();
+  }, [cabId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
+
 
 
 
@@ -387,113 +367,106 @@ const Page = () => {
     }
 
     try {
-      // Create a FormData object
+
       const formDataToSend = new FormData();
 
       const plainDescription = description.replace(/<[^>]*>/g, ""); // This removes HTML tags
-
-
-
       // Manually append each field from formData and plainDescription
-      formDataToSend.append("package_title", formData.package_title);
-      formDataToSend.append("package_content", plainDescription); // Save as plain text
-      formDataToSend.append("tour_price", formData.tour_price);
+      formDataToSend.append("cab_name", formData.cab_name);
+      formDataToSend.append("description", plainDescription);
+      formDataToSend.append("price", formData.price);
       formDataToSend.append("sale_price", formData.sale_price);
-      formDataToSend.append("youtube_video_link", formData.youtube_video_link);
-      formDataToSend.append("duration", formData.duration);
-      formDataToSend.append("tour_min_people", formData.tour_min_people);
-      formDataToSend.append("tour_max_people", formData.tour_max_people);
-      formDataToSend.append("pickup_point", formData.pickup_point);
+      formDataToSend.append("min_passenger", formData.min_passenger);
+      formDataToSend.append("max_passenger", formData.max_passenger);
 
-      formDataToSend.append("person_type_description1", formData.person_type_description1);
-      formDataToSend.append("person_type_price1", formData.person_type_price1);
-      formDataToSend.append("person_max1", formData.person_max1);
-      formDataToSend.append("person_min1", formData.person_min1);
-      formDataToSend.append("person_type_name1", formData.person_type_name1);
+      formDataToSend.append("location", formData.location_name);
 
-      formDataToSend.append("person_type_description2", formData.person_type_description2);
-      formDataToSend.append("person_type_price2", formData.person_type_price2);
-      formDataToSend.append("person_max2", formData.person_max2);
-      formDataToSend.append("person_min2", formData.person_min2);
-      formDataToSend.append("person_type_name2", formData.person_type_name2);
 
-      formDataToSend.append("person_type_description3", formData.person_type_description3);
-      formDataToSend.append("person_type_price3", formData.person_type_price3);
-      formDataToSend.append("person_max3", formData.person_max3);
-      formDataToSend.append("person_min3", formData.person_min3);
-      formDataToSend.append("person_type_name3", formData.person_type_name3);
+      formDataToSend.append(
+        "inclusion[]",
+        selectedInclusions.map((inc) => inc.cab_inclusion_title)
+      );
+      formDataToSend.append(
+        "exclusion[]",
+        selectedExclusions.map((inc) => inc.cab_exclusion_title)
+      );
 
-      formDataToSend.append("person_type_description4", formData.person_type_description4);
-      formDataToSend.append("person_type_price4", formData.person_type_price4);
-      formDataToSend.append("person_max4", formData.person_max4);
-      formDataToSend.append("person_min4", formData.person_min4);
-      formDataToSend.append("person_type_name4", formData.person_type_name4);
 
-      formDataToSend.append("person_type_description5", formData.person_type_description5);
-      formDataToSend.append("person_type_price5", formData.person_type_price5);
-      formDataToSend.append("person_max5", formData.person_max5);
-      formDataToSend.append("person_min5", formData.person_min5);
-      formDataToSend.append("person_type_name5", formData.person_type_name5);
+      // Add selected amenities as dynamic fields
+      selectedAmenities.forEach((amenityName, index) => {
+        const attributeNumber = index + 1; // Starts from 1
+        const amenity = amenities.find((a) => a.cab_attribute_name === amenityName);
 
-      formDataToSend.append("person_type_description6", formData.person_type_description6);
-      formDataToSend.append("person_type_price6", formData.person_type_price6);
-      formDataToSend.append("person_max6", formData.person_max6);
-      formDataToSend.append("person_min6", formData.person_min6);
-      formDataToSend.append("person_type_name6", formData.person_type_name6);
+        if (amenity) {
+          const attributeNameKey = `attribute_name${attributeNumber}`;
+          const attributeLogoKey = `attribute_logo${attributeNumber}`;
 
-      formDataToSend.append("location_name", formData.location_name);
-      formDataToSend.append("status", formData.status);
+          formDataToSend.append(attributeNameKey, amenity.cab_attribute_name);
+          formDataToSend.append(attributeLogoKey, amenity.cab_attribute_logo);
+        }
+      });
 
-      formDataToSend.append("package_includes", JSON.stringify(selectedInclusions.map((inc) => inc.include_title)));
-      formDataToSend.append("package_excludes", JSON.stringify(selectedExclusions.map((exc) => exc.exclude_title)));
-      formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
+      // Debug: Log all FormData entries
+      for (const [key, value] of formDataToSend.entries()) {
+        console.log(`${key}: ${value}`);
+      }
 
-      formDataToSend.append("_method", "PUT");
+
+
+      // const firstSelectedAmenity = selectedAmenities[0]; // Assuming the first selected amenity
+      // if (firstSelectedAmenity) {
+      //   // Append the name of the first selected attribute
+      //   formDataToSend.append('attribute_name1', firstSelectedAmenity);
+
+      //   // Find the corresponding logo for the selected amenity
+      //   const selectedAmenity = amenities.find(
+      //     (item) => item.cab_attribute_name === firstSelectedAmenity
+      //   );
+
+      //   // If we found the selected amenity, append its logo as well
+      //   if (selectedAmenity) {
+      //     formDataToSend.append('attribute_logo1', selectedAmenity.cab_attribute_logo);
+      //   }
+      // }
+
+      // selectedAmenities.forEach((label, index) => {
+      //   if (index < 15) { // Limit to 15 items
+      //     const selectedAmenity = amenities.find(
+      //       (item) => item.cab_attribute_name === label
+      //     );
+
+      //     if (selectedAmenity) {
+      //       formDataToSend.append(`attribute_name${index + 1}`, selectedAmenity.cab_attribute_name);
+      //       formDataToSend.append(`attribute_logo${index + 1}`, selectedAmenity.cab_attribute_logo);
+      //     }
+      //   }
+      // });
+
+      // // formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
 
       const faqsData = selectedFAQs.map((faq) => ({
-        question: faq.package_faq_title,
-        answer: faq.package_faq_description,
+        question: faq.cab_faq_title,
+        answer: faq.cab_faq_description,
       }));
-      formDataToSend.append("package_faqs", JSON.stringify(faqsData));
 
-      // If new files are selected, add them; otherwise, send an empty array
-      if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
+      const faqs = JSON.stringify(faqsData);
+      // console.log("zzzzzzzzzzzzzzzzzzz", faqs);
+
+      formDataToSend.append("faqs[]", faqs);
+
+      if (Array.isArray(bannerImages)) {
         bannerImages.forEach((file) => {
-          formDataToSend.append("banner_image[]", file);
+          formDataToSend.append("banner_image_multiple[]", file);
         });
       } else {
-        formDataToSend.append("banner_image[]", ""); // Clear existing images if no new ones are provided
-      }
-
-      // Check if itineraries is defined and is an array before using forEach
-      if (Array.isArray(itineraries)) {
-        itineraries.forEach((itinerary, index) => {
-          if (Array.isArray(itinerary.itinerary_images)) {
-            itinerary.itinerary_images.forEach((file) => {
-              formDataToSend.append(`itinerary_images[${index}]`, file);
-            });
-          } else {
-            console.error(`itinerary_images for itinerary ${index} is not defined or not an array`);
-          }
-        });
-      } else {
-        console.error('itineraries is not defined or not an array');
+        console.error('bannerImages is not defined or not an array');
       }
 
 
 
-      const formattedItineraries = itineraries.map((itinerary, index) => ({
-        day: index + 1,
-        title: itinerary.title,
-        description: itinerary.description.replace(/<[^>]*>/g, "").trim(),
-
-      }));
-
-      // Append itinerary data as a JSON string
-      formDataToSend.append("itinerary", JSON.stringify(formattedItineraries));
 
       // Send the request with FormData
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_package_by_id/${packageId}`, {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/cab-main-forms", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -504,50 +477,24 @@ const Page = () => {
 
       if (response.ok) {
         const data = await response.json();
-        alert("Package Updated successfully!");
-        router.push("/package/all-package");
-        console.log(data);
+        alert("Cab saved successfully!");
+        router.push("/cab/all-cab");
       } else {
-        alert("Failed to Update package.");
+        alert("Failed to save cab.");
       }
     } catch (error) {
-      console.error("Error Update package:", error);
+      console.error("Error saving cab:", error);
     }
   };
 
 
-
-
-  const handleInputChange = (index: number, field: string, value: string) => {
-    const newItineraries = [...itineraries];
-    newItineraries[index][field] = value;
-    setItineraries(newItineraries);
-  };
-
-  // Add new itinerary box
-  const addNewItinerary = () => {
-    if (itineraries.length < 5) {
-      setItineraries([
-        ...itineraries,
-        { image: "", title: "", description: "", content: "" }
-      ]);
-    }
-  };
-
-  // Delete itinerary box
-  const deleteItinerary = (index: number) => {
-    if (itineraries.length > 1) {
-      const newItineraries = itineraries.filter((_, i) => i !== index);
-      setItineraries(newItineraries);
-    }
-  };
 
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Add New Package</h2>
-        <Link href="/package/all-package" className="btn-primary">
-          <EyeIcon className="w-5 h-5" /> View All Packages
+        <h2 className="h2 text-white">Edit Cab</h2>
+        <Link href={`/cab/manage-cab?cabId=${cabId}`} className="btn-primary">
+          <EyeIcon className="w-5 h-5" /> Manage Cabs
         </Link>
       </div>
       {/* statisticts */}
@@ -558,7 +505,7 @@ const Page = () => {
               <div
                 className={`${open ? "rounded-t-2xl" : "rounded-2xl"
                   } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                <h3 className="h3">Package Content </h3>
+                <h3 className="h3">Cab Content </h3>
                 <ChevronDownIcon
                   className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                     }`}
@@ -587,14 +534,14 @@ const Page = () => {
 
 
 
-                <p className="mt-6 mb-4 text-xl font-medium">Package Name:</p>
+                <p className="mt-6 mb-4 text-xl font-medium">Cab Name:</p>
                 <input
                   type="text"
-                  name="package_title"
-                  value={formData.package_title}
+                  name="cab_name"
+                  value={formData.cab_name}
                   onChange={handleChange}
                   className="w-full border p-2 rounded-md text-base"
-                  placeholder="Name of Package"
+                  placeholder="Name of Cab"
                 />
 
                 <p className="mt-6 mb-4 text-xl font-medium">Description :<span className="astrick">*</span></p>
@@ -604,8 +551,8 @@ const Page = () => {
                 <p className="mt-6 mb-4 text-xl font-medium">Price:</p>
                 <input
                   type="number"
-                  name="tour_price"
-                  value={formData.tour_price}
+                  name="price"
+                  value={formData.price}
                   onChange={handleChange}
                   className="w-full border p-2 rounded-md text-base"
                   placeholder="10,000"
@@ -630,7 +577,7 @@ const Page = () => {
               <div
                 className={`${open ? "rounded-t-2xl" : "rounded-2xl"
                   } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}>
-                <h3 className="h3">Package Details </h3>
+                <h3 className="h3">Cab Details </h3>
                 <ChevronDownIcon
                   className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                     }`}
@@ -639,39 +586,31 @@ const Page = () => {
             )}
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className="mb-4 text-xl font-medium">Max People :</p>
+            <p className="mb-4 text-xl font-medium">Min Passenger :</p>
               <input
                 type="number"
-                name="tour_max_people"
-                value={formData.tour_max_people}
+                name="min_passenger"
+                value={formData.min_passenger}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
               />
 
-              <p className="mt-6 mb-4 text-xl font-medium">Min People :</p>
+              <p className="mt-6 mb-4 text-xl font-medium">Max Passenger :</p>
               <input
                 type="number"
-                name="tour_min_people"
-                value={formData.tour_min_people}
+                name="max_passenger"
+                value={formData.max_passenger}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
               />
-              <p className="mt-6 mb-4 text-xl font-medium">Duration</p>
+
+              <p className="mt-6 mb-4 text-xl font-medium">Min Passenger :</p>
               <input
-                type="text"
-                name="duration"
-                value={formData.duration}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
-              <p className="mt-6 mb-4 text-xl font-medium">Pickup Point :</p>
-              <input
-                type="text"
-                name="pickup_point"
-                value={formData.pickup_point}
+                type="number"
+                name="min_passenger"
+                value={formData.min_passenger}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
@@ -681,89 +620,6 @@ const Page = () => {
             </div>
           </Accordion>
 
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}>
-                <h3 className="h3">Price Details </h3>
-                <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                    }`}
-                />
-              </div>
-            )}
-            initialOpen={true}>
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <table className="table-auto w-full border-collapse border border-gray-200">
-                <thead>
-                  <tr className="bg-gray-100 text-left">
-                    <th className="border border-gray-200 px-4 py-2">Person Type</th>
-                    <th className="border border-gray-200 px-4 py-2">Description</th>
-                    <th className="border border-gray-200 px-4 py-2">Min</th>
-                    <th className="border border-gray-200 px-4 py-2">Max</th>
-                    <th className="border border-gray-200 px-4 py-2">Price</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[...Array(6)].map((_, index) => {
-                    const personIndex = index + 1;
-                    return (
-                      <tr key={index}>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <input
-                            type="text"
-                            name={`person_type_name${personIndex}`}
-                            value={formData[`person_type_name${personIndex}`] || ""}
-                            onChange={handleChange}
-                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                          />
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <input
-                            type="text"
-                            name={`person_type_description${personIndex}`}
-                            value={formData[`person_type_description${personIndex}`] || ""}
-                            onChange={handleChange}
-                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                          />
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <input
-                            type="number"
-                            name={`person_min${personIndex}`}
-                            value={formData[`person_min${personIndex}`] || ""}
-                            onChange={handleChange}
-                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                          />
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <input
-                            type="number"
-                            name={`person_max${personIndex}`}
-                            value={formData[`person_max${personIndex}`] || ""}
-                            onChange={handleChange}
-                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                          />
-                        </td>
-                        <td className="border border-gray-200 px-4 py-2">
-                          <input
-                            type="number"
-                            name={`person_type_price${personIndex}`}
-                            value={formData[`person_type_price${personIndex}`] || ""}
-                            onChange={handleChange}
-                            className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-
-          </Accordion>
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -844,12 +700,11 @@ const Page = () => {
 
 
 
-
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
                 <input
                   type="text"
-                  name="youtube_video_link"
-                  value={formData.youtube_video_link}
+                  name="youtube_video_image"
+                  value={formData.youtube_video_image}
                   onChange={handleChange}
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="0"
@@ -861,8 +716,7 @@ const Page = () => {
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Inclusion</h3>
                   <ChevronDownIcon
@@ -874,49 +728,42 @@ const Page = () => {
             >
               <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
                 <select
-                  name="include_title"
+                  name="cab_inclusion_title"
                   onChange={handleAddInclusion}
-                  value="" // Ensures the select shows "Select an Inclusion" by default
+                  value=""  // Add value attribute to ensure no default selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Inclusion
                   </option>
                   {inclusions.map((inclusion) => (
-                    <option key={inclusion.id} value={inclusion.include_title}>
-                      {inclusion.include_title}
+                    <option key={inclusion.id} value={inclusion.cab_inclusion_title}>
+                      {inclusion.cab_inclusion_title}
                     </option>
                   ))}
                 </select>
+
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        value={inclusion.include_title}
-                        onChange={(e) => handleEditInclusion(index, e.target.value)}
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      />
-                      {/* <button
-                        type="button"
-                        onClick={() => setSelectedInclusions((prev) => prev.filter((_, i) => i !== index))}
-                        className="text-red-500"
-                      >
-                        Remove
-                      </button> */}
-                    </div>
+                    <input
+                      key={index}
+                      type="text"
+                      value={inclusion.cab_inclusion_title}
+                      onChange={(e) => handleEditInclusion(index, e.target.value)}
+                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                    />
                   ))}
                 </div>
               </div>
             </Accordion>
+
           </div>
           <div className="rounded-2xl bg-white border mt-6">
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Exclusion</h3>
                   <ChevronDownIcon
@@ -928,45 +775,35 @@ const Page = () => {
             >
               <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
                 <select
-                  name="exclude_title"
+                  name="cab_exclusion_title"
                   onChange={handleAddExclusion}
-                  value="" // Ensures the select shows "Select an Exclusion" by default
+                  value=""  // Add value attribute to prevent default selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Exclusion
                   </option>
                   {exclusions.map((exclusion) => (
-                    <option key={exclusion.id} value={exclusion.exclude_title}>
-                      {exclusion.exclude_title}
+                    <option key={exclusion.id} value={exclusion.cab_exclusion_title}>
+                      {exclusion.cab_exclusion_title}
                     </option>
                   ))}
                 </select>
 
-                {/* Render selected exclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <div key={index} className="flex items-center space-x-2">
-                      <input
-                        type="text"
-                        value={exclusion.exclude_title}
-                        onChange={(e) => handleEditExclusion(index, e.target.value)}
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      />
-                      {/* Optionally add a remove button */}
-                      {/* <button
-          type="button"
-          onClick={() => setSelectedExclusions((prev) => prev.filter((_, i) => i !== index))}
-          className="text-red-500"
-        >
-          Remove
-        </button> */}
-                    </div>
+                    <input
+                      key={index}
+                      type="text"
+                      value={exclusion.cab_exclusion_title}
+                      onChange={(e) => handleEditExclusion(index, e.target.value)}
+                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                    />
                   ))}
                 </div>
               </div>
-
             </Accordion>
+
           </div>
 
 
@@ -1016,7 +853,7 @@ const Page = () => {
                       </option>
                       {faqs.map((faq) => (
                         <option key={faq.id} value={faq.id}>
-                          {faq.package_faq_title}
+                          {faq.cab_faq_title}
                         </option>
                       ))}
                     </select>
@@ -1032,17 +869,17 @@ const Page = () => {
                       <input
                         type="text"
                         className="w-1/2 border p-2 rounded-md"
-                        value={faq.package_faq_title}
+                        value={faq.cab_faq_title}
                         readOnly
                       />
                       <input
                         type="text"
                         className="w-1/2 border p-2 rounded-md"
-                        value={faq.package_faq_description}
+                        value={faq.cab_faq_description}
                         onChange={(e) => {
                           const updatedFAQs = selectedFAQs.map((f) =>
                             f.id === faq.id
-                              ? { ...f, package_faq_description: e.target.value }
+                              ? { ...f, cab_faq_description: e.target.value }
                               : f
                           );
                           setSelectedFAQs(updatedFAQs);
@@ -1082,9 +919,9 @@ const Page = () => {
                     {amenities.map((item) => (
                       <li key={item.id} className="py-2 flex items-center">
                         <CheckboxCustom
-                          label={item.package_attribute_name}
-                          onChange={() => handleCheckboxChange(item.package_attribute_name)} // Handle checkbox change
-                          checked={selectedAmenities.includes(item.package_attribute_name)} // Prefill based on selectedAmenities
+                          label={item.cab_attribute_name}
+                          onChange={() => handleCheckboxChange(item.cab_attribute_name)} // Use the amenity name
+                          checked={selectedAmenities.includes(item.cab_attribute_name)} // Check if selected
                         />
                       </li>
                     ))}
@@ -1093,99 +930,14 @@ const Page = () => {
               </div>
             </Accordion>
           </div>
+          <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
+            Save & Preview
+          </button>
         </div>
+
       </section>
 
-      <div className="rounded-2xl bg-white border m-6 p-6">
-        <Accordion
-          buttonContent={(open) => (
-            <div
-              className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-              <h3 className="h3">Itinerary</h3>
-              <ChevronDownIcon
-                className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-              />
-            </div>
-          )}
-          initialOpen={true}>
-          <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-            {itineraries.map((itinerary, index) => (
-              <div key={index} className="mb-6 p-4 border rounded-md">
-                <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/5 flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Day</label>
-                      <input
-                        type="text"
-                        value={`Day ${index + 1}`}
-                        readOnly
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base bg-gray-100"
-                        placeholder="Day 1"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
-                    <label className="block text-sm font-medium mb-2">Title</label>
-                    <textarea
-                      value={itinerary.title}
-                      onChange={(e) => handleInputChange(index, "title", e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      placeholder="Title"
-                    />
-                  </div>
-                  <div className="w-full md:w-1/4">
-                    <label className="block text-sm font-medium mb-2">Image</label>
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
-                      <span className="flex flex-col items-center justify-center py-12">
-                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
-                      </span>
-                      <input
-                        type="file"
-                        onChange={(e) => handleImageChange(index, e)}
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                      />
-                    </label>
-                  </div>
-                  {itineraries.length > 1 && (
-                    <div className="w-full md:w-1/6 flex items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => deleteItinerary(index)}
-                        className="text-red-500"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                  <div className="w-full flex flex-col">
-                    <div className="mt-4">
-                      <p className="mb-4 text-xl font-medium"> Itinerary Description :</p>
-                      <QuillEditor
-                        onChange={(value) => handleInputChange(index, "description", value)}
-                        value={itinerary.description || ""}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            <button
-              type="button"
-              onClick={addNewItinerary}
-              className="text-blue-500"
-              disabled={itineraries.length >= 5}
-            >
-              Add New
-            </button>
-          </div>
 
-        </Accordion>
-      </div>
-      <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
-        Save & Preview
-      </button>
 
       <Footer />
     </div>

@@ -48,11 +48,12 @@ const Page = () => {
 
 
 
-  const [address, setAddress] = useState("");
+  // const [address, setAddress] = useState("");
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [mobile_number, setMobileNumber] = useState(localStorage.getItem("mobile_number") || "");
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
@@ -71,14 +72,14 @@ const Page = () => {
     console.error("No package data found in localStorage");
     return; // Exit if no data is found
   }
-  
+
   // Access the first object in the array
-  const { 
+  const {
     adult, adultPrice,
     child1, child2, child3, childPrice1, childPrice2, childPrice3,
-    infant1, infant2, infantPrice1, infantPrice2, date 
+    infant1, infant2, infantPrice1, infantPrice2, date
   } = storedPackageData[0];
-    
+
 
 
 
@@ -105,7 +106,7 @@ const Page = () => {
 
         if (response.ok) {
           const data = await response.json();
-          setPackageItem(data); 
+          setPackageItem(data);
         } else {
           alert("Failed to fetch package details.");
         }
@@ -128,21 +129,36 @@ const Page = () => {
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
                 </div>
-                <div className="col-span-12 md:col-span-2 mt-[20px]">
-                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
+                <div className="border border-dashed my-6"></div>
+
+                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
+                  <div className="col-span-12 md:col-span-6">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">
-                          Booking date
-                        </span>
+                      <span className="clr-neutral-400 inline-block text-sm">
+                        Booking Date
+                      </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                     </div>
                   </div>
+                  
+                 
+                  <div className="col-span-12 md:col-span-6">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="clr-neutral-400 inline-block text-sm">
+                        Total Pax
+                      </span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{Number(adult) + Number(child1) + Number(child2) + Number(child3) + Number(infant1) + Number(infant2)}</p>
+                    </div>
+                  </div>
+                </div>
 
                 <div className="border border-dashed my-6"></div>
 
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                 
                   <div className="col-span-12 md:col-span-2">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
@@ -225,29 +241,19 @@ const Page = () => {
                           <div className="border border-dashed my-6"></div>
                           <ul className="flex flex-wrap gap-6">
                             <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-home"></i>
+                              <i className="las text-lg la-globe text-[#22804A]"></i>
                               <span className="block text-sm">
                                 {packageItem?.pickup_point || "Pickup Point"}
                               </span>
                             </li>
                             <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bed"></i>
+                            <i className="las la-clock text-xl text-[#22804A]"></i>
                               <span className="block text-sm">
                                 {packageItem?.duration || "Duration"}
                               </span>
                             </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bath"></i>
-                              <span className="block text-sm">
-                                {packageItem?.bath || "Bath"}
-                              </span>
-                            </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-arrows-alt"></i>
-                              <span className="block text-sm">
-                                {packageItem?.size || "Size"}
-                              </span>
-                            </li>
+                            
+
                           </ul>
                         </div>
                       </div>
@@ -258,7 +264,7 @@ const Page = () => {
 
 
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-                <h4 className="mb-3 text-2xl font-semibold">Billing address</h4>
+                <h4 className="mb-3 text-2xl font-semibold">Billing address <span className="astrick">*</span></h4>
                 <div className="border border-dashed my-6"></div>
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 md:col-span-6">
@@ -309,7 +315,7 @@ const Page = () => {
                         type="text"
                         className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
                         placeholder="Enter Passport Number"
-                        value={passportNumber} 
+                        value={passportNumber}
                         onChange={handlePassportChange}
                       />
                     </div>
@@ -318,7 +324,7 @@ const Page = () => {
                     <textarea
                       rows={5}
                       className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
-                      placeholder="Enter Address"
+                      placeholder="Enter All Fields"
                       value={address} // Set value from state
                       onChange={handleAddressChange} // Update state on change
                     ></textarea>
@@ -370,7 +376,7 @@ const Page = () => {
 
               <div className="border border-dashed my-8"></div>
               <div className="grid grid-cols-2 items-center mb-6">
-              <p className="mb-0 font-bold">Total Price</p>
+                <p className="mb-0 font-bold">Total Price</p>
 
                 <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
               </div>

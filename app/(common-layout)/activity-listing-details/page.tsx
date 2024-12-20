@@ -52,6 +52,13 @@ const Page = () => {
     ticket5: 0,
   });
 
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    message: "",
+  });
+
 
 
 
@@ -232,19 +239,48 @@ const Page = () => {
 
 
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+  
+  
+  
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        });
+        if (response.ok) {
+          alert("Enquiry submitted successfully!");
+          setFormData({ name: "", phone: "", email: "", message: "" });
+        } else {
+          alert("Failed to submit enquiry. Please try again.");
+        }
+      } catch (error) {
+        alert("An error occurred. Please try again.");
+      }
+    };
+
+
 
 
 
   return (
     <main>
       <div className="bg-[var(--bg-2)]">
-        <div className="py-4">
+      <div className="py-4">
           <div className="px-3">
             <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[70px]">
+              {/* Left Column */}
               <div className="col-span-12 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
+                  {/* Image 1 */}
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12">
-                    <div className="col-span-12 h-[230px]">
+                    <div className="h-[288px]"> {/* Consistent height */}
                       <Link
                         href="/img/tour-details-img-4.jpg"
                         className="link property-gallery">
@@ -258,7 +294,8 @@ const Page = () => {
                       </Link>
                     </div>
                   </div>
-                  <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative">
+                  {/* Button and Image */}
+                  <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative h-[288px]">
                     <Link
                       href="#"
                       className="absolute btn-outline bottom-6 bg-white border-none left-6">
@@ -270,31 +307,36 @@ const Page = () => {
                       className="link property-gallery">
                       <Image
                         width={610}
-                        height={681}
+                        height={288}
                         src={activityData.banner_image_multiple[1]}
                         alt="image"
-                        className="w-full h-full object-cover rounded-2xl"
+                        className="w-full h-full rounded-2xl object-cover"
                       />
                     </Link>
                   </div>
                 </div>
               </div>
+
+              {/* Center Column */}
               <div className="col-span-12 md:col-span-6 xl:col-span-4">
                 <Link
                   href="/img/tour-details-img-3.jpg"
-                  className="link block property-gallery h-full">
+                  className="link block property-gallery h-full"> {/* Combined height */}
                   <Image
                     width={610}
-                    height={288}
+                    height={576}
                     src={activityData.banner_image_multiple[2]}
                     alt="image"
-                    className=" w-full h-full object-fit-cover rounded-2xl"
+                    className="w-full h-full object-cover rounded-2xl"
                   />
                 </Link>
               </div>
+
+              {/* Right Column */}
               <div className="col-span-12 md:col-span-6 xl:col-span-4">
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
-                  <div className="col-span-12 h-[288px]">
+                  {/* Image 4 */}
+                  <div className="col-span-12 h-[288px]"> {/* Ensure consistent height */}
                     <Link
                       href="/img/tour-details-img-4.jpg"
                       className="link property-gallery">
@@ -307,34 +349,34 @@ const Page = () => {
                       />
                     </Link>
                   </div>
-
-                  <div className="col-span-12 sm:col-span-6 h-80">
+                  {/* Image 5 */}
+                  <div className="col-span-12 sm:col-span-6 h-[288px]">
                     <Link
                       href="/img/tour-details-img-5.jpg"
                       className="link property-gallery">
                       <Image
                         width={293}
-                        height={384}
+                        height={288}
                         src={activityData.banner_image_multiple[4]}
                         alt="image"
                         className="w-full h-full rounded-2xl object-cover"
                       />
                     </Link>
                   </div>
-                  <div className="col-span-12 sm:col-span-6 h-80">
+                  {/* Image 6 */}
+                  <div className="col-span-12 sm:col-span-6 h-[288px]">
                     <Link
                       href="/img/tour-details-img-6.jpg"
                       className="link property-gallery">
                       <Image
                         width={293}
-                        height={384}
+                        height={288}
                         src={activityData.banner_image_multiple[5]}
                         alt="image"
                         className="w-full h-full rounded-2xl object-cover"
                       />
                     </Link>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -359,7 +401,7 @@ const Page = () => {
                       <li className="py-2">
                         <div className="flex items-center gap-1">
                           <span>
-                            Place:{" "}
+                            Duration:{" "}
                             <span className="text-primary"> {activityData.duration}</span>
                           </span>
                         </div>
@@ -876,24 +918,45 @@ const Page = () => {
                         </div>
                       </Tab.Panel>
                       <Tab.Panel>
-                        <form className="flex flex-col gap-5">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
                           <input
                             type="text"
+                            name="name"
                             placeholder="Name..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.name}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
+                            required
+                          />
+                          <input
+                            type="number"
+                            name="phone"
+                            placeholder="Phone..."
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <input
                             type="email"
+                            name="email"
                             placeholder="Email..."
-                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full rounded-full bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                             required
                           />
                           <textarea
-                            rows={6}
+                            name="message"
                             placeholder="Message..."
-                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3 md:py-3 md:px-4"></textarea>
-                          <CheckboxCustom label="I agree with Terms of Service and Privacy Statement" />
+                            value={formData.message}
+                            onChange={handleChange}
+                            rows={6}
+                            className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
+                          ></textarea>
+                          <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded-full">
+                            Submit
+                          </button>
                         </form>
                       </Tab.Panel>
                     </Tab.Panels>

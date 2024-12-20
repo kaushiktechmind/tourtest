@@ -5,6 +5,10 @@ import {
   PencilSquareIcon,
   PlusCircleIcon,
   TrashIcon,
+  HomeIcon,
+  CubeIcon,
+  ClipboardIcon,
+  CarIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
@@ -31,7 +35,6 @@ interface Payment {
 
 const Page = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
-  const [tourName, setTourName] = useState<string | null>(null); 
 
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,6 +58,25 @@ const Page = () => {
     fetchPayments();
   }, []);
 
+  const getDetailsAndIcon = (payment: Payment) => {
+    const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
+
+    let icon = null;
+
+    if (payment.hotel_name) {
+      icon = <HomeIcon className="w-5 h-5" />;
+    } else if (payment.package_name) {
+      icon = <ClipboardIcon className="w-5 h-5" />;
+    } else if (payment.activity_name) {
+      icon = <CubeIcon className="w-5 h-5" />;
+    } else if (payment.cab_name) {
+      icon = <CarIcon className="w-5 h-5" />;
+    }
+
+    return { icon, details }; // Return icon and details as an object
+  };
+
+
   // Filtered and paginated payments
   const filteredPayments = payments.filter((payment) =>
     payment.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
@@ -71,31 +93,14 @@ const Page = () => {
   };
 
 
-  useEffect(() => {
-    if (payments.length > 0) {
-      // Find the first non-null value among the fields
-      const tourName = 
-        payments[0]?.hotel_name || 
-        payments[0]?.package_name || 
-        payments[0]?.activity_name || 
-        payments[0]?.cab_name;
-  
-        if (tourName) {
-          setTourName(tourName); // Set the value in state
-        } else {
-          setTourName(null); // Or handle if none found
-        }
-    }
-  }, [payments]);
-  
 
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Booking</h2>
-        <Link href="#" className="btn-primary">
+        {/* <Link href="#" className="btn-primary">
           <PlusCircleIcon className="w-5 h-5" /> View all booking
-        </Link>
+        </Link> */}
       </div>
 
       {/* Recent bookings */}
@@ -112,6 +117,7 @@ const Page = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <SearchIcon />
+
               </div>
             </form>
           </div>
@@ -141,7 +147,18 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">{payment.booking_id}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_name}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_mobile_number}</td>
-                    <td className="py-3 lg:py-4 px-2">{tourName}</td>
+                    <td className="py-3 lg:py-4 px-2 flex items-center gap-2">
+                      {(() => {
+                        const { icon, details } = getDetailsAndIcon(payment); // Destructure the returned object
+                        return (
+                          <>
+                            {icon}
+                            {details}
+                          </>
+                        );
+                      })()}
+                    </td>
+
                     <td className="py-3 lg:py-4 px-2">₹{payment.amount}/-</td>
                     <td className="py-3 lg:py-4 px-2">{payment.invoice_id}</td>
                     <td className="py-3 lg:py-4 px-2">

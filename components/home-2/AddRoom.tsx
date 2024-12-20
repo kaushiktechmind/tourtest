@@ -127,7 +127,7 @@ const AddRoom = () => {
                   </div>
                   <div className="flex-1">
                     <label>Children</label>
-                    <p>Age(6-12)</p>
+                    <p>Age(6-11)</p>
                     <select
                       value={room.children}
                       onChange={(e) =>

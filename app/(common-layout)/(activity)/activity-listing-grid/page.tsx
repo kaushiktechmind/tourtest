@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
+import 'font-awesome/css/font-awesome.min.css';
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
@@ -17,6 +18,7 @@ interface Package {
   location_name: string;
   activity_title: string;
   start_time: string;
+  duration: string;
   price: number;
   sale_price: number;
 }
@@ -60,7 +62,7 @@ const page = () => {
   return (
     <>
       {activities.map(
-     ({ id, banner_image_multiple, location_name, activity_title, start_time, price, sale_price }) => (
+     ({ id, banner_image_multiple, location_name, activity_title, start_time, duration, price, sale_price }) => (
           <div key={id} className="col-span-12 md:col-span-6 group">
             <div className="bg-white rounded-2xl p-3">
               <div className="relative">
@@ -93,6 +95,12 @@ const page = () => {
                     <div className="flex items-center gap-2">
                       <i className="las la-clock text-xl text-[#22804A]"></i>
                       <span className="block">{start_time} </span>
+                    </div>
+                  </li>
+                  <li className="col-span-1">
+                    <div className="flex items-center gap-2">
+                    <i className="fa fa-hourglass-half text-xl text-[#22804A]"></i>
+                      <span className="block">{duration} </span>
                     </div>
                   </li>
                 </ul>
