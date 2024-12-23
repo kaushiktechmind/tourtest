@@ -16,7 +16,7 @@ interface Activity {
   sale_price: number;
 }
 
-const page = () => {
+const Page = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -118,4 +118,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

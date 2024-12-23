@@ -63,13 +63,6 @@ const Page = () => {
 
 
 
-  if (storedActivityData.length === 0) {
-    console.error("No activity data found in localStorage");
-    return; // Exit if no data is found
-  }
-
-
-
 
 
 

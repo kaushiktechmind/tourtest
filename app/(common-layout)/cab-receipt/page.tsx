@@ -58,17 +58,11 @@ const Page = () => {
 
 
 
-  const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "{}");
+  // const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "{}");
   const totalPrice = storedCabDetails.totalPrice || 0;
   const hotelName = storedCabDetails.hotelName || "None";
   const selectedPax = storedCabDetails.selectedPax || "None";
 
-
-
-  if (storedCabDetails.length === 0) {
-    console.error("No cab data found in localStorage");
-    return; // Exit if no data is found
-  }
 
 
 
@@ -88,26 +82,26 @@ const Page = () => {
   const passport = selectedCountry !== "India" ? passportNumber : "N/A";
 
 
+  // Fetch cab item details based on cabId
   useEffect(() => {
-    const fetchCabItem = async () => {
-      try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`
-        );
-
-        if (response.ok) {
-          const data = await response.json();
-          setCabItem(data);
-        } else {
-          alert("Failed to fetch cab details.");
+    if (cabId) {
+      const fetchCabItem = async () => {
+        try {
+          const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`);
+          if (response.ok) {
+            const data = await response.json();
+            setCabItem(data);
+          } else {
+            alert("Failed to fetch cab details.");
+          }
+        } catch (error) {
+          console.error("Error fetching cab details:", error);
         }
-      } catch (error) {
-        console.error("Error fetching cab details:", error);
-      }
-    };
-
-    fetchCabItem();
+      };
+      fetchCabItem();
+    }
   }, [cabId]);
+
 
   useEffect(() => {
     const fetchPaymentData = async () => {
@@ -215,20 +209,7 @@ const Page = () => {
                             </div>
                           </div>
                           <div className="border border-dashed my-6"></div>
-                          {/* <ul className="flex flex-wrap gap-6">
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-home"></i>
-                              <span className="block text-sm">
-                                {cabItem?.start_time || "Pickup Point"}
-                              </span>
-                            </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bed"></i>
-                              <span className="block text-sm">
-                                {cabItem?.duration || "Duration"}
-                              </span>
-                            </li>
-                          </ul> */}
+                         
                         </div>
                       </div>
                     </div>

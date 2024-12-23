@@ -31,11 +31,6 @@ const Page = () => {
 
   const [bookingID, setBookingID] = useState('');
 
-  useEffect(() => {
-    // Generate a unique booking ID when the component mounts
-    setBookingID(generateBookingID());
-  }, []);
-
 
 
 
@@ -47,6 +42,8 @@ const Page = () => {
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
   const [mobile_number, setMobileNumber] = useState(localStorage.getItem("mobile_number") || "");
 
+
+
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
   const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => setMobileNumber(e.target.value);
@@ -55,22 +52,16 @@ const Page = () => {
     setAddress(e.target.value);
   };
 
-
-
   const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "{}");
   const totalPrice = storedCabDetails.totalPrice || 0;
   const hotelName = storedCabDetails.hotelName || "None";
   const selectedPax = storedCabDetails.selectedPax || "None";
 
 
-
-  if (storedCabDetails.length === 0) {
-    console.error("No cab data found in localStorage");
-    return; // Exit if no data is found
-  }
-
-
-
+  useEffect(() => {
+    // Generate a unique booking ID when the component mounts
+    setBookingID(generateBookingID());
+  }, []);
 
 
 

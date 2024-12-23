@@ -38,8 +38,10 @@ const Page = () => {
   const packageId = searchParams.get("packageId");
 
   const [packageItem, setPackageItem] = useState<any>(null);
-
   const [bookingID, setBookingID] = useState('');
+
+   // Check if package data exists in localStorage
+   const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
@@ -66,12 +68,6 @@ const Page = () => {
 
 
 
-  const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
-
-  if (storedPackageData.length === 0) {
-    console.error("No package data found in localStorage");
-    return; // Exit if no data is found
-  }
 
   // Access the first object in the array
   const {

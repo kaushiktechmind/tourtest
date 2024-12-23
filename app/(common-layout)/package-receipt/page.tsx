@@ -82,13 +82,6 @@ const Page = () => {
 
 
 
-  const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
-
-  if (storedPackageData.length === 0) {
-    console.error("No package data found in localStorage");
-    return; // Exit if no data is found
-  }
-
   // Access the first object in the array
   const {
     adult, adultPrice,

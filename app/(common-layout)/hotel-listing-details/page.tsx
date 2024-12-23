@@ -888,8 +888,10 @@ const Page = () => {
                           data-tooltip-id={amenity.name}
                           className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
                         >
-                          <image
+                          <Image
                             src={amenity.logo}
+                            width={30} // Set the width to 30 pixels
+                            height={30} // Specify height to maintain proportions
                             alt={amenity.name}
                             style={{ width: '30px', height: '30px', marginRight: '10px' }}
                           />
