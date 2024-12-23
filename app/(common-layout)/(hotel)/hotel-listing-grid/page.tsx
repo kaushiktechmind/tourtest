@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
@@ -28,7 +28,7 @@ const Page = () => {
   const itemsPerPage = 5; // Number of items per page
 
 
-  const fetchHotels = async () => {
+  const fetchHotels = useCallback(async () => {
     setLoading(true);
     setError(null);
 
@@ -155,7 +155,7 @@ const Page = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [type, loc]);
 
 
   // Fetch hotels when component mounts

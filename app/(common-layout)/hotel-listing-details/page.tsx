@@ -59,12 +59,7 @@ const Page = () => {
   const [roomData, setRoomData] = useState<Room[]>([]);
   const [msg, setMsg] = useState('');
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    message: "",
-  });
+
   // const [locationName, setLocationName] = useState("");
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -116,6 +111,14 @@ const Page = () => {
   const searchParams = useSearchParams();
   const hotelDetailsId = searchParams.get("hotelDetailsId");
   const type = searchParams.get("type");
+
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    service_type: type,
+    message: "",
+  });
 
   const adults = Number(localStorage.getItem("adults"));
   const children = searchParams.get("children");
@@ -650,7 +653,7 @@ const Page = () => {
     };
 
     fetchRooms();
-  }, [startdate, enddate, hotelDetailsId]);
+  }, [startdate, enddate, hotelDetailsId, location, totalRooms, type]);
 
   const handleRestrict = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -885,7 +888,7 @@ const Page = () => {
                           data-tooltip-id={amenity.name}
                           className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
                         >
-                          <img
+                          <image
                             src={amenity.logo}
                             alt={amenity.name}
                             style={{ width: '30px', height: '30px', marginRight: '10px' }}

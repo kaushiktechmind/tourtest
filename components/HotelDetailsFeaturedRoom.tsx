@@ -42,7 +42,7 @@ const HotelDetailsFeaturedRoom = ({
     };
 
     fetchRoomDetails();
-  }, []);
+  }, [id]);
 
   // Calculate total prices for adults, children, and extra beds
   const calculateTotalPrices = () => {
@@ -89,13 +89,22 @@ const HotelDetailsFeaturedRoom = ({
 
   const slideInterval = 3000; // 2 seconds interval
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     handleNext(); // Auto-slide to the next image
+  //   }, slideInterval);
+
+  //   return () => clearInterval(interval); // Clean up on component unmount
+  // }, [currentIndex]);
+
   useEffect(() => {
     const interval = setInterval(() => {
-      handleNext(); // Auto-slide to the next image
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % featured_images.length);
     }, slideInterval);
-
+  
     return () => clearInterval(interval); // Clean up on component unmount
-  }, [currentIndex]);
+  }, [currentIndex, featured_images.length, slideInterval]); // Add 'currentIndex' and other used variables
+  
 
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % featured_images.length);

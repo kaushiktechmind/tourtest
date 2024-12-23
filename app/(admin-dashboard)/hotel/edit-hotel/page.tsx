@@ -472,7 +472,7 @@ const Page = () => {
     };
 
     fetchHotelData();
-  }, [hotelId]); // Run this effect when hotelId changes
+  }, [hotelId, formData]); // Run this effect when hotelId changes
 
 
 

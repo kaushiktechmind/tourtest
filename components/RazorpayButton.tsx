@@ -25,7 +25,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, name, email
     };
 
     fetchRoomName();
-  }, [roomId]);
+  }, []);
 
 
   // Fetch hotel details dynamically

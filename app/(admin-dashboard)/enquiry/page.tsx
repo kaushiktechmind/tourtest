@@ -104,6 +104,7 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Date</th>
+                  <th className="py-3 lg:py-4 px-2">Service Type</th>
                   <th className="py-3 lg:py-4 px-2">Name</th>
                   <th className="py-3 lg:py-4 px-2">Email</th>
                   <th className="py-3 lg:py-4 px-2">Mobile Number</th>
@@ -119,6 +120,7 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">
                       {new Date(enquiry.created_at).toLocaleDateString()}
                     </td>
+                    <td className="py-3 lg:py-4 px-2">{enquiry.service_type}</td>
                     <td className="py-3 lg:py-4 px-2">{enquiry.name}</td>
                     <td className="py-3 lg:py-4 px-2">{enquiry.email}</td>
                     <td className="py-3 lg:py-4 px-2">{enquiry.phone}</td>

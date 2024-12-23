@@ -56,6 +56,7 @@ const Page = () => {
     name: "",
     phone: "",
     email: "",
+    service_type: "Activity",
     message: "",
   });
 
