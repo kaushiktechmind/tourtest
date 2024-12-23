@@ -40,7 +40,7 @@ const Page = () => {
 
 
 
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");

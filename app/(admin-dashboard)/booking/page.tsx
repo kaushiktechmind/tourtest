@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMountainSun, faCalendarDays, faHotel, faCar } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
 import {
   EllipsisVerticalIcon,
   PencilSquareIcon,
@@ -8,7 +10,8 @@ import {
   HomeIcon,
   CubeIcon,
   ClipboardIcon,
-  CarIcon,
+  TruckIcon 
+  // CarIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
@@ -64,18 +67,18 @@ const Page = () => {
     let icon = null;
 
     if (payment.hotel_name) {
-      icon = <HomeIcon className="w-5 h-5" />;
+      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
     } else if (payment.package_name) {
-      icon = <ClipboardIcon className="w-5 h-5" />;
+      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
     } else if (payment.activity_name) {
-      icon = <CubeIcon className="w-5 h-5" />;
+      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
     } else if (payment.cab_name) {
-      icon = <CarIcon className="w-5 h-5" />;
+      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
     }
 
     return { icon, details }; // Return icon and details as an object
   };
-
+  
 
   // Filtered and paginated payments
   const filteredPayments = payments.filter((payment) =>
@@ -126,6 +129,7 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Date</th>
+                  <th className="py-3 lg:py-4 px-2">Service Type</th>
                   <th className="py-3 lg:py-4 px-2">Booking ID</th>
                   <th className="py-3 lg:py-4 px-2">Name</th>
                   <th className="py-3 lg:py-4 px-2">Mobile</th>
@@ -144,6 +148,16 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">
                       {new Date(payment.created_at).toLocaleDateString()}
                     </td>
+                    <td className="py-3 lg:py-4 px-2 flex items-center gap-2">
+                      {(() => {
+                        const { icon, details } = getDetailsAndIcon(payment); // Destructure the returned object
+                        return (
+                          <>
+                            {icon}
+                          </>
+                        );
+                      })()}
+                    </td>
                     <td className="py-3 lg:py-4 px-2">{payment.booking_id}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_name}</td>
                     <td className="py-3 lg:py-4 px-2">{payment.customer_mobile_number}</td>
@@ -152,7 +166,6 @@ const Page = () => {
                         const { icon, details } = getDetailsAndIcon(payment); // Destructure the returned object
                         return (
                           <>
-                            {icon}
                             {details}
                           </>
                         );

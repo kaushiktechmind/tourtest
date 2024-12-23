@@ -67,6 +67,12 @@ const Page = () => {
   });
   // const [locationName, setLocationName] = useState("");
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const handleTabChange = (index: number) => {
+    setSelectedIndex(index);
+  };
+
 
 
 
@@ -1578,27 +1584,14 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <Tab.Group>
+
+                  <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
                     <Tab.List className="flex gap-3 about-tab mb-7">
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }
-                      >
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
                         Booking Form
-                      </Tab>{" "}
+                      </Tab>
                       <span>|</span>
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }
-                      >
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
                         Enquiry Form
                       </Tab>
                     </Tab.List>
@@ -1726,13 +1719,16 @@ const Page = () => {
 
                   <p></p>
 
-                  <Link
-                    href={`/payment-method?hotelId=${hotelDetailsId}`}
-                    onClick={handleRestrict}
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
-                  >
-                    <span className="inline-block">Proceed Booking</span>
-                  </Link>
+                  {/* Conditionally hide the "Proceed Booking" button based on the selected tab */}
+                  {selectedIndex === 0 && (
+                    <Link
+                      href={`/payment-method?hotelId=${hotelDetailsId}`}
+                      onClick={handleRestrict}
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                    >
+                      <span className="inline-block">Proceed Booking</span>
+                    </Link>
+                  )}
                   <ul className="flex justify-center gap-3 flex-wrap">
                     <li>
                       <Image

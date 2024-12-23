@@ -126,6 +126,7 @@ const Page = () => {
       const result = await response.json();
       if (response.ok) {
         alert(result.message);
+        window.location.reload();
         // Safeguard: Ensure prev is an array
         setAttributes((prev) => [
           ...(Array.isArray(prev) ? prev : []), // Ensure prev is an array

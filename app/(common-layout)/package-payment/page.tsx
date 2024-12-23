@@ -324,7 +324,7 @@ const Page = () => {
                     <textarea
                       rows={5}
                       className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
-                      placeholder="Enter All Fields"
+                      placeholder="Enter Address"
                       value={address} // Set value from state
                       onChange={handleAddressChange} // Update state on change
                     ></textarea>

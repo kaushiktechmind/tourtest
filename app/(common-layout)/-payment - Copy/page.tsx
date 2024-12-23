@@ -30,7 +30,6 @@ const Page = () => {
   const [activityItem, setActivityItem] = useState<any>(null);
 
   const [bookingID, setBookingID] = useState('');
-  const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
@@ -41,7 +40,7 @@ const Page = () => {
 
 
 
-  const [address, setAddress] = useState("");
+  const [address, setAddress] = useState(localStorage.getItem("address") || "");
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");
@@ -108,37 +107,6 @@ const Page = () => {
     fetchActivityItem();
   }, [activityId]);
 
-  useEffect(() => {
-    const fetchPaymentData = async () => {
-      const customerId = localStorage.getItem("id");
-      if (!customerId) {
-        console.error("Customer ID not found in local storage");
-        return;
-      }
-
-      try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/user/get_payment_by_customer_id/${customerId}`
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        console.log("API Response:", data); // Debugging the response
-        if (data?.data) {
-          setPaymentData(data.data); // Extract and set the data array
-        } else {
-          console.error("Unexpected API response:", data);
-        }
-      } catch (error) {
-        console.error("Error fetching payment data:", error);
-      }
-    };
-
-    fetchPaymentData();
-  }, []);
-
-
 
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
@@ -147,9 +115,8 @@ const Page = () => {
           <div className="col-span-12 lg:col-span-8">
             <div className="pb-lg-0">
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6 w-full">
-              <div className="flex justify-between items-center">
+                <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
-                  <p className="mb-0 h3 text-right">{paymentData[0]?.booking_id || ""}</p>
                 </div>
                 <div className="col-span-12 md:col-span-2 mt-[20px]">
                   <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
@@ -242,39 +209,71 @@ const Page = () => {
               </div>
 
 
-              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6 flex-1">
-                <h4 className="mb-3 text-2xl font-semibold">Billing Address</h4>
+              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
+                <h4 className="mb-3 text-2xl font-semibold">Billing address</h4>
                 <div className="border border-dashed my-6"></div>
                 <div className="grid grid-cols-12 gap-4 lg:gap-6">
                   <div className="col-span-12 md:col-span-6">
-                    <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">
-                      {paymentData[0]?.customer_name || ""}
-                    </p>
+                    <input
+                      type="text"
+                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
+                      placeholder="Enter Name"
+                      value={name}
+                      onChange={handleNameChange}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">{paymentData[0]?.customer_email || ""}</p>
+                    <input
+                      type="email"
+                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
+                      placeholder="Enter Email"
+                      value={email}
+                      onChange={handleEmailChange}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-6">
-                    <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5">  {paymentData[0]?.customer_mobile_number || ""}</p>
+                    <input
+                      type="text"
+                      className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
+                      placeholder="Enter Phone Number"
+                      value={mobile_number}
+                      onChange={handleMobileChange}
+                    />
                   </div>
                   <div className="col-span-12 md:col-span-6">
                     <div className="rounded-full border bg-[var(--bg-1)] pr-4">
-                      <p className="w-full bg-transparent px-5 py-3">{paymentData[0]?.country || ""}</p>
+                      <select
+                        className="w-full bg-transparent px-5 py-3 focus:outline-none"
+                        value={selectedCountry}
+                        onChange={handleCountryChange}
+                      >
+                        <option value="India">India</option>
+                        <option value="USA">USA</option>
+                        <option value="New York">New York</option>
+                        <option value="Chicago">Chicago</option>
+                        <option value="Atlanta">Atlanta</option>
+                      </select>
                     </div>
                   </div>
-                  <div className="col-span-12">
-                    {paymentData[0]?.passport_no !== "N/A" ? (
+                  {selectedCountry !== "India" && (
+                    <div className="col-span-12">
                       <input
                         type="text"
-                        value={paymentData[0]?.passport_no || ""}
-                        readOnly
-                        className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl py-3 px-6"
+                        className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
+                        placeholder="Enter Passport Number"
+                        value={passportNumber}
+                        onChange={handlePassportChange}
                       />
-                    ) : null}
-                  </div>
-
+                    </div>
+                  )}
                   <div className="col-span-12">
-                    <p className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl py-3 px-6"> {paymentData[0]?.address || ""}</p>
+                    <textarea
+                      rows={5}
+                      className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-3xl focus:outline-none py-3 px-6"
+                      placeholder="Enter Address"
+                      value={address} // Set value from state
+                      onChange={handleAddressChange} // Update state on change
+                    ></textarea>
                   </div>
                 </div>
               </div>
@@ -305,7 +304,7 @@ const Page = () => {
                 <p className="mb-0 font-medium text-right">₹{grandTotal}</p>
               </div>
 
-              {/* <RazorpayActBtn
+              <RazorpayActBtn
                 grandTotal={Number(grandTotal) * 100}
                 currency="INR"
                 name={name}
@@ -317,7 +316,7 @@ const Page = () => {
                 passport={passport}
                 country={selectedCountry}
               >
-              </RazorpayActBtn> */}
+              </RazorpayActBtn>
             </div>
           </div>
 

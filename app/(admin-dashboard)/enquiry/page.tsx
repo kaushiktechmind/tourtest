@@ -1,11 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
-import {
-  EllipsisVerticalIcon,
-  PencilSquareIcon,
-  PlusCircleIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisVerticalIcon, PencilSquareIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/solid"; // Import info icon
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import Pagination from "@/components/vendor-dashboard/Pagination";
@@ -27,13 +23,16 @@ interface Enquiry {
   invoice_pdf: string;
   created_at: string;
   updated_at: string;
+  message: string; // Assuming message exists in enquiry
 }
 
 const Page = () => {
   const [enquiries, setEnquiries] = useState<Enquiry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10; // Define items per page
+  const [showModal, setShowModal] = useState(false); // Track modal visibility
+  const [modalMessage, setModalMessage] = useState<string | null>(null); // Store the message to display in the modal
+  const itemsPerPage = 10;
 
   const fetchEnquiries = async () => {
     try {
@@ -56,7 +55,6 @@ const Page = () => {
   const filteredEnquiries = enquiries.filter((enquiry) =>
     enquiry.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
 
   const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
   const paginatedEnquiries = filteredEnquiries.slice(
@@ -66,6 +64,16 @@ const Page = () => {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const openModal = (message: string) => {
+    setModalMessage(message);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setModalMessage(null);
   };
 
   return (
@@ -114,7 +122,12 @@ const Page = () => {
                     <td className="py-3 lg:py-4 px-2">{enquiry.name}</td>
                     <td className="py-3 lg:py-4 px-2">{enquiry.email}</td>
                     <td className="py-3 lg:py-4 px-2">{enquiry.phone}</td>
-                    <td className="py-3 lg:py-4 px-2">{enquiry.message}</td>
+                    <td className="py-3 lg:py-4 px-2 relative">
+                      <InformationCircleIcon
+                        className="w-5 h-5 text-gray-500 cursor-pointer"
+                        onClick={() => openModal(enquiry.message)} // Open modal on icon click
+                      />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -128,6 +141,24 @@ const Page = () => {
           </div>
         </div>
       </section>
+
+      {/* Modal Dialog */}
+      {showModal && (
+        <div className="fixed inset-0 flex justify-center items-center bg-gray-500 bg-opacity-50 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+            <h3 className="text-lg font-semibold">Enquiry Message</h3>
+            <p className="mt-4">{modalMessage}</p>
+            <div className="mt-4 flex justify-end">
+              <button
+                onClick={closeModal}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Footer */}
       <Footer />

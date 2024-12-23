@@ -10,6 +10,7 @@ import { Navigation } from "swiper";
 import Link from "next/link";
 import ModalVideo from "react-modal-video";
 import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { StarIcon } from "@heroicons/react/20/solid";
 import {
   ArrowLongLeftIcon,
@@ -56,12 +57,27 @@ const Page = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const cabId = searchParams.get("cabId");
+  // const isDateSelected = selectedDate !== null;
+
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
     email: "",
     message: "",
   });
+
+  const [cabSubForms, setCabSubForms] = useState([]);
+  const [selectedPrice, setSelectedPrice] = useState(0);
+  const [dropdownOptions, setDropdownOptions] = useState<number[]>([]);
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const handleTabChange = (index: number) => {
+    setSelectedIndex(index);
+  };
+
 
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -89,16 +105,48 @@ const Page = () => {
 
 
   useEffect(() => {
+    // Fetch the API data
+    const fetchCabSubForms = async () => {
+      try {
+        const response = await fetch(
+          `https://yrpitsolutions.com/tourism_api/api/filter/cabsubforms/by-cab-main-form-id/${cabId}`
+        );
+        const data = await response.json();
+        setCabSubForms(data); // Assuming the response is directly an array
+      } catch (error) {
+        console.error("Error fetching cab sub-forms:", error);
+      }
+    };
+
+    fetchCabSubForms();
+  }, []);
+
+
+  const handleBook = (price: number, minPax: number, maxPax: number) => {
+    setSelectedPrice(price);
+    setDropdownOptions(Array.from({ length: maxPax - minPax + 1 }, (_, i) => i + minPax));
+  };
+
+
+
+  useEffect(() => {
     const fetchCabDetails = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/cab-main-forms/48"
+          `https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch cab details");
         }
         const data = await response.json();
-        setCabDetails(data);
+
+        // Parse the FAQs if they are stringified
+        if (data.faqs && typeof data.faqs === "string") {
+          const parsedFAQs = JSON.parse(data.faqs);
+          setCabDetails({ ...data, faqs: parsedFAQs });
+        } else {
+          setCabDetails(data);
+        }
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -107,18 +155,30 @@ const Page = () => {
     };
 
     fetchCabDetails();
-  }, []);
+  }, [cabId]);
+
+
+  console.log("zzzzzzzzzzzzzzzzz", cabDetails?.inclusion[0]);
+
+
+
+  const faqs = cabDetails?.faqs
+    ? JSON.parse(cabDetails.faqs[0] || "[]") // Parse the FAQ string
+    : [];
 
 
   // Process inclusions
   const inclusions = cabDetails?.inclusion
-    ? JSON.parse(cabDetails.inclusion[0]).map((item: string) => item.trim())
+    ? cabDetails.inclusion[0].split(',').map((item: string) => item.trim())
     : [];
+
 
   // Process exclusions
   const exclusions = cabDetails?.exclusion
-    ? JSON.parse(cabDetails.exclusion[0]).map((item: string) => item.trim())
+    ? cabDetails.exclusion[0].split(',').map((item: string) => item.trim())
     : [];
+
+
 
 
   const formatDate = (dateString: string) => {
@@ -151,6 +211,7 @@ const Page = () => {
 
 
 
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -168,6 +229,58 @@ const Page = () => {
     } catch (error) {
       alert("An error occurred. Please try again.");
     }
+  };
+
+
+  const handlePaxChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedPax(e.target.value);
+  };
+
+
+
+
+
+
+  const handleBookingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const accessToken = localStorage.getItem("access_token");
+
+    if (!selectedDate) {
+      alert("Select Date First");
+      return;
+    }
+
+    if (!accessToken) {
+      router.push("/sign-in");
+      return;
+    }
+
+    // Retrieve input values
+    const hotelName = (document.querySelector('input[placeholder="Hotel Name"]') as HTMLInputElement)?.value || "";
+    const selectedPax = (document.querySelector('select') as HTMLSelectElement)?.value || "";
+
+    // Validate required fields
+    if (!hotelName) {
+      alert("Enter Hotel Name");
+      return;
+    }
+
+    if (!selectedPax) {
+      alert("Select Pax");
+      return;
+    }
+
+    // Store booking details in localStorage
+    const storedCabDetails = {
+      hotelName,
+      selectedDate: selectedDate.toISOString().split("T")[0], // Format the date as YYYY-MM-DD
+      totalPrice: selectedPrice || 0,
+      selectedPax,
+    };
+    localStorage.setItem("storedCabDetails", JSON.stringify(storedCabDetails));
+
+    // Redirect to the payment page
+    router.push(`/cab-payment?cabId=${cabId}`);
   };
 
 
@@ -384,66 +497,62 @@ const Page = () => {
                       </thead>
 
                       <tbody>
-                        {/* You can map your rows here */}
-                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
-                          <td className="py-3 px-2">2</td>
-                          <td className="py-3 px-2">Maruti Swift</td>
-                          <td className="py-3 px-2">1</td>
-                          <td className="py-3 px-2">20</td>
-                          <td className="py-3 px-2">
-                            <div className="col-span-12">
-                          <Link href="#" className="btn-primary">
-                            Book
-                          </Link>
-                        </div>
-                          </td>
-                        </tr>
-                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
-                          <td className="py-3 px-2">4</td>
-                          <td className="py-3 px-2">Maruti Alto</td>
-                          <td className="py-3 px-2">2</td>
-                          <td className="py-3 px-2">15</td>
-                          <td className="py-3 px-2">
-                            <div className="col-span-12">
-                          <Link href="#" className="btn-primary">
-                            Book
-                          </Link>
-                        </div>
-                          </td>
-                        </tr>
-                        <tr className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300">
-                          <td className="py-3 px-2">4</td>
-                          <td className="py-3 px-2">Maruti Alto</td>
-                          <td className="py-3 px-2">2</td>
-                          <td className="py-3 px-2">15</td>
-                          <td className="py-3 px-2">
-                            <div className="col-span-12">
-                          <Link href="#" className="btn-primary">
-                            Book
-                          </Link>
-                        </div>
-                          </td>
-                        </tr>
-                        {/* More rows can be added here */}
+                        {cabSubForms.length > 0 ? (
+                          cabSubForms.map((cab, index) => (
+                            <tr
+                              key={index}
+                              className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                            >
+                              <td className="py-3 px-2">
+                                {cab.min_pax}-{cab.max_pax}
+                              </td>
+                              <td className="py-3 px-2">{cab.car_count}</td>
+                              <td className="py-3 px-2">{cab.cargo_count}</td>
+                              <td className="py-3 px-2">{cab.price}</td>
+                              <td className="py-3 px-2">
+                                <div className="col-span-12">
+                                  <button
+                                    onClick={() =>
+                                      handleBook(
+                                        Number(cab.price),
+                                        Number(cab.min_pax),
+                                        Number(cab.max_pax)
+                                      )
+                                    }
+                                    className="btn-primary"
+                                  >
+                                    Book
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={5} className="py-3 px-2 text-center">
+                              No Cab Available
+                            </td>
+                          </tr>
+                        )}
                       </tbody>
                     </table>
                   </div>
                 </div>
 
 
-
-
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                   <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
                   <div className="hr-dashed my-5"></div>
-
-
-                  <div className="mb-6">
-                    <h6 className="font-semibold mb-2">sdss</h6>
-                    <p>sdsdsd</p>
-                  </div>
-
-
+                  {faqs.length > 0 ? (
+                    faqs.map((faq: { question: string; answer: string }, index: number) => (
+                      <div className="mb-6" key={index}>
+                        <h6 className="font-semibold mb-2">{faq.question}</h6>
+                        <p>{faq.answer}</p>
+                      </div>
+                    ))
+                  ) : (
+                    <p>No FAQs available</p>
+                  )}
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
@@ -509,14 +618,14 @@ const Page = () => {
                         {" "}
                         Sort By :{" "}
                       </p>
-                      <div className="border rounded-full pr-3">
+                      {/* <div className="border rounded-full pr-3">
                         <select className="w-full bg-transparent px-5 py-3 focus:outline-none ">
                           <option>Latest</option>
                           <option value="1">One</option>
                           <option value="2">Two</option>
                           <option value="3">Three</option>
                         </select>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                   <div className="bg-[var(--bg-2)] rounded-2xl p-3 sm:p-4 lg:p-6 mb-8">
@@ -782,28 +891,16 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <Tab.Group>
-                    <Tab.List className="flex gap-3 about-tab mb-7">
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }>
-                        Booking Form
-                      </Tab>{" "}
-                      <span>|</span>
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }>
-                        Enquiry Form
-                      </Tab>
-                    </Tab.List>
+                  <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
+                                     <Tab.List className="flex gap-3 about-tab mb-7">
+                                       <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                                         Booking Form
+                                       </Tab>
+                                       <span>|</span>
+                                       <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                                         Enquiry Form
+                                       </Tab>
+                                     </Tab.List>
                     <Tab.Panels className="tab-content">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
@@ -840,8 +937,10 @@ const Page = () => {
                                 className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500 appearance-none"
                                 defaultValue=""
                               >
-
-                                {Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+                                <option value="" disabled>
+                                  Select Pax
+                                </option>
+                                {dropdownOptions.map((num) => (
                                   <option key={num} value={num}>
                                     {num}
                                   </option>
@@ -857,9 +956,9 @@ const Page = () => {
                         </div>
 
                         <div className="hr-dashed my-4"></div>
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between mb-[10px]">
                           <p className="mb-0 clr-neutral-500"> Total Price </p>
-                          <p className="mb-0 font-medium"> $1025 </p>
+                          <p className="mb-0 font-medium"> ₹{selectedPrice || 0} </p>
                         </div>
                       </Tab.Panel>
                       <Tab.Panel>
@@ -907,11 +1006,16 @@ const Page = () => {
                     </Tab.Panels>
                   </Tab.Group>
 
+                  {selectedIndex === 0 && (
                   <Link
-                    href="#"
-                    className="link inline-flex items-center gap-2 mt-6 lg:mt-8 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6">
+                    href={`cab-payment?cabId=${cabId}`}
+                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                    onClick={handleBookingClick}  // Use the new function here
+                  >
                     <span className="inline-block"> Proceed Booking </span>
                   </Link>
+                      )}
+
                   <ul className="flex justify-center gap-3 flex-wrap">
                     <li>
                       <Image

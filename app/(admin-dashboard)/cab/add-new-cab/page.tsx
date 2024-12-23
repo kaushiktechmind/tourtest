@@ -101,7 +101,7 @@ const Page = () => {
   useEffect(() => {
 
     const fetchExclusions = async () => {
-      try {
+      try { 
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_exclusion");
         const data = await response.json();
         setExclusions(data); // Assuming API response is an array
@@ -469,7 +469,7 @@ const Page = () => {
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
 
-            <p className=" mb-4 text-xl font-medium">Min Passenger :</p>
+              <p className=" mb-4 text-xl font-medium">Min Passenger :</p>
               <input
                 type="number"
                 name="min_passenger"
@@ -489,7 +489,7 @@ const Page = () => {
                 placeholder="0"
               />
 
-             
+
 
 
             </div>
@@ -760,23 +760,25 @@ const Page = () => {
               initialOpen={true}
             >
               <div className="p-6">
-                <p className="text-xl font-medium">Features:</p>
+                <p className="text-xl font-medium mb-4">Features:</p>
                 {amenities.length === 0 ? (
                   <p>No amenities available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="space-y-2">
                     {amenities.map((item) => (
-                      <li key={item.id} className="py-2 flex items-center">
+                      <li key={item.id} className="flex items-center space-x-2">
                         <CheckboxCustom
                           label={item.cab_attribute_name}
-                          onChange={() => handleCheckboxChange(item.cab_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.cab_attribute_name)} // Check if selected
+                          onChange={() => handleCheckboxChange(item.cab_attribute_name)}
+                          checked={selectedAmenities.includes(item.cab_attribute_name)}
                         />
+                        {/* <span className="text-lg">{item.cab_attribute_name}</span> */}
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
+
             </Accordion>
           </div>
           <button onClick={handleSubmit} className="btn-primary font-semibold m-6">

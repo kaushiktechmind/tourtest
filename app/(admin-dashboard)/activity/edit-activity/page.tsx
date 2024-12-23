@@ -283,18 +283,36 @@ const Page = () => {
         }
 
 
-        // Filter and set only the tickets with available data
-        const ticketData = [
-          { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
-          { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
-          { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
-          { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
-          { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
-        ];
+        // // Filter and set only the tickets with available data
+        // const ticketData = [
+        //   { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
+        //   { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
+        //   { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
+        //   { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
+        //   { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
+        // ];
 
-        // Filter out tickets with empty fields
-        const filteredTicketData = ticketData.filter(ticket => ticket.code || ticket.name || ticket.price || ticket.number);
-        setTickets(filteredTicketData); // Set filtered tickets
+        // // Filter out tickets with empty fields
+        // const filteredTicketData = ticketData.filter(ticket => ticket.code || ticket.name || ticket.price || ticket.number);
+        // setTickets(filteredTicketData); // Set filtered tickets
+
+       // Filter and set only the tickets with available data
+const ticketData = [
+  { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
+  { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
+  { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
+  { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
+  { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
+];
+
+// Filter out tickets where all fields are null or empty
+const filteredTicketData = ticketData.filter(ticket => 
+  ticket.code !== null && ticket.name !== null && ticket.price !== null && ticket.number !== null
+);
+
+// Set the filtered tickets
+setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
+
 
         // Prefill formData with the API response
         setFormData((prevState) => ({
@@ -311,14 +329,12 @@ const Page = () => {
           i_frame_link: data.i_frame_link || "",
 
 
-          tickets: Array.from({ length: 5 }, (_, index) => ({
-            code: data[`ticket_code${index + 1}`] || "",
-            name: data[`ticket_name${index + 1}`] || "",
-            price: data[`ticket_price${index + 1}`] || "",
-            number: data[`no_of_available_tickets${index + 1}`] || ""
-          }))
-
-
+          tickets: filteredTicketData.map((ticket) => ({
+            code: ticket.code || "",
+            name: ticket.name || "",
+            price: ticket.price || "",
+            number: ticket.number || "",
+          })),
           // Add other fields as necessary
         }));
 
@@ -522,9 +538,9 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Add New Activity</h2>
+        <h2 className="h2 text-white">Edit Activity</h2>
         <Link href="/activity/all-activity" className="btn-primary">
-          <EyeIcon className="w-5 h-5" /> View All Activitys
+          <EyeIcon className="w-5 h-5" /> View All Activities
         </Link>
       </div>
       {/* statisticts */}

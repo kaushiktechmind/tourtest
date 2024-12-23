@@ -245,91 +245,75 @@ const Page = () => {
         const data = await response.json();
         console.log("sssssssssss", data)
 
+
+        // Extract attribute names dynamically
+        const attributes = Object.keys(data)
+          .filter((key) => key.startsWith("attribute_name") && data[key]) // Filter non-null attribute names
+          .map((key) => data[key]); // Get attribute values
+
+
+        // Prefill selected amenities with valid attributes
+        setSelectedAmenities(attributes);
+
         // setBannerImages(data.banner_image || []);
         setBannerImages(data.banner_image_multiple || []);
 
 
-        // if (data.cab_faqs) {
-        //   const parsedFAQs = JSON.parse(data.cab_faqs).map((faq: any) => ({
-        //     cab_faq_title: faq.question,
-        //     cab_faq_description: faq.answer,
-        //   }));
-        //   setSelectedFAQs(parsedFAQs);
-        // }
-
+        if (data.faqs && data.faqs.length > 0) {
+          // Parse the first element of the array (which is a stringified JSON)
+          const parsedFAQs = JSON.parse(data.faqs[0]).map((faq: any) => ({
+            cab_faq_title: faq.question,
+            cab_faq_description: faq.answer,
+          }));
+          setSelectedFAQs(parsedFAQs);  // Update state with parsed FAQs
+        } else {
+          console.log("No FAQs found in the data");
+        }
 
 
         if (data.description) {
           setDescription(data.description); // Set the description from the API
         }
 
-        // if (data.amenities) {
-        //   const parsedAmenities = JSON.parse(data.amenities); // Parse the JSON string into an array
-        //   setSelectedAmenities(parsedAmenities); // Prefill selected amenities
-        // }
+        
 
-        // if (data.inclusion) {
-        //   const cabIncludes = JSON.parse(data.inclusion);
-        //   console.log("Parsed cab_includes:", cabIncludes);
+        // Process inclusion field
+        const rawInclusion = data.inclusion && data.inclusion[0] ? data.inclusion[0] : "";
+        const inclusions = rawInclusion
+          .replace(/^\[/, "") // Remove leading square bracket
+          .replace(/\]$/, "") // Remove trailing square bracket
+          .split(",") // Split items by comma
+          .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
 
-        //   const preFilledInclusions = inclusions.filter((inc) =>
-        //     cabIncludes.includes(inc.inclusion)
-        //   );
-        //   console.log("Pre-filled inclusions:", preFilledInclusions);
+        // Map parsed inclusions to selectedInclusions format
+        const prefilledInclusions = inclusions.map((title: string, index: number) => ({
+          id: index + 1, // Temporary unique ID
+          cab_inclusion_title: title,
+        }));
 
-        //   setSelectedInclusions(preFilledInclusions);
-        // }
-
-        // if (data.cab_excludes) {
-        //   const cabExcludes = JSON.parse(data.cab_excludes);
-        //   console.log("Parsed cab_excludes:", cabExcludes);
-
-        //   // Pre-fill exclusions based on the fetched cab data
-        //   const preFilledExclusions = exclusions.filter((ex) =>
-        //     cabExcludes.includes(ex.exclude_title)
-        //   );
-        //   console.log("Pre-filled exclusions:", preFilledExclusions);
-
-        //   setSelectedExclusions(preFilledExclusions);
-        // }
-
-      // Process inclusion field
-      const rawInclusion = data.inclusion && data.inclusion[0] ? data.inclusion[0] : "";
-      const inclusions = rawInclusion
-        .replace(/^\[/, "") // Remove leading square bracket
-        .replace(/\]$/, "") // Remove trailing square bracket
-        .split(",") // Split items by comma
-        .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
-
-      // Map parsed inclusions to selectedInclusions format
-      const prefilledInclusions = inclusions.map((title: string, index: number) => ({
-        id: index + 1, // Temporary unique ID
-        cab_inclusion_title: title,
-      }));
-
-      // Set inclusions in the state
-      setSelectedInclusions(prefilledInclusions);
+        // Set inclusions in the state
+        setSelectedInclusions(prefilledInclusions);
 
 
 
 
-       // Process inclusion field
-       const rawExclusion = data.exclusion && data.exclusion[0] ? data.exclusion[0] : "";
-       const exclusions = rawExclusion
-         .replace(/^\[/, "") // Remove leading square bracket
-         .replace(/\]$/, "") // Remove trailing square bracket
-         .split(",") // Split items by comma
-         .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
- 
-       // Map parsed inclusions to selectedInclusions format
-       const prefilledExclusions = exclusions.map((title: string, index: number) => ({
-         id: index + 1, // Temporary unique ID
-         cab_exclusion_title: title,
-       }));
- 
-       // Set inclusions in the state
-       setSelectedExclusions(prefilledExclusions);
- 
+        // Process inclusion field
+        const rawExclusion = data.exclusion && data.exclusion[0] ? data.exclusion[0] : "";
+        const exclusions = rawExclusion
+          .replace(/^\[/, "") // Remove leading square bracket
+          .replace(/\]$/, "") // Remove trailing square bracket
+          .split(",") // Split items by comma
+          .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
+
+        // Map parsed inclusions to selectedInclusions format
+        const prefilledExclusions = exclusions.map((title: string, index: number) => ({
+          id: index + 1, // Temporary unique ID
+          cab_exclusion_title: title,
+        }));
+
+        // Set inclusions in the state
+        setSelectedExclusions(prefilledExclusions);
+
 
         // Prefill formData with the API response
         setFormData((prevState) => ({
@@ -338,7 +322,6 @@ const Page = () => {
           description: data.description || "",
           price: data.price || "",
           sale_price: data.sale_price || "",
-          youtube_video_link: data.youtube_video_link || "",
           duration: data.duration || "",
           min_passenger: data.min_passenger || "",
           max_passenger: data.max_passenger || "",
@@ -380,6 +363,7 @@ const Page = () => {
       formDataToSend.append("max_passenger", formData.max_passenger);
 
       formDataToSend.append("location", formData.location_name);
+      formDataToSend.append("_method", "PUT");
 
 
       formDataToSend.append(
@@ -390,6 +374,7 @@ const Page = () => {
         "exclusion[]",
         selectedExclusions.map((inc) => inc.cab_exclusion_title)
       );
+
 
 
       // Add selected amenities as dynamic fields
@@ -466,7 +451,7 @@ const Page = () => {
 
 
       // Send the request with FormData
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/cab-main-forms", {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/cab-main-forms/${cabId}`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -586,7 +571,7 @@ const Page = () => {
             )}
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-            <p className="mb-4 text-xl font-medium">Min Passenger :</p>
+              <p className="mb-4 text-xl font-medium">Min Passenger :</p>
               <input
                 type="number"
                 name="min_passenger"
@@ -606,15 +591,6 @@ const Page = () => {
                 placeholder="0"
               />
 
-              <p className="mt-6 mb-4 text-xl font-medium">Min Passenger :</p>
-              <input
-                type="number"
-                name="min_passenger"
-                value={formData.min_passenger}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
 
 
             </div>
@@ -700,15 +676,7 @@ const Page = () => {
 
 
 
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
-                <input
-                  type="text"
-                  name="youtube_video_image"
-                  value={formData.youtube_video_image}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="0"
-                />
+
               </div>
             </Accordion>
           </div>
@@ -911,23 +879,25 @@ const Page = () => {
               initialOpen={true}
             >
               <div className="p-6">
-                <p className="text-xl font-medium">Features:</p>
+                <p className="text-xl font-medium mb-4">Features:</p>
                 {amenities.length === 0 ? (
                   <p>No amenities available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="space-y-2">
                     {amenities.map((item) => (
-                      <li key={item.id} className="py-2 flex items-center">
+                      <li key={item.id} className="flex items-center space-x-2">
                         <CheckboxCustom
                           label={item.cab_attribute_name}
-                          onChange={() => handleCheckboxChange(item.cab_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.cab_attribute_name)} // Check if selected
+                          onChange={() => handleCheckboxChange(item.cab_attribute_name)}
+                          checked={selectedAmenities.includes(item.cab_attribute_name)}
                         />
+                        <span className="text-lg">{item.cab_attribute_name}</span>
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
+
             </Accordion>
           </div>
           <button onClick={handleSubmit} className="btn-primary font-semibold m-6">

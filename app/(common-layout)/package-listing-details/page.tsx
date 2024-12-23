@@ -59,6 +59,14 @@ const Page = () => {
   });
 
 
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  // Function to handle the tab change and update the selectedIndex
+  const handleTabChange = (index: number) => {
+    setSelectedIndex(index);
+  };
+
+
 
   const [packageData, setPackageData] = useState<PackageData | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -906,28 +914,16 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <Tab.Group>
-                    <Tab.List className="flex gap-3 about-tab mb-7">
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }>
-                        Booking Form
-                      </Tab>{" "}
-                      <span>|</span>
-                      <Tab
-                        className={({ selected }) =>
-                          classNames(
-                            "focus:outline-none",
-                            selected ? "text-primary font-medium" : ""
-                          )
-                        }>
-                        Enquiry Form
-                      </Tab>
-                    </Tab.List>
+                  <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
+            <Tab.List className="flex gap-3 about-tab mb-7">
+              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                Booking Form
+              </Tab>
+              <span>|</span>
+              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                Enquiry Form
+              </Tab>
+            </Tab.List>
                     <Tab.Panels className="tab-content mb-8">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
@@ -1184,6 +1180,7 @@ const Page = () => {
                     </Tab.Panels>
                   </Tab.Group>
 
+                  {selectedIndex === 0 && (
                   <Link
                     href={`package-payment?packageId=${packageId}`}
                     className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
@@ -1191,6 +1188,7 @@ const Page = () => {
                   >
                     <span className="inline-block"> Proceed Booking </span>
                   </Link>
+                     )}
                 </div>
               </div>
             </div>

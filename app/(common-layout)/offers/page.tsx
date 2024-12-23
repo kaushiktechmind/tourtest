@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import CardPagination from "@/components/CardPagination";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMountainSun, faCalendarDays, faHotel, faCar } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
 
 interface PaymentData {
   id: number;
@@ -15,6 +17,17 @@ interface PaymentData {
   invoice_pdf: string | null;
   created_at: string;
 }
+import {
+  EllipsisVerticalIcon,
+  PencilSquareIcon,
+  PlusCircleIcon,
+  TrashIcon,
+  HomeIcon,
+  CubeIcon,
+  ClipboardIcon,
+  TruckIcon 
+  // CarIcon,
+} from "@heroicons/react/24/outline";
 
 const Page = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
@@ -86,22 +99,23 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
-  useEffect(() => {
-    if (paymentData.length > 0) {
-      // Find the first non-null value among the fields
-      const tourName = 
-        paymentData[0]?.hotel_name || 
-        paymentData[0]?.package_name || 
-        paymentData[0]?.activity_name || 
-        paymentData[0]?.cab_name;
-  
-        if (tourName) {
-          setTourName(tourName); // Set the value in state
-        } else {
-          setTourName(null); // Or handle if none found
-        }
+  const getDetailsAndIcon = (payment: Payment) => {
+    const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
+
+    let icon = null;
+
+    if (payment.hotel_name) {
+      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
+    } else if (payment.package_name) {
+      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
+    } else if (payment.activity_name) {
+      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
+    } else if (payment.cab_name) {
+      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
     }
-  }, [paymentData]);
+
+    return { icon, details }; // Return icon and details as an object
+  };
   
 
   return (
@@ -132,9 +146,10 @@ const Page = () => {
               <thead className="bg-gray-100">
                 <tr>
                   <th className="border p-2">Date</th>
+                  <th className="border p-2">Service Type</th>
                   <th className="border p-2">Booking ID</th>
                   <th className="border p-2">Customer Name</th>
-                  <th className="border p-2">Tour Name</th>
+                  <th className="border p-2">Booking Name</th>
                   <th className="border p-2">Transaction ID</th>
                   <th className="border p-2">Amount</th>
                   <th className="border p-2">Invoice</th>
@@ -150,9 +165,24 @@ const Page = () => {
                         day: "numeric",
                       })}
                     </td>
+                    <td className="border p-2"> {(() => {
+                        const { icon } = getDetailsAndIcon(payment); // Destructure the returned object
+                        return (
+                          <>
+                            {icon}
+                          </>
+                        );
+                      })()}</td>  
                     <td className="border p-2">{payment.booking_id}</td>  
                     <td className="border p-2">{payment.customer_name}</td>
-                    <td className="border p-2">{tourName}</td>
+                    <td className="border p-2"> {(() => {
+                        const { details } = getDetailsAndIcon(payment); // Destructure the returned object
+                        return (
+                          <>
+                            {details}
+                          </>
+                        );
+                      })()}</td>
                     <td className="border p-2">{payment.invoice_id}</td>
                     <td className="border p-2">₹{payment.amount}/-</td>
                     <td className="border p-2">

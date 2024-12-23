@@ -1134,7 +1134,7 @@ const Page = () => {
                 <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
                   type="text"
-                  id="zipcode"
+                    id="zipcode"
                   name="zipcode"
                   value={formData.zipcode}
                   onChange={handleChange}
