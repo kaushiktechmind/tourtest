@@ -21,6 +21,11 @@ interface Amenity {
   cab_attribute_logo: string; // Add this if the API returns a logo
 }
 
+interface Location {
+  id: string | number;  // Adjust type as needed
+  location_name: string;
+}
+
 
 const Page = () => {
   const router = useRouter();
@@ -70,7 +75,7 @@ const Page = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -157,11 +162,14 @@ const Page = () => {
 
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
-
+  
 
 
   const handleCheckboxChange = (label: string) => {
@@ -264,14 +272,14 @@ const Page = () => {
       formDataToSend.append("location", formData.location_name);
 
 
-      formDataToSend.append(
-        "inclusion[]",
-        selectedInclusions.map((inc) => inc.cab_inclusion_title)
-      );
-      formDataToSend.append(
-        "exclusion[]",
-        selectedExclusions.map((inc) => inc.cab_exclusion_title)
-      );
+      selectedInclusions.forEach((inc) => {
+        formDataToSend.append("inclusion[]", inc.cab_inclusion_title);
+      });
+      
+      selectedExclusions.forEach((inc) => {
+        formDataToSend.append("exclusion[]", inc.cab_exclusion_title);
+      });
+      
 
 
       // Add selected amenities as dynamic fields

@@ -233,7 +233,7 @@ const Page = () => {
                 )}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>
@@ -282,7 +282,7 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
         <div className="col-span-12 lg:col-span-6 py-6 lg:py-8 px-8 lg:px-10 border rounded-2xl bg-white">
@@ -322,7 +322,7 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>

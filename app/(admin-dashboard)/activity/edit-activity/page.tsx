@@ -27,6 +27,19 @@ interface Field {
   distance: string;
 }
 
+interface Ticket {
+  code: string;
+  name: string;
+  price: string;
+  number: string;
+}
+
+interface Location {
+  id: string; // or number, depending on your data
+  location_name: string;
+}
+
+
 
 const Page = () => {
   const router = useRouter();
@@ -56,7 +69,8 @@ const Page = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]);
+
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [activity_attribute, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
@@ -205,11 +219,14 @@ const Page = () => {
 
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
-
+  
 
 
   const handleCheckboxChange = (label: string) => {
@@ -277,7 +294,7 @@ const Page = () => {
               console.error("Error parsing FAQ:", faq, error);
               return null;
             }
-          }).filter((faq) => faq !== null);
+          }).filter((faq: null) => faq !== null);
 
           setSelectedFAQs(parsedFAQs);
         }
@@ -511,7 +528,7 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
 
 
 
-  const handleInputChange = (index: number, field: string, value: string) => {
+  const handleInputChange = (index: number, field: keyof Ticket, value: string) => {
     const newTickets = [...tickets];
     newTickets[index][field] = value;
     setTickets(newTickets);
@@ -578,8 +595,6 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
                   ))}
                 </select>
 
-
-
                 <p className="mt-6 mb-4 text-xl font-medium">Activity Name:</p>
                 <input
                   type="text"
@@ -613,7 +628,6 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
                   className="w-full border p-2 rounded-md text-base"
                   placeholder="9,000"
                 />
-
 
               </div>
             </div>

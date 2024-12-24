@@ -36,6 +36,15 @@ interface Payment {
   updated_at: string;
 }
 
+interface Payment {
+  booking_id: string;
+  hotel_name?: string;
+  package_name?: string;
+  activity_name?: string;
+  cab_name?: string;
+  // Other properties of Payment
+}
+
 const Page = () => {
   const [payments, setPayments] = useState<Payment[]>([]);
 

@@ -27,6 +27,18 @@ interface Field {
   distance: string;
 }
 
+type Ticket = {
+  code: string;
+  name: string;
+  price: string;
+  number: string;
+};
+
+interface Location {
+  id: string | number; // or whatever type your `id` field is
+  location_name: string;
+}
+
 
 const Page = () => {
   const router = useRouter();
@@ -52,7 +64,8 @@ const Page = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]); 
+  
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [activity_attribute, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -201,12 +214,13 @@ const Page = () => {
 
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-
+  
 
   const handleCheckboxChange = (label: string) => {
     setSelectedAmenities((prevSelected) => {
@@ -360,12 +374,11 @@ const Page = () => {
 
 
 
-  const handleInputChange = (index: number, field: string, value: string) => {
+  const handleInputChange = (index: number, field: keyof Ticket, value: string) => {
     const newTickets = [...tickets];
     newTickets[index][field] = value;
     setTickets(newTickets);
   };
-
   // Add new ticket box
   const addNewTicket = () => {
     if (tickets.length < 5) {

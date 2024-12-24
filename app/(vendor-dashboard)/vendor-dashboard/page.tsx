@@ -201,7 +201,7 @@ const Page = () => {
                 )}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>

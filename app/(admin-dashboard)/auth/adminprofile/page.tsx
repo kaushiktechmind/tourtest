@@ -46,30 +46,32 @@ const SignupPage = () => {
   };
 
   // Function to handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+  
     const payload = {
       name: fullName,
       email: email,
       password: password,
-      password_confirmation: confirmPassword, 
-      
+      password_confirmation: confirmPassword,
       // You can include other fields as needed
     };
-
+  
     try {
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/admin_update/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // Add your Bearer token if needed
-        },
-        body: JSON.stringify(payload),
-      });
-
+      const response = await fetch(
+        `https://yrpitsolutions.com/tourism_api/api/admin/admin_update/${id}`,
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('access_token')}`, // Add your Bearer token if needed
+          },
+          body: JSON.stringify(payload),
+        }
+      );
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         // Handle successful update
         setIsPopupVisible(true); // Show success popup
@@ -86,7 +88,7 @@ const SignupPage = () => {
       setErrorMessage("Failed to update user information.");
     }
   };
-
+  
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-1)] signup-section">
       <div className="container">

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import Link from "next/link";
 import {
   EllipsisVerticalIcon,
@@ -14,16 +14,21 @@ import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { Dialog, Transition } from "@headlessui/react";
 
+interface Exclude {
+  id: number; // Ensure the id is of type string if that's what your API returns
+  cab_exclusion_title: string;
+}
+
 const Page = () => {
-  const [excludes, setExcludes] = useState([]);
+  const [excludes, setExcludes] = useState<Exclude[]>([]);
   const [excludeTitle, setExcludeName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredExcludes, setFilteredExcludes] = useState([]);
+  const [filteredExcludes, setFilteredExcludes] = useState<Exclude[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
-  const [itemToDelete, setItemToDelete] = useState(null); // Item ID to delete
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -37,19 +42,20 @@ const Page = () => {
 
   const fetchExcludes = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_exclusion");
-      if (!response.ok) throw new Error("Failed to fetch excludes");
+    setError(null); // Reset the error state
+
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_exclusion");
+
+    // If response is OK, process it, otherwise, it will fail silently
+    if (response.ok) {
       const data = await response.json();
       setExcludes(data);
       setFilteredExcludes(data); // Initialize filteredExcludes
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false); // Always execute loading state reset
   };
+
 
   const handleSearch = () => {
     const lowercasedSearch = searchTerm.toLowerCase();
@@ -59,64 +65,64 @@ const Page = () => {
     setFilteredExcludes(filtered);
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
-  const handleAddExclude = async (e) => {
+  const handleAddExclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
 
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_exclusion", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
-      });
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_exclusion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
+    });
 
-      if (!response.ok) throw new Error("Failed to save exclude");
-
-      setExcludeName("");
-      await fetchExcludes();
-      alert("Exclude Added Successfully");
-    } catch (err) {
-      setSubmitError(err.message);
+    if (!response.ok) {
+      // You can throw the error here if you don't want to handle it with a try-catch
+      throw new Error("Failed to save exclude");
     }
+
+    setExcludeName("");
+    await fetchExcludes();
+    alert("Exclude Added Successfully");
   };
+
 
   const handleDeleteExclude = async () => {
     if (!itemToDelete) return;
 
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-      const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_cab_exclusion_by_id/${itemToDelete}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+    const response = await fetch(
+      `https://yrpitsolutions.com/tourism_api/api/admin/delete_cab_exclusion_by_id/${itemToDelete}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
-      if (!response.ok) throw new Error("Failed to delete exclude");
-
-      await fetchExcludes();
-      alert("Deleted Successfully");
-    } catch (err) {
-      console.error(err.message);
-      setError("Failed to delete exclude");
-    } finally {
-      setIsDialogOpen(false); // Close dialog
-      setItemToDelete(null); // Reset ID
+    if (!response.ok) {
+      // You can log or handle the error here if needed, or just let it fail silently
+      alert("Failed to delete exclude");
+      return;
     }
+
+    await fetchExcludes();
+    alert("Deleted Successfully");
+
+    setIsDialogOpen(false); // Close dialog
+    setItemToDelete(null); // Reset ID
   };
+
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -176,11 +182,11 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">Loading...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3 text-red-500">{error}</td>
+                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
                   ) : (
                     currentItems.map((exclude) => (
@@ -192,7 +198,7 @@ const Page = () => {
                           </Link>
                           <button
                             onClick={() => {
-                              setItemToDelete(exclude.id);
+                              setItemToDelete(exclude.id as number);
                               setIsDialogOpen(true);
                             }}
                             className="text-[var(--secondary-500)]"

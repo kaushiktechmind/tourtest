@@ -108,7 +108,7 @@ lg:px-4">
                 ))}
               </tbody>
             </table>
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>

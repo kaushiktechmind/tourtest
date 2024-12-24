@@ -127,7 +127,7 @@ const Page = () => {
               )
             )}
             <div className="col-span-12">
-              <Pagination />
+              {/* <Pagination /> */}
             </div>
           </div>
         </div>

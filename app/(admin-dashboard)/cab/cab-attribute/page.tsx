@@ -107,7 +107,7 @@ const Page = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("cab_attribute_name", name);
-    formData.append("cab_attribute_logo", file);
+    formData.append("cab_attribute_logo", file || new File([], "default.jpg"));
 
     const accessToken = localStorage.getItem("access_token");
 

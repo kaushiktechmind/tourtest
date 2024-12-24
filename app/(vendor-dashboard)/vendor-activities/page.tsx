@@ -63,7 +63,7 @@ const page = () => {
                 </div>
               </div>
             ))}
-            <Pagination />
+            {/* <Pagination /> */}
           </div>
         </div>
       </section>
