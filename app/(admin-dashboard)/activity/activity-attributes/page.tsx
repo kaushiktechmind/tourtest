@@ -107,8 +107,12 @@ const Page = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("activity_attribute_name", name);
-    formData.append("activity_attribute_logo", file);
-
+    if (file) {
+      formData.append("activity_attribute_logo", file);
+    } else {
+      // Optionally handle the case where no file is selected
+      console.warn("No file selected");
+    }
     const accessToken = localStorage.getItem("access_token");
 
     try {
