@@ -4,7 +4,7 @@ import Cta from "@/components/home-6/Cta";
 import DiscountCard from "@/components/home-6/DiscountCard";
 import Facilities from "@/components/home-6/Facilities";
 import Featured from "@/components/home-6/Featured";
-import Hero from "@/components/home-6/Hero";
+import Hero from "@/app/(common-layout)/(ferry)/Hero";
 import Info from "@/components/home-6/Info";
 import WorkingProcess from "@/components/home-6/WorkingProcess";
 

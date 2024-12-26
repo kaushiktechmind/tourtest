@@ -1,3 +1,4 @@
+"use client"
 import CheckboxCustom from "@/components/Checkbox";
 import CustomRangeSlider from "@/components/RangeSlider";
 import { flightList } from "@/public/data/flightlist";

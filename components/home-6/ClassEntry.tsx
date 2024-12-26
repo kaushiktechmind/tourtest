@@ -16,15 +16,15 @@ const ClassEntry = () => {
     query === ""
       ? people
       : people.filter((person) =>
-          person.name
-            .toLowerCase()
-            .replace(/\s+/g, "")
-            .includes(query.toLowerCase().replace(/\s+/g, ""))
-        );
+        person.name
+          .toLowerCase()
+          .replace(/\s+/g, "")
+          .includes(query.toLowerCase().replace(/\s+/g, ""))
+      );
 
   return (
     <Combobox value={selected} onChange={setSelected}>
-      <div className="relative w-full md:w-[48%] xxl:w-[17%] shrink-0">
+      <div className="relative w-full md:w-[20%] xxl:w-[12%] shrink-0">
         <div className="relative w-full cursor-pointer overflow-hidden rounded-full sm:text-sm bg-[var(--bg-1)] border focus:outline-none">
           <Combobox.Input
             className="w-full bg-[var(--bg-1)] border-none py-2  lg:py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none"
@@ -55,24 +55,21 @@ const ClassEntry = () => {
                 <Combobox.Option
                   key={person.id}
                   className={({ active }) =>
-                    `relative cursor-default select-none py-3 pl-10 pr-4 ${
-                      active ? "bg-gray-200 text-gray-900" : "text-gray-900"
+                    `relative cursor-default select-none py-3 pl-10 pr-4 ${active ? "bg-gray-200 text-gray-900" : "text-gray-900"
                     }`
                   }
                   value={person}>
                   {({ selected, active }) => (
                     <>
                       <span
-                        className={`block truncate ${
-                          selected ? "font-medium" : "font-normal"
-                        }`}>
+                        className={`block truncate ${selected ? "font-medium" : "font-normal"
+                          }`}>
                         {person.name}
                       </span>
                       {selected ? (
                         <span
-                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                            active ? "text-white" : "text-teal-600"
-                          }`}>
+                          className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? "text-white" : "text-teal-600"
+                            }`}>
                           <CheckIcon className="h-5 w-5" aria-hidden="true" />
                         </span>
                       ) : null}

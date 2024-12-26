@@ -33,7 +33,7 @@ export const menus = [
   {
     // title: "Home",
         title: "Ferry",
-        url: "/flight-list",
+        url: "/ferry-home",
   },
   {
     // title: "Home",
