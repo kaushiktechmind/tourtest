@@ -3,9 +3,17 @@ import { Fragment, useState } from "react";
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 
-export default function SelectPeople() {
-  const [adult, setAdult] = useState(1);
-  const [children, setChildren] = useState(0);
+export default function SelectPeople({
+  adult,
+  setAdult,
+  children,
+  setChildren,
+}: {
+  adult: number;
+  setAdult: (value: number) => void;
+  children: number;
+  setChildren: (value: number) => void;
+}) {
   return (
     <Menu
       as="div"

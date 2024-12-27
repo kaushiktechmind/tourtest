@@ -1,6 +1,8 @@
 "use client";
-import { useState } from "react";
-import { SearchIcon, PlusIcon } from "@/public/data/icons";
+import { useState, useEffect } from "react";
+
+
+import { SearchIcon } from "@/public/data/icons";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -14,39 +16,147 @@ import flight from "@/public/img/hero-flight/flight.png";
 import HeroFlightImg1 from "@/public/img/hero-flight/img-1.png";
 import HeroFlightImg2 from "@/public/img/hero-flight/img-2.png";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const Page = () => {
   const [startDate, setStartDate] = useState(null);
   const [isOpen, setOpen] = useState(false);
-  const [trips, setTrips] = useState([{ id: 1, from: "", to: "" }]); // Initialize with one trip row
-  const [tripType, setTripType] = useState("one"); // State for the selected trip type (one or round)
+  const [trips, setTrips] = useState([{ id: 1, from: "", to: "" }]); // Initialize with single_trip row
+  const [tripType, setTripType] = useState("single_trip"); // State for the selected trip type (single_trip or return_trip)
+  const router = useRouter();
+
+  const [adult, setAdult] = useState(1);
+  const [children, setChildren] = useState(0);
 
   // List of locations to choose from
-  const locations = ["Port Blair", "Havelock", "Neil Island"];
+  const locations = ["Port Blair", "Swaraj Dweep  (Havelock) ", "Shaheed Dweep (Neil)"];
 
-  // Function to add a new trip row and set tripType to 'round'
   const addTrip = () => {
     if (trips.length < 3) { // Check if there are less than 3 trips
-      setTrips((prevTrips) => [...prevTrips, { id: prevTrips.length + 1, from: "", to: "" }]);
-      setTripType("round"); // Set tripType to "round" when adding a trip
+      setTrips((prevTrips) => {
+        const lastTrip = prevTrips[prevTrips.length - 1]; // Get the last trip
+        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "" }; // Prefill the 'from' field with the last 'to' field
+        return [...prevTrips, newTrip];
+      });
+      setTripType("return_trip"); // Set tripType to "return_trip" when adding a trip
     }
   };
+
 
   // Function to remove a trip row by ID
   const removeTrip = (id: number) => {
     setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
   };
 
+
+  // const formatDate = (date: Date): string => {
+  //   const year = date.getFullYear();
+  //   const month = String(date.getMonth() + 1).padStart(2, "0");
+  //   const day = String(date.getDate()).padStart(2, "0");
+  //   return `${year}-${month}-${day}`;
+  // };
+
+
+  const updateLocalStorage = () => {
+    if (trips.length > 0) {
+      const firstTrip = trips[0];
+      const lastTrip = trips[trips.length - 1];
+
+      const formatDate = (date) => {
+        if (!date) return "";
+        const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+        return offsetDate.toISOString().split("T")[0]; // Extract only the date part
+      };
+      const travelData = {
+        travel_date: formatDate(firstTrip.date),
+        
+        from: firstTrip.from || "",
+        to: lastTrip.to || "",
+        adults: adult,
+        children: children,
+        no_of_passengers: adult + children,
+      };
+
+      if (trips.length > 1) {
+        travelData.return_date = formatDate(lastTrip.date); // Store return date for multiple trips
+      }
+  
+      // Store the entire travelData object in localStorage
+      localStorage.setItem("travelData", JSON.stringify(travelData));
+
+    }
+  };
+
+
+  // Update localStorage whenever trips change
+  useEffect(() => {
+    updateLocalStorage();
+  }, [trips, adult, children]);
+
+
   // Handle radio button change
   const handleTripTypeChange = (type: string) => {
     setTripType(type);
     // Reset trips based on the trip type selected
-    if (type === "one") {
-      setTrips([{ id: 1, from: "", to: "" }]); // One-way: reset to one trip
+    if (type === "single_trip") {
+      setTrips([{ id: 1, from: "", to: "" }]); // single_trip: reset to single_trip
     } else {
-      setTrips([{ id: 1, from: "", to: "" }, { id: 2, from: "", to: "" }]); // Round-trip: set two trips by default
+      setTrips([{ id: 1, from: "", to: "" }, { id: 2, from: "", to: "" }]); // return_trip: set two trips by default
     }
   };
+
+  // Login and store token in localStorage
+  const handleLogin = async () => {
+    const loginPayload = {
+      data: {
+        username: "am@makruzz.com",
+        password: "maki3004",
+      },
+    };
+
+    try {
+      const response = await fetch("https://staging.makruzz.com/booking_api/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(loginPayload),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const token = data?.data?.token;
+
+        if (token) {
+          localStorage.setItem("Mak_Authorization", token);
+          alert("Login successful!");
+          router.push(`/ferry-list?tripType=${tripType}`);
+        } else {
+          alert("Failed to retrieve token.");
+        }
+      } else {
+        alert("Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
+      alert("An error occurred during login.");
+    }
+  };
+
+  const handleSearch = () => {
+    // Check if all required fields are filled
+    const allFieldsFilled = trips.every((trip) => trip.from && trip.to && trip.date);
+
+    if (!allFieldsFilled) {
+      alert("Please fill all fields before searching.");
+      return; // Stop further execution
+    }
+
+    // Proceed with your login or search logic
+    handleLogin();
+
+  };
+
 
   return (
     <section className="relative px-3 xl:px-0">
@@ -116,23 +226,23 @@ const Page = () => {
               <input
                 type="radio"
                 name="way"
-                id="one"
-                checked={tripType === "one"}
-                onChange={() => handleTripTypeChange("one")}
+                id="single_trip"
+                checked={tripType === "single_trip"}
+                onChange={() => handleTripTypeChange("single_trip")}
                 className="scale-125 accent-[var(--primary)]"
               />
-              <label htmlFor="one">One Way</label>
+              <label htmlFor="single_trip">Single Trip</label>
             </div>
             <div className="flex gap-2">
               <input
                 type="radio"
                 name="way"
-                id="round"
-                checked={tripType === "round"}
-                onChange={() => handleTripTypeChange("round")}
+                id="return_trip"
+                checked={tripType === "return_trip"}
+                onChange={() => handleTripTypeChange("return_trip")}
                 className="scale-125 accent-[var(--primary)]"
               />
-              <label htmlFor="round">Round Trip</label>
+              <label htmlFor="return_trip">Multiple Trip</label>
             </div>
           </div>
           {trips.map((trip, index) => {
@@ -162,7 +272,7 @@ const Page = () => {
                       }}
                       className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
                     >
-                      <option value="" disabled>Select Location</option>
+                      <option value="" disabled>From</option>
                       {locations.map((location) => (
                         <option key={location} value={location}>
                           {location}
@@ -191,7 +301,7 @@ const Page = () => {
                       }}
                       className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
                     >
-                      <option value="" disabled>Select Location</option>
+                      <option value="" disabled>To</option>
                       {availableLocations.map((location) => (
                         <option key={location} value={location}>
                           {location}
@@ -206,28 +316,42 @@ const Page = () => {
 
                 <div className="w-full md:w-[30%] xxl:w-[20%] flex pl-2 pt-1 pb-1 pr-3 items-center justify-between rounded-full sm:text-sm bg-[var(--bg-1)] border">
                   <DatePicker
-                    selected={startDate}
-                    onChange={(date: any) => setStartDate(date)}
+                    selected={trip.date}
+                    onChange={(date: Date) => {
+                      const updatedTrips = [...trips];
+                      updatedTrips[index].date = date;
+                      setTrips(updatedTrips);
+                    }}
                     placeholderText="Depart Date"
                     className="w-full bg-[var(--bg-1)] p-2 rounded-full focus:outline-none"
                   />
                   <CalendarDaysIcon className="w-5 h-5 text-gray-600 shrink-0" />
                 </div>
 
-                <SelectPeople />
+                {/* Only show SelectPeople for the first row */}
+                {index === 0 && (
+                  <SelectPeople
+                    adult={adult}
+                    setAdult={setAdult}
+                    children={children}
+                    setChildren={setChildren}
+                  />
+                )}
 
-                {/* Conditionally render the delete button if more than one trip */}
+                {/* Conditionally render the delete button if more than single_trip */}
                 {trips.length > 1 && (
                   <button
+                    type="button"
                     onClick={() => removeTrip(trip.id)}
-                    className="text-red-500 py-2 px-4 bg-white rounded-full hover:bg-gray-200"
+                    className="text-red-500 hover:text-red-700"
                   >
-                    Delete
+                    Remove Trip
                   </button>
                 )}
               </div>
             );
           })}
+
 
           {/* Add Trip and Search buttons in the same row */}
           <div className="flex justify-between items-center mt-6">
@@ -242,12 +366,12 @@ const Page = () => {
             </button>
 
             {/* Search Button */}
-            <Link
-              href="#"
+            <button
+              onClick={handleSearch}
               className="py-[14px] px-6 flex justify-center text-white bg-primary rounded-full"
             >
               <SearchIcon />
-            </Link>
+            </button>
           </div>
         </div>
       </div>

@@ -36,7 +36,7 @@ const Facilities = () => {
         </div>
       </div>
       <div className="mt-8 lg:mt-14 text-center">
-        <Link href="flight-list" className="btn-outline  text-primary">
+        <Link href="ferry-list" className="btn-outline  text-primary">
           See All Facilities
         </Link>
       </div>

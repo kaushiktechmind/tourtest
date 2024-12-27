@@ -80,7 +80,7 @@ const Featured = () => {
         </div>
       </div>
       <div className="flex justify-center mt-8 lg:mt-14">
-        <Link href="flight-list" className="btn-outline  text-primary">
+        <Link href="ferry-list" className="btn-outline  text-primary">
           See All Destinations
         </Link>
       </div>
