@@ -38,19 +38,22 @@ const page = () => {
     setIsDialogOpen(false);  // Close the dialog
   };
   // Extracting data from travelData
-  const travel_date = travelData?.travel_date;
-  const from = travelData?.from;
-  const to = travelData?.to;
+  const from1 = travelData?.from1;
+  const to1 = travelData?.to1;
+  const from2 = travelData?.from2;
+  const to2 = travelData?.to2;
+  const from3 = travelData?.from3;
+  const to3 = travelData?.to3;
   const adults = travelData?.adults;
-  const children = travelData?.children;
+  const infants = travelData?.infants;
   const no_of_passengers = travelData?.no_of_passengers;
-  const return_travel_date = travelData?.return_date;
+  const travel_date2 = travelData?.travel_date2;
 
-  console.log("zzzzzzzzzzzz", travel_date, from, to, adults, children, no_of_passengers, return_travel_date, tripType);
+  console.log("zzzzzzzzzzzz", travel_date2, from1, to1, adults, infants, no_of_passengers, tripType);
 
   // Fetching IDs for `from` and `to` based on the mapping
-  const fromId = locationIds[from] || null; // Defaults to `null` if location not found
-  const toId = locationIds[to] || null;
+  const fromId = locationIds[from2] || null;
+  const toId = locationIds[to2] || null;
 
 
   const [scheduleData, setScheduleData] = useState<any>(null);
@@ -71,8 +74,8 @@ const page = () => {
         trip_type: tripType === "single_trip" ? "single_trip" : "return_trip",
         from_location: fromId,
         to_location: toId,
-        travel_date: travelData?.travel_date,
-        return_travel_date: travelData?.return_date,
+        travel_date: travelData?.travel_date2,
+        return_travel_date: travelData?.travel_date2,
         no_of_passenger: travelData?.no_of_passengers,
       },
     };
@@ -143,8 +146,40 @@ const page = () => {
 
   return (
     <div className="py-[30px] lg:py-[60px]">
+
       <div className="container">
-        <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[100px]">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-6">
+          <div className="flex items-center space-x-6 flex-wrap">
+            {/* Always show the first pair */}
+            <div className="flex items-center space-x-2">
+              <p className="text-gray-600">{from1} -> </p>
+              <p className="text-gray-600">{to1}</p>
+            </div>
+
+            {/* Show the second pair only if from2 is available */}
+            {from2 && (
+              <div className="flex items-center space-x-2">
+                <p className="text-green-600">{from2} -> </p>
+                <p className="text-green-600">{to2}</p>
+              </div>
+            )}
+
+            {/* Show the third pair only if from2 is available */}
+            {from2 && (
+              <div className="flex items-center space-x-2">
+                <p className="text-gray-600">{from3} -> </p>
+                <p className="text-gray-600">{to3}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+
+
+
+
+        <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[10px]">
+
           <div className="col-span-12 lg:col-span-4 order-2 lg:order-1 ">
             <div className="py-6 px-8 bg-white rounded-2xl shadow-lg">
               <h4 className="mb-0 text-2xl font-semibold"> Filter </h4>
@@ -316,15 +351,13 @@ const page = () => {
                           </span>
                         </div>
                         <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
-                          <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                        <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
                             <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
-                              <i className="las la-plane-departure text-2xl"></i>
+                              {/* Replace the flight icon with a boat icon */}
+                              <i className="las la-ship text-2xl"></i>
                             </div>
                           </div>
-                          {/* <span className="block font-medium">
-                          {" "}
-                          Non-stop{" "}
-                        </span> */}
+                         
                           <span className="block clr-neutral-500">
                             {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
                           </span>
@@ -341,8 +374,8 @@ const page = () => {
                       </div>
                       <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
                         <p className="mb-0">
-                          Seats
-                          <span className="text-amber-700">{schedule.seat}</span>
+                          Seats:
+                          <span className="text-amber-700"> {schedule.seat}</span>
                         </p>
                         <p className="text-primary">•</p>
                         <p className="mb-0">
@@ -395,7 +428,12 @@ const page = () => {
                     <p><strong>From:</strong> {selectedSchedule?.source_name}</p>
                     <p><strong>To:</strong> {selectedSchedule?.destination_name}</p>
                     <button onClick={closeDialog} className="mt-4 bg-primary text-white p-2 rounded-lg">Close</button>
-                    <Link href="/flight-details" className="mt-4 ml-2 bg-primary text-white p-2 rounded-lg">Proceed</Link>
+                    <Link
+                      href={from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page"}
+                      className="mt-4 ml-2 bg-primary text-white p-2 rounded-lg"
+                    >
+                      Proceed
+                    </Link>
                   </div>
                 </div>
               )}

@@ -26,7 +26,7 @@ const Page = () => {
   const router = useRouter();
 
   const [adult, setAdult] = useState(1);
-  const [children, setChildren] = useState(0);
+  const [infants, setInfants] = useState(0);
 
   // List of locations to choose from
   const locations = ["Port Blair", "Swaraj Dweep  (Havelock) ", "Shaheed Dweep (Neil)"];
@@ -57,41 +57,72 @@ const Page = () => {
   // };
 
 
+
+  // const updateLocalStorage = () => {
+  //   if (trips.length > 0) {
+  //     const firstTrip = trips[0];
+  //     const lastTrip = trips[trips.length - 1];
+
+  //     const formatDate = (date) => {
+  //       if (!date) return "";
+  //       const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  //       return offsetDate.toISOString().split("T")[0]; // Extract only the date part
+  //     };
+  //     const travelData = {
+  //       travel_date: formatDate(firstTrip.date),
+        
+  //       from: firstTrip.from || "",
+  //       to: lastTrip.to || "",
+  //       adults: adult,
+  //       infants: infants,
+  //       no_of_passengers: adult + infants,
+  //     };
+
+  //     if (trips.length > 1) {
+  //       travelData.return_date = formatDate(lastTrip.date); // Store return date for multiple trips
+  //     }
+  
+  //     // Store the entire travelData object in localStorage
+  //     localStorage.setItem("travelData", JSON.stringify(travelData));
+
+  //   }
+  // };
+
+
+
   const updateLocalStorage = () => {
     if (trips.length > 0) {
-      const firstTrip = trips[0];
-      const lastTrip = trips[trips.length - 1];
-
-      const formatDate = (date) => {
-        if (!date) return "";
-        const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-        return offsetDate.toISOString().split("T")[0]; // Extract only the date part
-      };
-      const travelData = {
-        travel_date: formatDate(firstTrip.date),
-        
-        from: firstTrip.from || "",
-        to: lastTrip.to || "",
-        adults: adult,
-        children: children,
-        no_of_passengers: adult + children,
-      };
-
-      if (trips.length > 1) {
-        travelData.return_date = formatDate(lastTrip.date); // Store return date for multiple trips
-      }
+      const travelData = {};
+  
+      trips.forEach((trip, index) => {
+        const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
+  
+        const formatDate = (date) => {
+          if (!date) return "";
+          const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+          return offsetDate.toISOString().split("T")[0]; // Extract only the date part
+        };
+  
+        // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
+        travelData[`from${tripIndex}`] = trip.from || "";
+        travelData[`to${tripIndex}`] = trip.to || "";
+        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
+  
+      });
+      travelData["adults"] = adult;
+      travelData["infants"] = infants;
+      travelData["no_of_passengers"] = adult + infants;
   
       // Store the entire travelData object in localStorage
       localStorage.setItem("travelData", JSON.stringify(travelData));
-
     }
   };
-
+  
 
   // Update localStorage whenever trips change
   useEffect(() => {
     updateLocalStorage();
-  }, [trips, adult, children]);
+  }, [trips, adult, infants]);
 
 
   // Handle radio button change
@@ -270,7 +301,7 @@ const Page = () => {
                         updatedTrips[index].from = e.target.value;
                         setTrips(updatedTrips); // Update the "from" location
                       }}
-                      className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+                      className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
                     >
                       <option value="" disabled>From</option>
                       {locations.map((location) => (
@@ -299,7 +330,7 @@ const Page = () => {
                           setTrips(nextTrip);
                         }
                       }}
-                      className="w-full bg-[var(--bg-1)] border-none py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+                      className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
                     >
                       <option value="" disabled>To</option>
                       {availableLocations.map((location) => (
@@ -333,8 +364,8 @@ const Page = () => {
                   <SelectPeople
                     adult={adult}
                     setAdult={setAdult}
-                    children={children}
-                    setChildren={setChildren}
+                    infants={infants}
+                    setInfants={setInfants}
                   />
                 )}
 
