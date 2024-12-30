@@ -26,17 +26,7 @@ const page = () => {
     "Swaraj Dweep  (Havelock) ": 2,
     "Shaheed Dweep (Neil)": 3,
   };
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
 
-  const openDialog = (schedule) => {
-    setSelectedSchedule(schedule);  // Set the selected schedule
-    setIsDialogOpen(true);  // Open the dialog
-  };
-
-  const closeDialog = () => {
-    setIsDialogOpen(false);  // Close the dialog
-  };
   // Extracting data from travelData
   const from1 = travelData?.from1;
   const to1 = travelData?.to1;
@@ -49,7 +39,6 @@ const page = () => {
   const no_of_passengers = travelData?.no_of_passengers;
   const travel_date2 = travelData?.travel_date2;
 
-  console.log("zzzzzzzzzzzz", travel_date2, from1, to1, adults, infants, no_of_passengers, tripType);
 
   // Fetching IDs for `from` and `to` based on the mapping
   const fromId = locationIds[from2] || null;
@@ -92,7 +81,6 @@ const page = () => {
         body: JSON.stringify(requestPayload),
       });
       const data = await response.json();
-      console.log("fetched data", data);
 
       if (response.ok) {
         // Check for response structure
@@ -100,7 +88,6 @@ const page = () => {
           tripType === "single_trip"
             ? data.data // Direct access for single trips
             : data.data.schedule; // Nested access for multiple trips
-        console.log("schedule data", schedule);
 
         setScheduleData(schedule);
       } else {
@@ -141,6 +128,28 @@ const page = () => {
 
     return `${hours}h ${minutes}m`;
   };
+
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12; // Convert 0 or 12-hour to 12-hour clock
+    return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  };
+
+  const handleSelectFerry = (shipClassId: string) => {
+    // Find the selected object from scheduleData
+    const selectedFerry = scheduleData?.find(
+      (item: any) => item.ship_class_id === shipClassId
+    );
+  
+    if (selectedFerry) {
+      localStorage.setItem('selectedFerry2', JSON.stringify(selectedFerry));
+      console.log('Selected ferry object:', selectedFerry);
+    } else {
+      console.error('Ferry object not found for ship_class_id:', shipClassId);
+    }
+  };
+  
 
 
 
@@ -334,7 +343,7 @@ const page = () => {
                             <Image
                               width={52}
                               height={27}
-                              src={'/img/brand-11.png'}
+                              src={'/img/makruzz.jpg'}
                               alt="image"
                               className=" object-fit-contain"
                             />
@@ -344,7 +353,7 @@ const page = () => {
                         <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
                           <span className="block text-primary">From</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                            {schedule.departure_time}
+                          {formatTime(schedule.departure_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.source_name}
@@ -365,7 +374,7 @@ const page = () => {
                         <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
                           <span className="block text-primary">To</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                            {schedule.arrival_time}
+                          {formatTime(schedule.arrival_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.destination_name}
@@ -383,32 +392,17 @@ const page = () => {
                           <span className="text-primary"> {schedule.ship_class_title}</span>
                         </p>
                       </div>
-                      <div className="md:flex justify-between text-center">
-                        <p className="mb-0">
-                          View Photos
-                          {/* <span className="text-primary">₹5 eCash</span> */}
-                        </p>
-                        <p className="mb-0 text-red-500">
-                          {" "}
-                          Only 10 Seat Left{" "}
-                        </p>
-                        <p className="mb-0"> Ferry Details </p>
-                      </div>
                     </div>
 
                     <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
-                      <p className="clr-neutral-200 line-through">₹450</p>
                       <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
                         <h2 className="mb-0 h2 text-[var(--neutral-700)]">
                           {" "}
                           ₹{schedule.ship_class_price}
                         </h2>
-                        <span className="inline-block text-sm text-primary">
-                          20% OFF
-                        </span>
                       </div>
                       <Link
-                        href="" onClick={() => openDialog(schedule)}
+                        href={from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page"} onClick={() => handleSelectFerry(schedule.ship_class_id)}
                         className="btn-outline  flex justify-center text-primary">
                         Select Ferry
                       </Link>
@@ -418,25 +412,6 @@ const page = () => {
               ))}
 
 
-              {isDialogOpen && (
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center transition-opacity">
-                  <div className="bg-white p-6 rounded-lg w-1/2">
-                    <h2 className="text-2xl font-semibold">Ferry Details</h2>
-                    <p><strong>Ship Title:</strong> {selectedSchedule?.ship_title}</p>
-                    <p><strong>Departure Time:</strong> {selectedSchedule?.departure_time}</p>
-                    <p><strong>Arrival Time:</strong> {selectedSchedule?.arrival_time}</p>
-                    <p><strong>From:</strong> {selectedSchedule?.source_name}</p>
-                    <p><strong>To:</strong> {selectedSchedule?.destination_name}</p>
-                    <button onClick={closeDialog} className="mt-4 bg-primary text-white p-2 rounded-lg">Close</button>
-                    <Link
-                      href={from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page"}
-                      className="mt-4 ml-2 bg-primary text-white p-2 rounded-lg"
-                    >
-                      Proceed
-                    </Link>
-                  </div>
-                </div>
-              )}
 
 
               <div className="col-span-1">

@@ -49,7 +49,6 @@ const page = () => {
   const no_of_passengers = travelData?.no_of_passengers;
   const travel_date3 = travelData?.travel_date3;
 
-  console.log("zzzzzzzzzzzz", travel_date3, from3, to3, adults, infants, no_of_passengers, tripType);
 
   // Fetching IDs for `from` and `to` based on the mapping
   const fromId = locationIds[from3] || null;
@@ -142,37 +141,61 @@ const page = () => {
     return `${hours}h ${minutes}m`;
   };
 
+  const formatTime = (time: string) => {
+    const [hours, minutes] = time.split(":").map(Number);
+    const period = hours >= 12 ? "PM" : "AM";
+    const formattedHours = hours % 12 || 12; // Convert 0 or 12-hour to 12-hour clock
+    return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
+  };
+
+  const handleSelectFerry = (shipClassId: string) => {
+    // Find the selected object from scheduleData
+    const selectedFerry = scheduleData?.find(
+      (item: any) => item.ship_class_id === shipClassId
+    );
+
+    if (selectedFerry) {
+      localStorage.setItem('selectedFerry3', JSON.stringify(selectedFerry));
+      console.log('Selected ferry object:', selectedFerry);
+    } else {
+      console.error('Ferry object not found for ship_class_id:', shipClassId);
+    }
+  };
+
+
+
+
 
 
   return (
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
-      <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-6"> 
-  <div className="flex items-center space-x-6 flex-wrap">
-    {/* Always show the first pair */}
-    <div className="flex items-center space-x-2">
-      <p className="text-gray-600">{from1} -> </p>
-      <p className="text-gray-600">{to1}</p>
-    </div>
-    
-    {/* Show the second pair only if from2 is available */}
-    {from2 && (
-      <div className="flex items-center space-x-2">
-        <p className="text-gray-600">{from2} -> </p>
-        <p className="text-gray-600">{to2}</p>
-      </div>
-    )}
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-6">
+          <div className="flex items-center space-x-6 flex-wrap">
+            {/* Always show the first pair */}
+            <div className="flex items-center space-x-2">
+              <p className="text-gray-600">{from1} -> </p>
+              <p className="text-gray-600">{to1}</p>
+            </div>
 
-    {/* Show the third pair only if from2 is available */}
-    {from2 && (
-      <div className="flex items-center space-x-2">
-        <p className="text-green-600">{from3} -> </p>
-        <p className="text-green-600">{to3}</p>
-      </div>
-    )}
-  </div>
-</div>
+            {/* Show the second pair only if from2 is available */}
+            {from2 && (
+              <div className="flex items-center space-x-2">
+                <p className="text-gray-600">{from2} -> </p>
+                <p className="text-gray-600">{to2}</p>
+              </div>
+            )}
+
+            {/* Show the third pair only if from2 is available */}
+            {from2 && (
+              <div className="flex items-center space-x-2">
+                <p className="text-green-600">{from3} -> </p>
+                <p className="text-green-600">{to3}</p>
+              </div>
+            )}
+          </div>
+        </div>
 
 
 
@@ -334,7 +357,7 @@ const page = () => {
                             <Image
                               width={52}
                               height={27}
-                              src={'/img/brand-11.png'}
+                              src={'/img/makruzz.jpg'}
                               alt="image"
                               className=" object-fit-contain"
                             />
@@ -344,20 +367,20 @@ const page = () => {
                         <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
                           <span className="block text-primary">From</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                            {schedule.departure_time}
+                            {formatTime(schedule.departure_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.source_name}
                           </span>
                         </div>
                         <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
-                        <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                          <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
                             <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
                               {/* Replace the flight icon with a boat icon */}
                               <i className="las la-ship text-2xl"></i>
                             </div>
                           </div>
-                         
+
                           <span className="block clr-neutral-500">
                             {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
                           </span>
@@ -365,7 +388,7 @@ const page = () => {
                         <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
                           <span className="block text-primary">To</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                            {schedule.arrival_time}
+                            {formatTime(schedule.arrival_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.destination_name}
@@ -383,32 +406,17 @@ const page = () => {
                           <span className="text-primary"> {schedule.ship_class_title}</span>
                         </p>
                       </div>
-                      <div className="md:flex justify-between text-center">
-                        <p className="mb-0">
-                          View Photos
-                          {/* <span className="text-primary">₹5 eCash</span> */}
-                        </p>
-                        <p className="mb-0 text-red-500">
-                          {" "}
-                          Only 10 Seat Left{" "}
-                        </p>
-                        <p className="mb-0"> Ferry Details </p>
-                      </div>
                     </div>
 
                     <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
-                      <p className="clr-neutral-200 line-through">₹450</p>
                       <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
                         <h2 className="mb-0 h2 text-[var(--neutral-700)]">
                           {" "}
                           ₹{schedule.ship_class_price}
                         </h2>
-                        <span className="inline-block text-sm text-primary">
-                          20% OFF
-                        </span>
                       </div>
                       <Link
-                        href="" onClick={() => openDialog(schedule)}
+                        href="/ferry-details-page" onClick={() => handleSelectFerry(schedule.ship_class_id)}
                         className="btn-outline  flex justify-center text-primary">
                         Select Ferry
                       </Link>

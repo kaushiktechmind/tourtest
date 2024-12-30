@@ -6,7 +6,6 @@ import { Children } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayPkgBtn from "@/components/RazorpayPkgBtn";
-RazorpayPkgBtn;
 
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"

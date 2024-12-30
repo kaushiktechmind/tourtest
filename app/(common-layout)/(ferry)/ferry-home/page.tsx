@@ -160,7 +160,7 @@ const Page = () => {
 
         if (token) {
           localStorage.setItem("Mak_Authorization", token);
-          alert("Login successful!");
+          // alert("Login successful!");
           router.push(`/ferry-list?tripType=${tripType}`);
         } else {
           alert("Failed to retrieve token.");
@@ -193,10 +193,11 @@ const Page = () => {
     <section className="relative px-3 xl:px-0">
       <div className="w-full lg:w-[638px] lg:h-[700px] absolute max-xl:hidden right-4 top-0 xxl:right-10 3xl:right-[10%] grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="col-span-1 flex flex-col gap-5 ">
-          <Image src={HeroFlightImg1} alt="img" />
+        <Image src="/img/ferryPic.jpg" alt="img" width={500} height={300} />
+
         </div>
         <div className="col-span-1 flex flex-col gap-6">
-          <Image src={HeroFlightImg2} alt="img" />
+        <Image src="/img/ferryPic2.jpg" alt="img" width={500} height={300} />
           <Image src={flight} className="self-end" alt="img" />
         </div>
       </div>
