@@ -5,6 +5,11 @@ import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { MapPinIcon } from "@heroicons/react/24/outline";
+import DatePicker from "react-datepicker";
+import { CalendarDaysIcon } from "@heroicons/react/24/outline";
+import SelectPeople from "@/components/home-6/SelectPeople";
+import "react-datepicker/dist/react-datepicker.css";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -16,9 +21,9 @@ import Link from "next/link";
 const page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const tripType = searchParams.get("tripType");
+  const storedTripType = searchParams.get("tripType");
 
-  const travelData = JSON.parse(localStorage.getItem('travelData'));
+  const storedTravelData = JSON.parse(localStorage.getItem('travelData'));
 
   const locationIds = {
     "Port Blair": 1,
@@ -26,24 +31,33 @@ const page = () => {
     "Shaheed Dweep (Neil)": 3,
   };
   
-  // Extracting data from travelData
-  const from1 = travelData?.from1;
-  const to1 = travelData?.to1;
-  const from2 = travelData?.from2;
-  const to2 = travelData?.to2;
-  const from3 = travelData?.from3;
-  const to3 = travelData?.to3;
-  const adults = travelData?.adults;
-  const infants = travelData?.infants;
-  const no_of_passengers = travelData?.no_of_passengers;
-  const travel_date1 = travelData?.travel_date1;
+  // Extracting data from storedTravelData
+  const storedFrom1 = storedTravelData?.from1;
+  const storedTo1 = storedTravelData?.to1;
+  const storedFrom2 = storedTravelData?.from2;
+  const storedTo2 = storedTravelData?.to2;
+  const storedFrom3 = storedTravelData?.from3;
+  const storedTo3 = storedTravelData?.to3;
+  // const storedAdults = storedTravelData?.adults;
+  // const storedInfants = storedTravelData?.infants;
+  // const stored_no_of_passengers = storedTravelData?.no_of_passengers;
+  // const travel_date1 = storedTravelData?.travel_date1;
 
   // Fetching IDs for `from` and `to` based on the mapping
-  const fromId = locationIds[from1] || null;
-  const toId = locationIds[to1] || null;
+  const fromId = locationIds[storedFrom1] || null;
+  const toId = locationIds[storedTo1] || null;
   const [scheduleData, setScheduleData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+
+  const [trips, setTrips] = useState([{ id: 1, from: "", to: "" }]); // Initialize with single_trip row
+  const [tripType, setTripType] = useState(storedTripType); // State for the selected trip type (single_trip or return_trip)
+  // const router = useRouter();
+
+  const [adult, setAdult] = useState(storedTravelData?.adults);
+  const [infants, setInfants] = useState(storedTravelData?.infants);
+
 
 
   const fetchScheduleData = async () => {
@@ -55,17 +69,17 @@ const page = () => {
 
     const requestPayload = {
       data: {
-        trip_type: tripType === "single_trip" ? "single_trip" : "return_trip",
+        trip_type: storedTripType === "single_trip" ? "single_trip" : "return_trip",
         from_location: fromId,
         to_location: toId,
-        travel_date: travelData?.travel_date1,
-        return_travel_date: travelData?.travel_date1,
-        no_of_passenger: travelData?.no_of_passengers,
+        travel_date: storedTravelData?.travel_date1,
+        return_travel_date: storedTravelData?.travel_date1,
+        no_of_passenger: storedTravelData?.no_of_passengers,
       },
     };
 
     const apiUrl =
-      tripType === "single_trip"
+      storedTripType === "single_trip"
         ? "https://staging.makruzz.com/booking_api/schedule_search"
         : "https://staging.makruzz.com/booking_api/return_schedule_search";
 
@@ -81,7 +95,7 @@ const page = () => {
       if (response.ok) {
         // Check for response structure
         const schedule =
-          tripType === "single_trip"
+          storedTripType === "single_trip"
             ? data.data // Direct access for single trips
             : data.data.schedule; // Nested access for multiple trips
         // console.log("schedule data", schedule);
@@ -97,11 +111,26 @@ const page = () => {
     }
   };
 
+
   useEffect(() => {
-    if (tripType) {
+    const initialTrips = [{ id: 1, from: storedTravelData?.from1, to: storedTravelData?.to1,  date: storedTravelData?.travel_date1 ? new Date(storedTravelData?.travel_date1) : null }];
+    
+    if (storedTravelData?.travel_date2 && !storedTravelData?.travel_date3) {
+      initialTrips.push({ id: 2, from: storedTravelData?.from2, to: storedTravelData?.to2,  date: storedTravelData?.travel_date2 ? new Date(storedTravelData?.travel_date2) : null });
+    } else if (storedTravelData?.travel_date3) {
+      initialTrips.push({ id: 2, from: storedTravelData?.from2, to: storedTravelData?.to2, date: storedTravelData?.travel_date2 ? new Date(storedTravelData?.travel_date2) : null });
+      initialTrips.push({ id: 3, from: storedTravelData?.from3, to: storedTravelData?.to3, date: storedTravelData?.travel_date3 ? new Date(storedTravelData?.travel_date3) : null });
+    }
+  
+    setTrips(initialTrips);
+  }, [storedTravelData?.travel_date2, storedTravelData?.travel_date3]);
+  
+
+  useEffect(() => {
+    if (storedTripType) {
       fetchScheduleData();
     }
-  }, [tripType]);
+  }, [storedTripType]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p className="text-red-500">Error: {error}</p>;
@@ -149,10 +178,103 @@ const page = () => {
     if (selectedFerry) {
       localStorage.setItem('selectedFerry', JSON.stringify(selectedFerry));
       console.log('Selected ferry object:', selectedFerry);
+      router.push(storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"); 
+      // href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"} 
     } else {
       console.error('Ferry object not found for ship_class_id:', shipClassId);
     }
   };
+
+
+  
+
+
+
+
+
+
+
+  // List of locations to choose from
+  const locations = ["Port Blair", "Swaraj Dweep  (Havelock) ", "Shaheed Dweep (Neil)"];
+
+  const addTrip = () => {
+    if (trips.length < 3) { // Check if there are less than 3 trips
+      setTrips((prevTrips) => {
+        const lastTrip = prevTrips[prevTrips.length - 1]; // Get the last trip
+        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "" }; // Prefill the 'from' field with the last 'to' field
+        return [...prevTrips, newTrip];
+      });
+      setTripType("return_trip"); // Set tripType to "return_trip" when adding a trip
+    }
+  };
+
+  const removeTrip = (id: number) => {
+    setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
+  };
+
+  const updateLocalStorage = () => {
+    if (trips.length > 0) {
+      const travelData = {};
+
+      trips.forEach((trip, index) => {
+        const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
+
+        const formatDate = (date) => {
+          if (!date) return "";
+          const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+          return offsetDate.toISOString().split("T")[0]; // Extract only the date part
+        };
+
+        // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
+        travelData[`from${tripIndex}`] = trip.from || "";
+        travelData[`to${tripIndex}`] = trip.to || "";
+        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
+
+      });
+      travelData["adults"] = adult;
+      travelData["infants"] = infants;
+      travelData["no_of_passengers"] = adult + infants;
+
+      // Store the entire travelData object in localStorage
+      localStorage.setItem("travelData", JSON.stringify(travelData));
+    }
+  };
+
+  const handleTripTypeChange = (type: string) => {
+    setTripType(type);
+    // Reset trips based on the trip type selected
+    if (type === "single_trip") {
+      setTrips([{ id: 1, from: "", to: "" }]); // single_trip: reset to single_trip
+    } else {
+      setTrips([{ id: 1, from: "", to: "" }, { id: 2, from: "", to: "" }]); // return_trip: set two trips by default
+    }
+  };
+
+
+
+  const handleSearch = () => {
+    const allFieldsFilled = trips.every((trip) => trip.from && trip.to && trip.date);
+
+    if (!allFieldsFilled) {
+      alert("Please fill all fields before searching.");
+      return; // Stop further execution
+    }
+
+    // Proceed with your login or search logic
+    updateLocalStorage();
+    // router.push(`/ferry-list?tripType=${tripType}`); 
+    window.location.href = `/ferry-list?tripType=${tripType}`;
+    
+   
+
+  };
+
+
+
+
+
+
+  
   
   
 
@@ -165,27 +287,193 @@ const page = () => {
           <div className="flex items-center space-x-6 flex-wrap">
             {/* Always show the first pair */}
             <div className="flex items-center space-x-2">
-              <p className="text-green-600">{from1} -> </p>
-              <p className="text-green-600">{to1}</p>
+              <p className="text-green-600">{storedFrom1} -> </p>
+              <p className="text-green-600">{storedTo1}</p>
             </div>
 
             {/* Show the second pair only if from2 is available */}
-            {from2 && (
+            {storedFrom2 && (
               <div className="flex items-center space-x-2">
-                <p className="text-gray-600">{from2} -> </p>
-                <p className="text-gray-600">{to2}</p>
+                <p className="text-gray-600">{storedFrom2} -> </p>
+                <p className="text-gray-600">{storedTo2}</p>
               </div>
             )}
 
             {/* Show the third pair only if from2 is available */}
-            {from2 && (
+            {storedFrom3 && (
               <div className="flex items-center space-x-2">
-                <p className="text-gray-600">{from3} -> </p>
-                <p className="text-gray-600">{to3}</p>
+                <p className="text-gray-600">{storedFrom3} -> </p>
+                <p className="text-gray-600">{storedTo3}</p>
               </div>
             )}
           </div>
         </div>
+
+
+
+        <div className="bg-white rounded-xl p-3 md:p-5">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 text-lg">
+            <div className="flex gap-2">
+              <input
+                type="radio"
+                name="way"
+                id="single_trip"
+                checked={tripType === "single_trip"}
+                onChange={() => handleTripTypeChange("single_trip")}
+                className="scale-125 accent-[var(--primary)]"
+              />
+              <label htmlFor="single_trip">Single Trip</label>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="radio"
+                name="way"
+                id="return_trip"
+                checked={tripType === "return_trip"}
+                onChange={() => handleTripTypeChange("return_trip")}
+                className="scale-125 accent-[var(--primary)]"
+              />
+              <label htmlFor="return_trip">Multiple Trip</label>
+            </div>
+          </div>
+
+
+       {trips.map((trip, index) => {
+  const availableLocations = locations.filter(
+    (location) => location !== trip.from
+  );
+
+  return (
+    <div key={trip.id} className="flex flex-wrap gap-5 mt-6 items-center">
+      {trips.length > 1 && (
+        <div className="w-full text-xl text-gray-600 font-semibold">
+          Trip {index + 1}
+        </div>
+      )}
+
+      <div className="flex w-full md:w-[35%] gap-3 mr-10">
+        <div className="relative w-full">
+          <select
+            value={trip.from || ""}
+            onChange={(e) => {
+              const updatedTrips = [...trips];
+              updatedTrips[index].from = e.target.value;
+              setTrips(updatedTrips);
+            }}
+            className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+          >
+            <option value="" disabled>From</option>
+            {locations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+            <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+          </div>
+        </div>
+
+        <div className="relative w-full">
+          <select
+            value={trip.to || ""}
+            onChange={(e) => {
+              const updatedTrips = [...trips];
+              updatedTrips[index].to = e.target.value;
+              setTrips(updatedTrips);
+              if (index < trips.length - 1) {
+                const nextTrip = [...trips];
+                nextTrip[index + 1].from = e.target.value;
+                setTrips(nextTrip);
+              }
+            }}
+            className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+          >
+            <option value="" disabled>To</option>
+            {availableLocations.map((location) => (
+              <option key={location} value={location}>
+                {location}
+              </option>
+            ))}
+          </select>
+          <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+            <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+          </div>
+        </div>
+      </div>
+
+      <div className="w-full md:w-[30%] xxl:w-[20%] flex pl-2 pt-1 pb-1 pr-3 items-center justify-between rounded-full sm:text-sm bg-[var(--bg-1)] border">
+        <DatePicker
+          selected={trip.date}
+          onChange={(date: Date) => {
+            const updatedTrips = [...trips];
+            updatedTrips[index].date = date;
+            setTrips(updatedTrips);
+          }}
+          placeholderText="Depart Date"
+          className="w-full bg-[var(--bg-1)] p-2 rounded-full focus:outline-none"
+        />
+        <CalendarDaysIcon className="w-5 h-5 text-gray-600 shrink-0" />
+      </div>
+
+      {index === 0 && (
+        <SelectPeople
+          adult={adult}
+          setAdult={setAdult}
+          infants={infants}
+          setInfants={setInfants}
+        />
+      )}
+
+      {index > 0 && (
+        <button
+          type="button"
+          onClick={() => removeTrip(trip.id)}
+          className="text-red-500 hover:text-red-700"
+        >
+          Remove Trip
+        </button>
+      )}
+    </div>
+  );
+})}
+
+
+
+          {/* Add Trip and Search buttons in the same row */}
+          <div className="flex justify-between items-center mt-6">
+            {/* Add Trip Button */}
+            <button
+              onClick={addTrip}
+              type="button"
+              className="py-[10px] px-5 w-auto text-black rounded-full sm:text-sm bg-[var(--bg-1)] border"
+              disabled={trips.length >= 3}
+            >
+              + Add Trip
+            </button>
+
+            {/* Search Button */}
+            <button
+              onClick={handleSearch}
+              className="py-[14px] px-6 flex justify-center text-white bg-primary rounded-full"
+            >
+              <SearchIcon />
+            </button>
+          </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[10px]">
           <div className="col-span-12 lg:col-span-4 order-2 lg:order-1 ">
@@ -397,7 +685,7 @@ const page = () => {
 
                       </div>
                       <Link
-                         href={from2 ? `/ferry-list2?tripType=${tripType}` : "/ferry-details-page"}   onClick={() => handleSelectFerry(schedule.ship_class_id)}
+                         href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"}   onClick={() => handleSelectFerry(schedule.ship_class_id)}
                         className="btn-outline  flex justify-center text-primary">
                         Select Ferry
                       </Link>

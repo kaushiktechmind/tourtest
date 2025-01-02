@@ -42,90 +42,38 @@ const Page = () => {
     }
   };
 
-
-  // Function to remove a trip row by ID
   const removeTrip = (id: number) => {
     setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
   };
 
-
-  // const formatDate = (date: Date): string => {
-  //   const year = date.getFullYear();
-  //   const month = String(date.getMonth() + 1).padStart(2, "0");
-  //   const day = String(date.getDate()).padStart(2, "0");
-  //   return `${year}-${month}-${day}`;
-  // };
-
-
-
-  // const updateLocalStorage = () => {
-  //   if (trips.length > 0) {
-  //     const firstTrip = trips[0];
-  //     const lastTrip = trips[trips.length - 1];
-
-  //     const formatDate = (date) => {
-  //       if (!date) return "";
-  //       const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  //       return offsetDate.toISOString().split("T")[0]; // Extract only the date part
-  //     };
-  //     const travelData = {
-  //       travel_date: formatDate(firstTrip.date),
-        
-  //       from: firstTrip.from || "",
-  //       to: lastTrip.to || "",
-  //       adults: adult,
-  //       infants: infants,
-  //       no_of_passengers: adult + infants,
-  //     };
-
-  //     if (trips.length > 1) {
-  //       travelData.return_date = formatDate(lastTrip.date); // Store return date for multiple trips
-  //     }
-  
-  //     // Store the entire travelData object in localStorage
-  //     localStorage.setItem("travelData", JSON.stringify(travelData));
-
-  //   }
-  // };
-
-
-
   const updateLocalStorage = () => {
     if (trips.length > 0) {
       const travelData = {};
-  
+
       trips.forEach((trip, index) => {
         const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
-  
+
         const formatDate = (date) => {
           if (!date) return "";
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part
         };
-  
+
         // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
         travelData[`from${tripIndex}`] = trip.from || "";
         travelData[`to${tripIndex}`] = trip.to || "";
         travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
-  
+
       });
       travelData["adults"] = adult;
       travelData["infants"] = infants;
       travelData["no_of_passengers"] = adult + infants;
-  
+
       // Store the entire travelData object in localStorage
       localStorage.setItem("travelData", JSON.stringify(travelData));
     }
   };
-  
 
-  // Update localStorage whenever trips change
-  useEffect(() => {
-    updateLocalStorage();
-  }, [trips, adult, infants]);
-
-
-  // Handle radio button change
   const handleTripTypeChange = (type: string) => {
     setTripType(type);
     // Reset trips based on the trip type selected
@@ -136,7 +84,6 @@ const Page = () => {
     }
   };
 
-  // Login and store token in localStorage
   const handleLogin = async () => {
     const loginPayload = {
       data: {
@@ -175,7 +122,6 @@ const Page = () => {
   };
 
   const handleSearch = () => {
-    // Check if all required fields are filled
     const allFieldsFilled = trips.every((trip) => trip.from && trip.to && trip.date);
 
     if (!allFieldsFilled) {
@@ -184,6 +130,7 @@ const Page = () => {
     }
 
     // Proceed with your login or search logic
+    updateLocalStorage();
     handleLogin();
 
   };
@@ -191,67 +138,31 @@ const Page = () => {
 
   return (
     <section className="relative px-3 xl:px-0">
-      <div className="w-full lg:w-[638px] lg:h-[700px] absolute max-xl:hidden right-4 top-0 xxl:right-10 3xl:right-[10%] grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="col-span-1 flex flex-col gap-5 ">
-        <Image src="/img/ferryPic.jpg" alt="img" width={500} height={300} />
-
-        </div>
-        <div className="col-span-1 flex flex-col gap-6">
-        <Image src="/img/ferryPic2.jpg" alt="img" width={500} height={300} />
-          <Image src={flight} className="self-end" alt="img" />
+      <div
+        className="relative w-full h-[550px] bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: 'url(/img/ferry-bg.jpg)' }} // Set the background image
+      >
+        {/* Content over the background image */}
+        <div className="container relative py-[60px] lg:py-[120px] text-white">
+          <div className="grid grid-cols-12 gap-5">
+            <div className="col-span-12 lg:col-span-8 xl:col-span-6 xxl:col-span-5">
+              {/* <SubHeadingBtn
+                text="4.8 rated service"
+                classes="bg-[var(--primary-light)]"
+              /> */}
+              <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
+                Book Your Andaman Ferry
+              </h1>
+              <p className="mb-10 text-lg max-w-lg">
+                Compare & book all hi-speed ferries in Andamans in 3 easy steps
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      <ModalVideo
-        channel="youtube"
-        isOpen={isOpen}
-        videoId="L61p2uyiMSo"
-        onClose={() => setOpen(false)}
-      />
-      <Image
-        width={117}
-        height={117}
-        src="/img/flight-hero-el-1.png"
-        alt="image"
-        className="hidden xl:block absolute left-16 top-14"
-      />
-      <Image
-        height={100}
-        width={100}
-        src="/img/flight-hero-el-2.png"
-        alt="image"
-        className="hidden xl:block absolute top-[50%] left-[50%]"
-      />
-      <span
-        onClick={() => setOpen(true)}
-        style={{ zIndex: 2 }}
-        className="cursor-pointer absolute hidden lg:block top-[84px] right-[22%]">
-        <Image
-          height={80}
-          width={80}
-          src="/img/video-img.png"
-          alt="image"
-          className=""
-        />
-      </span>
 
-      <div className="container relative py-[60px] lg:py-[120px]">
-        <div className="grid grid-cols-12 gap-5">
-          <div className="col-span-12 lg:col-span-8 xl:col-span-6 xxl:col-span-5">
-            <SubHeadingBtn
-              text="Fly Anywhere with Confidence"
-              classes="bg-[var(--primary-light)]"
-            />
-            <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
-              Book Your Next Ferry with Ease
-            </h1>
-            <p className="mb-10 text-lg max-w-lg">
-              Ready to explore the world? Our flight booking website makes it
-              easy to unlock new destinations and experiences.
-            </p>
-          </div>
-        </div>
-
+      <div className="container relative -mt-[40px]">
         <div className="bg-white rounded-xl p-3 md:p-5">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 text-lg">
             <div className="flex gap-2">
@@ -277,6 +188,7 @@ const Page = () => {
               <label htmlFor="return_trip">Multiple Trip</label>
             </div>
           </div>
+
           {trips.map((trip, index) => {
             // Filter the locations to exclude the selected "from" location
             const availableLocations = locations.filter(
@@ -371,7 +283,7 @@ const Page = () => {
                 )}
 
                 {/* Conditionally render the delete button if more than single_trip */}
-                {trips.length > 1 && (
+                {index > 0 && (
                   <button
                     type="button"
                     onClick={() => removeTrip(trip.id)}
@@ -407,6 +319,26 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+
+
+      <div className="container relative py-[60px] lg:py-[120px]">
+        <div className="grid grid-cols-12 gap-5">
+          <div className="col-span-12 lg:col-span-8 xl:col-span-8 xxl:col-span-12">
+            <SubHeadingBtn
+              text="4.8 rated service"
+              classes="bg-[var(--primary-light)]"
+            />
+            <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
+              Your One-Stop Shop for All Hi-Speed
+            </h1>
+            <p className="mb-10 text-lg max-w-lg">
+              The Simplest Process Ever. Book Ferry in 3 Steps
+            </p>
+          </div>
+        </div>
+      </div>
+
     </section>
   );
 };
