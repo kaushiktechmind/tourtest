@@ -129,18 +129,36 @@ export const sidenavData = [
   },
   {
     id: 14,
+    name: "Pages",
+    icon: <i className="las la-sms text-2xl"></i>,
+    url: "/pages/all-pages",
+  },
+  {
+    id: 15,
+    name: "Blogs",
+    icon: <i className="las la-sms text-2xl"></i>,
+    url: "/blogs/all-blogs",
+  },
+  {
+    id: 16,
+    name: "Categories",
+    icon: <i className="las la-sms text-2xl"></i>,
+    url: "/categories/all-categories",
+  },
+  {
+    id: 17,
     name: "Reviews",
     icon: <i className="lar la-star text-2xl"></i>,
     url: "/reviews",
   },
   {
-    id: 15,
+    id: 18,
     name: "Coupon",
     icon: <i className="las la-ticket-alt text-2xl"></i>,
     url: "/coupon",
   },
   {
-    id: 16,
+    id: 19,
     name: "Total Earnings",
     icon: <i className="las la-hand-holding-usd text-2xl"></i>,
     submenus: [
@@ -151,7 +169,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 17,
+    id: 20,
     name: "General Settings",
     icon: <i className="las la-cog text-2xl"></i>,
     submenus: [
@@ -164,7 +182,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 18,
+    id: 21,
     name: "Payment Settings",
     icon: <i className="las la-credit-card text-2xl"></i>,
     submenus: [
@@ -175,13 +193,13 @@ export const sidenavData = [
     ],
   },
   {
-    id: 19,
+    id: 22,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",
   },
   {
-    id: 20,
+    id: 23,
     name: "Authentication",
     icon: <i className="las la-user-shield text-2xl"></i>,
     submenus: [

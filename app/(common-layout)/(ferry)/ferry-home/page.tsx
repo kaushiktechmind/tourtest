@@ -107,6 +107,7 @@ const Page = () => {
 
         if (token) {
           localStorage.setItem("Mak_Authorization", token);
+          localStorage.setItem("nautika_token", "U2FsdGVkX18wFH8L127Sgd0wBwCSQMhE3y2kxDFXgc5zItPTXXqvjfTLuSAeD1ySsGVF5lj9i5LUoR/JhwJvSQ==");
           // alert("Login successful!");
           router.push(`/ferry-list?tripType=${tripType}`);
         } else {
@@ -132,7 +133,6 @@ const Page = () => {
     // Proceed with your login or search logic
     updateLocalStorage();
     handleLogin();
-
   };
 
 

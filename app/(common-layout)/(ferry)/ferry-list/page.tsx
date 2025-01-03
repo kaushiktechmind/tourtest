@@ -23,6 +23,9 @@ const page = () => {
   const searchParams = useSearchParams();
   const storedTripType = searchParams.get("tripType");
 
+
+  const [tripData, setTripData] = useState<any>(null);
+
   const storedTravelData = JSON.parse(localStorage.getItem('travelData'));
 
   const locationIds = {
@@ -30,7 +33,7 @@ const page = () => {
     "Swaraj Dweep  (Havelock) ": 2,
     "Shaheed Dweep (Neil)": 3,
   };
-  
+
   // Extracting data from storedTravelData
   const storedFrom1 = storedTravelData?.from1;
   const storedTo1 = storedTravelData?.to1;
@@ -112,19 +115,71 @@ const page = () => {
   };
 
 
+
+
   useEffect(() => {
-    const initialTrips = [{ id: 1, from: storedTravelData?.from1, to: storedTravelData?.to1,  date: storedTravelData?.travel_date1 ? new Date(storedTravelData?.travel_date1) : null }];
-    
+    const fetchTripData = async () => {
+      const requestBody = {
+        date: "20-11-2022",
+        from: "Port Blair",
+        to: "Swaraj Dweep",
+        userName: "agent",
+        token: "U2FsdGVkX18wFH8L127Sgd0wBwCSQMhE3y2kxDFXgc5zItPTXXqvjfTLuSAeD1ySsGVF5lj9i5LUoR/JhwJvSQ=="
+      };
+
+      console.log("Fetching data...");
+
+      try {
+        const response = await fetch('http://api.dev.gonautika.com:8012/getTripData', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(requestBody),
+        });
+
+        // Log the response status for debugging
+        console.log("Response Status:", response.status);
+
+        // Check if the response is OK (status 200)
+        if (!response.ok) {
+          console.error('Error in response:', response.statusText);
+          return;
+        }
+
+        // Parse the JSON response
+        const data = await response.json();
+        console.log("Fetched Data:", data);
+
+        // Handle the response data
+        if (data && data.err === null) {
+          setTripData(data.data); // Store the trip data
+        } else {
+          console.error("Error in data:", data.err);
+        }
+      } catch (error) {
+        console.error('Error fetching trip data:', error);
+      }
+    };
+
+    // Call the fetchTripData function
+    fetchTripData();
+  }, []);
+
+
+  useEffect(() => {
+    const initialTrips = [{ id: 1, from: storedTravelData?.from1, to: storedTravelData?.to1, date: storedTravelData?.travel_date1 ? new Date(storedTravelData?.travel_date1) : null }];
+
     if (storedTravelData?.travel_date2 && !storedTravelData?.travel_date3) {
-      initialTrips.push({ id: 2, from: storedTravelData?.from2, to: storedTravelData?.to2,  date: storedTravelData?.travel_date2 ? new Date(storedTravelData?.travel_date2) : null });
+      initialTrips.push({ id: 2, from: storedTravelData?.from2, to: storedTravelData?.to2, date: storedTravelData?.travel_date2 ? new Date(storedTravelData?.travel_date2) : null });
     } else if (storedTravelData?.travel_date3) {
       initialTrips.push({ id: 2, from: storedTravelData?.from2, to: storedTravelData?.to2, date: storedTravelData?.travel_date2 ? new Date(storedTravelData?.travel_date2) : null });
       initialTrips.push({ id: 3, from: storedTravelData?.from3, to: storedTravelData?.to3, date: storedTravelData?.travel_date3 ? new Date(storedTravelData?.travel_date3) : null });
     }
-  
+
     setTrips(initialTrips);
   }, [storedTravelData?.travel_date2, storedTravelData?.travel_date3]);
-  
+
 
   useEffect(() => {
     if (storedTripType) {
@@ -174,11 +229,11 @@ const page = () => {
     const selectedFerry = scheduleData?.find(
       (item: any) => item.ship_class_id === shipClassId
     );
-  
+
     if (selectedFerry) {
       localStorage.setItem('selectedFerry', JSON.stringify(selectedFerry));
       console.log('Selected ferry object:', selectedFerry);
-      router.push(storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"); 
+      router.push(storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page");
       // href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"} 
     } else {
       console.error('Ferry object not found for ship_class_id:', shipClassId);
@@ -186,7 +241,15 @@ const page = () => {
   };
 
 
-  
+
+
+
+
+
+
+
+
+
 
 
 
@@ -264,8 +327,8 @@ const page = () => {
     updateLocalStorage();
     // router.push(`/ferry-list?tripType=${tripType}`); 
     window.location.href = `/ferry-list?tripType=${tripType}`;
-    
-   
+
+
 
   };
 
@@ -274,9 +337,9 @@ const page = () => {
 
 
 
-  
-  
-  
+
+
+
 
 
   return (
@@ -338,105 +401,105 @@ const page = () => {
           </div>
 
 
-       {trips.map((trip, index) => {
-  const availableLocations = locations.filter(
-    (location) => location !== trip.from
-  );
+          {trips.map((trip, index) => {
+            const availableLocations = locations.filter(
+              (location) => location !== trip.from
+            );
 
-  return (
-    <div key={trip.id} className="flex flex-wrap gap-5 mt-6 items-center">
-      {trips.length > 1 && (
-        <div className="w-full text-xl text-gray-600 font-semibold">
-          Trip {index + 1}
-        </div>
-      )}
+            return (
+              <div key={trip.id} className="flex flex-wrap gap-5 mt-6 items-center">
+                {trips.length > 1 && (
+                  <div className="w-full text-xl text-gray-600 font-semibold">
+                    Trip {index + 1}
+                  </div>
+                )}
 
-      <div className="flex w-full md:w-[35%] gap-3 mr-10">
-        <div className="relative w-full">
-          <select
-            value={trip.from || ""}
-            onChange={(e) => {
-              const updatedTrips = [...trips];
-              updatedTrips[index].from = e.target.value;
-              setTrips(updatedTrips);
-            }}
-            className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
-          >
-            <option value="" disabled>From</option>
-            {locations.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-            <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-          </div>
-        </div>
+                <div className="flex w-full md:w-[35%] gap-3 mr-10">
+                  <div className="relative w-full">
+                    <select
+                      value={trip.from || ""}
+                      onChange={(e) => {
+                        const updatedTrips = [...trips];
+                        updatedTrips[index].from = e.target.value;
+                        setTrips(updatedTrips);
+                      }}
+                      className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+                    >
+                      <option value="" disabled>From</option>
+                      {locations.map((location) => (
+                        <option key={location} value={location}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                      <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                    </div>
+                  </div>
 
-        <div className="relative w-full">
-          <select
-            value={trip.to || ""}
-            onChange={(e) => {
-              const updatedTrips = [...trips];
-              updatedTrips[index].to = e.target.value;
-              setTrips(updatedTrips);
-              if (index < trips.length - 1) {
-                const nextTrip = [...trips];
-                nextTrip[index + 1].from = e.target.value;
-                setTrips(nextTrip);
-              }
-            }}
-            className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
-          >
-            <option value="" disabled>To</option>
-            {availableLocations.map((location) => (
-              <option key={location} value={location}>
-                {location}
-              </option>
-            ))}
-          </select>
-          <div className="absolute inset-y-0 right-0 flex items-center pr-4">
-            <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
-          </div>
-        </div>
-      </div>
+                  <div className="relative w-full">
+                    <select
+                      value={trip.to || ""}
+                      onChange={(e) => {
+                        const updatedTrips = [...trips];
+                        updatedTrips[index].to = e.target.value;
+                        setTrips(updatedTrips);
+                        if (index < trips.length - 1) {
+                          const nextTrip = [...trips];
+                          nextTrip[index + 1].from = e.target.value;
+                          setTrips(nextTrip);
+                        }
+                      }}
+                      className="w-full bg-[var(--bg-1)] rounded-full border py-3 pl-3 md:pl-4 text-sm leading-5 text-gray-900 focus:outline-none appearance-none"
+                    >
+                      <option value="" disabled>To</option>
+                      {availableLocations.map((location) => (
+                        <option key={location} value={location}>
+                          {location}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-4">
+                      <MapPinIcon className="h-5 w-5 text-gray-500" aria-hidden="true" />
+                    </div>
+                  </div>
+                </div>
 
-      <div className="w-full md:w-[30%] xxl:w-[20%] flex pl-2 pt-1 pb-1 pr-3 items-center justify-between rounded-full sm:text-sm bg-[var(--bg-1)] border">
-        <DatePicker
-          selected={trip.date}
-          onChange={(date: Date) => {
-            const updatedTrips = [...trips];
-            updatedTrips[index].date = date;
-            setTrips(updatedTrips);
-          }}
-          placeholderText="Depart Date"
-          className="w-full bg-[var(--bg-1)] p-2 rounded-full focus:outline-none"
-        />
-        <CalendarDaysIcon className="w-5 h-5 text-gray-600 shrink-0" />
-      </div>
+                <div className="w-full md:w-[30%] xxl:w-[20%] flex pl-2 pt-1 pb-1 pr-3 items-center justify-between rounded-full sm:text-sm bg-[var(--bg-1)] border">
+                  <DatePicker
+                    selected={trip.date}
+                    onChange={(date: Date) => {
+                      const updatedTrips = [...trips];
+                      updatedTrips[index].date = date;
+                      setTrips(updatedTrips);
+                    }}
+                    placeholderText="Depart Date"
+                    className="w-full bg-[var(--bg-1)] p-2 rounded-full focus:outline-none"
+                  />
+                  <CalendarDaysIcon className="w-5 h-5 text-gray-600 shrink-0" />
+                </div>
 
-      {index === 0 && (
-        <SelectPeople
-          adult={adult}
-          setAdult={setAdult}
-          infants={infants}
-          setInfants={setInfants}
-        />
-      )}
+                {index === 0 && (
+                  <SelectPeople
+                    adult={adult}
+                    setAdult={setAdult}
+                    infants={infants}
+                    setInfants={setInfants}
+                  />
+                )}
 
-      {index > 0 && (
-        <button
-          type="button"
-          onClick={() => removeTrip(trip.id)}
-          className="text-red-500 hover:text-red-700"
-        >
-          Remove Trip
-        </button>
-      )}
-    </div>
-  );
-})}
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => removeTrip(trip.id)}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    Remove Trip
+                  </button>
+                )}
+              </div>
+            );
+          })}
 
 
 
@@ -656,7 +719,7 @@ const page = () => {
                         <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
                           <span className="block text-primary">To</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                          {formatTime(schedule.arrival_time)}
+                            {formatTime(schedule.arrival_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.destination_name}
@@ -685,7 +748,113 @@ const page = () => {
 
                       </div>
                       <Link
-                         href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"}   onClick={() => handleSelectFerry(schedule.ship_class_id)}
+                        href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"} onClick={() => handleSelectFerry(schedule.ship_class_id)}
+                        className="btn-outline  flex justify-center text-primary">
+                        Select Ferry
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              ))}
+
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            {/* nautikaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa */}
+
+
+
+
+            <div className="grid grid-cols-1 gap-4 lg:gap-6">
+
+              {scheduleData.map((schedule, index) => (
+                <div key={schedule.id || index} className="col-span-1">
+                  <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
+                    <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
+                      <div className="flex flex-col md:flex-row justify-center items-start gap-6">
+                        <div className="flex w-full justify-center md:w-auto flex-col gap-3 md:gap-7 text-center md:text-start flex-grow">
+                          {/* <div className="grid place-content-center w-16 h-16 rounded-full bg-white shadow-lg mx-auto ms-md-0"> */}
+                          <div className="grid place-content-center w-16 h-16 bg-white shadow-lg mx-auto ms-md-0">
+                            <Image
+                              width={52}
+                              height={27}
+                              src={'/img/nautika-logo.jpg'}
+                              alt="image"
+                              className=" object-fit-contain"
+                            />
+                          </div>
+                          {/* <p className="mb-0 font-medium">{schedule.ship_title}</p> */}
+                          <p className="mb-0 font-medium">Nautika</p>
+                        </div>
+                        <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
+                          <span className="block text-primary">From</span>
+                          <h4 className="mb-0 text-2xl font-semibold">
+                            {formatTime(schedule.departure_time)}
+                          </h4>
+                          <span className="block text-[var(--neutral-700)]">
+                            {schedule.source_name}
+                          </span>
+                        </div>
+                        <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
+                          <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                            <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
+                              {/* Replace the flight icon with a boat icon */}
+                              <i className="las la-ship text-2xl"></i>
+                            </div>
+                          </div>
+                          <span className="block clr-neutral-500">
+                            {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
+                          </span>
+                        </div>
+                        <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
+                          <span className="block text-primary">To</span>
+                          <h4 className="mb-0 text-2xl font-semibold">
+                            {formatTime(schedule.arrival_time)}
+                          </h4>
+                          <span className="block text-[var(--neutral-700)]">
+                            {schedule.destination_name}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
+                        <p className="mb-0">
+                          Seats:
+                          <span className="text-amber-700"> {schedule.seat}</span>
+                        </p>
+                        <p className="text-primary">•</p>
+                        <p className="mb-0">
+                          Travel Class:
+                          <span className="text-primary"> {schedule.ship_class_title}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
+                      {/* <p className="clr-neutral-200 line-through">₹450</p> */}
+                      <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
+                        <h2 className="mb-0 h2 text-[var(--neutral-700)]">
+                          {" "}
+                          ₹{schedule.ship_class_price}
+                        </h2>
+
+                      </div>
+                      <Link
+                        href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"} onClick={() => handleSelectFerry(schedule.ship_class_id)}
                         className="btn-outline  flex justify-center text-primary">
                         Select Ferry
                       </Link>
@@ -737,6 +906,11 @@ const page = () => {
               </div>
             </div>
           </div>
+
+
+
+
+
         </div>
       </div>
     </div>
