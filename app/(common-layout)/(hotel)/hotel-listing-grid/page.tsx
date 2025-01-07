@@ -60,7 +60,7 @@ const Page = () => {
       if (Array.isArray(response.data.data)) {
         if (type == "Hotel" || type=="HomeStay") {
           // Normalization for 'filter_by_type' API response
-          normalizedData = response.data.data.map((hotel) => ({
+          normalizedData = response.data.data.map((hotel: { id: any; hotel_name: any; location_name: any; ratings: any; banner_images: any; starting_price: any; highest_price: any; amenity_name1: any; amenity_name2: any; amenity_name3: any; amenity_name4: any; amenity_name5: any; amenity_name6: any; amenity_name7: any; amenity_name8: any; amenity_name9: any; amenity_name10: any; amenity_name11: any; amenity_name12: any; amenity_name13: any; amenity_name14: any; amenity_name15: any; amenity_logo1: any; amenity_logo2: any; amenity_logo3: any; amenity_logo4: any; amenity_logo5: any; amenity_logo6: any; amenity_logo7: any; amenity_logo8: any; amenity_logo9: any; amenity_logo10: any; amenity_logo11: any; amenity_logo12: any; amenity_logo13: any; amenity_logo14: any; amenity_logo15: any; }) => ({
             id: hotel.id,
             hotel_id: hotel.id, // Use id as hotel_id if not explicitly provided
             hotel_name: hotel.hotel_name,
@@ -102,7 +102,7 @@ const Page = () => {
           }));
         } else if (loc) {
           // Normalization for 'filter' API response (location and date-based)
-          normalizedData = response.data.data.map((item) => ({
+          normalizedData = response.data.data.map((item: { hotel_id: any; hotel_name: any; location_name: any; ratings: any; banner_images: any; starting_price: any; highest_price: any; amenity_name1: any; amenity_name2: any; amenity_name3: any; amenity_name4: any; amenity_name5: any; amenity_name6: any; amenity_name7: any; amenity_name8: any; amenity_name9: any; amenity_name10: any; amenity_name11: any; amenity_name12: any; amenity_name13: any; amenity_name14: any; amenity_name15: any; amenity_logo1: any; amenity_logo2: any; amenity_logo3: any; amenity_logo4: any; amenity_logo5: any; amenity_logo6: any; amenity_logo7: any; amenity_logo8: any; amenity_logo9: any; amenity_logo10: any; amenity_logo11: any; amenity_logo12: any; amenity_logo13: any; amenity_logo14: any; amenity_logo15: any; }) => ({
             id: item.hotel_id, // Adjusted for the new API response
             hotel_id: item.hotel_id, // Adjusted for the new API response
             hotel_name: item.hotel_name,

@@ -30,6 +30,7 @@ interface RoomData {
 
 
 interface PaymentData {
+  country: string;
   id: number;
   booking_id: string;
   invoice_id: string;
@@ -49,7 +50,8 @@ interface PaymentData {
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
-const totalCounts = JSON.parse(localStorage.getItem("totalCounts"));
+const totalCounts = JSON.parse(localStorage.getItem("totalCounts") ?? "0");
+
 
 // Access the properties from the parsed object
 const adults = Number(totalCounts?.adults || 0); // Default to 0 if undefined
@@ -283,7 +285,7 @@ const Page = () => {
                     </div>
                     <p className="mb-0">Child Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{totalChildPrice * noOfNights}</p>
+                  <p className="mb-0 font-medium text-right">₹{Number(totalChildPrice) * noOfNights}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -295,7 +297,7 @@ const Page = () => {
                     </div>
                     <p className="mb-0">Extra Bed Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{totalExtraBedPrice * noOfNights}</p>
+                  <p className="mb-0 font-medium text-right">₹{Number(totalExtraBedPrice) * noOfNights}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -412,3 +414,7 @@ const Page = () => {
 };
 
 export default Page;
+function setSelectedCountry(value: string) {
+  throw new Error("Function not implemented.");
+}
+

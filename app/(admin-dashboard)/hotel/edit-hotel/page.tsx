@@ -186,8 +186,8 @@ const Page = () => {
   };
 
   // Render input rows
-  const renderInputRows = (fields, setFields) => {
-    return fields.map((field, index) => (
+  const renderInputRows = (fields: any[], setFields: { (value: React.SetStateAction<Field[]>): void; (value: React.SetStateAction<Field[]>): void; (value: React.SetStateAction<Field[]>): void; (arg0: any[]): void; }) => {
+    return fields.map((field: { name: string | number | readonly string[] | undefined; content: string | number | readonly string[] | undefined; distance: string | number | readonly string[] | undefined; }, index: React.Key | null | undefined) => (
       <div key={index} className="flex gap-4 mb-4">
         <input
           type="text"

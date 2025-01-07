@@ -72,7 +72,7 @@ const Page = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("FAQ Updated Successfully:", data);
+        alert("FAQ Updated Successfully:");
         // Redirect or show success message here
         router.push("/hotel/hotel-faq");
       } else {

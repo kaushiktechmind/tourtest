@@ -28,9 +28,9 @@ const Page = () => {
   const infants = travelData.infants ?? 0; // Default to 0 if not available
 
   // Parse selected ferries from localStorage, default to null if not available
-  const selectedFerry = JSON.parse(localStorage.getItem("selectedFerry") || null);
-  const selectedFerry2 = JSON.parse(localStorage.getItem("selectedFerry2") || null);
-  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") || null);
+  const selectedFerry = JSON.parse(localStorage.getItem("selectedFerry") || "null");
+  const selectedFerry2 = JSON.parse(localStorage.getItem("selectedFerry2") || "null");
+  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") || "null");
 
   // Assign values only if the selected ferry objects exist
   const shipTitle1 = selectedFerry?.ship_title;
@@ -116,7 +116,7 @@ const Page = () => {
     Array.from({ length: adults + infants }).fill("Indian")
   );
 
-  const handleNationalityChange = (index, nationality) => {
+  const handleNationalityChange = (index: number, nationality: unknown) => {
     const updatedNationalities = [...nationalities];
     updatedNationalities[index] = nationality;
     setNationalities(updatedNationalities);

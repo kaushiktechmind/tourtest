@@ -29,7 +29,7 @@ const Page = () => {
         setReviews(response.data);
         // Initialize switch states based on fetched review status
         const initialSwitchStates = {};
-        response.data.forEach((review) => {
+        response.data.forEach((review: { id: string | number; status: string; }) => {
           initialSwitchStates[review.id] = review.status === "active"; // Assuming 'active' means ON
         });
         setSwitchStates(initialSwitchStates);
@@ -38,7 +38,7 @@ const Page = () => {
   }, []);
 
   // Handle switch toggle and API call
-  const handleToggle = (id) => {
+  const handleToggle = (id: string | number) => {
     const token = localStorage.getItem("access_token"); // Retrieve Bearer token from localStorage
     const newStatus = !switchStates[id];
     setSwitchStates((prev) => ({

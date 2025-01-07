@@ -79,6 +79,10 @@ const Page = () => {
     setCurrentPage(1); // Reset to the first page on search
   };
 
+  function handleDelete(id: number): void {
+    throw new Error("Function not implemented.");
+  }
+
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">

@@ -159,7 +159,6 @@ const Page = () => {
   }, [cabId]);
 
 
-  console.log("zzzzzzzzzzzzzzzzz", cabDetails?.inclusion[0]);
 
 
 

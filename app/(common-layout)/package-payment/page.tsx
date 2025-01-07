@@ -383,10 +383,9 @@ const Page = () => {
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
-                packageId={packageId}
+                packageId={Number(packageId)}
                 passport={passport}
-                country={selectedCountry}
-              >
+                country={selectedCountry} adults={0} infants={0}              >
               </RazorpayPkgBtn>
             </div>
           </div>

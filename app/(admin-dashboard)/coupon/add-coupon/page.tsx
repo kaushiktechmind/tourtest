@@ -95,7 +95,7 @@ const Page = () => {
       setCoupons((prevCoupons) => prevCoupons.filter((coupon) => coupon.id !== id));
     } catch (error) {
       console.error("Error deleting coupon:", error);
-      alert("Error deleting coupon: " + error.message);
+      alert("Error deleting coupon: ");
     }
   };
   
@@ -164,7 +164,7 @@ const Page = () => {
       window.location.reload();
     } catch (error) {
       console.error("Error occurred during coupon addition:", error);
-      alert("Error adding coupon: " + error.message);
+      alert("Error adding coupon: ");
     }
   };
 

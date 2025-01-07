@@ -27,6 +27,25 @@ function classNames(...classes: any[]) {
 
 
 interface PackageData {
+  person_type_price1: any;
+  person_type_price2: any;
+  person_type_price3: any;
+  person_type_price4: any;
+  person_type_price5: any;
+  person_type_price6: any;
+  person_min1(person_min1: any): unknown;
+  person_max1(person_max1: any): unknown;
+  person_min2(person_min2: any): unknown;
+  person_max2(person_max2: any): unknown;
+  person_min3(person_min3: any): unknown;
+  person_max3(person_max3: any): unknown;
+  person_min4(person_min4: any): unknown;
+  person_max4(person_max4: any): unknown;
+  person_min5(person_min5: any): unknown;
+  person_max5(person_max5: any): unknown;
+  person_min6(person_min6: any): unknown;
+  person_max6(person_max6: any): unknown;
+  sale_price: number;
   banner_image: any;
   id: number;
   location_name: string;
@@ -41,6 +60,10 @@ interface PackageData {
   package_includes: string; // JSON string
   package_excludes: string; // JSON string
   package_faqs: string;
+}
+
+interface ItineraryItem {
+  
 }
 
 
@@ -310,7 +333,7 @@ const Page = () => {
       });
       if (response.ok) {
         alert("Enquiry submitted successfully!");
-        setFormData({ name: "", phone: "", email: "", message: "" });
+        setFormData({ name: "", phone: "", email: "", message: "", service_type: ""});
       } else {
         alert("Failed to submit enquiry. Please try again.");
       }

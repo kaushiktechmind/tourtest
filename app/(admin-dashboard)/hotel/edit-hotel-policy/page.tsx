@@ -73,7 +73,7 @@ const Page = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Policy Updated Successfully:", data);
+        alert("Policy Updated Successfully:");
         // Redirect or show success message here
         router.push("/hotel/hotel-policy");
       } else {

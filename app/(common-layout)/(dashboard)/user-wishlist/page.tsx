@@ -51,8 +51,7 @@ const Page = () => {
                   loc={""}
                   startdate={""}
                   enddate={""}
-                  noOfRooms={0}
-                />
+                  noOfRooms={0} type={""}                />
               ))}
             </div>
           </div>

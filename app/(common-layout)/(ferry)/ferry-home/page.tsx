@@ -18,6 +18,9 @@ import HeroFlightImg2 from "@/public/img/hero-flight/img-2.png";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
 
+
+
+
 const Page = () => {
   const [startDate, setStartDate] = useState(null);
   const [isOpen, setOpen] = useState(false);
@@ -53,7 +56,7 @@ const Page = () => {
       trips.forEach((trip, index) => {
         const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
 
-        const formatDate = (date) => {
+        const formatDate = (date: { getTime: () => number; getTimezoneOffset: () => number; }) => {
           if (!date) return "";
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part

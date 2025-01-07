@@ -264,7 +264,7 @@ const Page = () => {
         });
         if (response.ok) {
           alert("Enquiry submitted successfully!");
-          setFormData({ name: "", phone: "", email: "", message: "" });
+          setFormData({ name: "", phone: "", email: "", message: "", service_type: "Activity" });
         } else {
           alert("Failed to submit enquiry. Please try again.");
         }

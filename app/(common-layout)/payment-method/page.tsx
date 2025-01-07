@@ -30,7 +30,8 @@ interface RoomData {
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
-const totalCounts = JSON.parse(localStorage.getItem("totalCounts"));
+const totalCounts = JSON.parse(localStorage.getItem("totalCounts") ?? "0");
+
 
 // Access the properties from the parsed object
 const adults = Number(totalCounts?.adults || 0); // Default to 0 if undefined
@@ -62,7 +63,7 @@ const Page = () => {
 
   const storedAddress = localStorage.getItem("address");
   const [address, setAddress] = useState(storedAddress || "");
-  
+
   const [selectedCountry, setSelectedCountry] = useState("India");
   const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");
@@ -319,7 +320,7 @@ const Page = () => {
                         type="text"
                         className="w-full bg-[var(--bg-1)] focus:outline-none border border-neutral-40 rounded-full py-3 px-5"
                         placeholder="Enter Passport Number"
-                        value={passportNumber} 
+                        value={passportNumber}
                         onChange={handlePassportChange}
                       />
                     </div>
@@ -356,7 +357,11 @@ const Page = () => {
                     </div>
                     <p className="mb-0">Child Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{totalChildPrice*noOfNights}</p>
+                  {/* <p className="mb-0 font-medium text-right">₹{totalChildPrice*noOfNights}</p> */}
+                  <p className="mb-0 font-medium text-right">
+                    ₹{totalChildPrice !== null ? Number(totalChildPrice) * noOfNights : 0}
+                  </p>
+
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -368,7 +373,7 @@ const Page = () => {
                     </div>
                     <p className="mb-0">Extra Bed Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{totalExtraBedPrice*noOfNights}</p>
+                  <p className="mb-0 font-medium text-right">₹{Number(totalExtraBedPrice) * noOfNights}</p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -404,8 +409,7 @@ const Page = () => {
                 address={address}
                 bookingID={bookingID}
                 passport={passport}
-                country={selectedCountry}
-              >
+                country={selectedCountry} adults={0} infants={0}              >
                 {Number(children)}
               </RazorpayButton>
             </div>

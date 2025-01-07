@@ -32,7 +32,6 @@ interface CabFormData {
   cargo_count: string;
   price: string;
   cab_name: string;
-  ar_count: string;
 }
 
 const Page = () => {
@@ -51,7 +50,6 @@ const Page = () => {
     cargo_count: "",
     price: "",
     cab_name: "",
-    car_count: "",
   });
 
 
@@ -133,7 +131,9 @@ const Page = () => {
 
     // Create FormData to send to the API
     const formDataToSend = new FormData();
-    formDataToSend.append("cab_main_form_id", cabId);
+    if (cabId) {
+      formDataToSend.append("cab_main_form_id", cabId);
+    }
     formDataToSend.append("min_pax", formData.min_pax);
     formDataToSend.append("max_pax", formData.max_pax);
     formDataToSend.append("car_count", formData.car_count);

@@ -4,15 +4,24 @@ import axios from 'axios';
 
 interface RazorpayButtonProps {
   grandTotal: number;
+  name: string;
+  email: string;
+  mobile_number: string;
+  passport: string;
+  country: string;
+  bookingID: string;
+  address: string;
   currency: string;
   adults: number;
   children?: number;
   infants: number;
   hotelId: number;
+  roomId: number;
 }
+
 const roomId = localStorage.getItem("roomId");
 
-const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, name, email, mobile_number, passport, country, bookingID, currency, hotelId, address }) => {
+const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, name, email, mobile_number, passport, country, bookingID, currency, hotelId, address, roomId }) => {
   const router = useRouter();
   const [hotelDetails, setHotelDetails] = useState<{ hotel_or_home_stay: string; hotel_name: string } | null>(null);
   const [roomName, setRoomName] = useState<string | null>(null);
@@ -79,7 +88,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, name, email
 
 
 
-  const totalCounts = JSON.parse(localStorage.getItem("totalCounts"));
+  const totalCounts = JSON.parse(localStorage.getItem("totalCounts") ?? "0");
   const { adults, children, infants, totalRooms, extraBeds } = totalCounts;
   const storedChildPrice = localStorage.getItem("storedChildPrice");
   const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");

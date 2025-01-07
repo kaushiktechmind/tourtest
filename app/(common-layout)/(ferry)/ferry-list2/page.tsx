@@ -19,7 +19,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const tripType = searchParams.get("tripType");
 
-  const travelData = JSON.parse(localStorage.getItem('travelData'));
+  const travelData = JSON.parse(localStorage.getItem('travelData') || 'null');
 
   const locationIds = {
     "Port Blair": 1,

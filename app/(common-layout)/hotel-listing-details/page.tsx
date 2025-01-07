@@ -49,7 +49,9 @@ interface Room {
   title: string;
   price: number;
   extra_bed_price: number;
+  featured_images?: any; // Add this line
 }
+
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -137,9 +139,10 @@ const Page = () => {
   noOfNights = isNaN(Number(localStorage.getItem('noOfNights'))) ? 0 : Number(localStorage.getItem('noOfNights'));
 
 
-  const subTotalPrice = (Number(storedAdultPrice) + Number(storedChildPrice * noOfNights) + Number(storedExtraBedPrice * noOfNights)) / noOfNights;
+  const subTotalPrice = (Number(storedAdultPrice) + Number(Number(storedChildPrice) * noOfNights) + Number(Number(storedExtraBedPrice) * noOfNights)) / noOfNights;
   localStorage.setItem("storedTotalPrice", subTotalPrice.toString());
-  const storedTotalPrice = Math.round(parseFloat(localStorage.getItem("storedTotalPrice")));
+  const storedTotalPrice = Math.round(parseFloat(localStorage.getItem("storedTotalPrice") || "0"));
+
   const grandTotal = isNaN(noOfNights * Number(storedTotalPrice)) ? 0 : noOfNights * Number(storedTotalPrice);
 
 
@@ -194,7 +197,7 @@ const Page = () => {
       return;
     }
 
-    const formatDate = (date) => {
+    const formatDate = (date: Date) => {
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
       const day = String(date.getDate()).padStart(2, "0");
@@ -600,7 +603,7 @@ const Page = () => {
             for (const roomId in result.rooms_by_room_id) {
               const roomList = result.rooms_by_room_id[roomId];
               if (roomList.length > 0) {
-                const totalPrice = roomList.reduce((sum, room) => sum + parseFloat(room.room_price || 0), 0);
+                const totalPrice = roomList.reduce((sum: number, room: { room_price: any; }) => sum + parseFloat(room.room_price || 0), 0);
                 totalRoomPricesByRoomId[roomId] = totalPrice;
 
                 const room = roomList[0]; // Take the first object for each room_id

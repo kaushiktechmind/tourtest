@@ -107,7 +107,10 @@ const Page = () => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("package_attribute_name", name);
-    formData.append("package_attribute_logo", file);
+    if (file) {
+      formData.append("package_attribute_logo", file);
+    }
+    
 
     const accessToken = localStorage.getItem("access_token");
 

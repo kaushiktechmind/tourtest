@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Key, ReactNode, useEffect, useState } from "react";
 import {
   EyeIcon,
   PencilSquareIcon,
@@ -17,6 +17,17 @@ interface Room {
   blog_heading: string;
 }
 
+interface Blog {
+  id: number;
+  // Add more fields as per your data structure
+}
+
+interface Category {
+  id: Key | null | undefined;
+  category_name: ReactNode;
+}
+
+
 
 
 interface HotelFormData {
@@ -24,8 +35,9 @@ interface HotelFormData {
   category_id: string;
   blog_heading: string;
   tags: string;
+  comments: string;
   blog_image_multiple: File[];
-  [key: string]: string | File[] | string[];
+  // [key: string]: string | File[] | string[];
   // For multiple image uploads
 }
 

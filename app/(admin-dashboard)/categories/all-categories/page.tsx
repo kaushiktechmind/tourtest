@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import Link from "next/link";
 import {
   EllipsisVerticalIcon,
@@ -37,19 +37,18 @@ const Page = () => {
 
   const fetchCategorys = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_category");
-      if (!response.ok) throw new Error("Failed to fetch categorys");
+    setError(null); // You can remove this if `setError` is not needed
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_category");
+    
+    if (response.ok) {
       const data = await response.json();
       setCategorys(data);
       setFilteredCategorys(data); // Initialize filteredCategorys
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+    
+    setLoading(false);
   };
+  
 
   const handleSearch = () => {
     const lowercasedSearch = searchTerm.toLowerCase();
@@ -59,11 +58,11 @@ const Page = () => {
     setFilteredCategorys(filtered);
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
-  const handleAddCategory = async (e) => {
+  const handleAddCategory = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
 
@@ -176,11 +175,11 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">Loading...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3 text-red-500">{error}</td>
+                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
                   ) : (
                     currentItems.map((category) => (

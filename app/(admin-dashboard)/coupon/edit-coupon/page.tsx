@@ -124,7 +124,7 @@ const Page = () => {
             router.push("/coupon/add-coupon"); // Redirect after successful update
         } catch (error) {
             console.error("Error occurred during coupon update:", error);
-            alert("Error updating coupon: " + error.message);
+            alert("Error updating coupon:");
         }
     };
 

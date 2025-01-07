@@ -115,7 +115,9 @@ const Hero = () => {
 
 
         <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg">
-          <LocationEntry placeholder="Location" />
+          <LocationEntry placeholder="Location" onChange={function (location: string): void {
+            throw new Error("Function not implemented.");
+          } } />
 
           <div className="w-full md:w-[40%] xl:w-[20%] flex pr-3 items-center justify-between rounded-full sm:text-sm bg-[var(--bg-1)] border">
             <DatePicker

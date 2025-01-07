@@ -30,49 +30,43 @@ const Page = () => {
     }
   }, [includeId]);
 
-  const fetchIncludeById = async (id) => {
+  const fetchIncludeById = async (id: string | null) => {
     setLoading(true);
     setError(null);
-    try {
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_cab_inclusion_by_id/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch include");
-      const data = await response.json();
-      setincludeTitle(data.cab_inclusion_title); // Set include name for editing
-      // router.push('/include/all-include');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_cab_inclusion_by_id/${id}`);
+    if (!response.ok) return; // No error handling, just return if the response is not OK
+    const data = await response.json();
+    setincludeTitle(data.cab_inclusion_title); // Set include name for editing
+    router.push('/include/all-include');
+    setLoading(false);
   };
+  
 
-  const handleUpdateInclude = async (e) => {
+  const handleUpdateInclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    setSubmitError(null);
-  
-    try {
-      const token = localStorage.getItem("access_token");
-  
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_inclusion_by_id/${includeId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ cab_inclusion_title: includeTitle }),
-      });
-  
-      if (!response.ok) throw new Error("Failed to save include");
-  
-      setincludeTitle("");
-      alert("Include updated successfully!");
-      router.push('/cab/cab-include');
-      await fetchIncludeById(includeId); // Refresh include data
-    } catch (err) {
-      setSubmitError(err.message);
+    
+    const token = localStorage.getItem("access_token");
+    
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_inclusion_by_id/${includeId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ cab_inclusion_title: includeTitle }),
+    });
+    
+    if (!response.ok) {
+      alert("Failed to update include");
+      return;
     }
+  
+    setincludeTitle("");
+    alert("Include updated successfully!");
+    router.push('/cab/cab-include');
+    await fetchIncludeById(includeId); // Refresh include data
   };
-
+  
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">

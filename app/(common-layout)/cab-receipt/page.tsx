@@ -8,6 +8,16 @@ import { useEffect, useState } from "react";
 import RazorpayActBtn from "@/components/RazorpayCabBtn";
 RazorpayActBtn;
 
+interface PaymentData{
+  customer_name: string;
+  customer_email: string;
+  customer_mobile_number: string;
+  country: string;
+  passport_no: string;
+  address: string;
+
+}
+
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 

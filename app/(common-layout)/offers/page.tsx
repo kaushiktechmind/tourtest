@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMountainSun, faCalendarDays, faHotel, faCar } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
 
 interface PaymentData {
+  booking_id: number;
   id: number;
   invoice_id: string;
   order_id: string;
@@ -16,6 +17,13 @@ interface PaymentData {
   amount: string;
   invoice_pdf: string | null;
   created_at: string;
+}
+
+interface Payment {
+  hotel_name: any;
+  package_name: any;
+  activity_name: any;
+  cab_name: any;
 }
 import {
   EllipsisVerticalIcon,

@@ -39,11 +39,11 @@ interface HotelFormData {
   max_adults: string;
   max_childs: string;
   max_infants: string;
-  amenities: []; // Assuming it's a string ID
+  amenities: number[]; // Change from [] to number[]
   status: string;
   agent_price: string;
   featured_images: File[];
-  [key: string]: string | File[]; // For multiple image uploads
+  [key: string]: string | File[] | number[]; // Ensure this covers amenities
 }
 
 const Page = () => {

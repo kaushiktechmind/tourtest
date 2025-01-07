@@ -5,7 +5,7 @@ import { flightList } from "@/public/data/flightlist";
 import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -19,7 +19,7 @@ const Page = () => {
   const searchParams = useSearchParams();
   const tripType = searchParams.get("tripType");
 
-  const travelData = JSON.parse(localStorage.getItem('travelData'));
+  const travelData = JSON.parse(localStorage.getItem('travelData') || 'null');
 
   const locationIds = {
     "Port Blair": 1,
@@ -29,7 +29,7 @@ const Page = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
-  const openDialog = (schedule) => {
+  const openDialog = (schedule: SetStateAction<null>) => {
     setSelectedSchedule(schedule);  // Set the selected schedule
     setIsDialogOpen(true);  // Open the dialog
   };
@@ -346,7 +346,7 @@ const Page = () => {
           <div className="col-span-12 lg:col-span-8 order-1 lg:order-2">
             <div className="grid grid-cols-1 gap-4 lg:gap-6">
 
-              {scheduleData.map((schedule, index) => (
+              {scheduleData.map((schedule: { id: any; ship_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; departure_time: string; source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; arrival_time: string; destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_id: string; }, index: any) => (
 
                 <div key={schedule.id || index} className="col-span-1">
                   <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">

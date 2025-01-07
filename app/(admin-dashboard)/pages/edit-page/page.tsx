@@ -72,7 +72,7 @@ const Page = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("PAGE Updated Successfully:", data);
+        alert("PAGE Updated Successfully:");
         // Redirect or show success message here
         router.push("/pages/all-pages");
       } else {

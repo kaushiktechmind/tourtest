@@ -30,49 +30,38 @@ const Page = () => {
     }
   }, [excludeId]);
 
-  const fetchExcludeById = async (id) => {
+  const fetchExcludeById = async (id: string | null) => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_exclude_by_id/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch exclude");
-      const data = await response.json();
-      setexcludeTitle(data.exclude_title); // Set exclude name for editing
-      // router.push('/exclude/all-exclude');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_package_exclude_by_id/${id}`);
+    const data = await response.json();
+    setexcludeTitle(data.exclude_title); // Set exclude name for editing
+    setLoading(false);
   };
+  
 
-  const handleUpdateExclude = async (e) => {
+  const handleUpdateExclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
   
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
   
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_package_exclude_by_id/${excludeId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ exclude_title: excludeTitle }),
-      });
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_package_exclude_by_id/${excludeId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ exclude_title: excludeTitle }),
+    });
   
-      if (!response.ok) throw new Error("Failed to save exclude");
-  
+    if (response.ok) {
       setexcludeTitle("");
       alert("Exclude updated successfully!");
       router.push('/package/package-exclude');
       await fetchExcludeById(excludeId); // Refresh exclude data
-    } catch (err) {
-      setSubmitError(err.message);
     }
   };
-
+  
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">

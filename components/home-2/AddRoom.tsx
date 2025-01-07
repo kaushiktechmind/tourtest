@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { TrashIcon } from "@heroicons/react/24/outline";
 
 const AddRoom = () => {
@@ -18,12 +18,12 @@ const AddRoom = () => {
   // Calculate totals from initial localStorage data
   useEffect(() => {
     const calculateTotals = () => {
-      const totalAdultCount = rooms.reduce((acc, room) => acc + room.adults, 0);
+      const totalAdultCount = rooms.reduce((acc: any, room: { adults: any; }) => acc + room.adults, 0);
       const totalChildrenCount = rooms.reduce(
-        (acc, room) => acc + room.children,
+        (acc: any, room: { children: any; }) => acc + room.children,
         0
       );
-      const totalInfantCount = rooms.reduce((acc, room) => acc + room.infants, 0);
+      const totalInfantCount = rooms.reduce((acc: any, room: { infants: any; }) => acc + room.infants, 0);
 
       setLocalTotal({
         adults: totalAdultCount,
@@ -43,15 +43,22 @@ const AddRoom = () => {
     }
   };
 
-  const handleRemoveRoom = (index) => {
-    setRooms(rooms.filter((_, i) => i !== index));
+  const handleRemoveRoom = (index: any) => {
+    setRooms(rooms.filter((_: any, i: any) => i !== index));
   };
 
-  const handleChange = (index, type, value) => {
+  // const handleChange = (index: string | number, type: string, value: number) => {
+  //   const updatedRooms = [...rooms];
+  //   updatedRooms[index][type] = value;
+  //   setRooms(updatedRooms);
+  // };
+
+  const handleChange = (index: number, type: string, value: number) => {
     const updatedRooms = [...rooms];
     updatedRooms[index][type] = value;
     setRooms(updatedRooms);
   };
+
 
   const handleOpenDropdown = () => {
     setIsOpen(!isOpen);
@@ -62,13 +69,14 @@ const AddRoom = () => {
 
   const handleDone = () => {
     localStorage.removeItem("restrictValue");
-    const totalAdultCount = rooms.reduce((acc, room) => acc + room.adults, 0);
+    const totalAdultCount = rooms.reduce((acc: any, room: { adults: any; }) => acc + room.adults, 0);
     const totalChildrenCount = rooms.reduce(
-      (acc, room) => acc + room.children,
+      (acc: any, room: { children: any; }) => acc + room.children,
       0
     );
-    const totalInfantCount = rooms.reduce((acc, room) => acc + room.infants, 0);
-    const totalExtraBeds = rooms.reduce((acc, room) => acc + (room.adults > 2 ? 1 : 0), 0);
+    const totalInfantCount = rooms.reduce((acc: any, room: { infants: any; }) => acc + room.infants, 0);
+    // const totalExtraBeds = rooms.reduce((acc: string | number, room: { adults: number; }) => acc + (room.adults > 2 ? 1 : 0), 0);
+    const totalExtraBeds = rooms.reduce((acc: number, room: { adults: number }) => acc + (room.adults > 2 ? 1 : 0), 0);
 
     const totals = {
       totalRooms: rooms.length,
@@ -107,7 +115,7 @@ const AddRoom = () => {
       {isOpen && (
         <div className="absolute top-full left-0 z-50">
           <div className="relative bg-white border rounded-lg mt-2 p-4 shadow-lg w-96 z-50">
-            {rooms.map((room, index) => (
+            {rooms.map((room: { adults: string | number | readonly string[] | undefined; children: string | number | readonly string[] | undefined; infants: string | number | readonly string[] | undefined; }, index: number | null | undefined) => (
               <div key={index} className="mb-4">
                 <div className="flex gap-4 items-center mb-3">
                   <div className="flex-1">
@@ -116,7 +124,7 @@ const AddRoom = () => {
                     <select
                       value={room.adults}
                       onChange={(e) =>
-                        handleChange(index, "adults", parseInt(e.target.value))
+                        index !== null && index !== undefined && handleChange(index, "adults", parseInt(e.target.value))
                       }
                       className="w-full border rounded p-1"
                     >
@@ -131,7 +139,7 @@ const AddRoom = () => {
                     <select
                       value={room.children}
                       onChange={(e) =>
-                        handleChange(index, "children", parseInt(e.target.value))
+                        index !== null && index !== undefined && handleChange(index, "children", parseInt(e.target.value))
                       }
                       className="w-full border rounded p-1"
                     >
@@ -145,7 +153,7 @@ const AddRoom = () => {
                     <select
                       value={room.infants}
                       onChange={(e) =>
-                        handleChange(index, "infants", parseInt(e.target.value))
+                        index !== null && index !== undefined && handleChange(index, "infants", parseInt(e.target.value))
                       }
                       className="w-full border rounded p-1"
                     >
@@ -155,16 +163,16 @@ const AddRoom = () => {
                   </div>
                   {rooms.length > 1 && (
                     <button
-                      onClick={() => handleRemoveRoom(index)}
+                      onClick={() => index !== null && index !== undefined && handleRemoveRoom(index)}
                       className="text-red-500 ml-4"
                     >
                       <TrashIcon className="w-5 h-5" />
                     </button>
                   )}
-
                 </div>
               </div>
             ))}
+
             <div className="mt-4 flex justify-between items-center">
               <button
                 onClick={handleAddRoom}

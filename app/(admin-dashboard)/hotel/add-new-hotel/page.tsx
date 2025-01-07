@@ -73,6 +73,11 @@ interface HotelFormData {
   i_frame_link: string;
 }
 
+interface Amenity {
+  amenity_name: string;
+  amenity_logo: string;
+}
+
 const Page = () => {
   const router = useRouter();
   const [description, setDescription] = useState<string>(""); // Type for description
@@ -117,7 +122,7 @@ const Page = () => {
   const [maxAdults, setMaxAdults] = useState("");
   const [maxChildren, setMaxChildren] = useState("");
   const [maxInfants, setMaxInfants] = useState("");
-  const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
+  const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
 
   const [policies, setPolicies] = useState<Policy[]>([]);

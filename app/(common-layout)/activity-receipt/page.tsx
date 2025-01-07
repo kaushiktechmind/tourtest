@@ -2,11 +2,21 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children } from "react";
+import { Children, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayActBtn from "@/components/RazorpayCabBtn";
 RazorpayActBtn;
+
+interface PaymentData{
+  booking_id: string;
+  customer_name: string;
+  customer_email: string;
+  customer_mobile_number: string;
+  country: string;
+  passport_no: string;
+  address: string;
+}
 
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
@@ -277,7 +287,7 @@ const Page = () => {
               <h4 className="mb-0 text-2xl font-semibold">Order Summary</h4>
               <div className="border border-dashed my-8"></div>
               <ul className="flex flex-col gap-4">
-                {tickets.map((ticket, index) => (
+                {tickets.map((ticket: { ticketName: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; quantity: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; totalPrice: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; }, index: Key | null | undefined) => (
                   <li key={index} className="grid grid-cols-2 items-center">
                     <p className="mb-0">{ticket.ticketName} X {ticket.quantity}</p>
                     <p className="mb-0 font-medium text-right">₹{ticket.totalPrice}</p>

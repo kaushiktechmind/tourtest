@@ -26,7 +26,8 @@ const Page = () => {
 
   const [tripData, setTripData] = useState<any>(null);
 
-  const storedTravelData = JSON.parse(localStorage.getItem('travelData'));
+  const storedTravelData = JSON.parse(localStorage.getItem('travelData') || 'null');
+
 
   const locationIds = {
     "Port Blair": 1,

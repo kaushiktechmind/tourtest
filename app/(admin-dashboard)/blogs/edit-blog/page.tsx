@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Key, ReactNode, useEffect, useState } from "react";
 import {
   EyeIcon,
   PencilSquareIcon,
@@ -18,6 +18,14 @@ interface Room {
   blog_heading: string;
 }
 
+
+interface Blog {
+}
+
+interface Category {
+  id: Key | null | undefined;
+  category_name: ReactNode;
+}
 
 
 interface HotelFormData {

@@ -19,6 +19,21 @@ import { Navigation } from "swiper";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { SearchIcon } from "@/public/data/icons";
 
+interface Category {
+  category_name: string;
+}
+
+interface Blog {
+  blog_title: string;
+  created_at: Date;
+  category: Category; // Specify category as Category type
+  comments: string;
+  blog_heading: string;
+  description: string;
+  tags: string;
+  blog_image_multiple?: string[]; // Assuming it's an array of strings, update if needed
+}
+
 const Page = () => {
 
   const router = useRouter();
@@ -62,12 +77,13 @@ const Page = () => {
             <div className="flex gap-2 items-center">
               <CalendarDaysIcon className="w-5 h-5" />
               <p className="text-gray-500">
-                {new Date(blog?.created_at).toLocaleDateString('en-US', {
+                {new Date(blog?.created_at || new Date()).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
                 })}
               </p>
+
             </div>
             <h2 className="h2 font-semibold my-6">
               {blog?.blog_title}
@@ -92,37 +108,37 @@ const Page = () => {
               </li>
             </ul>
             <Swiper
-      loop={true}
-      slidesPerView={1}
-      spaceBetween={24}
-      navigation={{
-        nextEl: '.btn-next',
-        prevEl: '.btn-prev',
-      }}
-      modules={[Navigation]}
-      className="swiper blog-details-slider mb-10"
-    >
-      {blogImages.map((image, index) => (
-        <SwiperSlide key={index}>
-          <Image
-            width={1296}
-            height={600}
-            src={image}
-            alt={`blog-image-${index + 1}`}
-            className="w-full rounded-2xl"
-          />
-        </SwiperSlide>
-      ))}
+              loop={true}
+              slidesPerView={1}
+              spaceBetween={24}
+              navigation={{
+                nextEl: '.btn-next',
+                prevEl: '.btn-prev',
+              }}
+              modules={[Navigation]}
+              className="swiper blog-details-slider mb-10"
+            >
+              {blogImages.map((image, index) => (
+                <SwiperSlide key={index}>
+                  <Image
+                    width={1296}
+                    height={600}
+                    src={image}
+                    alt={`blog-image-${index + 1}`}
+                    className="w-full rounded-2xl"
+                  />
+                </SwiperSlide>
+              ))}
 
-      <div className="absolute bottom-0 right-0 p-3 sm:p-4 md:p-5 lg:px-10 lg:py-6 bg-primary z-10 flex gap-3 text-white rounded-tl-2xl rounded-br-2xl">
-        <div className="btn-prev border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
-          <i className="las la-angle-left"></i>
-        </div>
-        <div className="btn-next border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
-          <i className="las la-angle-right"></i>
-        </div>
-      </div>
-    </Swiper>
+              <div className="absolute bottom-0 right-0 p-3 sm:p-4 md:p-5 lg:px-10 lg:py-6 bg-primary z-10 flex gap-3 text-white rounded-tl-2xl rounded-br-2xl">
+                <div className="btn-prev border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
+                  <i className="las la-angle-left"></i>
+                </div>
+                <div className="btn-next border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
+                  <i className="las la-angle-right"></i>
+                </div>
+              </div>
+            </Swiper>
             <div className="container">
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-12 lg:col-span-8">
@@ -133,7 +149,7 @@ const Page = () => {
                     <p className="clr-neutral-500 mb-6">
                       {blog?.description}
                     </p>
-                  
+
                     <figure className="p-6 bg-[var(--bg-2)] mb-10">
                       <blockquote className="blockquote text-lg">
                         <p>

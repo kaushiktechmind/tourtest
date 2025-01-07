@@ -297,7 +297,7 @@ const Page = () => {
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
-                cabId={cabId}
+                cabId={Number(cabId)}
                 passport={passport}
                 country={selectedCountry}
               >

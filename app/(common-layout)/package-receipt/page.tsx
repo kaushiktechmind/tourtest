@@ -10,6 +10,7 @@ RazorpayPkgBtn;
 
 
 interface PaymentData {
+  country: string;
   id: number;
   booking_id: string;
   invoice_id: string;

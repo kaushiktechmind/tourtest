@@ -63,7 +63,7 @@ const Page = () => {
       if (field) {
         const file = files[0];
         const imageUrl = URL.createObjectURL(file); // Generate temporary URL
-        setFormData((prevData) => ({
+        setFormData((prevData: any) => ({
           ...prevData,
           [field]: imageUrl, // Set the generated URL as the image src
         }));
@@ -75,7 +75,7 @@ const Page = () => {
   // Handle form data change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
-    setFormData((prevData) => ({
+    setFormData((prevData: any) => ({
       ...prevData,
       [id]: value,
     }));

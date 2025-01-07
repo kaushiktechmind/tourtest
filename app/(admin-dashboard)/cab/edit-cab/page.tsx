@@ -275,7 +275,7 @@ const Page = () => {
           setDescription(data.description); // Set the description from the API
         }
 
-        
+
 
         // Process inclusion field
         const rawInclusion = data.inclusion && data.inclusion[0] ? data.inclusion[0] : "";
@@ -283,7 +283,7 @@ const Page = () => {
           .replace(/^\[/, "") // Remove leading square bracket
           .replace(/\]$/, "") // Remove trailing square bracket
           .split(",") // Split items by comma
-          .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
+          .map((item: string) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
 
         // Map parsed inclusions to selectedInclusions format
         const prefilledInclusions = inclusions.map((title: string, index: number) => ({
@@ -303,7 +303,7 @@ const Page = () => {
           .replace(/^\[/, "") // Remove leading square bracket
           .replace(/\]$/, "") // Remove trailing square bracket
           .split(",") // Split items by comma
-          .map((item) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
+          .map((item: string) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
 
         // Map parsed inclusions to selectedInclusions format
         const prefilledExclusions = exclusions.map((title: string, index: number) => ({
@@ -366,14 +366,16 @@ const Page = () => {
       formDataToSend.append("_method", "PUT");
 
 
-      formDataToSend.append(
-        "inclusion[]",
-        selectedInclusions.map((inc) => inc.cab_inclusion_title)
-      );
-      formDataToSend.append(
-        "exclusion[]",
-        selectedExclusions.map((inc) => inc.cab_exclusion_title)
-      );
+      // Append each inclusion separately
+      selectedInclusions.forEach((inc) => {
+        formDataToSend.append("inclusion[]", inc.cab_inclusion_title);
+      });
+
+      // Append each exclusion separately
+      selectedExclusions.forEach((inc) => {
+        formDataToSend.append("exclusion[]", inc.cab_exclusion_title);
+      });
+
 
 
 

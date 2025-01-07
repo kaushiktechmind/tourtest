@@ -10,7 +10,9 @@ const Page = () => {
         <PropertyListCard item={item} key={item.id} />
       ))}
 
-      <CardPagination />
+      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
+        throw new Error("Function not implemented.");
+      } } />
     </>
   );
 };

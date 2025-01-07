@@ -110,7 +110,10 @@ const Page = () => {
 
     const formData = new FormData();
     formData.append("amenity_name", name);
-    formData.append("amenity_logo", file);
+    if (file) {
+      formData.append("amenity_logo", file);
+    }
+    
 
     const accessToken = localStorage.getItem("access_token");
 

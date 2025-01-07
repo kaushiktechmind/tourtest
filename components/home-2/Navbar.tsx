@@ -76,7 +76,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
     };
   }, [dropdown]);
 
-  function handleLinkClick(event: MouseEvent<HTMLAnchorElement, MouseEvent>): void {
+  function handleLinkClick(event: React.MouseEvent<HTMLAnchorElement>): void { 
   
      localStorage.removeItem("startDate");
      localStorage.removeItem("endDate");

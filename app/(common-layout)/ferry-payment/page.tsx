@@ -28,9 +28,10 @@ const Page = () => {
   const infants = travelData.infants ?? 0; // Default to 0 if not available
 
   // Parse selected ferries from localStorage, default to null if not available
-  const selectedFerry = JSON.parse(localStorage.getItem("selectedFerry") || null);
-  const selectedFerry2 = JSON.parse(localStorage.getItem("selectedFerry2") || null);
-  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") || null);
+  const selectedFerry = JSON.parse(localStorage.getItem("selectedFerry") || "null");
+
+  const selectedFerry2 = JSON.parse(localStorage.getItem("selectedFerry2") || "null");
+  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") ||" null");
 
   // Assign values only if the selected ferry objects exist
   const shipTitle1 = selectedFerry?.ship_title;
@@ -116,12 +117,13 @@ const Page = () => {
     Array.from({ length: adults + infants }).fill("Indian")
   );
 
-  const handleNationalityChange = (index, nationality) => {
+
+  const handleNationalityChange = (index: number, nationality: unknown) => {
     const updatedNationalities = [...nationalities];
     updatedNationalities[index] = nationality;
     setNationalities(updatedNationalities);
   };
-
+  
 
   const [passengerData, setPassengerData] = useState(
     Array.from({ length: adults + infants }, () => ({
@@ -187,14 +189,14 @@ const Page = () => {
     }
   }, []); // Empty dependency array ensures this runs only once on mount.
 
-  const handlePassengerChange = (index, field, value) => {
+  const handlePassengerChange = (index: number, field: string, value: string) => {
     const updatedData = [...passengerData];
 
     updatedData[index][field] = value;
     setPassengerData(updatedData);
   };
 
-  const handleContactChange = (field, value) => {
+  const handleContactChange = (field: string, value: string) => {
     setContactDetails({ ...contactDetails, [field]: value });
   };
 
@@ -324,7 +326,7 @@ const Page = () => {
 
 
 
-  const handleDownloadTicket = async (bookingId) => {
+  const handleDownloadTicket = async (bookingId: any) => {
     try {
       const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
         method: "POST",

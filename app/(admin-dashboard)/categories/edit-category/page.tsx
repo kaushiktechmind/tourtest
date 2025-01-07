@@ -30,48 +30,41 @@ const Page = () => {
     }
   }, [categoryId]);
 
-  const fetchCategoryById = async (id) => {
+  const fetchCategoryById = async (id: string | null) => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/get_category_by_id/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch category");
-      const data = await response.json();
-      setcategoryTitle(data.category_name); // Set category name for editing
-      // router.push('/category/all-category');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+  
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/get_category_by_id/${id}`);
+    const data = await response.json();
+    
+    setcategoryTitle(data.category_name); // Set category name for editing
+  
+    setLoading(false);
   };
+  
 
-  const handleUpdateCategory = async (e) => {
+  const handleUpdateCategory = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
   
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
   
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_category_by_id/${categoryId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ category_name: categoryTitle }),
-      });
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_category_by_id/${categoryId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ category_name: categoryTitle }),
+    });
   
-      if (!response.ok) throw new Error("Failed to save category");
-  
+    if (response.ok) {
       setcategoryTitle("");
       alert("Category updated successfully!");
       router.push('/categories/all-categories');
       await fetchCategoryById(categoryId); // Refresh category data
-    } catch (err) {
-      setSubmitError(err.message);
     }
   };
+  
 
   return (
     <div className="bg-[var(--bg-2)]">

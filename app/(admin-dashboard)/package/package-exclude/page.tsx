@@ -37,19 +37,18 @@ const Page = () => {
 
   const fetchExcludes = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_exclude");
-      if (!response.ok) throw new Error("Failed to fetch excludes");
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_exclude");
+    
+    // Check if the response is ok (status code 2xx)
+    if (response.ok) {
       const data = await response.json();
       setExcludes(data);
       setFilteredExcludes(data); // Initialize filteredExcludes
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+  
+    setLoading(false);
   };
+  
 
   const handleSearch = () => {
     const lowercasedSearch = searchTerm.toLowerCase();

@@ -4,6 +4,13 @@ import axios from 'axios';
 
 interface RazorpayPkgBtnProps {
   grandTotal: number;
+  name: string;
+  email: string;
+  mobile_number: string;
+  passport: string;
+  country: string;
+  bookingID: string;
+  address: string;
   currency: string;
   adults: number;
   children?: number;

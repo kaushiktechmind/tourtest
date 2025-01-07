@@ -30,49 +30,44 @@ const Page = () => {
     }
   }, [locId]);
 
-  const fetchLocationById = async (id) => {
+  const fetchLocationById = async (id: string | null) => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_location_by_id/${id}`);
-      if (!response.ok) throw new Error("Failed to fetch location");
+  
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/get_location_by_id/${id}`);
+    
+    if (response.ok) {
       const data = await response.json();
       setLocationName(data.location_name); // Set location name for editing
       // router.push('/location/all-location');
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
     }
+  
+    setLoading(false);
   };
+  
 
-  const handleUpdateLocation = async (e) => {
+  const handleUpdateLocation = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
   
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
   
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_location_by_id/${locId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ location_name: locationName }),
-      });
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_location_by_id/${locId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ location_name: locationName }),
+    });
   
-      if (!response.ok) throw new Error("Failed to save location");
-  
+    if (response.ok) {
       setLocationName("");
       alert("Location updated successfully!");
       router.push('/location/all-location');
       await fetchLocationById(locId); // Refresh location data
-    } catch (err) {
-      setSubmitError(err.message);
     }
   };
-
+  
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">

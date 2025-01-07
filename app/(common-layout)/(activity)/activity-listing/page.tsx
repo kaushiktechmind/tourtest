@@ -122,7 +122,9 @@ const Page = () => {
           </div>
         )
       )}
-      <CardPagination />
+      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
+        throw new Error("Function not implemented.");
+      } } />
     </>
   );
 };
