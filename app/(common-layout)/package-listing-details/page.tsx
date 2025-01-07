@@ -20,6 +20,7 @@ import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 import CheckboxCustom from "@/components/Checkbox";
 import { useRouter, useSearchParams } from "next/navigation";
+import axios from "axios";
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -66,6 +67,18 @@ const Page = () => {
   const handleTabChange = (index: number) => {
     setSelectedIndex(index);
   };
+
+
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [review, setReview] = useState('');
+  const [rating, setRating] = useState(0); // Rating value (1-5)
+  const [hoverRating, setHoverRating] = useState(0); // Hover effect for rating
+
+  const handleRatingClick = (value: number) => setRating(value);
+  const handleRatingHover = (value: number) => setHoverRating(value);
+  const handleRatingLeave = () => setHoverRating(0);
+
 
 
 
@@ -175,6 +188,8 @@ const Page = () => {
       return; // Stop execution here if access token is not found
     }
 
+    
+
     // Calculate package data and store it in localStorage
     const formattedDate = selectedDate.toISOString().split("T")[0];
     const newPackageData = {
@@ -233,6 +248,55 @@ const Page = () => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
+
+
+
+
+
+
+
+  const handleReviewSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      alert('You are not logged in.');
+      return;
+    }
+
+    const payload = {
+      user_id: 7, // Pass actual user_id dynamically
+      blog_id: 12, // Pass actual blog_id dynamically
+      model_name: 'review',
+      ratings: rating,
+      name,
+      email,
+      description: review,
+      status: 1,
+    };
+
+    try {
+      const response = await axios.post(
+        'https://yrpitsolutions.com/tourism_api/api/admin/save_review',
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      alert('Review submitted successfully!');
+      setName('');
+      setEmail('');
+      setReview('');
+      setRating(0);
+    } catch (error) {
+      console.error('Error submitting review:', error);
+      alert('Failed to submit the review.');
+    }
+  };
+
 
 
 
@@ -840,67 +904,87 @@ const Page = () => {
               </div>
 
               <div className="mb-10 lg:mb-14">
-                <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
-                  <h4 className="mb-0 text-2xl font-semibold">
-                    Write a review
-                  </h4>
-                  <div className="border border-dashed my-6"></div>
-                  <p className="text-xl font-medium mb-2">Rating *</p>
-                  <div className="flex gap-1 mb-3">
-                    <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                    <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                    <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                    <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                    <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                  </div>
-                  <form action="#">
-                    <div className="grid grid-cols-12 gap-4">
-                      <div className="col-span-12">
-                        <label
-                          htmlFor="review-name"
-                          className="text-xl font-medium block mb-3">
-                          Name *
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                          placeholder="Enter Name.."
-                          id="review-name"
-                        />
-                      </div>
-                      <div className="col-span-12">
-                        <label
-                          htmlFor="review-email"
-                          className="text-xl font-medium block mb-3">
-                          Email *
-                        </label>
-                        <input
-                          type="text"
-                          className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                          placeholder="Enter Email.."
-                          id="review-email"
-                        />
-                      </div>
-                      <div className="col-span-12">
-                        <label
-                          htmlFor="review-review"
-                          className="text-xl font-medium block mb-3">
-                          Review *
-                        </label>
-                        <textarea
-                          id="review-review"
-                          rows={5}
-                          className="bg-[var(--bg-1)] border rounded-2xl py-3 px-5 w-full focus:outline-none"></textarea>
-                      </div>
-                      <div className="col-span-12">
-                        <Link href="#" className="btn-primary">
-                          Submit Review
-                        </Link>
-                      </div>
-                    </div>
-                  </form>
-                </div>
-              </div>
+      <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
+        <h4 className="mb-0 text-2xl font-semibold">Write a review</h4>
+        <div className="border border-dashed my-6"></div>
+
+        <p className="text-xl font-medium mb-2">Rating *</p>
+        <div className="flex gap-1 mb-3">
+          {[1, 2, 3, 4, 5].map((value) => (
+            <StarIcon
+              key={value}
+              className={`w-5 h-5 cursor-pointer ${
+                (hoverRating || rating) >= value
+                  ? 'text-yellow-400'
+                  : 'text-gray-400'
+              }`}
+              onClick={() => handleRatingClick(value)}
+              onMouseEnter={() => handleRatingHover(value)}
+              onMouseLeave={handleRatingLeave}
+            />
+          ))}
+        </div>
+
+        <form onSubmit={handleReviewSubmit}>
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-12">
+              <label
+                htmlFor="review-name"
+                className="text-xl font-medium block mb-3"
+              >
+                Name *
+              </label>
+              <input
+                type="text"
+                className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
+                placeholder="Enter Name.."
+                id="review-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </div>
+            <div className="col-span-12">
+              <label
+                htmlFor="review-email"
+                className="text-xl font-medium block mb-3"
+              >
+                Email *
+              </label>
+              <input
+                type="email"
+                className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
+                placeholder="Enter Email.."
+                id="review-email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
+            <div className="col-span-12">
+              <label
+                htmlFor="review-review"
+                className="text-xl font-medium block mb-3"
+              >
+                Review *
+              </label>
+              <textarea
+                id="review-review"
+                rows={5}
+                className="bg-[var(--bg-1)] border rounded-2xl py-3 px-5 w-full focus:outline-none"
+                placeholder="Write your review here..."
+                value={review}
+                onChange={(e) => setReview(e.target.value)}
+              ></textarea>
+            </div>
+            <div className="col-span-12">
+              <button type="submit" className="btn-primary">
+                Submit Review
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
             </div>
 
             <div className="col-span-12 xl:col-span-4">

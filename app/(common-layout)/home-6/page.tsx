@@ -1,10 +1,11 @@
 "use client";
+import Hero from "@/components/home-2/Hero";
 import Testimonial from "@/components/home-2/Testimonial";
 import Cta from "@/components/home-6/Cta";
 import DiscountCard from "@/components/home-6/DiscountCard";
 import Facilities from "@/components/home-6/Facilities";
 import Featured from "@/components/home-6/Featured";
-import Hero from "@/app/(common-layout)/(ferry)/Hero";
+// import Hero from "@/app/(common-layout)/(ferry)/Hero";
 import Info from "@/components/home-6/Info";
 import WorkingProcess from "@/components/home-6/WorkingProcess";
 

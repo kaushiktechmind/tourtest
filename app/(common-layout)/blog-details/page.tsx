@@ -9,6 +9,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -17,38 +19,66 @@ import { Navigation } from "swiper";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { SearchIcon } from "@/public/data/icons";
 
-const page = () => {
+const Page = () => {
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const blogId = searchParams.get("blogId");
+
+
+
+  const [blog, setBlog] = useState<Blog | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+
+  useEffect(() => {
+    const fetchBlog = async () => {
+      try {
+        const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/get_blog_by_id/${blogId}`);
+        const data = await response.json();
+        if (response.ok) {
+          setBlog(data.data);
+        } else {
+          setError(data.message || 'Failed to fetch blog');
+        }
+      } catch (err) {
+        setError('An error occurred while fetching the blog');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlog();
+  }, [blogId]);
+
+  const blogImages = blog?.blog_image_multiple || [];
+
   return (
     <div className="py-[60px] lg:py-[60px] bg-[var(--bg-2)] px-3">
       <div className="container">
-        <div className="grid grid-cols-12 gap-4">
+        <div className="grid grid-cols-12 gap-4 mt-6">
           <div className="col-span-12">
             <div className="flex gap-2 items-center">
               <CalendarDaysIcon className="w-5 h-5" />
-              <p className="mb-0"> 12 Jan, 2023 </p>
+              <p className="text-gray-500">
+                {new Date(blog?.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
             </div>
             <h2 className="h2 font-semibold my-6">
-              The Wall Street Journal&apos;s Real Estate
+              {blog?.blog_title}
             </h2>
             <ul className="flex flex-wrap items-center mb-10 gap-3 gap-md-0">
               <li>
                 <div className="flex gap-2 items-center">
-                  <UserCircleIcon className="w-5 h-5" />
+                  <li className="text-primary">•</li>
                   <p className="mb-0">
-                    By
-                    <Link
-                      href="#"
-                      className="link text-[var(--neutral-700)] hover:text-primary">
-                      Admin
-                    </Link>
+                    {blog?.category.category_name}
                   </p>
-                </div>
-              </li>
-              <li className="text-primary">•</li>
-              <li>
-                <div className="flex gap-2 items-center">
-                  <EyeIcon className="w-5 h-5" />
-                  <p className="mb-0"> 1.6k </p>
                 </div>
               </li>
               <li className="text-primary">•</li>
@@ -56,103 +86,54 @@ const page = () => {
                 <div className="flex gap-2 items-center">
                   <ChatBubbleLeftRightIcon className="w-5 h-5" />
                   <Link href="#" className="mb-0">
-                    {" "}
-                    32 Comments{" "}
+                    {blog?.comments}
                   </Link>
                 </div>
               </li>
             </ul>
             <Swiper
-              loop={true}
-              slidesPerView={1}
-              spaceBetween={24}
-              navigation={{
-                nextEl: ".btn-next",
-                prevEl: ".btn-prev",
-              }}
-              modules={[Navigation]}
-              className="swiper blog-details-slider mb-10">
-              <SwiperSlide>
-                <Image
-                  width={1296}
-                  height={600}
-                  src="/img/blog-details-img-1.jpg"
-                  alt="image"
-                  className="w-full rounded-2xl"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Image
-                  width={1296}
-                  height={600}
-                  src="/img/blog-details-2.png"
-                  alt="image"
-                  className="w-full rounded-2xl"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Image
-                  width={1296}
-                  height={600}
-                  src="/img/blog-details-3.png"
-                  alt="image"
-                  className="w-full rounded-2xl"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Image
-                  width={1296}
-                  height={600}
-                  src="/img/blog-details-4.png"
-                  alt="image"
-                  className="w-full rounded-2xl"
-                />
-              </SwiperSlide>
-              <SwiperSlide>
-                <Image
-                  width={1296}
-                  height={600}
-                  src="/img/blog-details-5.png"
-                  alt="image"
-                  className="w-full rounded-2xl"
-                />
-              </SwiperSlide>
+      loop={true}
+      slidesPerView={1}
+      spaceBetween={24}
+      navigation={{
+        nextEl: '.btn-next',
+        prevEl: '.btn-prev',
+      }}
+      modules={[Navigation]}
+      className="swiper blog-details-slider mb-10"
+    >
+      {blogImages.map((image, index) => (
+        <SwiperSlide key={index}>
+          <Image
+            width={1296}
+            height={600}
+            src={image}
+            alt={`blog-image-${index + 1}`}
+            className="w-full rounded-2xl"
+          />
+        </SwiperSlide>
+      ))}
 
-              <div className="absolute bottom-0 right-0 p-3 sm:p-4 md:p-5 lg:px-10 lg:py-6 bg-primary z-10 flex gap-3 text-white rounded-tl-2xl rounded-br-2xl">
-                <div className="btn-prev border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
-                  <i className="las la-angle-left"></i>
-                </div>
-                <div className="btn-next border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
-                  <i className="las la-angle-right"></i>
-                </div>
-              </div>
-            </Swiper>
+      <div className="absolute bottom-0 right-0 p-3 sm:p-4 md:p-5 lg:px-10 lg:py-6 bg-primary z-10 flex gap-3 text-white rounded-tl-2xl rounded-br-2xl">
+        <div className="btn-prev border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
+          <i className="las la-angle-left"></i>
+        </div>
+        <div className="btn-next border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">
+          <i className="las la-angle-right"></i>
+        </div>
+      </div>
+    </Swiper>
             <div className="container">
               <div className="grid grid-cols-12 gap-4">
                 <div className="col-span-12 lg:col-span-8">
                   <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-10">
                     <h2 className="h2 mb-8">
-                      The Wall Street Journal&apos;s Real Estate
+                      {blog?.blog_heading}
                     </h2>
                     <p className="clr-neutral-500 mb-6">
-                      This section provides daily news on real estate, covering
-                      trends in the residential and commercial markets, and
-                      updates on mortgage rates and home prices. The Wall Street
-                      Journal&apos;s Real Estate section is a part of the
-                      newspaper that covers news and analysis related to the
-                      real estate industry.
+                      {blog?.description}
                     </p>
-                    <p className="clr-neutral-500 mb-10">
-                      It provides information on residential and commercial
-                      properties, market trends, financing options, property
-                      management, and other related topics. The Real Estate
-                      section is a valuable resource for investors, property
-                      owners, and anyone interested in the real estate market.
-                      The Wall Street Journal&apos;s Real Estate section is
-                      known for its in-depth reporting and analysis, and its
-                      articles are widely read and highly regarded in the
-                      industry.
-                    </p>
+                  
                     <figure className="p-6 bg-[var(--bg-2)] mb-10">
                       <blockquote className="blockquote text-lg">
                         <p>
@@ -847,49 +828,7 @@ const page = () => {
                         <Link
                           href="#"
                           className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          Real Estate
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          Building
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          Apartment
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          House
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          Resort
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          Studio
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          New
+                          {blog?.tags}
                         </Link>
                       </li>
                     </ul>
@@ -904,4 +843,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

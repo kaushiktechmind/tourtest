@@ -13,13 +13,14 @@ import { SearchIcon } from "@/public/data/icons";
 import { agentWithdraw } from "@/public/data/agentWithdraw";
 import { coupons } from "@/public/data/coupons";
 import HeadlessList from "@/components/ListBox";
+import CardPagination from "@/components/CardPagination";
 
 const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Coupon</h2>
-        <Link href="/cab/add-new-cab" className="btn-primary">
+        <Link href="/coupon/add-coupon" className="btn-primary">
           <PlusCircleIcon className="w-5 h-5" /> Add New Coupon
         </Link>
       </div>

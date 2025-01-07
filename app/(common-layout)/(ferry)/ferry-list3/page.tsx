@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tripType = searchParams.get("tripType");
@@ -175,14 +175,14 @@ const page = () => {
           <div className="flex items-center space-x-6 flex-wrap">
             {/* Always show the first pair */}
             <div className="flex items-center space-x-2">
-              <p className="text-gray-600">{from1} -> </p>
+              <p className="text-gray-600">{from1} -&gt; </p>
               <p className="text-gray-600">{to1}</p>
             </div>
 
             {/* Show the second pair only if from2 is available */}
             {from2 && (
               <div className="flex items-center space-x-2">
-                <p className="text-gray-600">{from2} -> </p>
+                <p className="text-gray-600">{from2} -&gt; </p>
                 <p className="text-gray-600">{to2}</p>
               </div>
             )}
@@ -190,7 +190,7 @@ const page = () => {
             {/* Show the third pair only if from2 is available */}
             {from2 && (
               <div className="flex items-center space-x-2">
-                <p className="text-green-600">{from3} -> </p>
+                <p className="text-green-600">{from3} -&gt; </p>
                 <p className="text-green-600">{to3}</p>
               </div>
             )}
@@ -491,4 +491,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

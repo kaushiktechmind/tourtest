@@ -17,17 +17,14 @@ interface Room {
   blog_heading: string;
 }
 
-interface Location {
-  location_name: string;
-}
 
 
 interface HotelFormData {
   blog_title: string;
-  location_name: string;
+  category_id: string;
   blog_heading: string;
   tags: string;
-  featured_images: File[];
+  blog_image_multiple: File[];
   [key: string]: string | File[] | string[];
   // For multiple image uploads
 }
@@ -35,85 +32,87 @@ interface HotelFormData {
 const Page = () => {
 
   const [description, setDescription] = useState<string>("");
-  const [rooms, setRooms] = useState<Room[]>([]);
+
+  const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+
+
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
 
   const [formData, setFormData] = useState<HotelFormData>({
     blog_title: "",
+    category_id: "",
     blog_heading: "",
-    location_name: "",
     tags: "",
     comments: "",
-    featured_images: [],
+    blog_image_multiple: [],
   });
 
 
 
-  
-
 
   useEffect(() => {
-    const fetchRooms = async () => {
+    const fetchCategories = async () => {
       try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelId}/rooms`
-        );
-        if (!response.ok) {
-          const errorMessage = await response.text(); // Retrieve the error message
-          console.error("Error during image upload:", errorMessage);
-          throw new Error(`Failed to add room: ${errorMessage}`);
-        }
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_category');
         const data = await response.json();
-        setRooms(data.data); // Assuming the rooms array is in data.rooms
+        setCategories(data); // Store categories in state
       } catch (error) {
-        console.error(error);
+        console.error('Error fetching categories:', error);
       }
     };
 
-    fetchRooms();
+    fetchCategories();
   }, []);
 
 
-
-    useEffect(() => {
-      const fetchLocations = async () => {
-        try {
-          const response = await fetch(
-            "https://yrpitsolutions.com/tourism_api/api/admin/get_location"
-          );
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          const data = await response.json();
-          // Assuming the API returns an array of locations
-          setLocations(data); // Adjust based on the actual structure of the API response
-        } catch (error) {
-          console.error("Failed to fetch locations:", error);
-        }
-      };
-  
-      fetchLocations();
-    }, []);
+  const handleCategoryChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const categoryId = event.target.value;
+    setSelectedCategoryId(Number(categoryId)); // Update selectedCategoryId state
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      category_id: categoryId, // Update category_id in formData
+    }));
+  };
 
 
-   const [locations, setLocations] = useState<
-      {
-        location_name: any;
-        name: string;
-      }[]
-    >([]);
 
-  const handleDelete = async (roomId: number) => {
-    const token = localStorage.getItem("access_token");
+
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_all_blogs');
+        const result = await response.json();
+        setBlogs(result.data); // Set blogs data in state
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching blogs:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+
+  const handleDelete = async (blogId: number) => {
+    const token = localStorage.getItem('access_token');
     if (!token) {
-      console.error("No access token found");
+      console.error('No access token found');
+      return;
+    }
+
+    if (!confirm('Are you sure you want to delete this blog?')) {
       return;
     }
 
     try {
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/delete_blog_by_id/${blogId}`,
         {
-          method: "DELETE",
+          method: 'DELETE',
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -121,15 +120,21 @@ const Page = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to delete room");
+        throw new Error('Failed to delete blog');
       }
 
-      setRooms((prevRooms) => prevRooms.filter((room) => room.id !== roomId));
-      alert(`Room Deleted Successfully`);
+      setBlogs((prevBlogs) => prevBlogs.filter((blog) => blog.id !== blogId));
+      alert('Blog deleted successfully');
     } catch (error) {
-      console.error(error);
+      console.error('Error deleting blog:', error);
+      alert('Failed to delete blog');
     }
   };
+
+
+
+
+
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -146,7 +151,7 @@ const Page = () => {
       const files = Array.from(e.target.files);
       setFormData((prevData) => ({
         ...prevData,
-        featured_images: files,
+        blog_image_multiple: files,
       }));
     }
   };
@@ -159,22 +164,24 @@ const Page = () => {
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
 
+    // Append all formData fields except images
     for (const key in formData) {
-      if (key === "featured_images") {
-        formData.featured_images.forEach((file) => {
-          formDataToSend.append("featured_images[]", file);
+      if (key === "blog_image_multiple") {
+        formData.blog_image_multiple.forEach((file) => {
+          formDataToSend.append("blog_image_multiple[]", file);
         });
       } else {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
 
-    try {
-      const tempElement = document.createElement("div");
-      tempElement.innerHTML = description;
-      const plainTextDescription =
-        tempElement.textContent || tempElement.innerText || "";
+    // Append the plain text description
+    const tempElement = document.createElement("div");
+    tempElement.innerHTML = description;
+    const plainTextDescription = tempElement.textContent || tempElement.innerText || "";
+    formDataToSend.append("description", plainTextDescription);
 
+    try {
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/save_blog",
         {
@@ -183,7 +190,6 @@ const Page = () => {
             Authorization: `Bearer ${token}`,
           },
           body: formDataToSend,
-          
         }
       );
 
@@ -199,6 +205,7 @@ const Page = () => {
       console.error("Error occurred during room addition:", error);
     }
   };
+
   <div className="mt-[20px]">
     <button
       type="submit"
@@ -214,12 +221,6 @@ const Page = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Blogs</h2>
-        <Link
-          href={`/hotel/room-availability`}
-          className="btn-primary"
-        >
-          <EyeIcon className="w-5 h-5" /> Room Availability
-        </Link>
       </div>
 
       {/* Add Room Form */}
@@ -230,24 +231,38 @@ const Page = () => {
 
 
 
-          <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>
+            <p className="mt-6 mb-4 text-xl font-medium">
+              Category: <span className="astrick">*</span>
+            </p>
 
-<select
-  id="location_name"
-  name="location_name"
-  value={formData.location_name}
-  onChange={""}
-  className="w-full border p-2 focus:outline-none rounded-md text-base"
->
-  <option value="" disabled>
-    Select a location
-  </option>
-  {locations.map((location, index) => (
-    <option key={index} value={location.location_name}>
-      {location.location_name} {/* Display the location_name */}
-    </option>
-  ))}
-</select>
+            <select
+              id="category"
+              name="category"
+              value={formData.category_id}
+              onChange={handleCategoryChange}
+              className="w-full border p-2 focus:outline-none rounded-md text-base"
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.category_name}
+                </option>
+              ))}
+            </select>
+
+            {/* 
+            <p className="mt-6 mb-4 text-xl font-medium">Category :<span className="astrick">*</span></p>
+            <input
+              type="text"
+              id="category_id"
+              name="category_id"
+              placeholder=""
+              className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border focus:border-primary outline-1"
+              value={formData.category_id}
+              onChange={handleInputChange}
+            /> */}
 
             <label
               htmlFor="name"
@@ -333,7 +348,7 @@ const Page = () => {
             </div>
             {/* Display selected images */}
             <div className="mt-6 grid grid-cols-3 gap-4">
-              {formData.featured_images.map((file, index) => (
+              {formData.blog_image_multiple.map((file, index) => (
                 <div key={index} className="w-full h-32 bg-gray-200 rounded-lg overflow-hidden">
                   <img
                     src={URL.createObjectURL(file)}
@@ -374,28 +389,34 @@ const Page = () => {
             <table className="w-full whitespace-nowrap">
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Name</th>
-                  <th className="py-3 lg:py-4 px-2">Price</th>
-                  <th className="py-3 lg:py-4 px-2">Status</th>
+                  <th className="py-3 lg:py-4 px-2">Blog Title</th>
+                  <th className="py-3 lg:py-4 px-2">Category Name</th>
+                  <th className="py-3 lg:py-4 px-2">Blog Heading</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
 
               <tbody>
-                {(rooms ?? []).length > 0 ? (
-                  rooms.map(({ id, blog_title, blog_heading, status }) => (
+                {loading ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-3">
+                      Loading blogs...
+                    </td>
+                  </tr>
+                ) : blogs.length > 0 ? (
+                  blogs.map(({ id, blog_title, blog_heading, category }) => (
                     <tr
                       key={id}
                       className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                     >
                       <td className="py-3 lg:py-4 px-2">{blog_title}</td>
-                      <td className="py-3 lg:py-4 px-2">{blog_heading}</td>
                       <td className="py-3 lg:py-4 px-2">
-                        {status === "1" ? "Active" : "Inactive"}
+                        {category ? category.category_name : 'No Category'}
                       </td>
+                      <td className="py-3 lg:py-4 px-2">{blog_heading}</td>
                       <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                         <Link
-                          href={`/hotel/edit-manage-room?hotelId=${hotelId}&roomId=${id}`}
+                          href={`/blogs/edit-blog?blogId=${id}`}
                           className="text-primary"
                         >
                           <PencilSquareIcon className="w-5 h-5" />
@@ -412,13 +433,12 @@ const Page = () => {
                 ) : (
                   <tr>
                     <td colSpan={4} className="text-center py-3">
-                      No rooms available
+                      No blogs available
                     </td>
                   </tr>
                 )}
               </tbody>
             </table>
-            {/* <Pagination /> */}
           </div>
         </div>
       </section>

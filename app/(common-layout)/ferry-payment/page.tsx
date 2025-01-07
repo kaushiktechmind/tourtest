@@ -18,7 +18,7 @@ function classNames(...classes: any[]) {
 }
 
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   // Parse travelData from localStorage, default to an empty object if not available
   const travelData = JSON.parse(localStorage.getItem("travelData") || "{}");
@@ -1300,4 +1300,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

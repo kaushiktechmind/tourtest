@@ -1,132 +1,142 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import { blogs } from "@/public/data/blogs";
+import { SearchIcon } from "@/public/data/icons";
 import {
   ArrowLongRightIcon,
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
+  ChevronLeftIcon,
+  ChevronRightIcon,
   EyeIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { SearchIcon } from "@/public/data/icons";
+import CardPagination from "@/components/CardPagination";
 
-const Page = () => {
-  const [blogs, setBlogs] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      try {
-        const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/get_all_blogs"
-        );
-        const data = await response.json();
-        if (data && data.data) {
-          setBlogs(data.data);
-        }
-      } catch (error) {
-        console.error("Error fetching blogs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBlogs();
-  }, []);
-
+const page = () => {
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
       <div className="container">
-        <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-6">
+        <div className="grid grid-cols-12 gap-4 lg:gap-6">
           <div className="col-span-12 lg:col-span-8">
-            {loading ? (
-              <p>Loading blogs...</p>
-            ) : (
-              <ul className="flex flex-col gap-6">
-                {blogs.map(
-                  ({
-                    id,
-                    blog_title,
-                    description,
-                    comments,
-                    created_at,
-                    blog_image_multiple,
-                    category,
-                  }) => (
-                    <li key={id}>
-                      <div className="bg-white rounded-2xl p-2">
+            <ul className="flex flex-col gap-6">
+              {blogs.map(({ id, comments, date, desc, img, title }) => (
+                <li key={id}>
+                  <div className="bg-white rounded-2xl p-2">
+                    <Link
+                      href="blog-details"
+                      className="link block rounded-2xl">
+                      <Image
+                        width={840}
+                        height={500}
+                        src={img}
+                        alt="image"
+                        className=" rounded-2xl"
+                      />
+                    </Link>
+                    <div className="p-3 md:p-5 pt-8">
+                      <ul className="flex flex-wrap mb-5 gap-4 gap-md-0">
+                        <li>
+                          <div className="flex gap-2 items-center">
+                            <UserCircleIcon className="w-5 h-5" />
+                            <p className="mb-0">
+                              By
+                              <Link
+                                href="#"
+                                className="link text-[var(--neutral-700)] hover:text-primary">
+                                Admin
+                              </Link>
+                            </p>
+                          </div>
+                        </li>
+                        <li className="text-primary text-lg">•</li>
+                        <li>
+                          <div className="flex gap-2 items-center">
+                            <CalendarDaysIcon className="w-5 h-5" />
+                            <p className="mb-0"> 12 Jan, 2023 </p>
+                          </div>
+                        </li>
+                        <li className="text-primary text-lg">•</li>
+                        <li>
+                          <div className="flex gap-2 items-center">
+                            <EyeIcon className="w-5 h-5" />
+                            <p className="mb-0"> 1.6k </p>
+                          </div>
+                        </li>
+                        <li className="text-primary text-lg">•</li>
+                        <li>
+                          <div className="flex gap-2 items-center">
+                            <ChatBubbleLeftRightIcon className="w-5 h-5" />
+                            <p className="mb-0"> 32 Comments </p>
+                          </div>
+                        </li>
+                      </ul>
+                      <h3 className="h3 mb-5">
                         <Link
-                          href={`/blog-details?blogId=${id}`}
-                          className="link block rounded-2xl">
-                          <Image
-                            width={840}
-                            height={500}
-                            src={blog_image_multiple[0]}
-                            alt={blog_title}
-                            className="rounded-2xl object-cover w-full h-[300px]"
-                          />
+                          href="blog-details"
+                          className="link text-[var(--neutral-700)] hover:text-primary">
+                          Realtor Magazine
                         </Link>
-                        <div className="p-3 md:p-5 pt-8">
-                          <ul className="flex flex-wrap mb-5 gap-4 gap-md-0">
-                            <li>
-                              <div className="flex gap-2 items-center">
-                              <li className="text-primary text-lg">•</li>
-                                <p className="mb-0">
-                                  <Link
-                                    href="#"
-                                    className="link text-[var(--neutral-700)] hover:text-primary">
-                                    {category.category_name}
-                                  </Link>
-                                </p>
-                              </div>
-                            </li>
-                            <li className="text-primary text-lg">•</li>
-                            <li>
-                              <div className="flex gap-2 items-center">
-                                <CalendarDaysIcon className="w-5 h-5" />
-                                <p className="mb-0">
-                                  {new Date(created_at).toLocaleDateString()}
-                                </p>
-                              </div>
-                            </li>
-                            
-                            <li className="text-primary text-lg">•</li>
-                            <li>
-                              <div className="flex gap-2 items-center">
-                                <ChatBubbleLeftRightIcon className="w-5 h-5" />
-                                <p className="mb-0"> {comments} Comments </p>
-                              </div>
-                            </li>
-                          </ul>
-                          <h3 className="h3 mb-5">
-                            <Link
-                              href={`/blog-details?blogId=${id}`}
-                              className="link text-[var(--neutral-700)] hover:text-primary">
-                              {blog_title}
-                            </Link>
-                          </h3>
-                          <p className="mb-8">
-                            {description.split(" ").slice(0, 10).join(" ")}...
-                          </p>
-                          <Link
-                            href={`/blog-details?blogId=${id}`}
-                            className="btn-outline text-primary inline-flex gap-2 items-center font-semibold">
-                            Read More
-                            <ArrowLongRightIcon className="w-5 h-5" />
-                          </Link>
-                        </div>
-                      </div>
+                      </h3>
+                      <p className="mb-8">
+                        Realtor Magazine is the official publication of the
+                        National Association of Realtors, providing real estate
+                        news, trends, and advice for real...
+                      </p>
+                      <Link
+                        href="/blog-details"
+                        className="btn-outline text-primary inline-flex gap-2 items-center font-semibold">
+                        Read More
+                        <ArrowLongRightIcon className="w-5 h-5" />
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              ))}
+
+              <li>
+                <nav>
+                  <ul className="flex gap-3 justify-center">
+                    <li className="page-item">
+                      <Link
+                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+                        href="#">
+                        <ChevronLeftIcon className="w-5 h-5" />
+                      </Link>
                     </li>
-                  )
-                )}
-              </ul>
-            )}
+                    <li className="page-item">
+                      <Link
+                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] bg-primary text-white"
+                        href="#">
+                        1
+                      </Link>
+                    </li>
+                    <li className="page-item">
+                      <Link
+                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+                        href="#">
+                        2
+                      </Link>
+                    </li>
+                    <li className="page-item">
+                      <Link
+                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+                        href="#">
+                        3
+                      </Link>
+                    </li>
+                    <li className="page-item">
+                      <Link
+                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+                        href="#">
+                        <ChevronRightIcon className="w-5 h-5" />
+                      </Link>
+                    </li>
+                  </ul>
+                </nav>
+              </li>
+            </ul>
           </div>
-
-
-
           <div className="col-span-12 lg:col-span-4">
             <div className="bg-white rounded-2xl p-6 mb-6">
               <h4 className="mb-6 text-2xl font-semibold"> Search </h4>
@@ -374,4 +384,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default page;
