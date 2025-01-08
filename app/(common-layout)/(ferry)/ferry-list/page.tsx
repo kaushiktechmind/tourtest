@@ -29,11 +29,15 @@ const Page = () => {
   const storedTravelData = JSON.parse(localStorage.getItem('travelData') || 'null');
 
 
-  const locationIds = {
+  const locationIds: { [key: string]: number } = {
     "Port Blair": 1,
-    "Swaraj Dweep  (Havelock) ": 2,
+    "Swaraj Dweep  (Havelock)": 2,
     "Shaheed Dweep (Neil)": 3,
   };
+
+  type Location = keyof typeof locationIds;
+
+  
 
   // Extracting data from storedTravelData
   const storedFrom1 = storedTravelData?.from1;

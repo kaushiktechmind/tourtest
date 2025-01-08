@@ -20,6 +20,10 @@ interface Amenity {
   cab_attribute_name: string; // Ensure this matches your API response
   cab_attribute_logo: string; // Add this if the API returns a logo
 }
+interface Location {
+  id: number;
+  location_name: string;
+}
 
 
 const Page = () => {
@@ -72,7 +76,7 @@ const Page = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]); 
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -159,7 +163,7 @@ const Page = () => {
 
 
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -662,7 +666,7 @@ const Page = () => {
                             {bannerImages.map((image, index) => (
                               <div key={index} className="relative">
                                 <img
-                                  src={image as string}
+                                  src={image as unknown as string}
                                   alt={`Banner Image ${index + 1}`}
                                   className="w-[150px] h-[150px] object-cover rounded-lg"
                                 />

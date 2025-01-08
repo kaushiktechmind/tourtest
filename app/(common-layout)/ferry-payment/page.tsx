@@ -17,6 +17,18 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+interface Passenger {
+  title: string;
+  name: string;
+  age: string;
+  sex: string;
+  nationality: string;
+  fcountry: string;
+  fpassport: string;
+  fexpdate: string;
+}
+
+
 
 const Page = () => {
   const router = useRouter();
@@ -125,7 +137,7 @@ const Page = () => {
   };
   
 
-  const [passengerData, setPassengerData] = useState(
+  const [passengerData, setPassengerData] = useState<Passenger[]>(
     Array.from({ length: adults + infants }, () => ({
       title: "Mr",
       name: "",
@@ -137,7 +149,7 @@ const Page = () => {
       fexpdate: "",
     }))
   );
-
+  
   const storedName = localStorage.getItem("name");
   const storedEmail = localStorage.getItem("email");
   const storedMobile = localStorage.getItem("mobile_number");
@@ -189,12 +201,12 @@ const Page = () => {
     }
   }, []); // Empty dependency array ensures this runs only once on mount.
 
-  const handlePassengerChange = (index: number, field: string, value: string) => {
+  const handlePassengerChange = (index: number, field: keyof Passenger, value: string) => {
     const updatedData = [...passengerData];
-
     updatedData[index][field] = value;
     setPassengerData(updatedData);
   };
+  
 
   const handleContactChange = (field: string, value: string) => {
     setContactDetails({ ...contactDetails, [field]: value });
@@ -332,7 +344,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+          Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
         },
         body: JSON.stringify({
           data: {
@@ -415,7 +427,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+          Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
         },
         body: JSON.stringify(payload),
       });
@@ -435,7 +447,7 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
             },
             body: JSON.stringify({
               data: {
@@ -449,7 +461,7 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
             },
             body: JSON.stringify({
               data: {

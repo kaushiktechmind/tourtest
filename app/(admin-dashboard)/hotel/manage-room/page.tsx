@@ -177,9 +177,10 @@ const Page = () => {
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,
-      amenities: selectedAmenities,
+      amenities: selectedAmenities.map((item) => item.toString()), // Convert to string[]
     }));
   }, [selectedAmenities]);
+  
 
 
   const handleSubmit = async (e: React.FormEvent) => {

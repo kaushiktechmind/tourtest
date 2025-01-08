@@ -45,11 +45,20 @@ interface RoomPrice {
 
 interface Room {
   id: number;
-  img: string;
+  // img: string;
   title: string;
   price: number;
+  child_price: number;
   extra_bed_price: number;
-  featured_images?: any; // Add this line
+  featured_images: string[];
+  amenity_name1: string;
+  amenity_logo1: string;
+  amenity_name2: string;
+  amenity_logo2: string;
+  amenity_name3: string;
+  amenity_logo3: string;
+  amenity_name4: string;
+  amenity_logo4: string;
 }
 
 
@@ -732,7 +741,7 @@ const Page = () => {
       });
       if (response.ok) {
         alert("Enquiry submitted successfully!");
-        setFormData({ name: "", phone: "", email: "", message: "" });
+        setFormData({ name: "", phone: "", email: "", message: "", service_type: "Hotel" });
       } else {
         alert("Failed to submit enquiry. Please try again.");
       }

@@ -11,8 +11,14 @@ import CheckboxCustom from "@/components/Checkbox";
 import { SearchIcon } from "@/public/data/icons";
 import { useState, useEffect } from "react";
 
+interface Location {
+  id: string;  // Or number, depending on the type of 'id'
+  location_name: string;
+  // Add other fields as needed
+}
+
 const Page = () => {
-  const [locations, setLocations] = useState([]);
+   const [locations, setLocations] = useState<Location[]>([]); 
   const [locationName, setLocationName] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -27,66 +33,50 @@ const Page = () => {
 
   const fetchLocations = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_location");
-      if (!response.ok) throw new Error("Failed to fetch locations");
-      const data = await response.json();
-      setLocations(data);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_location");
+    const data = await response.json();
+    setLocations(data);
+    setLoading(false);
   };
-
-  const handleAddLocation = async (e) => {
+  
+  const handleAddLocation = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    setSubmitError(null);
+    const token = localStorage.getItem("access_token");
   
-    try {
-      const token = localStorage.getItem("access_token");
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_locations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+      body: JSON.stringify({ location_name: locationName }),
+    });
   
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_locations", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
-        },
-        body: JSON.stringify({ location_name: locationName }),
-      });
-  
-      if (!response.ok) throw new Error("Failed to save location");
-  
+    if (response.ok) {
       setLocationName("");
       await fetchLocations();
-      alert("Location Added SuccessFully");
-    } catch (err) {
-      setSubmitError(err.message);
+      alert("Location Added Successfully");
     }
   };
+  
 
-  const handleDeleteLocation = async (id) => {
-    try {
-      const token = localStorage.getItem("access_token");
-
-      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/delete_location_by_id/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-        },
-      });
-
-      if (!response.ok) throw new Error("Failed to delete location");
-
+  const handleDeleteLocation = async (id: any) => {
+    const token = localStorage.getItem("access_token");
+  
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/delete_location_by_id/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+  
+    if (response.ok) {
       // Refresh location list after deletion
       await fetchLocations();
-      alert("Deleted SuccessFully");
-    } catch (err) {
-      console.error(err.message);
-      setError("Failed to delete location");
+      alert("Deleted Successfully");
     }
   };
+  
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -149,11 +139,11 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">Loading...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3 text-red-500">{error}</td>
+                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
                   ) : (
                     locations.map((location) => (

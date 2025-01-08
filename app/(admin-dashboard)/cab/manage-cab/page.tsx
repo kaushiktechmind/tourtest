@@ -17,7 +17,12 @@ interface Cab {
   price: string;
   max_pax: string;
   status: string;
+  cab_main_form: {
+    cab_name: string; // Ensure cab_name is part of cab_main_form
+  };
+  car_count: string;
 }
+
 interface Amenity {
   id: number;
   amenity_name: string; // Ensure this matches your API response

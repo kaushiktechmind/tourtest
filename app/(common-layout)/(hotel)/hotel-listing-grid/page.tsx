@@ -203,11 +203,10 @@ const Page = () => {
                 key={uniqueItem.hotel_id}
                 item={uniqueItem}
                 noOfRooms={noOfRooms}
-                loc={loc}
-                type={type}
-                startdate={startdate}
-                enddate={enddate}
-              />
+                loc={loc || ""}
+                type={type || ""}
+                startdate={startdate || ""}
+                enddate={enddate || ""} adults={0} numChildren={0} infants={0} />
             ))
         ) : (
           <div>No hotels available.</div>

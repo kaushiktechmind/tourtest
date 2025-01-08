@@ -1,6 +1,4 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import Link from "next/link";
 import {
   EllipsisVerticalIcon,
@@ -14,16 +12,21 @@ import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { Dialog, Transition } from "@headlessui/react";
 
+interface PackageInclude {
+  id: string | number;
+  include_title: string;
+}
+
 const Page = () => {
-  const [includes, setIncludes] = useState([]);
+  const [includes, setIncludes] = useState<PackageInclude[]>([]);
   const [includeTitle, setIncludeName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredIncludes, setFilteredIncludes] = useState([]);
+  const [filteredIncludes, setFilteredIncludes] = useState<PackageInclude[]>([]); // Explicit type here
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
-  const [itemToDelete, setItemToDelete] = useState(null); // Item ID to delete
+  const [itemToDelete, setItemToDelete] = useState<number | string | null>(null); // Item ID to delete
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -37,20 +40,17 @@ const Page = () => {
 
   const fetchIncludes = async () => {
     setLoading(true);
-    setError(null);
-    try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_include");
-      if (!response.ok) throw new Error("Failed to fetch includes");
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_package_include");
+    if (response.ok) {
       const data = await response.json();
       setIncludes(data);
       setFilteredIncludes(data); // Initialize filteredIncludes
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+    } else {
+      console.error("Failed to fetch includes");
     }
+    setLoading(false);
   };
-
+  
   const handleSearch = () => {
     const lowercasedSearch = searchTerm.toLowerCase();
     const filtered = includes.filter((include) =>
@@ -59,65 +59,59 @@ const Page = () => {
     setFilteredIncludes(filtered);
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
-  const handleAddInclude = async (e) => {
+  const handleAddInclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    setSubmitError(null);
 
-    try {
-      const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("access_token");
 
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_package_include", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ include_title: includeTitle }),
-      });
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_package_include", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ include_title: includeTitle }),
+    });
 
-      if (!response.ok) throw new Error("Failed to save include");
-
+    if (response.ok) {
       setIncludeName("");
       await fetchIncludes();
       alert("Include Added Successfully");
-    } catch (err) {
-      setSubmitError(err.message);
+    } else {
+      console.error("Failed to save include");
     }
   };
 
   const handleDeleteInclude = async () => {
     if (!itemToDelete) return;
-
-    try {
-      const token = localStorage.getItem("access_token");
-
-      const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_package_include_by_id/${itemToDelete}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to delete include");
-
+  
+    const token = localStorage.getItem("access_token");
+  
+    const response = await fetch(
+      `https://yrpitsolutions.com/tourism_api/api/admin/delete_package_include_by_id/${itemToDelete}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  
+    if (response.ok) {
       await fetchIncludes();
       alert("Deleted Successfully");
-    } catch (err) {
-      console.error(err.message);
-      setError("Failed to delete include");
-    } finally {
-      setIsDialogOpen(false); // Close dialog
-      setItemToDelete(null); // Reset ID
+    } else {
+      console.error("Failed to delete include");
     }
+  
+    setIsDialogOpen(false); // Close dialog
+    setItemToDelete(null); // Reset ID
   };
-
+  
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -176,11 +170,11 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">Loading...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3 text-red-500">{error}</td>
+                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
                   ) : (
                     currentItems.map((include) => (

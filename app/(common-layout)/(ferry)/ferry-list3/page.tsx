@@ -21,11 +21,15 @@ const Page = () => {
 
   const travelData = JSON.parse(localStorage.getItem('travelData') || 'null');
 
-  const locationIds = {
+  const locationIds: { [key: string]: number } = {
     "Port Blair": 1,
-    "Swaraj Dweep  (Havelock) ": 2,
+    "Swaraj Dweep  (Havelock)": 2,
     "Shaheed Dweep (Neil)": 3,
   };
+
+  type Location = keyof typeof locationIds;
+
+  
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
 
@@ -67,7 +71,7 @@ const Page = () => {
       "Content-Type": "application/json",
       "Mak_Authorization": token,
     };
-
+  
     const requestPayload = {
       data: {
         trip_type: tripType === "single_trip" ? "single_trip" : "return_trip",
@@ -78,39 +82,37 @@ const Page = () => {
         no_of_passenger: travelData?.no_of_passengers,
       },
     };
-
+  
     const apiUrl =
       tripType === "single_trip"
         ? "https://staging.makruzz.com/booking_api/schedule_search"
         : "https://staging.makruzz.com/booking_api/return_schedule_search";
-
-    try {
-      const response = await fetch(apiUrl, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(requestPayload),
-      });
-      const data = await response.json();
-      console.log("fetched data", data);
-
-      if (response.ok) {
-        // Check for response structure
-        const schedule =
-          tripType === "single_trip"
-            ? data.data // Direct access for single trips
-            : data.data.schedule; // Nested access for multiple trips
-        console.log("schedule data", schedule);
-
-        setScheduleData(schedule);
-      } else {
-        throw new Error(data.message || "Failed to fetch schedule");
-      }
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
+  
+    setLoading(true); // You may still want to set loading to true before the request
+  
+    const response = await fetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify(requestPayload),
+    });
+  
+    const data = await response.json();
+    console.log("fetched data", data);
+  
+    if (response.ok) {
+      // Check for response structure
+      const schedule =
+        tripType === "single_trip"
+          ? data.data // Direct access for single trips
+          : data.data.schedule; // Nested access for multiple trips
+      console.log("schedule data", schedule);
+  
+      setScheduleData(schedule);
     }
+  
+    setLoading(false); // Ensure loading is turned off
   };
+  
 
   useEffect(() => {
     if (tripType) {
@@ -440,7 +442,6 @@ const Page = () => {
                   </div>
                 </div>
               )}
-
 
               <div className="col-span-1">
                 <nav>

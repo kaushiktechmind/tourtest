@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import Link from "next/link";
 import {
   EllipsisVerticalIcon,
@@ -58,11 +58,11 @@ const Page = () => {
     setFilteredExcludes(filtered);
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page: SetStateAction<number>) => {
     setCurrentPage(page);
   };
 
-  const handleAddExclude = async (e) => {
+  const handleAddExclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
 

@@ -107,23 +107,47 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
-  const getDetailsAndIcon = (payment: Payment) => {
-    const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
+  // const getDetailsAndIcon = (payment: Payment) => {
+  //   const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
 
+  //   let icon = null;
+
+  //   if (payment.hotel_name) {
+  //     icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
+  //   } else if (payment.package_name) {
+  //     icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
+  //   } else if (payment.activity_name) {
+  //     icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
+  //   } else if (payment.cab_name) {
+  //     icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
+  //   }
+
+  //   return { icon, details }; // Return icon and details as an object
+  // };
+
+  const getDetailsAndIcon = (payment: PaymentData | Payment) => {
+    const details = 
+      (payment as Payment).hotel_name || 
+      (payment as Payment).package_name || 
+      (payment as Payment).activity_name || 
+      (payment as Payment).cab_name || 
+      "N/A";
+  
     let icon = null;
-
-    if (payment.hotel_name) {
-      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
-    } else if (payment.package_name) {
-      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
-    } else if (payment.activity_name) {
-      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
-    } else if (payment.cab_name) {
-      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
+  
+    if ((payment as Payment).hotel_name) {
+      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
+    } else if ((payment as Payment).package_name) {
+      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />;
+    } else if ((payment as Payment).activity_name) {
+      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
+    } else if ((payment as Payment).cab_name) {
+      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
     }
-
-    return { icon, details }; // Return icon and details as an object
+  
+    return { icon, details };
   };
+  
   
 
   return (
@@ -195,7 +219,7 @@ const Page = () => {
                     <td className="border p-2">₹{payment.amount}/-</td>
                     <td className="border p-2">
                       <a
-                        href={payment.invoice_pdf}
+                        ref={payment.invoice_pdf}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 underline flex items-center space-x-2"

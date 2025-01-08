@@ -37,6 +37,11 @@ interface HotelFormData {
   [key: string]: string | File[] | string[];
 }
 
+interface FormData {
+  comments: string;
+  // other fields...
+}
+
 const Page = () => {
 
   const [description, setDescription] = useState<string>("");
@@ -246,7 +251,7 @@ const Page = () => {
                 Select a category
               </option>
               {categories.map((category) => (
-                <option key={category.id} value={category.id}>
+               <option key={category.id} value={category.id ?? ''}>
                   {category.category_name}
                 </option>
               ))}
@@ -287,7 +292,7 @@ const Page = () => {
               name="comments"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder=""
-              value={formData.comments}
+              value={typeof formData.comments === "string" ? formData.comments : ""}
               onChange={handleInputChange}
             />
             <p className="mt-6 mb-4 text-xl font-medium">Tags :</p>

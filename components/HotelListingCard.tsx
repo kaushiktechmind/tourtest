@@ -15,6 +15,7 @@ const HotelListingCard = ({
   numChildren: number;
   infants: number;
   loc: string;
+  type: string,
   startdate: string;
   enddate: string;
   noOfRooms: number;

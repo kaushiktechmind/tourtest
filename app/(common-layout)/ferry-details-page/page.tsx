@@ -187,14 +187,14 @@ const Page = () => {
     }
   }, []); // Empty dependency array ensures this runs only once on mount.
 
-  const handlePassengerChange = (index, field, value) => {
+  const handlePassengerChange = (index: number, field: string, value: string) => {
     const updatedData = [...passengerData];
 
     updatedData[index][field] = value;
     setPassengerData(updatedData);
   };
 
-  const handleContactChange = (field, value) => {
+  const handleContactChange = (field: string, value: string) => {
     setContactDetails({ ...contactDetails, [field]: value });
   };
 
@@ -324,7 +324,7 @@ const Page = () => {
 
 
 
-  const handleDownloadTicket = async (bookingId) => {
+  const handleDownloadTicket = async (bookingId: any) => {
     try {
       const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
         method: "POST",

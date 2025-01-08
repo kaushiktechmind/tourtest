@@ -225,15 +225,26 @@ const Page = () => {
     ));
   };
 
-  const handleCheckboxChange = (label: string) => {
+  // const handleCheckboxChange = (label: string) => {
+  //   setSelectedAmenities((prevSelected) => {
+  //     if (prevSelected.includes(label)) {
+  //       return prevSelected.filter((item) => item !== label); // Unselect
+  //     } else {
+  //       return [...prevSelected, label]; // Select
+  //     }
+  //   });
+  // };
+  
+  const handleCheckboxChange = (amenity: Amenity) => {
     setSelectedAmenities((prevSelected) => {
-      if (prevSelected.includes(label)) {
-        return prevSelected.filter((item) => item !== label); // Unselect
+      if (prevSelected.some(item => item.id === amenity.id)) {
+        return prevSelected.filter(item => item.id !== amenity.id); // Unselect
       } else {
-        return [...prevSelected, label]; // Select
+        return [...prevSelected, amenity]; // Select
       }
     });
   };
+  
 
   useEffect(() => {
     const fetchLocations = async () => {

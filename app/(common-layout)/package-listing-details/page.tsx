@@ -63,7 +63,10 @@ interface PackageData {
 }
 
 interface ItineraryItem {
-  
+  day: string; 
+  title: string; 
+  description: string; 
+  image: string; 
 }
 
 
@@ -74,7 +77,7 @@ const Page = () => {
   const [selectedChildren3, setSelectedChildren3] = useState(0);
   const [selectedInfants1, setSelectedInfants1] = useState(0);
   const [selectedInfants2, setSelectedInfants2] = useState(0);
-  const datePickerRef = useRef(null);
+  const datePickerRef = useRef<any>(null);
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -531,7 +534,7 @@ const Page = () => {
                     <h4 className="mb-5 text-2xl font-semibold">Attributes</h4>
                     <div className="grid grid-cols-12 gap-4">
                       {(amenitiesArray && amenitiesArray.length > 0) ? (
-                        amenitiesArray.slice(0, 4).map((amenity, index) => (
+                        amenitiesArray.slice(0, 4).map((amenity: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined, index: React.Key | null | undefined) => (
                           <div className="col-span-12 md:col-span-4 lg:col-span-3" key={index}>
                             <ul className="flex flex-col gap-4">
                               <li>
@@ -618,7 +621,7 @@ const Page = () => {
                     <h6 className="mb-4 font-semibold">Inclusions</h6>
                     <ul className="flex flex-col gap-4 mb-10">
                       {(inclusions || []).length > 0 ? (
-                        inclusions.map((item, index) => (
+                        inclusions.map((item: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined, index: React.Key | null | undefined) => (
                           <li key={index}>
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
@@ -638,7 +641,7 @@ const Page = () => {
                     <h6 className="mb-4 font-semibold">Exclusions</h6>
                     <ul className="flex flex-col gap-4 mb-10">
                       {(exclusions || []).length > 0 ? (
-                        exclusions.map((item, index) => (
+                        exclusions.map((item: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined, index: React.Key | null | undefined) => (
                           <li key={index}>
                             <div className="flex items-center gap-2">
                               <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
@@ -669,7 +672,7 @@ const Page = () => {
 
                     {/* FAQ content */}
                     {faqs.length > 0 ? (
-                      faqs.map((faq, index) => (
+                      faqs.map((faq: { question: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; answer: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }, index: React.Key | null | undefined) => (
                         <div key={index} className="mb-6">
                           <h6 className="font-semibold mb-2">{faq.question}</h6>
                           <p>{faq.answer}</p>

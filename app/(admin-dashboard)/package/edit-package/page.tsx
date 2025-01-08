@@ -21,10 +21,17 @@ interface Amenity {
   package_attribute_logo: string; // Add this if the API returns a logo
 }
 
+interface Itinerary {
+  day: string;
+  title: string;
+  description: string;
+  itinerary_images: File[]; // Store the images in this array
+}
+
 
 const Page = () => {
-  const [itineraries, setItineraries] = useState([
-    { day: "", title: "", description: "" }
+  const [itineraries, setItineraries] = useState<Itinerary[]>([
+    { day: "", title: "", description: "", itinerary_images: [] }
   ]);
 
   const router = useRouter();

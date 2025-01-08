@@ -14,16 +14,21 @@ import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { Dialog, Transition } from "@headlessui/react";
 
+interface Category {
+  id: number | null;
+  category_name: string;
+}
+
 const Page = () => {
-  const [categorys, setCategorys] = useState([]);
+  const [categorys, setCategorys] = useState<Category[]>([]);
   const [categoryTitle, setCategoryName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredCategorys, setFilteredCategorys] = useState([]);
+  const [filteredCategorys, setFilteredCategorys] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
-  const [itemToDelete, setItemToDelete] = useState(null); // Item ID to delete
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -64,58 +69,51 @@ const Page = () => {
 
   const handleAddCategory = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    setSubmitError(null);
-
-    try {
-      const token = localStorage.getItem("access_token");
-
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ category_name: categoryTitle }),
-      });
-
-      if (!response.ok) throw new Error("Failed to save category");
-
-      setCategoryName("");
-      await fetchCategorys();
+    setSubmitError(null); // Optionally, you can still clear the error here
+  
+    const token = localStorage.getItem("access_token");
+  
+    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_category", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ category_name: categoryTitle }),
+    });
+  
+    if (response.ok) {
+      setCategoryName(""); // Clear the category name
+      await fetchCategorys(); // Fetch updated category list
       alert("Category Added Successfully");
-    } catch (err) {
-      setSubmitError(err.message);
     }
   };
+  
 
   const handleDeleteCategory = async () => {
     if (!itemToDelete) return;
-
-    try {
-      const token = localStorage.getItem("access_token");
-
-      const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_category_by_id/${itemToDelete}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (!response.ok) throw new Error("Failed to delete category");
-
+  
+    const token = localStorage.getItem("access_token");
+  
+    const response = await fetch(
+      `https://yrpitsolutions.com/tourism_api/api/admin/delete_category_by_id/${itemToDelete}`,
+      {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+  
+    if (response.ok) {
       await fetchCategorys();
       alert("Deleted Successfully");
-    } catch (err) {
-      console.error(err.message);
-      setError("Failed to delete category");
-    } finally {
-      setIsDialogOpen(false); // Close dialog
-      setItemToDelete(null); // Reset ID
     }
+  
+    setIsDialogOpen(false); // Close dialog
+    setItemToDelete(null); // Reset ID
   };
+  
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;

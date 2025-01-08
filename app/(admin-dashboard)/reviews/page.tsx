@@ -12,9 +12,23 @@ import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+interface Review {
+  id: string | number;
+  name: string,
+  model_name: string,
+  description: string;
+  created_at: string; // Or Date if you prefer
+  // Add other fields that are expected in the object
+}
+
+interface SwitchStates {
+  [key: string]: boolean; // Define index signature for dynamic keys (id) with boolean values
+}
+
 const Page = () => {
-  const [reviews, setReviews] = useState([]);
-  const [switchStates, setSwitchStates] = useState({}); // Track switch states for each review
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [switchStates, setSwitchStates] = useState<SwitchStates>({});
+
 
   useEffect(() => {
     const token = localStorage.getItem("access_token"); // Retrieve Bearer token from localStorage
@@ -41,7 +55,7 @@ const Page = () => {
   const handleToggle = (id: string | number) => {
     const token = localStorage.getItem("access_token"); // Retrieve Bearer token from localStorage
     const newStatus = !switchStates[id];
-    setSwitchStates((prev) => ({
+    setSwitchStates((prev: any) => ({
       ...prev,
       [id]: newStatus,
     }));
@@ -69,7 +83,7 @@ const Page = () => {
       .catch((error) => {
         console.error("Error updating review status:", error);
         // Revert switch state on error
-        setSwitchStates((prev) => ({
+        setSwitchStates((prev: any) => ({
           ...prev,
           [id]: !newStatus,
         }));

@@ -39,7 +39,18 @@ interface ActivityData {
   activity_includes: string; // JSON string
   activity_excludes: string; // JSON string
   activity_faqs: string;
+  ticket_name1?: string;
+  ticket_name2?: string;
+  ticket_name3?: string;
+  ticket_name4?: string;
+  ticket_name5?: string;
+  ticket_price1?: number;
+  ticket_price2?: number;
+  ticket_price3?: number;
+  ticket_price4?: number;
+  ticket_price5?: number;
 }
+
 
 
 const Page = () => {

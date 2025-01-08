@@ -19,9 +19,12 @@ interface Room {
 
 interface Blog {
   id: number;
-  // Add more fields as per your data structure
+  blog_title: string;
+  blog_heading: string;
+  category: {
+    category_name: string;
+  } | null;
 }
-
 interface Category {
   id: Key | null | undefined;
   category_name: ReactNode;
@@ -258,7 +261,7 @@ const Page = () => {
                 Select a category
               </option>
               {categories.map((category) => (
-                <option key={category.id} value={category.id}>
+               <option key={category.id} value={category.id ?? ''}>
                   {category.category_name}
                 </option>
               ))}

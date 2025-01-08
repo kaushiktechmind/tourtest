@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper";
 import Link from "next/link";
 import ModalVideo from "react-modal-video";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Key } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StarIcon } from "@heroicons/react/20/solid";
 import {
@@ -33,12 +33,15 @@ import ReactPlayer from "react-player";
 import { PlayIcon } from "@/public/data/icons";
 import { Tab } from "@headlessui/react";
 import CheckboxCustom from "@/components/Checkbox";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+import { UrlObject } from "url";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 interface CabDetails {
+  banner_image_multiple: any;
   location: string;
   cab_name: string;
   description: string;
@@ -48,7 +51,7 @@ interface CabDetails {
   max_passenger: number;
   inclusions: string;
   exclusions: string;
-  // Add more fields as needed from the API response
+  faqs?: string[]; // Assuming 'faqs' is an array of strings
 }
 
 
@@ -168,14 +171,14 @@ const Page = () => {
 
 
   // Process inclusions
-  const inclusions = cabDetails?.inclusion
-    ? cabDetails.inclusion[0].split(',').map((item: string) => item.trim())
+  const inclusions = cabDetails?.inclusions
+    ? cabDetails.inclusions[0].split(',').map((item: string) => item.trim())
     : [];
 
 
   // Process exclusions
-  const exclusions = cabDetails?.exclusion
-    ? cabDetails.exclusion[0].split(',').map((item: string) => item.trim())
+  const exclusions = cabDetails?.exclusions
+    ? cabDetails.exclusions[0].split(',').map((item: string) => item.trim())
     : [];
 
 
@@ -222,7 +225,7 @@ const Page = () => {
       });
       if (response.ok) {
         alert("Enquiry submitted successfully!");
-        setFormData({ name: "", phone: "", email: "", message: "" });
+        setFormData({ name: "", phone: "", email: "", message: "", service_type: "Cab" });
       } else {
         alert("Failed to submit enquiry. Please try again.");
       }
@@ -232,9 +235,9 @@ const Page = () => {
   };
 
 
-  const handlePaxChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedPax(e.target.value);
-  };
+  // const handlePaxChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   setSelectedPax(e.target.value);
+  // };
 
 
 
@@ -320,9 +323,9 @@ const Page = () => {
               >
                 <div className="swiper-wrapper property-gallery-slider">
                   {/* Dynamically render SwiperSlide from banner_image_multiple */}
-                  {cabDetails.banner_image_multiple.map((image, index) => (
+                  {cabDetails.banner_image_multiple.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => (
                     <SwiperSlide key={index} className="swiper-slide">
-                      <Link href={image} className="link property-gallery">
+                      <Link ref={image} className="link property-gallery">
                         <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}> {/* Fixed height for all images */}
                           <Image
                             layout="fill"  // Ensures the image fills the parent container
