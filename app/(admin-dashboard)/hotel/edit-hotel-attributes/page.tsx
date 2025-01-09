@@ -7,10 +7,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-const Page = () => {
+const EditHotelAttribute = () => {
   const [amenityData, setAmenityData] = useState({
     amenity_name: "",
     amenity_logo: "",
@@ -122,6 +122,7 @@ const Page = () => {
   
 
   return (
+   
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Hotel Attributes</h2>
@@ -215,5 +216,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditHotelAttribute />
+  </Suspense>
+);
 
 export default Page;

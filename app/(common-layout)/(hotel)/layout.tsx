@@ -7,7 +7,7 @@ import { ArrowPathIcon, ListBulletIcon, MapPinIcon, Squares2X2Icon } from "@hero
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
@@ -21,7 +21,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 
   return (
-    <>
       <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3 ">
         <div className="container">
           <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[100px]">
@@ -81,7 +80,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </li>
                 </ul>
                 <div className="border-t border-dashed my-6"></div>
-               
+
                 <div className="border-t border-dashed my-6"></div>
                 <Link
                   href="#"
@@ -126,6 +125,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </div>
         </div>
       </div>
-    </>
   );
 }

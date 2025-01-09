@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -17,7 +17,7 @@ interface CabFormData {
   ar_count: string;
 }
 
-const Page = () => {
+const EditManageCab = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cabId = searchParams.get("cabId");
@@ -134,6 +134,7 @@ const Page = () => {
   };
 
   return (
+    
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Manage Cab</h2>
@@ -227,5 +228,9 @@ const Page = () => {
     </div>
   );
 };
-
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditManageCab />
+  </Suspense>
+);
 export default Page;

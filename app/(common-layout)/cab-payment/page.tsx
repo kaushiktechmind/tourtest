@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children } from "react";
+import { Children, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayCabBtn from "@/components/RazorpayCabBtn";
@@ -22,7 +22,7 @@ const generateBookingID = () => {
   return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
 };
 
-const Page = () => {
+const CabPayment = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cabId = searchParams.get("cabId");
@@ -310,5 +310,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <CabPayment />
+  </Suspense>
+);
 
 export default Page;

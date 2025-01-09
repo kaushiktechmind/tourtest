@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import HotelListingCard from "@/components/HotelListingCard";
 
-const Page = () => {
+const HotelListingGrid = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -189,9 +189,6 @@ const Page = () => {
 
   return (
     <>
-
-
-      <>
         {loading ? (
           <div>Loading...</div>
         ) : hotels.length > 0 ? (
@@ -218,9 +215,16 @@ const Page = () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      </>
-    </>
+        </>
   );
 };
 
-export default Page;
+
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <HotelListingGrid />
+  </Suspense>
+);
+
+export default Page;  

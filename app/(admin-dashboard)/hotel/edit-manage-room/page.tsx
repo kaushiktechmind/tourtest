@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   ChevronDownIcon,
   EyeIcon,
@@ -46,7 +46,7 @@ interface HotelFormData {
   [key: string]: string | File[] | number[]; // Ensure this covers amenities
 }
 
-const Page = () => {
+const EditManageRoom = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelId = searchParams.get("hotelId");
@@ -456,4 +456,9 @@ const Page = () => {
   );
 };
 
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditManageRoom />
+  </Suspense>
+);
 export default Page;

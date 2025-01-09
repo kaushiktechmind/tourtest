@@ -5,7 +5,7 @@ import { flightList } from "@/public/data/flightlist";
 import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
+import { useState, useEffect, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -14,7 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
-const Page = () => {
+const FerryList2 = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tripType = searchParams.get("tripType");
@@ -153,6 +153,7 @@ const Page = () => {
 
 
   return (
+    
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
@@ -461,5 +462,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <FerryList2 />
+  </Suspense>
+);
 
 export default Page;

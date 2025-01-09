@@ -9,11 +9,11 @@ import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
 import { SearchIcon } from "@/public/data/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
-const Page = () => {
+const EditCabExclude = () => {
   const [excludeTitle, setexcludeTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,6 +70,7 @@ const Page = () => {
 
 
   return (
+    
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Cab Exclude</h2>
@@ -109,5 +110,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditCabExclude />
+  </Suspense>
+);
 
 export default Page;

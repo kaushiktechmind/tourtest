@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   EyeIcon,
   PencilSquareIcon,
@@ -39,7 +39,7 @@ interface CabFormData {
   cab_name: string;
 }
 
-const Page = () => {
+const ManageCab = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cabId = searchParams.get("cabId"); // Get FAQ ID from URL params
@@ -182,6 +182,7 @@ const Page = () => {
   </div>;
 
   return (
+   
     <div className="bg-[var(--bg-2)]">
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -353,5 +354,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ManageCab />
+  </Suspense>
+);
 
 export default Page;

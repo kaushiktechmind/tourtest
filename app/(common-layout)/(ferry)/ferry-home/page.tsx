@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 
 import { SearchIcon } from "@/public/data/icons";
@@ -29,7 +29,7 @@ interface Trip {
 
 
 
-const Page = () => {
+const FerryHome = () => {
   const [startDate, setStartDate] = useState(null);
   const [isOpen, setOpen] = useState(false);
   const [trips, setTrips] = useState<Trip[]>([{ id: 1, from: "", to: "", date: null }]);
@@ -391,5 +391,11 @@ const Page = () => {
     </section>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <FerryHome />
+  </Suspense>
+);
 
 export default Page;

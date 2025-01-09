@@ -1,10 +1,12 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, Suspense } from "react";
+
 import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
-import QuillEditor from "@/components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -26,7 +28,7 @@ interface Location {
 }
 
 
-const Page = () => {
+const EditCab = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const cabId = searchParams.get("cabId");
@@ -481,6 +483,7 @@ const Page = () => {
 
 
   return (
+  
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Cab</h2>
@@ -919,5 +922,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditCab />
+  </Suspense>
+);
 
 export default Page;  

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
+import { Children, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayActBtn from "@/components/RazorpayActBtn";
@@ -22,7 +22,7 @@ const generateBookingID = () => {
   return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
 };
 
-const Page = () => {
+const ActivityPayment = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activityId = searchParams.get("activityId");
@@ -318,5 +318,13 @@ const Page = () => {
     </div>
   );
 };
+
+
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ActivityPayment />
+  </Suspense>
+);
 
 export default Page;

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import {
   ChevronDownIcon,
   EyeIcon,
@@ -41,7 +41,7 @@ interface HotelFormData {
   // For multiple image uploads
 }
 
-const Page = () => {
+const AddCoupon = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -366,5 +366,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <AddCoupon />
+  </Suspense>
+);
 
 export default Page;

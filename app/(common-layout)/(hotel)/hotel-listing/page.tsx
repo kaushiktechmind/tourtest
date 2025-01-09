@@ -1,12 +1,12 @@
 "use client";
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, Suspense } from "react";
 import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pagination } from "swiper";
 
-const Page = () => {
+const HotelListing = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = searchParams.get("type");
@@ -229,5 +229,11 @@ const Page = () => {
   
 };
 
-export default Page;
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <HotelListing />
+  </Suspense>
+);
+
+export default Page;  
 	

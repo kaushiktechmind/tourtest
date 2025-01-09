@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import featured1 from "@/public/img/featured-img-1.jpg";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children } from "react";
+import { Children, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayButton from "@/components/RazorpayButton";
@@ -45,7 +45,7 @@ const generateBookingID = () => {
   return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
 };
 
-const Page = () => {
+const PaymentMethod = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const totalAdultPrice = localStorage.getItem("storedAdultPrice");
@@ -421,5 +421,12 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <PaymentMethod />
+  </Suspense>
+);
+
 
 export default Page;

@@ -5,7 +5,7 @@ import { flightList } from "@/public/data/flightlist";
 import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, SetStateAction, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
+import { useState, useEffect, SetStateAction, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 import {
   ArrowPathIcon,
   ChevronLeftIcon,
@@ -23,7 +23,7 @@ interface Schedule {
 }
 
 
-const Page = () => {
+const FerryList3 = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tripType = searchParams.get("tripType");
@@ -184,6 +184,7 @@ const Page = () => {
 
 
   return (
+    
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
@@ -506,4 +507,11 @@ const Page = () => {
   );
 };
 
-export default Page;
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FerryList3 />
+    </Suspense>
+  );
+}

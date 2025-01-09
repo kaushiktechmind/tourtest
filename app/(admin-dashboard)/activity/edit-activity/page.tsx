@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import { useState, useEffect, Suspense } from "react";
 import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
-import QuillEditor from "@/components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -41,7 +42,7 @@ interface Location {
 
 
 
-const Page = () => {
+const EditActivity = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activityId = searchParams.get("activityId");
@@ -1051,5 +1052,11 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditActivity />
+  </Suspense>
+);
 
 export default Page;  

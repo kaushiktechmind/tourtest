@@ -7,10 +7,10 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-const Page = () => {
+const EditPackageAttribute = () => {
   const [amenityData, setAmenityData] = useState({
     package_attribute_name: "",
     package_attribute_logo: "",
@@ -216,4 +216,9 @@ const Page = () => {
   );
 };
 
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditPackageAttribute />
+  </Suspense>
+);
 export default Page;

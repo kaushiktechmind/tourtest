@@ -6,7 +6,7 @@ import { Tooltip } from "react-tooltip";
 import "swiper/css";
 import { Navigation } from "swiper";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Tab } from "@headlessui/react";
 
 import "react-datepicker/dist/react-datepicker.css";
@@ -66,7 +66,7 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Page = () => {
+const HotelListingDetails = () => {
   const [roomData, setRoomData] = useState<Room[]>([]);
   const [msg, setMsg] = useState('');
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -1792,5 +1792,12 @@ const Page = () => {
     </main>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <HotelListingDetails />
+  </Suspense>
+);
+
 
 export default Page;

@@ -12,6 +12,7 @@ import ModalVideo from "react-modal-video";
 import { useState, useEffect, Key } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StarIcon } from "@heroicons/react/20/solid";
+import { Suspense } from "react";
 import {
   ArrowLongLeftIcon,
   ArrowRightIcon,
@@ -63,7 +64,7 @@ interface CabSubForm {
 }
 
 
-const Page = () => {
+const CabListingDetails = () => {
   const [cabDetails, setCabDetails] = useState<CabDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -1037,8 +1038,14 @@ const Page = () => {
           </div>
         </div>
       </div>
-    </>
+      </>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <CabListingDetails />
+  </Suspense>
+);
 
 export default Page;

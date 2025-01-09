@@ -4,12 +4,14 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
+
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import React, { useState, useEffect } from "react";
-import QuillEditor from "../../../../components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import { Dialog, Transition } from "@headlessui/react";
 
 interface Page {

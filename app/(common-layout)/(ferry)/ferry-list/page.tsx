@@ -4,7 +4,7 @@ import CustomRangeSlider from "@/components/RangeSlider";
 import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
+import { useState, useEffect, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import DatePicker from "react-datepicker";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
@@ -27,7 +27,7 @@ interface Trip {
 }
 
 
-const Page = () => {
+const FerryList = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const storedTripType = searchParams.get("tripType");
@@ -354,11 +354,6 @@ const Page = () => {
 
 
   };
-
-
-
-
-
 
 
 
@@ -929,4 +924,9 @@ const Page = () => {
   );
 };
 
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <FerryList />
+  </Suspense>
+);
 export default Page;

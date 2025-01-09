@@ -1,5 +1,5 @@
 "use client";
-import React, { Fragment, useState, useEffect } from "react";
+import React, { Fragment, useState, useEffect, Suspense } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -9,12 +9,11 @@ import { PlusCircleIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import CheckboxCustom from "@/components/Checkbox";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import SelectUI from "@/components/SelectUI";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 
-export default function DemoApp() {
+const DemoApp = () => {
   const [roomData, setRoomData] = useState<any[]>([]); // Initialize roomData
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -478,6 +477,17 @@ export default function DemoApp() {
     </div>
   );
 }
+
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <DemoApp />
+  </Suspense>
+);
+
+export default Page;
+
+
 
 function renderEventContent(eventInfo: any) {
   return (

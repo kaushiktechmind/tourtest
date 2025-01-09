@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -27,7 +27,7 @@ interface HotelFormData {
     status: string;
 }
 
-const Page = () => {
+const EditCoupon = () => {
     const router = useRouter();
     const searchParams = useSearchParams();
     const couponId = searchParams.get("couponId");
@@ -129,6 +129,7 @@ const Page = () => {
     };
 
     return (
+       
         <div className="bg-[var(--bg-2)]">
             <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
                 <h2 className="h2 text-white">Edit Coupon</h2>
@@ -241,5 +242,11 @@ const Page = () => {
         </div>
     );
 };
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditCoupon />
+    </Suspense>
+  );
 
 export default Page;

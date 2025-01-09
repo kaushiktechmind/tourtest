@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
+import React, { useState, useEffect, Suspense } from "react";
 import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
-import QuillEditor from "@/components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
 import { useSearchParams, useRouter } from "next/navigation";
@@ -35,7 +36,7 @@ interface Itinerary {
 }
 
 
-const Page = () => {
+const AddNewPackage = () => {
   const router = useRouter();
   const [itineraries, setItineraries] = useState<Itinerary[]>([
     {
@@ -1031,5 +1032,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <AddNewPackage />
+  </Suspense>
+);
 
 export default Page;  

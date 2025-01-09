@@ -5,15 +5,16 @@ import {
   EyeIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
-import dynamic from "next/dynamic";
+;
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
-import QuillEditor from "../../../../components/QuillEditor";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
+import React, { useState, useEffect, ChangeEvent, Suspense } from "react";
 import axios, { AxiosError } from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
 
@@ -78,7 +79,7 @@ interface Amenity {
   amenity_logo: string;
 }
 
-const Page = () => {
+const AddNewHotel = () => {
   const router = useRouter();
   const [description, setDescription] = useState<string>(""); // Type for description
   const [formData, setFormData] = useState<HotelFormData>({
@@ -449,6 +450,8 @@ const Page = () => {
       setSelectedImages(previews); // Update selectedImages state with previews
     }
   };
+
+
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
@@ -1199,5 +1202,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <AddNewHotel />
+  </Suspense>
+);
 
 export default Page;

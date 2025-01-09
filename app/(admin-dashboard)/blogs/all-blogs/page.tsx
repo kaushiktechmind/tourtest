@@ -6,11 +6,13 @@ import {
   CloudArrowUpIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
+
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
-import QuillEditor from "../../../../components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 
 interface Room {
   blog_title: string;

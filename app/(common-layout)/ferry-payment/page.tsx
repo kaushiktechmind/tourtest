@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 // import RazorpayFerryBtn from "@/components/RazorpayFerryBtn";
 import RazorpayFerryBtn from "@/components/RazorpayFerryBtn";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -30,7 +30,7 @@ interface Passenger {
 
 
 
-const Page = () => {
+const FerryPayment = () => {
   const router = useRouter();
   // Parse travelData from localStorage, default to an empty object if not available
   const travelData = JSON.parse(localStorage.getItem("travelData") || "{}");
@@ -1313,5 +1313,12 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <FerryPayment />
+  </Suspense>
+);
+
 
 export default Page;

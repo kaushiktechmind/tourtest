@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import featured1 from "@/public/img/featured-img-1.jpg";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children } from "react";
+import { Children, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayButton from "@/components/RazorpayButton";
@@ -65,7 +65,7 @@ const enddate = localStorage.getItem("endDate");
 
 
 
-const Page = () => {
+const Reciept = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const totalAdultPrice = localStorage.getItem("storedAdultPrice");
@@ -413,6 +413,12 @@ const Page = () => {
   );
 };
 
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <Reciept />
+  </Suspense>
+);
+ 
 export default Page;
 function setSelectedCountry(value: string) {
   throw new Error("Function not implemented.");

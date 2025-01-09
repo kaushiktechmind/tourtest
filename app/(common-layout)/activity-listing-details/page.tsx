@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import DatePicker from "react-datepicker";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import CheckboxCustom from "@/components/Checkbox";
 import { useRouter, useSearchParams } from "next/navigation";
 function classNames(...classes: any[]) {
@@ -282,6 +282,7 @@ const Page = () => {
 
 
   return (
+    <Suspense fallback={<div>Loading...</div>}>
     <main>
       <div className="bg-[var(--bg-2)]">
         <div className="py-4">
@@ -988,6 +989,7 @@ const Page = () => {
         </div>
       </div>
     </main>
+    </Suspense>
   );
 };
 

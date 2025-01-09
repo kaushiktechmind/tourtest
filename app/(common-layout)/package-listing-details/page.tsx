@@ -1,5 +1,5 @@
 "use client";
-import React, { useRef } from "react";
+import React, { Suspense, useRef } from "react";
 import { Tab } from "@headlessui/react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import "react-datepicker/dist/react-datepicker.css";
@@ -70,7 +70,7 @@ interface ItineraryItem {
 }
 
 
-const Page = () => {
+const PackageListingDetails = () => {
   const [selectedAdults, setSelectedAdults] = useState(0);
   const [selectedChildren1, setSelectedChildren1] = useState(0);
   const [selectedChildren2, setSelectedChildren2] = useState(0);
@@ -1309,5 +1309,12 @@ const Page = () => {
     </main>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <PackageListingDetails />
+  </Suspense>
+);
+
 
 export default Page;

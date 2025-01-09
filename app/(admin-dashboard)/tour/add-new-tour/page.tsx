@@ -5,13 +5,13 @@ import {
   EyeIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
 import { touramenities } from "@/public/data/touramenities"
+import Link from "next/link";
 import dynamic from 'next/dynamic';
 const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import React, { useState } from "react";

@@ -5,15 +5,17 @@ import {
   EyeIcon,
   InformationCircleIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
+
 import dynamic from "next/dynamic";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
 import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
-import QuillEditor from "../../../../components/QuillEditor";
-import React, { useState, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
+
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
+import React, { useState, useEffect, ChangeEvent, Suspense } from "react";
 import axios, { AxiosError } from "axios";
 import { useSearchParams, useRouter } from "next/navigation";
 interface Amenity {
@@ -73,7 +75,7 @@ interface HotelFormData {
   i_frame_link: string;
 }
 
-const Page = () => {
+const EditHotel = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const hotelId = searchParams.get("hotelId");
@@ -1314,5 +1316,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditHotel />
+  </Suspense>
+);
 
 export default Page;

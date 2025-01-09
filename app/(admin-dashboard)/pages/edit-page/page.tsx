@@ -1,11 +1,13 @@
 "use client";
-import Link from "next/link";
-import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import QuillEditor from "../../../../components/QuillEditor";
-import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
 
-const Page = () => {
+import Footer from "@/components/vendor-dashboard/Vendor.Footer";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { useState, useEffect, Suspense } from "react";
+
+const EditPage = () => {
   const [pageTitle, setPageTitle] = useState<string>(""); // State for PAGE Title
   const [description, setDescription] = useState<string>(
     "This is a default description"
@@ -72,7 +74,7 @@ const Page = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("PAGE Updated Successfully:");
+        alert("Page is Updated Successfully:");
         // Redirect or show success message here
         router.push("/pages/all-pages");
       } else {
@@ -132,5 +134,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditPage />
+  </Suspense>
+);
 
 export default Page;

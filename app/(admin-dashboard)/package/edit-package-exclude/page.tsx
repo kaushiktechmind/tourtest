@@ -9,11 +9,11 @@ import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import CheckboxCustom from "@/components/Checkbox";
 import { SearchIcon } from "@/public/data/icons";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
-const Page = () => {
+const EditPackageExclude = () => {
   const [excludeTitle, setexcludeTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -102,5 +102,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditPackageExclude />
+  </Suspense>
+);
 
 export default Page;

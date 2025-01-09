@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -34,7 +34,7 @@ interface Blog {
   blog_image_multiple?: string[]; // Assuming it's an array of strings, update if needed
 }
 
-const Page = () => {
+const BlogDetails = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -858,5 +858,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <BlogDetails />
+  </Suspense>
+);
 
 export default Page;

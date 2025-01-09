@@ -1,11 +1,12 @@
 "use client";
-import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import QuillEditor from "../../../../components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 
-const Page = () => {
+const EditHotelFAQ = () => {
   const [faqTitle, setFaqTitle] = useState<string>(""); // State for FAQ Title
   const [description, setDescription] = useState<string>(
     "This is a default description"
@@ -132,5 +133,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditHotelFAQ />
+  </Suspense>
+);
 
 export default Page;

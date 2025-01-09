@@ -1,16 +1,17 @@
 "use client";
-import { Key, ReactNode, useEffect, useState } from "react";
+import { Key, ReactNode, Suspense, useEffect, useState } from "react";
 import {
   EyeIcon,
   PencilSquareIcon,
   CloudArrowUpIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
-import QuillEditor from "../../../../components/QuillEditor";
+import Link from "next/link";
+import dynamic from 'next/dynamic';
+const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), { ssr: false });
 import { useRouter, useSearchParams } from "next/navigation";
 
 interface Room {
@@ -42,7 +43,7 @@ interface FormData {
   // other fields...
 }
 
-const Page = () => {
+const EditBlog = () => {
 
   const [description, setDescription] = useState<string>("");
 
@@ -394,5 +395,11 @@ const Page = () => {
     </div>
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <EditBlog />
+  </Suspense>
+);
 
 export default Page;
