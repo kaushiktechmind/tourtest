@@ -33,7 +33,8 @@ const Page = () => {
 
   useEffect(() => {
     fetchIncludes();
-  }, []);
+  }, []); 
+
 
   useEffect(() => {
     handleSearch();
@@ -104,7 +105,7 @@ const Page = () => {
   
     if (response.ok) {
       await fetchIncludes();
-      alert("Deleted Successfully");
+      alert("Include Deleted Successfully");
     } else {
       console.error("Failed to delete include");
     }
