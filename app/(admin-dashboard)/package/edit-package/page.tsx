@@ -14,6 +14,10 @@ interface FAQ {
   package_faq_title: string;
   package_faq_description: string; // Assuming the correct spelling is 'package_faq_description'
 }
+interface Location {
+  id: number;
+  location_name: string;
+}
 
 interface Amenity {
   id: number;
@@ -86,7 +90,7 @@ const Page = () => {
     itinerary_images: [],
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
@@ -186,11 +190,13 @@ const Page = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
+  
 
 
   const handleCheckboxChange = (label: string) => {
@@ -525,18 +531,26 @@ const Page = () => {
 
 
 
-  const handleInputChange = (index: number, field: string, value: string) => {
+  const handleInputChange = (index: number, field: keyof Itinerary, value: string) => {
     const newItineraries = [...itineraries];
-    newItineraries[index][field] = value;
+    (newItineraries[index] as any)[field] = value;
     setItineraries(newItineraries);
   };
 
   // Add new itinerary box
+  // const addNewItinerary = () => {
+  //   if (itineraries.length < 5) {
+  //     setItineraries([
+  //       ...itineraries,
+  //       { image: "", title: "", description: "", content: "" }
+  //     ]);
+  //   }
+  // };
   const addNewItinerary = () => {
     if (itineraries.length < 5) {
       setItineraries([
         ...itineraries,
-        { image: "", title: "", description: "", content: "" }
+        { day: "", title: "", description: "", itinerary_images: [] }
       ]);
     }
   };
@@ -721,7 +735,7 @@ const Page = () => {
                           <input
                             type="text"
                             name={`person_type_name${personIndex}`}
-                            value={formData[`person_type_name${personIndex}`] || ""}
+                            value={formData[`person_type_name${personIndex}` as keyof typeof formData] || ""}
                             onChange={handleChange}
                             className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                           />
@@ -730,7 +744,7 @@ const Page = () => {
                           <input
                             type="text"
                             name={`person_type_description${personIndex}`}
-                            value={formData[`person_type_description${personIndex}`] || ""}
+                            value={formData[`person_type_description${personIndex}`  as keyof typeof formData] || ""}
                             onChange={handleChange}
                             className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                           />
@@ -739,7 +753,7 @@ const Page = () => {
                           <input
                             type="number"
                             name={`person_min${personIndex}`}
-                            value={formData[`person_min${personIndex}`] || ""}
+                            value={formData[`person_min${personIndex}`  as keyof typeof formData] || ""}
                             onChange={handleChange}
                             className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                           />
@@ -748,7 +762,7 @@ const Page = () => {
                           <input
                             type="number"
                             name={`person_max${personIndex}`}
-                            value={formData[`person_max${personIndex}`] || ""}
+                            value={formData[`person_max${personIndex}`  as keyof typeof formData] || ""}
                             onChange={handleChange}
                             className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                           />
@@ -757,7 +771,7 @@ const Page = () => {
                           <input
                             type="number"
                             name={`person_type_price${personIndex}`}
-                            value={formData[`person_type_price${personIndex}`] || ""}
+                            value={formData[`person_type_price${personIndex}`  as keyof typeof formData] || ""}
                             onChange={handleChange}
                             className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                           />

@@ -32,7 +32,6 @@ import {
 import ReactPlayer from "react-player";
 import { PlayIcon } from "@/public/data/icons";
 import { Tab } from "@headlessui/react";
-import CheckboxCustom from "@/components/Checkbox";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { UrlObject } from "url";
 
@@ -41,6 +40,7 @@ function classNames(...classes: any[]) {
 }
 
 interface CabDetails {
+  created_at: string;  // Ensure it's a string
   banner_image_multiple: any;
   location: string;
   cab_name: string;
@@ -52,6 +52,14 @@ interface CabDetails {
   inclusions: string;
   exclusions: string;
   faqs?: string[]; // Assuming 'faqs' is an array of strings
+}
+
+interface CabSubForm {
+  min_pax: number;
+  max_pax: number;
+  car_count: number;
+  cargo_count: number;
+  price: number;
 }
 
 
@@ -73,7 +81,7 @@ const Page = () => {
     message: "",
   });
 
-  const [cabSubForms, setCabSubForms] = useState([]);
+  const [cabSubForms, setCabSubForms] = useState<CabSubForm[]>([]);
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [dropdownOptions, setDropdownOptions] = useState<number[]>([]);
 
@@ -235,15 +243,6 @@ const Page = () => {
   };
 
 
-  // const handlePaxChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   setSelectedPax(e.target.value);
-  // };
-
-
-
-
-
-
   const handleBookingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("access_token");
@@ -323,21 +322,33 @@ const Page = () => {
               >
                 <div className="swiper-wrapper property-gallery-slider">
                   {/* Dynamically render SwiperSlide from banner_image_multiple */}
-                  {cabDetails.banner_image_multiple.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => (
-                    <SwiperSlide key={index} className="swiper-slide">
-                      <Link ref={image} className="link property-gallery">
-                        <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}> {/* Fixed height for all images */}
-                          <Image
-                            layout="fill"  // Ensures the image fills the parent container
-                            objectFit="cover" // Maintains aspect ratio while covering the container
-                            src={image}
-                            alt={`cab-gallery-${index + 1}`}
-                            className=""
-                          />
-                        </div>
-                      </Link>
-                    </SwiperSlide>
-                  ))}
+                  {cabDetails.banner_image_multiple.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => {
+                    // Check if the image is a valid string (for string URLs or StaticImport)
+                    const imageUrl = typeof image === 'string' ? image : (image as UrlObject)?.href;
+
+                    // If the image is invalid (undefined or null), skip rendering the image
+                    if (!imageUrl) {
+                      return null;
+                    }
+
+                    return (
+                      <SwiperSlide key={index} className="swiper-slide">
+                        <Link href="#" className="link property-gallery">
+                          <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}>
+                            {/* Fixed height for all images */}
+                            <Image
+                              layout="fill"  // Ensures the image fills the parent container
+                              objectFit="cover" // Maintains aspect ratio while covering the container
+                              src={imageUrl}    // Ensures the src is a valid string
+                              alt={`cab-gallery`}
+                              className=""
+                            />
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                    );
+                  })}
+
                 </div>
                 <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
                   <ChevronLeftIcon className="w-5 h-5" />
@@ -386,43 +397,6 @@ const Page = () => {
                       </p>
                     </li>
                   </ul>
-                  {/* <div className="border border-dashed my-8"></div>
-                  <ul className="flex flex-wrap items-center justify-between gap-4 gap-md-0">
-                    <li>
-                      <div className="flex items-center gap-2">
-                        <i className="text-[var(--secondary-500)] text-2xl las la-user-friends"></i>
-                        <p className="mb-0"> 8 People </p>
-                      </div>
-                    </li>
-                    <li className="text-primary text-lg">•</li>
-                    <li>
-                      <div className="flex items-center gap-2">
-                        <i className="text-[var(--secondary-500)] text-2xl las la-gas-pump"></i>
-                        <p className="mb-0"> Hybrid </p>
-                      </div>
-                    </li>
-                    <li className="text-primary text-lg">•</li>
-                    <li>
-                      <div className="flex items-center gap-2">
-                        <i className="text-[var(--secondary-500)] text-2xl las la-tachometer-alt"></i>
-                        <p className="mb-0"> 6.1 km/ 1-litre </p>
-                      </div>
-                    </li>
-                    <li className="text-primary text-lg">•</li>
-                    <li>
-                      <div className="flex items-center gap-2">
-                        <i className="text-[var(--secondary-500)] text-2xl las la-tachometer-alt"></i>
-                        <p className="mb-0"> Automatic </p>
-                      </div>
-                    </li>
-                    <li className="text-primary text-lg">•</li>
-                    <li>
-                      <div className="flex items-center gap-2">
-                        <i className="text-[var(--secondary-500)] text-2xl las la-calendar-alt"></i>
-                        <p className="mb-0"> 9 Bags </p>
-                      </div>
-                    </li>
-                  </ul> */}
                 </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">Description</h4>
@@ -895,15 +869,15 @@ const Page = () => {
                   </div>
 
                   <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
-                                     <Tab.List className="flex gap-3 about-tab mb-7">
-                                       <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                                         Booking Form
-                                       </Tab>
-                                       <span>|</span>
-                                       <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                                         Enquiry Form
-                                       </Tab>
-                                     </Tab.List>
+                    <Tab.List className="flex gap-3 about-tab mb-7">
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Booking Form
+                      </Tab>
+                      <span>|</span>
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Enquiry Form
+                      </Tab>
+                    </Tab.List>
                     <Tab.Panels className="tab-content">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
@@ -1010,14 +984,14 @@ const Page = () => {
                   </Tab.Group>
 
                   {selectedIndex === 0 && (
-                  <Link
-                    href={`cab-payment?cabId=${cabId}`}
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
-                    onClick={handleBookingClick}  // Use the new function here
-                  >
-                    <span className="inline-block"> Proceed Booking </span>
-                  </Link>
-                      )}
+                    <Link
+                      href={`cab-payment?cabId=${cabId}`}
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                      onClick={handleBookingClick}  // Use the new function here
+                    >
+                      <span className="inline-block"> Proceed Booking </span>
+                    </Link>
+                  )}
 
                   <ul className="flex justify-center gap-3 flex-wrap">
                     <li>
@@ -1059,105 +1033,6 @@ const Page = () => {
                   </ul>
                 </div>
               </div>
-              {/* <div className="bg-white rounded-2xl py-8 px-6">
-                <div className="w-32 h-32 border border-[var(--primary)] rounded-full bg-white p-4 grid place-content-center relative mx-auto mb-10">
-                  <Image
-                    width={96}
-                    height={96}
-                    src="/img/team-1.jpg"
-                    alt="image"
-                    className="rounded-full"
-                  />
-                  <div className="w-8 h-8 grid place-content-center rounded-full border-2 white text-white bg-primary absolute bottom-0 right-0">
-                    <CheckIcon className="w-5 h-5" />
-                  </div>
-                </div>
-                <h4 className="text-center text-2xl font-semibold mb-4">
-                  {" "}
-                  Savannah Nguyen{" "}
-                </h4>
-                <ul className="flex items-center gap-3 justify-center flex-wrap mb-7">
-                  <li>
-                    <p className="mb-0">
-                      ID: <span className="text-primary">235</span>
-                    </p>
-                  </li>
-                  <li className="text-primary text-lg">•</li>
-                  <li>
-                    <p className="mb-0"> Property: 24 </p>
-                  </li>
-                  <li className="text-primary text-lg">•</li>
-                  <li>
-                    <div className="flex gap-1 items-center">
-                      <i className="las la-star text-[var(--tertiary)]"></i>
-                      <p className="mb-0"> 4.8 </p>
-                    </div>
-                  </li>
-                </ul>
-                <ul className="flex justify-center flex-wrap gap-3">
-                  <li>
-                    <Link
-                      href="#"
-                      className="link grid place-content-center duration-300 w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                      <i className="lab la-facebook-f text-xl"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#"
-                      className="link grid place-content-center duration-300 w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                      <i className="lab la-twitter text-xl"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#"
-                      className="link grid place-content-center duration-300 w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                      <i className="lab la-instagram text-xl"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#"
-                      className="link grid place-content-center duration-300 w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                      <i className="lab la-linkedin-in text-xl"></i>
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      href="#"
-                      className="link grid place-content-center duration-300 w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                      <i className="lab la-dribbble text-xl"></i>
-                    </Link>
-                  </li>
-                </ul>
-                <div className="border border-dashed my-7"></div>
-                <ul className="flex flex-col gap-4 mb-10 max-text-30 mx-auto">
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <CalendarDaysIcon className="w-5 h-5 text-primary" />
-                      <p className="mb-0"> Joined in June 2018 </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-[var(--secondary)]" />
-                      <p className="mb-0"> Response rate - 100% </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div className="flex items-center gap-2">
-                      <ClockIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                      <p className="mb-0"> Fast response </p>
-                    </div>
-                  </li>
-                </ul>
-                <div className="text-center">
-                  <Link href="#" className="btn-outline  font-semibold">
-                    See Host Profile
-                  </Link>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

@@ -21,6 +21,12 @@ interface Amenity {
   package_attribute_logo: string; // Add this if the API returns a logo
 }
 
+interface Location {
+  id: number;
+  location_name: string;
+}
+
+
 interface Itinerary {
   day: string;
   title: string;
@@ -33,10 +39,13 @@ const Page = () => {
   const router = useRouter();
   const [itineraries, setItineraries] = useState<Itinerary[]>([
     {
-      day: "", title: "", description: "",
+      day: "", 
+      title: "", 
+      description: "", 
       itinerary_images: []
     }
   ]);
+
   const [description, setDescription] = useState<string>("");
   const [formData, setFormData] = useState({
     package_title: "",
@@ -85,7 +94,7 @@ const Page = () => {
     itinerary_images: [],
   });
 
-  const [locations, setLocations] = useState([]);
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -179,7 +188,7 @@ const Page = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -396,19 +405,18 @@ const Page = () => {
 
   const handleInputChange = (index: number, field: string, value: string) => {
     const newItineraries = [...itineraries];
-    newItineraries[index][field] = value;
+    (newItineraries[index] as any)[field] = value;
     setItineraries(newItineraries);
   };
-
-  // Add new itinerary box
-  const addNewItinerary = () => {
-    if (itineraries.length < 5) {
-      setItineraries([
-        ...itineraries,
-        { image: "", title: "", description: "", content: "" }
-      ]);
-    }
-  };
+  
+ const addNewItinerary = () => {
+  if (itineraries.length < 5) {
+    setItineraries([
+      ...itineraries,
+      { day: "", title: "", description: "", itinerary_images: [] }
+    ]);
+  }
+};
 
   // Delete itinerary box
   const deleteItinerary = (index: number) => {

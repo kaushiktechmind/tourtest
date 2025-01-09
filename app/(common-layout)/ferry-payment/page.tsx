@@ -409,18 +409,18 @@ const Page = () => {
 
 
   const handleSubmit = async () => {
-    const passenger = passengerData.reduce((acc, data, index) => {
+    const passenger = passengerData.reduce<Record<number, typeof passengerData[0]>>((acc, data, index) => {
       acc[index + 1] = data;
       return acc;
     }, {});
-
+  
     const payload = {
       data: {
         passenger,
         ...contactDetails,
       },
     };
-
+  
     try {
       // First, save passengers' data
       const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
@@ -711,14 +711,14 @@ const Page = () => {
                         <input
                           type="text"
                           placeholder="Customer Name"
-                          value={contactDetails.c_name}
+                          value={contactDetails.c_name || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_name", e.target.value)}
                         />
                         <input
                           type="text"
                           placeholder="Email Address"
-                          value={contactDetails.c_email}
+                          value={contactDetails.c_email || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_email", e.target.value)}
                         />
@@ -729,7 +729,7 @@ const Page = () => {
                         <input
                           type="number"
                           placeholder="Phone Number"
-                          value={contactDetails.c_mobile}
+                          value={contactDetails.c_mobile || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_mobile", e.target.value)}
                         />

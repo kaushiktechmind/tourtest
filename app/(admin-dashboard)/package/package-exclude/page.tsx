@@ -14,16 +14,21 @@ import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { Dialog, Transition } from "@headlessui/react";
 
+interface Exclude{
+  exclude_title: string;
+  id: string
+}
+
 const Page = () => {
-  const [excludes, setExcludes] = useState([]);
+  const [excludes, setExcludes] = useState<Exclude[]>([]);
   const [excludeTitle, setExcludeName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredExcludes, setFilteredExcludes] = useState([]);
+  const [filteredExcludes, setFilteredExcludes] = useState<Exclude[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false); // Dialog state
-  const [itemToDelete, setItemToDelete] = useState(null); // Item ID to delete
+  const [itemToDelete, setItemToDelete] =  useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -84,7 +89,7 @@ const Page = () => {
       await fetchExcludes();
       alert("Exclude Added Successfully");
     } catch (err) {
-      setSubmitError(err.message);
+     
     }
   };
 
@@ -109,8 +114,6 @@ const Page = () => {
       await fetchExcludes();
       alert("Deleted Successfully");
     } catch (err) {
-      console.error(err.message);
-      setError("Failed to delete exclude");
     } finally {
       setIsDialogOpen(false); // Close dialog
       setItemToDelete(null); // Reset ID
@@ -175,11 +178,11 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">Loading...</td>
                     </tr>
                   ) : error ? (
                     <tr>
-                      <td colSpan="2" className="text-center py-3 text-red-500">{error}</td>
+                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
                   ) : (
                     currentItems.map((exclude) => (

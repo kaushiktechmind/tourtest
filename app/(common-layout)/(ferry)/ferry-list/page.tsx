@@ -4,7 +4,7 @@ import CustomRangeSlider from "@/components/RangeSlider";
 import { flightTypes } from "@/public/data/flighttypes";
 import { SearchIcon } from "@/public/data/icons";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import DatePicker from "react-datepicker";
 import { CalendarDaysIcon } from "@heroicons/react/24/outline";
@@ -17,6 +17,15 @@ import {
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+
+
+interface Trip {
+  id: number;
+  from: string;
+  to: string;
+  date: Date | null; // Assuming `date` can be a Date object or null
+}
+
 
 const Page = () => {
   const router = useRouter();
@@ -37,7 +46,7 @@ const Page = () => {
 
   type Location = keyof typeof locationIds;
 
-  
+
 
   // Extracting data from storedTravelData
   const storedFrom1 = storedTravelData?.from1;
@@ -59,7 +68,7 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
 
 
-  const [trips, setTrips] = useState([{ id: 1, from: "", to: "" }]); // Initialize with single_trip row
+  const [trips, setTrips] = useState<Trip[]>([{ id: 1, from: "", to: "", date: null }]);
   const [tripType, setTripType] = useState(storedTripType); // State for the selected trip type (single_trip or return_trip)
   // const router = useRouter();
 
@@ -69,7 +78,7 @@ const Page = () => {
 
 
   const fetchScheduleData = async () => {
-    const token = localStorage.getItem("Mak_Authorization");
+    const token = localStorage.getItem("Mak_Authorization") || '';
     const headers = {
       "Content-Type": "application/json",
       "Mak_Authorization": token,
@@ -113,7 +122,7 @@ const Page = () => {
         throw new Error(data.message || "Failed to fetch schedule");
       }
     } catch (err) {
-      setError(err.message);
+
     } finally {
       setLoading(false);
     }
@@ -269,7 +278,7 @@ const Page = () => {
     if (trips.length < 3) { // Check if there are less than 3 trips
       setTrips((prevTrips) => {
         const lastTrip = prevTrips[prevTrips.length - 1]; // Get the last trip
-        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "" }; // Prefill the 'from' field with the last 'to' field
+        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "", date: null }; // Prefill the 'from' field with the last 'to' field
         return [...prevTrips, newTrip];
       });
       setTripType("return_trip"); // Set tripType to "return_trip" when adding a trip
@@ -282,39 +291,48 @@ const Page = () => {
 
   const updateLocalStorage = () => {
     if (trips.length > 0) {
-      const travelData = {};
-
+      const travelData: { [key: string]: string | number } = {}; // Allow dynamic keys with string or number values
+  
       trips.forEach((trip, index) => {
         const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
-
-        const formatDate = (date) => {
-          if (!date) return "";
+  
+        const formatDate = (date: Date | null) => {
+          if (!date) return ""; // Return an empty string if date is null
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part
         };
-
+  
         // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
         travelData[`from${tripIndex}`] = trip.from || "";
         travelData[`to${tripIndex}`] = trip.to || "";
-        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
-
+        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // Format date
       });
+  
       travelData["adults"] = adult;
       travelData["infants"] = infants;
       travelData["no_of_passengers"] = adult + infants;
-
+  
       // Store the entire travelData object in localStorage
       localStorage.setItem("travelData", JSON.stringify(travelData));
     }
   };
-
+  
   const handleTripTypeChange = (type: string) => {
     setTripType(type);
     // Reset trips based on the trip type selected
     if (type === "single_trip") {
-      setTrips([{ id: 1, from: "", to: "" }]); // single_trip: reset to single_trip
+      setTrips([{
+        id: 1, from: "", to: "",
+        date: null
+      }]); // single_trip: reset to single_trip
     } else {
-      setTrips([{ id: 1, from: "", to: "" }, { id: 2, from: "", to: "" }]); // return_trip: set two trips by default
+      setTrips([{
+        id: 1, from: "", to: "",
+        date: null
+      }, {
+        id: 2, from: "", to: "",
+        date: null
+      }]); // return_trip: set two trips by default
     }
   };
 
@@ -532,17 +550,6 @@ const Page = () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
         <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[10px]">
           <div className="col-span-12 lg:col-span-4 order-2 lg:order-1 ">
             <div className="py-6 px-8 bg-white rounded-2xl shadow-lg">
@@ -684,7 +691,7 @@ const Page = () => {
           <div className="col-span-12 lg:col-span-8 order-1 lg:order-2">
             <div className="grid grid-cols-1 gap-4 lg:gap-6">
 
-              {scheduleData.map((schedule, index) => (
+              {scheduleData.map((schedule: { id: any; ship_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; departure_time: string; source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; arrival_time: string; destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_id: string; }, index: any) => (
                 <div key={schedule.id || index} className="col-span-1">
                   <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
                     <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
@@ -788,7 +795,7 @@ const Page = () => {
 
             <div className="grid grid-cols-1 gap-4 lg:gap-6">
 
-              {scheduleData.map((schedule, index) => (
+              {scheduleData.map((schedule: { id: any; departure_time: string; source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; arrival_time: string; destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined; ship_class_id: string; }, index: any) => (
                 <div key={schedule.id || index} className="col-span-1">
                   <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
                     <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">

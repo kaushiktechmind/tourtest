@@ -19,12 +19,20 @@ import { MapPinIcon } from "@heroicons/react/24/outline";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
+interface Trip {
+  id: number;
+  from: string;
+  to: string;
+  date: Date | null; // Assuming `date` can be a Date object or null
+}
+
+
 
 
 const Page = () => {
   const [startDate, setStartDate] = useState(null);
   const [isOpen, setOpen] = useState(false);
-  const [trips, setTrips] = useState([{ id: 1, from: "", to: "" }]); // Initialize with single_trip row
+  const [trips, setTrips] = useState<Trip[]>([{ id: 1, from: "", to: "", date: null }]);
   const [tripType, setTripType] = useState("single_trip"); // State for the selected trip type (single_trip or return_trip)
   const router = useRouter();
 
@@ -38,7 +46,7 @@ const Page = () => {
     if (trips.length < 3) { // Check if there are less than 3 trips
       setTrips((prevTrips) => {
         const lastTrip = prevTrips[prevTrips.length - 1]; // Get the last trip
-        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "" }; // Prefill the 'from' field with the last 'to' field
+        const newTrip = { id: prevTrips.length + 1, from: lastTrip.to || "", to: "", date: null }; // Prefill the 'from' field with the last 'to' field
         return [...prevTrips, newTrip];
       });
       setTripType("return_trip"); // Set tripType to "return_trip" when adding a trip
@@ -49,25 +57,53 @@ const Page = () => {
     setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
   };
 
+  // const updateLocalStorage = () => {
+  //   if (trips.length > 0) {
+  //     const travelData = {};
+
+  //     trips.forEach((trip, index) => {
+  //       const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
+
+  //       const formatDate = (date: { getTime: () => number; getTimezoneOffset: () => number; }) => {
+  //         if (!date) return "";
+  //         const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+  //         return offsetDate.toISOString().split("T")[0]; // Extract only the date part
+  //       };
+
+  //       // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
+  //       travelData[`from${tripIndex}`] = trip.from || "";
+  //       travelData[`to${tripIndex}`] = trip.to || "";
+  //       travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
+
+  //     });
+  //     travelData["adults"] = adult;
+  //     travelData["infants"] = infants;
+  //     travelData["no_of_passengers"] = adult + infants;
+
+  //     // Store the entire travelData object in localStorage
+  //     localStorage.setItem("travelData", JSON.stringify(travelData));
+  //   }
+  // };
+
   const updateLocalStorage = () => {
     if (trips.length > 0) {
-      const travelData = {};
+      const travelData: { [key: string]: string | number } = {}; // Allow dynamic keys with string or number values
 
       trips.forEach((trip, index) => {
         const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
 
-        const formatDate = (date: { getTime: () => number; getTimezoneOffset: () => number; }) => {
-          if (!date) return "";
+        const formatDate = (date: Date | null) => {
+          if (!date) return ""; // Return an empty string if date is null
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part
         };
-
+        
         // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
         travelData[`from${tripIndex}`] = trip.from || "";
         travelData[`to${tripIndex}`] = trip.to || "";
-        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
-
+        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); 
       });
+
       travelData["adults"] = adult;
       travelData["infants"] = infants;
       travelData["no_of_passengers"] = adult + infants;
@@ -77,13 +113,23 @@ const Page = () => {
     }
   };
 
+
   const handleTripTypeChange = (type: string) => {
     setTripType(type);
     // Reset trips based on the trip type selected
     if (type === "single_trip") {
-      setTrips([{ id: 1, from: "", to: "" }]); // single_trip: reset to single_trip
+      setTrips([{
+        id: 1, from: "", to: "",
+        date: null
+      }]); // single_trip: reset to single_trip
     } else {
-      setTrips([{ id: 1, from: "", to: "" }, { id: 2, from: "", to: "" }]); // return_trip: set two trips by default
+      setTrips([{
+        id: 1, from: "", to: "",
+        date: null
+      }, {
+        id: 2, from: "", to: "",
+        date: null
+      }]); // return_trip: set two trips by default
     }
   };
 

@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 interface Review {
+  ratings: number;
   id: string | number;
   name: string,
   model_name: string,
@@ -42,7 +43,7 @@ const Page = () => {
       .then((response) => {
         setReviews(response.data);
         // Initialize switch states based on fetched review status
-        const initialSwitchStates = {};
+        const initialSwitchStates: { [key: string]: boolean } = {};
         response.data.forEach((review: { id: string | number; status: string; }) => {
           initialSwitchStates[review.id] = review.status === "active"; // Assuming 'active' means ON
         });

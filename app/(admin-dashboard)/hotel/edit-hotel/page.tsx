@@ -23,10 +23,11 @@ interface Amenity {
 }
 
 interface Policy {
-  id: number; // Use number if your API returns numeric IDs
-  policy_title: string;
-  policy_decription: string; // Corrected spelling from 'policy_decription' to 'policy_decription'
+  id: number;
+  policy_title: any;
+  policy_description: any; // Ensure the correct field name here
 }
+
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
@@ -196,10 +197,15 @@ const Page = () => {
           placeholder="Name"
           onChange={(e) => {
             const updatedFields = [...fields];
-            updatedFields[index].name = e.target.value;
-            setFields(updatedFields);
+
+            // Ensure index is a number before using it as an array index
+            if (typeof index === 'number') {
+              updatedFields[index].name = e.target.value;
+              setFields(updatedFields);
+            }
           }}
         />
+
         <input
           type="text"
           className="w-1/3 border p-2 rounded-md"
@@ -207,8 +213,10 @@ const Page = () => {
           placeholder="Content"
           onChange={(e) => {
             const updatedFields = [...fields];
-            updatedFields[index].content = e.target.value;
-            setFields(updatedFields);
+            if (typeof index === 'number') {
+              updatedFields[index].name = e.target.value;
+              setFields(updatedFields);
+            }
           }}
         />
         <input
@@ -218,10 +226,11 @@ const Page = () => {
           placeholder="Distance"
           onChange={(e) => {
             const updatedFields = [...fields];
-            updatedFields[index].distance = e.target.value;
+            updatedFields[index as number].distance = e.target.value; // Assert index as number
             setFields(updatedFields);
           }}
         />
+
       </div>
     ));
   };
@@ -366,11 +375,11 @@ const Page = () => {
         }
         setSelectedFAQs(faqsArray);
 
-        const policyArray = [];
+        const policyArray: Policy[] = [];
         for (let i = 1; i <= 30; i++) {
           const policyTitle = hotelData.data[`policy_title${i}`];
           const policyDescription = hotelData.data[`policy_description${i}`];
-
+        
           if (policyTitle) {
             policyArray.push({
               id: i, // Using index as id for unique key
@@ -379,7 +388,7 @@ const Page = () => {
             });
           }
         }
-        setSelectedPolicies(policyArray);
+        setSelectedPolicies(policyArray); // This should now work
 
         const educationFieldsArray = [];
         for (let i = 1; i <= 5; i++) {
@@ -537,7 +546,7 @@ const Page = () => {
     // Append selected policies
     selectedPolicies.forEach((policy, index) => {
       formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
-      formDataToSend.append(`policy_description${index + 1}`, policy.policy_decription);
+      formDataToSend.append(`policy_description${index + 1}`, policy.policy_description);
     });
 
     // Append selected FAQs
@@ -783,7 +792,7 @@ const Page = () => {
                   <option value="1">1</option>
                 </select>
 
-               
+
               </div>
             </div>
           </Accordion>
@@ -1113,7 +1122,7 @@ const Page = () => {
                       <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                         Select Files
                       </span>
-                      
+
                     </span>
                     <input
                       type="file"

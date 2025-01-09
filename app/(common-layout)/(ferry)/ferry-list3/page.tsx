@@ -14,6 +14,15 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 
+interface Schedule {
+  ship_title: string;
+  departure_time: string;
+  arrival_time: string;
+  source_name: string;
+  destination_name: string;
+}
+
+
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -31,12 +40,12 @@ const Page = () => {
 
   
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [selectedSchedule, setSelectedSchedule] = useState(null);
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
 
-  const openDialog = (schedule: SetStateAction<null>) => {
-    setSelectedSchedule(schedule);  // Set the selected schedule
-    setIsDialogOpen(true);  // Open the dialog
-  };
+  // const openDialog = (schedule: SetStateAction<null>) => {
+  //   setSelectedSchedule(schedule);  // Set the selected schedule
+  //   setIsDialogOpen(true);  // Open the dialog
+  // };
 
   const closeDialog = () => {
     setIsDialogOpen(false);  // Close the dialog
@@ -67,9 +76,9 @@ const Page = () => {
 
   const fetchScheduleData = async () => {
     const token = localStorage.getItem("Mak_Authorization");
-    const headers = {
+    const headers: Record<string, string> = {
       "Content-Type": "application/json",
-      "Mak_Authorization": token,
+      "Mak_Authorization": token ?? "", // Ensure it's always a string
     };
   
     const requestPayload = {
@@ -90,28 +99,33 @@ const Page = () => {
   
     setLoading(true); // You may still want to set loading to true before the request
   
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers,
-      body: JSON.stringify(requestPayload),
-    });
+    try {
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(requestPayload),
+      });
   
-    const data = await response.json();
-    console.log("fetched data", data);
+      const data = await response.json();
+      console.log("fetched data", data);
   
-    if (response.ok) {
-      // Check for response structure
-      const schedule =
-        tripType === "single_trip"
-          ? data.data // Direct access for single trips
-          : data.data.schedule; // Nested access for multiple trips
-      console.log("schedule data", schedule);
+      if (response.ok) {
+        // Check for response structure
+        const schedule =
+          tripType === "single_trip"
+            ? data.data // Direct access for single trips
+            : data.data.schedule; // Nested access for multiple trips
+        console.log("schedule data", schedule);
   
-      setScheduleData(schedule);
+        setScheduleData(schedule);
+      }
+    } catch (error) {
+      console.error("Error fetching schedule data:", error);
+    } finally {
+      setLoading(false); // Ensure loading is turned off
     }
-  
-    setLoading(false); // Ensure loading is turned off
   };
+  
   
 
   useEffect(() => {

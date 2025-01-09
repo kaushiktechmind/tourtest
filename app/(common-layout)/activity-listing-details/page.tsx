@@ -39,23 +39,14 @@ interface ActivityData {
   activity_includes: string; // JSON string
   activity_excludes: string; // JSON string
   activity_faqs: string;
-  ticket_name1?: string;
-  ticket_name2?: string;
-  ticket_name3?: string;
-  ticket_name4?: string;
-  ticket_name5?: string;
-  ticket_price1?: number;
-  ticket_price2?: number;
-  ticket_price3?: number;
-  ticket_price4?: number;
-  ticket_price5?: number;
+  [key: string]: string | number | undefined; // This will allow dynamic keys like ticket_name1, ticket_price1, etc.
 }
 
 
 
 const Page = () => {
 
-  const [selectedTickets, setSelectedTickets] = useState({
+  const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({
     ticket1: 0,
     ticket2: 0,
     ticket3: 0,
@@ -146,7 +137,7 @@ const Page = () => {
           console.log("No amenities data available");
         }
 
-        
+
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -175,7 +166,8 @@ const Page = () => {
     for (let i = 1; i <= 5; i++) {
       const ticketName = activityData[`ticket_name${i}`];
       const ticketPrice = activityData[`ticket_price${i}`];
-      const selectedQuantity = selectedTickets[`ticket${i}`];
+      const selectedQuantity = selectedTickets[`ticket${i}` as keyof typeof selectedTickets];
+
 
       // If ticket exists (i.e., not null), calculate the total price
       if (ticketName && ticketPrice) {
@@ -189,40 +181,41 @@ const Page = () => {
   const handleBookingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     const accessToken = localStorage.getItem("access_token");
-  
+
     if (!isDateSelected) {
       alert("Select Date First");
       return;
     }
-  
+
     if (!accessToken) {
       router.push("/sign-in");
       return;
     }
-  
+
     // Prepare the data for individual ticket details
     const ticketDetails = [];
     let totalPrice = 0;
-  
+
     for (let i = 1; i <= 5; i++) {
       const ticketName = activityData[`ticket_name${i}`];
       const ticketPrice = Number(activityData[`ticket_price${i}`]);
-      const selectedQuantity = selectedTickets[`ticket${i}`];
-  
+      const selectedQuantity = selectedTickets[`ticket${i}` as keyof typeof selectedTickets];
+
+
       if (ticketName && ticketPrice > 0 && selectedQuantity > 0) {
         const individualTotal = ticketPrice * selectedQuantity;
-  
+
         ticketDetails.push({
           ticketName,
           pricePerTicket: ticketPrice,
           quantity: selectedQuantity,
           totalPrice: individualTotal,
         });
-  
+
         totalPrice += individualTotal;
       }
     }
-  
+
     // Store ticket data along with the selected date
     const formattedDate = selectedDate.toISOString().split("T")[0];
     const newActivityData = {
@@ -230,17 +223,17 @@ const Page = () => {
       tickets: ticketDetails, // Detailed ticket breakdown
       grandTotal: totalPrice, // Total calculated price
     };
-  
+
     localStorage.setItem("storedActivityData", JSON.stringify(newActivityData));
 
-    if(totalPrice==0){
+    if (totalPrice == 0) {
       alert("Choose Ticket");
       return;
     }
-  
+
     router.push(`/activity-payment?activityId=${activityId}`);
   };
-  
+
 
   // const handleRestrict = async (e: React.FormEvent) => {
   //   e.preventDefault();
@@ -259,30 +252,30 @@ const Page = () => {
 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prevData) => ({ ...prevData, [name]: value }));
-    };
-  
-  
-  
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      try {
-        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
-        });
-        if (response.ok) {
-          alert("Enquiry submitted successfully!");
-          setFormData({ name: "", phone: "", email: "", message: "", service_type: "Activity" });
-        } else {
-          alert("Failed to submit enquiry. Please try again.");
-        }
-      } catch (error) {
-        alert("An error occurred. Please try again.");
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        alert("Enquiry submitted successfully!");
+        setFormData({ name: "", phone: "", email: "", message: "", service_type: "Activity" });
+      } else {
+        alert("Failed to submit enquiry. Please try again.");
       }
-    };
+    } catch (error) {
+      alert("An error occurred. Please try again.");
+    }
+  };
 
 
 
@@ -291,7 +284,7 @@ const Page = () => {
   return (
     <main>
       <div className="bg-[var(--bg-2)]">
-      <div className="py-4">
+        <div className="py-4">
           <div className="px-3">
             <div className="grid grid-cols-12 gap-4 lg:gap-6 mt-[70px]">
               {/* Left Column */}
@@ -494,7 +487,7 @@ const Page = () => {
                     </div>
                   </div>
 
-               
+
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
                     <div className="hr-dashed my-5"></div>
@@ -839,15 +832,15 @@ const Page = () => {
                   </div>
 
                   <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
-            <Tab.List className="flex gap-3 about-tab mb-7">
-              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                Booking Form
-              </Tab>
-              <span>|</span>
-              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                Enquiry Form
-              </Tab>
-            </Tab.List>
+                    <Tab.List className="flex gap-3 about-tab mb-7">
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Booking Form
+                      </Tab>
+                      <span>|</span>
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Enquiry Form
+                      </Tab>
+                    </Tab.List>
                     <Tab.Panels className="tab-content mb-8">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
@@ -895,7 +888,17 @@ const Page = () => {
                                             }))}
                                           >
                                             {/* Generate dropdown options dynamically based on ticket availability */}
-                                            {[...Array(Math.min(ticketAvailability || 0, 9) + 1).keys()].map((num) => (
+                                            {/* {[...Array(Math.min(ticketAvailability || 0, 9) + 1).keys()].map((num) => (
+                                              <option key={num} value={num}>
+                                                {num}
+                                              </option>
+                                            ))} */}
+                                            {[
+                                              ...Array(Math.min(
+                                                typeof ticketAvailability === 'number' ? ticketAvailability : 0,  // Ensure it's a number
+                                                9
+                                              ) + 1).keys()
+                                            ].map((num) => (
                                               <option key={num} value={num}>
                                                 {num}
                                               </option>
@@ -969,14 +972,14 @@ const Page = () => {
                     </Tab.Panels>
                   </Tab.Group>
                   {selectedIndex === 0 && (
-                  <Link
-                    href={`activity-payment?activityId=${activityId}`}
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
-                    onClick={handleBookingClick}  // Use the new function here
-                  >
-                    <span className="inline-block"> Proceed Booking </span>
-                  </Link>
-                       )}
+                    <Link
+                      href={`activity-payment?activityId=${activityId}`}
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                      onClick={handleBookingClick}  // Use the new function here
+                    >
+                      <span className="inline-block"> Proceed Booking </span>
+                    </Link>
+                  )}
 
                 </div>
               </div>

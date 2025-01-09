@@ -696,8 +696,8 @@ const Page = () => {
 
   const amenities = [];
   for (let i = 1; i <= 30; i++) {
-    const amenityName = hotelDetails[`amenity_name${i}`];
-    const amenityLogo = hotelDetails[`amenity_logo${i}`];
+    const amenityName = (hotelDetails as any)[`amenity_name${i}`];
+    const amenityLogo = (hotelDetails as any)[`amenity_logo${i}`];
 
     if (amenityName && amenityLogo) {
       amenities.push({ name: amenityName, logo: amenityLogo });
@@ -867,16 +867,15 @@ const Page = () => {
                       </p>
                     </li>
                     <li className="text-primary text-lg">•</li>
-                    <li>
-                      <div className="flex items-center gap-1">
-                        {Array.from({ length: hotelDetails.ratings }, (_, index) => (
-                          <StarIcon
-                            key={index}
-                            className="w-5 h-5 text-[var(--tertiary)]"
-                          />
-                        ))}
-                      </div>
-                    </li>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: Number(hotelDetails.ratings) }, (_, index) => (
+                        <StarIcon
+                          key={index}
+                          className="w-5 h-5 text-[var(--tertiary)]"
+                        />
+                      ))}
+                    </div>
+
 
                     <li className="text-primary text-lg">•</li>
                     <li>
@@ -1633,7 +1632,7 @@ const Page = () => {
                             </div>
                             <p className="mb-0 clr-neutral-500">Extra Bed Price:</p>
                           </div>
-                          <p className="mb-0 font-medium">₹{storedExtraBedPrice * noOfNights || 0}</p>
+                          <p className="mb-0 font-medium">₹{Number(storedExtraBedPrice) * noOfNights || 0}</p>
                         </div>
 
 
@@ -1648,7 +1647,7 @@ const Page = () => {
                             </div>
                             <p className="mb-0 clr-neutral-500">Child Price:</p>
                           </div>
-                          <p className="mb-0 font-medium">₹{storedChildPrice * noOfNights || 0}</p>
+                          <p className="mb-0 font-medium">₹{Number(storedChildPrice) * noOfNights || 0}</p>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">

@@ -17,6 +17,19 @@ function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
+interface Passenger {
+  [key: string]: string | number;
+  title: string;
+  name: string;
+  age: string;
+  sex: string;
+  nationality: string;
+  fcountry: string;
+  fpassport: string;
+  fexpdate: string;
+}
+
+
 
 const Page = () => {
   const router = useRouter();
@@ -123,8 +136,8 @@ const Page = () => {
   };
 
 
-  const [passengerData, setPassengerData] = useState(
-    Array.from({ length: adults + infants }, () => ({
+  const [passengerData, setPassengerData] = useState<Passenger[]>([
+    ...Array.from({ length: adults + infants }, () => ({
       title: "Mr",
       name: "",
       age: "",
@@ -134,7 +147,8 @@ const Page = () => {
       fpassport: "",
       fexpdate: "",
     }))
-  );
+  ]);
+  
 
   const storedName = localStorage.getItem("name");
   const storedEmail = localStorage.getItem("email");
@@ -330,7 +344,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+          Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
         },
         body: JSON.stringify({
           data: {
@@ -395,7 +409,7 @@ const Page = () => {
 
 
   const handleSubmit = async () => {
-    const passenger = passengerData.reduce((acc, data, index) => {
+    const passenger = passengerData.reduce<{ [key: number]: typeof passengerData[0] }>((acc, data, index) => {
       acc[index + 1] = data;
       return acc;
     }, {});
@@ -413,7 +427,7 @@ const Page = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+          Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
         },
         body: JSON.stringify(payload),
       });
@@ -433,7 +447,7 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+              Mak_Authorization: localStorage.getItem("Mak_Authorization")?? "",
             },
             body: JSON.stringify({
               data: {
@@ -447,7 +461,7 @@ const Page = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization"),
+              Mak_Authorization: localStorage.getItem("Mak_Authorization")?? "",
             },
             body: JSON.stringify({
               data: {
@@ -697,14 +711,14 @@ const Page = () => {
                         <input
                           type="text"
                           placeholder="Customer Name"
-                          value={contactDetails.c_name}
+                          value={contactDetails.c_name || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_name", e.target.value)}
                         />
                         <input
                           type="text"
                           placeholder="Email Address"
-                          value={contactDetails.c_email}
+                          value={contactDetails.c_email || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_email", e.target.value)}
                         />
@@ -715,7 +729,7 @@ const Page = () => {
                         <input
                           type="number"
                           placeholder="Phone Number"
-                          value={contactDetails.c_mobile}
+                          value={contactDetails.c_mobile || ''}
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                           onChange={(e) => handleContactChange("c_mobile", e.target.value)}
                         />
