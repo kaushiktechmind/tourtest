@@ -44,7 +44,7 @@ interface ActivityData {
 
 
 
-const Page = () => {
+const ActivityListingDetails = () => {
 
   const [selectedTickets, setSelectedTickets] = useState<Record<string, number>>({
     ticket1: 0,
@@ -282,7 +282,7 @@ const Page = () => {
 
 
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+
     <main>
       <div className="bg-[var(--bg-2)]">
         <div className="py-4">
@@ -989,8 +989,14 @@ const Page = () => {
         </div>
       </div>
     </main>
-    </Suspense>
+  
   );
 };
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ActivityListingDetails />
+  </Suspense>
+);
 
 export default Page;

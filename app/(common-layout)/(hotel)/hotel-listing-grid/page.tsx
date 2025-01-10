@@ -12,9 +12,18 @@ const HotelListingGrid = () => {
   const type = searchParams.get("type");
   const loc = searchParams.get("loc");
 
-  const noOfRooms = Number(localStorage.getItem('noOfRooms'));
-  const startdate = localStorage.getItem('startDate');
-  const enddate = localStorage.getItem('endDate');
+
+  const [noOfRooms, setNoOfRooms] = useState<number | null>(null);
+  const [startdate, setStartdate] = useState<string | null>(null);
+  const [enddate, setEnddate] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only run on the client-side
+    setNoOfRooms(Number(localStorage.getItem('noOfRooms')));
+    setStartdate(localStorage.getItem('startDate'));
+    setEnddate(localStorage.getItem('endDate'));
+  }, []);
+
 
 
   // alert(noOfRooms)
@@ -176,15 +185,15 @@ const HotelListingGrid = () => {
     setCurrentPage(page);
   };
 
-  const noOfHotels = Number(localStorage.getItem("noOfHotels"));
-  let noOfCurHotels;
+  // const noOfHotels = Number(localStorage.getItem("noOfHotels"));
+  // let noOfCurHotels;
 
-  if (noOfHotels >= itemsPerPage) {
-    noOfCurHotels = itemsPerPage;
-  }
-  else
-    noOfCurHotels = noOfHotels;
-  localStorage.setItem("noOfCurHotels", String(noOfCurHotels));
+  // if (noOfHotels >= itemsPerPage) {
+  //   noOfCurHotels = itemsPerPage;
+  // }
+  // else
+  //   noOfCurHotels = noOfHotels;
+  // localStorage.setItem("noOfCurHotels", String(noOfCurHotels));
 
 
   return (
@@ -199,7 +208,7 @@ const HotelListingGrid = () => {
               <HotelListingCard
                 key={uniqueItem.hotel_id}
                 item={uniqueItem}
-                noOfRooms={noOfRooms}
+                noOfRooms={Number(noOfRooms)}
                 loc={loc || ""}
                 type={type || ""}
                 startdate={startdate || ""}
