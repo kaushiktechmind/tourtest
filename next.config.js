@@ -4,6 +4,9 @@ const nextConfig = {
     unoptimized: true,
   },
   output: "export",
+  experimental: {
+    missingSuspenseWithCSRBailout: false,
+  },
 };
 
 module.exports = nextConfig;

@@ -1,8 +1,10 @@
+
 import "./globals.css";
 import { Inter } from "next/font/google";
 import "@/public/styles/styles.scss";
 import "@/public/styles/line-awesome.min.css";
 const inter = Inter({ subsets: ["latin"] });
+
 
 export const metadata = {
   title: "Andman Mangroves Holydays",
