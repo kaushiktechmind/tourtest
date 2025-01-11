@@ -465,8 +465,7 @@ const AddNewHotel = () => {
         </div>
       </div>
       {/* statisticts */}
-      <form
-        onSubmit={handleSubmit}
+      <div
         className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0"
       >
         <div className="col-span-12 lg:col-span-6">
@@ -660,7 +659,7 @@ const AddNewHotel = () => {
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Bedrooms: <span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 id="no_of_bedrooms"
                 name="no_of_bedrooms"
                 value={formData.no_of_bedrooms}
@@ -674,7 +673,7 @@ const AddNewHotel = () => {
               /> */}
               <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :<span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 id="no_of_bathrooms"
                 name="no_of_bathrooms"
                 value={formData.no_of_bathrooms}
@@ -699,7 +698,7 @@ const AddNewHotel = () => {
 
               <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :<span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 name="no_of_beds"
                 id="no_of_beds"
                 value={formData.no_of_beds}
@@ -902,7 +901,7 @@ const AddNewHotel = () => {
           >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               {/* Education Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
+              <p className="mb-4 text-xl font-medium">Education:</p>
               {renderInputRows(educationFields, setEducationFields)}
               {educationFields.length < 5 && (
                 <button
@@ -947,39 +946,6 @@ const AddNewHotel = () => {
               )}
             </div>
           </Accordion>
-
-          {/* <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <div className="">
-              <p className=" mb-3 text-xl font-medium">Status:</p>
-              <div className="flex flex-col gap-2">
-                {" "}
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="publish"
-                    name="status"
-                    value="publish"
-                    className="mr-2"
-                  />
-                  <label htmlFor="hotel" className="text-base">
-                    Publish
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="draft"
-                    name="status"
-                    value="draft"
-                    className="mr-2"
-                  />
-                  <label htmlFor="homestay" className="text-base">
-                    Draft
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div> */}
 
           <Link href="#" className="btn-primary font-semibold mt-6">
             <span className="inline-block" onClick={handleSubmit}>
@@ -1095,9 +1061,6 @@ const AddNewHotel = () => {
                   ))}
                 </select>
 
-                {/* <SelectUI
-                  options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
-                /> */}
               </div>
             </Accordion>
           </div>
@@ -1152,13 +1115,13 @@ const AddNewHotel = () => {
               <div className="pt-6">
                 <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
-                  type="text"
+                  type="number"
                     id="zipcode"
                   name="zipcode"
                   value={formData.zipcode}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="4"
+                  placeholder="123456"
                 />
                 <p className="mt-6 mb-4 text-xl font-medium">Phone :<span className="astrick">*</span></p>
                 <input
@@ -1195,7 +1158,7 @@ const AddNewHotel = () => {
             </Accordion>
           </div>
         </div>
-      </form>
+      </div>
 
       {/* Footer */}
       <Footer />
