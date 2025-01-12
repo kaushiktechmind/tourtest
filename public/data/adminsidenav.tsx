@@ -5,8 +5,8 @@ export const sidenavData = [
     icon: <i className="las la-hotel text-2xl"></i>,
     submenus: [
       { url: "/hotel/all-hotels", title: "All Hotels" },
-      { url: "/hotel/attributes", title: "Attributes" },
-      { url: "/hotel/hotel-faq", title: "FAQ" },
+      { url: "/hotel/attributes", title: "Hotel Attributes" },
+      { url: "/hotel/hotel-faq", title: " Hotel FAQ" },
       { url: "/hotel/hotel-policy", title: "Hotel Policy" },
     ],
   },
@@ -130,34 +130,34 @@ export const sidenavData = [
   {
     id: 14,
     name: "Pages",
-    icon: <i className="las la-sms text-2xl"></i>,
+    icon: <i className="las la-file-alt text-2xl"></i>,  // Updated icon for Pages
     url: "/pages/all-pages",
   },
   {
     id: 15,
     name: "Blogs",
-    icon: <i className="las la-sms text-2xl"></i>,
+    icon: <i className="las la-blog text-2xl"></i>,  // Updated icon for Blogs
     url: "/blogs/all-blogs",
   },
   {
     id: 16,
     name: "Categories",
-    icon: <i className="las la-sms text-2xl"></i>,
+    icon: <i className="las la-tags text-2xl"></i>,  // Updated icon for Categories
     url: "/categories/all-categories",
   },
   {
     id: 17,
     name: "Reviews",
-    icon: <i className="lar la-star text-2xl"></i>,
+    icon: <i className="las la-comment-dots text-2xl"></i>,  // Updated icon for Reviews
     url: "/reviews",
   },
   {
     id: 18,
     name: "Coupon",
-    icon: <i className="las la-ticket-alt text-2xl"></i>,
+    icon: <i className="las la-ticket-alt text-2xl"></i>,  // Icon for Coupon remains the same
     url: "/coupon",
   },
-  {
+{  
     id: 19,
     name: "Total Earnings",
     icon: <i className="las la-hand-holding-usd text-2xl"></i>,

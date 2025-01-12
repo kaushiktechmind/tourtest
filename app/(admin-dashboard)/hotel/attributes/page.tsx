@@ -34,6 +34,8 @@ const Page = () => {
   const [name, setName] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [searchQuery, setSearchQuery] = useState<string>(""); // State for search query
   const [filteredAmenities, setFilteredAmenities] = useState<Amenity[]>([]); // State for filtered amenities
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -98,7 +100,12 @@ const Page = () => {
   // Function to handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+
+      // Create a preview of the selected image
+      const previewUrl = URL.createObjectURL(selectedFile);
+      setImagePreview(previewUrl);
     }
   };
 
@@ -106,14 +113,12 @@ const Page = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-
-
     const formData = new FormData();
     formData.append("amenity_name", name);
     if (file) {
       formData.append("amenity_logo", file);
     }
-    
+
 
     const accessToken = localStorage.getItem("access_token");
 
@@ -147,11 +152,11 @@ const Page = () => {
         setFile(null);
       } else {
         console.error(result.message);
-        alert("Failed to add amenity. Please try again.");
+        alert("Failed to add attribute. Please try again.");
       }
     } catch (error) {
       console.error("Error saving amenity:", error);
-      alert("An error occurred while saving the amenity.");
+      alert("An error occurred while saving the attribute.");
     }
   };
 
@@ -175,7 +180,7 @@ const Page = () => {
         setAmenities((prev) =>
           Array.isArray(prev) ? prev.filter((amenity) => amenity.id !== amenityToDelete) : []
         );
-        alert("Amenity deleted successfully.");
+        alert("Attribute deleted successfully.");
       } else {
         const result = await response.json();
         alert(result.message || "Failed to delete amenity.");
@@ -223,7 +228,17 @@ const Page = () => {
             >
               Upload Icon :
             </label>
-            <div className="pt-6">
+
+            {imagePreview && (
+              <div className="mt-4">
+                <img
+                  src={imagePreview}
+                  alt="Selected Image"
+                  className="max-w-xs max-h-32 rounded-lg"
+                />
+              </div>
+            )}
+            <div className="">
               <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                 <label
                   htmlFor="dropzone-file"
@@ -250,6 +265,10 @@ const Page = () => {
                 </label>
               </div>
             </div>
+
+
+
+
             <div className="mt-[20px]">
               <button type="submit" className="btn-primary font-semibold">
                 <span className="inline-block"> Add New </span>
@@ -328,38 +347,38 @@ const Page = () => {
             currentPage={currentPage}
             onPageChange={handlePageChange}
           />
-         <Transition appear show={isOpen} as={Fragment}>
-  <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeDialog}>
-    <div className="min-h-screen px-4 text-center flex items-center justify-center">
-      <Dialog.Overlay className="fixed inset-0 bg-black opacity-50" />
-      <span className="inline-block h-screen align-middle" aria-hidden="true">
-        &#8203;
-      </span>
-      <div className="inline-block w-full max-w-md p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-lg">
-        <Dialog.Title className="text-2xl font-semibold text-gray-900 mb-4">
-          Are you sure to delete this attribute?
-        </Dialog.Title>
-        
-        <div className="flex justify-between">
-          <button
-            type="button"
-            className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md text-lg font-medium hover:bg-gray-400 transition duration-300"
-            onClick={closeDialog}
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            className="px-6 py-2 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
-            onClick={handleDelete}
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-    </div>
-  </Dialog>
-</Transition>
+          <Transition appear show={isOpen} as={Fragment}>
+            <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={closeDialog}>
+              <div className="min-h-screen px-4 text-center flex items-center justify-center">
+                <Dialog.Overlay className="fixed inset-0 bg-black opacity-50" />
+                <span className="inline-block h-screen align-middle" aria-hidden="true">
+                  &#8203;
+                </span>
+                <div className="inline-block w-full max-w-md p-8 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-2xl rounded-lg">
+                  <Dialog.Title className="text-2xl font-semibold text-gray-900 mb-4">
+                    Are you sure to delete this attribute?
+                  </Dialog.Title>
+
+                  <div className="flex justify-between">
+                    <button
+                      type="button"
+                      className="px-6 py-2 bg-gray-300 text-gray-700 rounded-md text-lg font-medium hover:bg-gray-400 transition duration-300"
+                      onClick={closeDialog}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="px-6 py-2 bg-blue-600 text-white rounded-md text-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 transition duration-300"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </Dialog>
+          </Transition>
 
 
         </div>

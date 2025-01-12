@@ -347,152 +347,139 @@ const EditHotel = () => {
           `https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelId}`
         );
         const hotelData = response.data; // Assuming the data is in the 'data' field
-        console.log("yeahhhhhhhhh", hotelData.data.description);
-        setDescription(hotelData.data.description);
-        const amenitiesArray = [];
-        for (let i = 1; i <= 30; i++) {  // Assuming there are up to 7 amenities
-          const amenityName = hotelData.data[`amenity_name${i}`];
-          const amenityLogo = hotelData.data[`amenity_logo${i}`];
-
-          if (amenityName) {
-            amenitiesArray.push({
-              amenity_name: amenityName,
-              amenity_logo: amenityLogo,
-            });
-          }
-        }
-        console.log("Transformed Amenities:", amenitiesArray);
-
-        const faqsArray = [];
-        for (let i = 1; i <= 30; i++) {
-          const faqTitle = hotelData.data[`faq_title${i}`];
-          const faqDescription = hotelData.data[`faq_description${i}`];
-          if (faqTitle) {
-            faqsArray.push({
-              id: i, // Use the index as an id if there's no unique id
-              faq_title: faqTitle,
-              faq_description: faqDescription || "",
-            });
-          }
-        }
-        setSelectedFAQs(faqsArray);
-
-        const policyArray: Policy[] = [];
-        for (let i = 1; i <= 30; i++) {
-          const policyTitle = hotelData.data[`policy_title${i}`];
-          const policyDescription = hotelData.data[`policy_description${i}`];
         
-          if (policyTitle) {
-            policyArray.push({
-              id: i, // Using index as id for unique key
-              policy_title: policyTitle,
-              policy_description: policyDescription || "", // Maintain exact field name
-            });
+        // Check if formData is already populated to prevent overwriting edited data
+        if (!formData.property_id) {
+          setDescription(hotelData.data.description);
+  
+          const amenitiesArray = [];
+          for (let i = 1; i <= 30; i++) {
+            const amenityName = hotelData.data[`amenity_name${i}`];
+            const amenityLogo = hotelData.data[`amenity_logo${i}`];
+            if (amenityName) {
+              amenitiesArray.push({
+                amenity_name: amenityName,
+                amenity_logo: amenityLogo,
+              });
+            }
           }
-        }
-        setSelectedPolicies(policyArray); // This should now work
-
-        const educationFieldsArray = [];
-        for (let i = 1; i <= 5; i++) {
-          const educationName = hotelData.data[`education_name${i}`];
-          const educationContent = hotelData.data[`education_content${i}`];
-          const educationDistance = hotelData.data[`education_distance${i}`];
-
-          if (educationName) {
-            educationFieldsArray.push({
-              name: educationName,
-              content: educationContent || "",
-              distance: educationDistance || "",
-            });
+          console.log("Transformed Amenities:", amenitiesArray);
+  
+          const faqsArray = [];
+          for (let i = 1; i <= 30; i++) {
+            const faqTitle = hotelData.data[`faq_title${i}`];
+            const faqDescription = hotelData.data[`faq_description${i}`];
+            if (faqTitle) {
+              faqsArray.push({
+                id: i,
+                faq_title: faqTitle,
+                faq_description: faqDescription || "",
+              });
+            }
           }
-        }
-
-
-        const healthFieldsArray = [];
-        for (let i = 1; i <= 5; i++) {
-          const healthName = hotelData.data[`health_name${i}`];
-          const healthContent = hotelData.data[`health_content${i}`];
-          const healthDistance = hotelData.data[`health_distance${i}`];
-
-          if (healthName) {
-            healthFieldsArray.push({
-              name: healthName,
-              content: healthContent || "",
-              distance: healthDistance || "",
-            });
+          setSelectedFAQs(faqsArray);
+  
+          const policyArray: Policy[] = [];
+          for (let i = 1; i <= 30; i++) {
+            const policyTitle = hotelData.data[`policy_title${i}`];
+            const policyDescription = hotelData.data[`policy_description${i}`];
+            if (policyTitle) {
+              policyArray.push({
+                id: i,
+                policy_title: policyTitle,
+                policy_description: policyDescription || "",
+              });
+            }
           }
-        }
-
-        const transportFieldsArray = [];
-        for (let i = 1; i <= 5; i++) {
-          const transportName = hotelData.data[`transport_name${i}`];
-          const transportContent = hotelData.data[`transport_content${i}`];
-          const transportDistance = hotelData.data[`transport_distance${i}`];
-
-          if (transportName) {
-            transportFieldsArray.push({
-              name: transportName,
-              content: transportContent || "",
-              distance: transportDistance || "",
-            });
+          setSelectedPolicies(policyArray);
+  
+          const educationFieldsArray = [];
+          for (let i = 1; i <= 5; i++) {
+            const educationName = hotelData.data[`education_name${i}`];
+            const educationContent = hotelData.data[`education_content${i}`];
+            const educationDistance = hotelData.data[`education_distance${i}`];
+            if (educationName) {
+              educationFieldsArray.push({
+                name: educationName,
+                content: educationContent || "",
+                distance: educationDistance || "",
+              });
+            }
           }
+  
+          const healthFieldsArray = [];
+          for (let i = 1; i <= 5; i++) {
+            const healthName = hotelData.data[`health_name${i}`];
+            const healthContent = hotelData.data[`health_content${i}`];
+            const healthDistance = hotelData.data[`health_distance${i}`];
+            if (healthName) {
+              healthFieldsArray.push({
+                name: healthName,
+                content: healthContent || "",
+                distance: healthDistance || "",
+              });
+            }
+          }
+  
+          const transportFieldsArray = [];
+          for (let i = 1; i <= 5; i++) {
+            const transportName = hotelData.data[`transport_name${i}`];
+            const transportContent = hotelData.data[`transport_content${i}`];
+            const transportDistance = hotelData.data[`transport_distance${i}`];
+            if (transportName) {
+              transportFieldsArray.push({
+                name: transportName,
+                content: transportContent || "",
+                distance: transportDistance || "",
+              });
+            }
+          }
+  
+          // Set the prefilled education, health, and transport fields
+          setEducationFields(educationFieldsArray);
+          setHealthFields(healthFieldsArray);
+          setTransportationFields(transportFieldsArray);
+  
+          // Prefill the form fields only if not already set
+          setFormData({
+            ...formData,
+            property_id: hotelData.data.property_id,
+            hotel_or_home_stay: hotelData.data.hotel_or_home_stay.toLowerCase(),
+            location_name: hotelData.data.location_name,
+            hotel_name: hotelData.data.hotel_name,
+            description: hotelData.data.description,
+            starting_price: hotelData.data.starting_price,
+            highest_price: hotelData.data.highest_price,
+            ratings: hotelData.data.ratings,
+            max_adult: hotelData.data.max_adult,
+            max_children: hotelData.data.max_children,
+            max_infant: hotelData.data.max_infant,
+            no_of_bedrooms: hotelData.data.no_of_bedrooms,
+            no_of_bathrooms: hotelData.data.no_of_bathrooms,
+            no_of_beds: hotelData.data.no_of_beds,
+            room_size: hotelData.data.room_size,
+            company_website: hotelData.data.company_website,
+            email: hotelData.data.email,
+            phone: hotelData.data.phone,
+            zipcode: hotelData.data.zipcode,
+            parking: hotelData.data.parking,
+            banner_images: [], // Assuming the images come as an array
+            video_link: hotelData.data.video_link,
+            full_address: hotelData.data.full_address,
+            i_frame_link: hotelData.data.i_frame_link,
+          });
+  
+          setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
+          setBannerImageUrls(hotelData.data.banner_images); // Storing URLs for display
         }
-
-
-
-
-        // Set the prefilled education fields
-        setEducationFields(educationFieldsArray);
-        setHealthFields(healthFieldsArray);
-        setTransportationFields(transportFieldsArray);
-
-        // Prefill the form fields
-        setFormData({
-          ...formData,
-          property_id: hotelData.data.property_id,
-          hotel_or_home_stay: hotelData.data.hotel_or_home_stay.toLowerCase(),
-          location_name: hotelData.data.location_name,
-          hotel_name: hotelData.data.hotel_name,
-          description: hotelData.data.description,
-          starting_price: hotelData.data.starting_price,
-          highest_price: hotelData.data.highest_price,
-          ratings: hotelData.data.ratings,
-          max_adult: hotelData.data.max_adult,
-          max_children: hotelData.data.max_children,
-          max_infant: hotelData.data.max_infant,
-          no_of_bedrooms: hotelData.data.no_of_bedrooms,
-          no_of_bathrooms: hotelData.data.no_of_bathrooms,
-          no_of_beds: hotelData.data.no_of_beds,
-          room_size: hotelData.data.room_size,
-          company_website: hotelData.data.company_website,
-          email: hotelData.data.email,
-          phone: hotelData.data.phone,
-          zipcode: hotelData.data.zipcode,
-          parking: hotelData.data.parking,
-          banner_images: [], // Assuming the images come as an array
-          video_link: hotelData.data.video_link,
-          full_address: hotelData.data.full_address,
-          i_frame_link: hotelData.data.i_frame_link,
-        });
-        setSelectedAmenities(amenitiesArray.map(item => item.amenity_name));
-        // Store image URLs for rendering
-        setBannerImageUrls(hotelData.data.banner_images); // Storing URLs for display
       } catch (error) {
         console.error("Error fetching hotel data:", error);
       }
     };
-
+  
     fetchHotelData();
-  }, [hotelId, formData]); // Run this effect when hotelId changes
-
-
-
-
-
-
-
-
-
+  }, [hotelId]);
+  
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -579,9 +566,12 @@ const EditHotel = () => {
       );
       console.log("API Response:", response.data);
       alert("Hotel Details Updated");
-      // router.push("/hotel/all-hotels"); 
+      router.push("/hotel/all-hotels"); 
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        alert(
+          `Failed to update hotel: ${error.response?.data?.message || error.message}`
+        );
         console.error("Axios error message:", error.message);
         console.error("Axios error response:", error.response);
       } else if (error instanceof Error) {
@@ -622,7 +612,7 @@ const EditHotel = () => {
         </div>
       </div>
       {/* statisticts */}
-      <form
+      <div
 
         className=" grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0"
       >
@@ -732,9 +722,7 @@ const EditHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="Name of Hotel"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
-                    /> */}
+
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="children" className="text-base">
@@ -749,10 +737,7 @@ const EditHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="Name of Hotel"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    /> */}
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="infants" className="text-base">
@@ -767,10 +752,7 @@ const EditHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="Name of Hotel"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    /> */}
                   </div>
                 </div>
 
@@ -817,7 +799,7 @@ const EditHotel = () => {
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Bedrooms: <span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 id="no_of_bedrooms"
                 name="no_of_bedrooms"
                 value={formData.no_of_bedrooms}
@@ -825,13 +807,10 @@ const EditHotel = () => {
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
                 placeholder="5"
               />
-              {/* <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
-              /> */}
+
               <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :<span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 id="no_of_bathrooms"
                 name="no_of_bathrooms"
                 value={formData.no_of_bathrooms}
@@ -839,9 +818,7 @@ const EditHotel = () => {
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
                 placeholder="10"
               />
-              {/* <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              /> */}
+
 
               <p className="mt-6 mb-4 text-xl font-medium">Room Size :<span className="astrick">*</span></p>
               <input
@@ -856,7 +833,7 @@ const EditHotel = () => {
 
               <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :<span className="astrick">*</span></p>
               <input
-                type="text"
+                type="number"
                 name="no_of_beds"
                 id="no_of_beds"
                 value={formData.no_of_beds}
@@ -871,7 +848,7 @@ const EditHotel = () => {
                 value={formData.parking}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="3"
+                placeholder="yes/no"
               />
             </div>
           </Accordion>
@@ -1053,45 +1030,6 @@ const EditHotel = () => {
 
           </Accordion>
 
-          {/* <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <div className="">
-              <p className=" mb-3 text-xl font-medium">Status:</p>
-              <div className="flex flex-col gap-2">
-                {" "}
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="publish"
-                    name="status"
-                    value="publish"
-                    className="mr-2"
-                  />
-                  <label htmlFor="hotel" className="text-base">
-                    Publish
-                  </label>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="radio"
-                    id="draft"
-                    name="status"
-                    value="draft"
-                    className="mr-2"
-                  />
-                  <label htmlFor="homestay" className="text-base">
-                    Draft
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div> */}
-
-          <Link href="#" className="btn-primary font-semibold mt-6">
-            <span className="inline-block" onClick={handleSubmit}>
-              {" "}
-              Save & Preview{" "}
-            </span>
-          </Link>
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -1151,14 +1089,7 @@ const EditHotel = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="3"
                 />
-                {/* <div className="mt-6">
-                  <div className="h-[400px]">
-                    <iframe
-                      width="100%"
-                      height="100%"
-                      src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d2233.5934788396344!2d89.78232001463437!3d23.836268639364576!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sbd!4v1688381345276!5m2!1sen!2sbd"></iframe>
-                  </div>
-                </div> */}
+
                 <p className="mt-6 mb-4 text-xl font-medium">
                   Map Address (Script) :<span className="astrick">*</span>
                 </p>
@@ -1200,56 +1131,42 @@ const EditHotel = () => {
                   ))}
                 </select>
 
-                {/* <SelectUI
-                  options={locations.map(location => ({ name: location.location_name }))} // Map the location data to the expected format
-                /> */}
               </div>
             </Accordion>
           </div>
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
             <Accordion
               buttonContent={(open) => (
-                <div className="rounded-2xl flex justify-between">
+                <div className="rounded-2xl flex justify-between items-center">
                   <h3 className="h3">Attributes</h3>
                   <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
                   />
                 </div>
               )}
               initialOpen={true}
             >
               <div className="pt-6">
-                <p className="text-xl font-medium">Features:</p>
+                <p className="text-xl font-medium mb-4">Features:</p>
                 {amenities.length === 0 ? (
-                  <p>No amenities available</p>
+                  <p className="text-gray-500">No amenities available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                     {amenities.map((item) => (
-                      <li key={item.amenity_name} className="py-2">
+                      <li key={item.amenity_name} className="flex items-center">
                         <CheckboxCustom
-                          label={item.amenity_name} // Use amenity_name for the checkbox label
-                          // img={
-                          //   item.amenity_logo ? (
-                          //     <img
-                          //       src={item.amenity_logo}
-                          //       alt={item.amenity_name}
-                          //       className="w-5 h-5"
-                          //     />
-                          //   ) : null
-                          // }
-                          onChange={() => handleCheckboxChange(item.amenity_name)} // Call the handler
-                          checked={selectedAmenities.includes(item.amenity_name)} // Set checked state
+                          label={item.amenity_name}
+                          onChange={() => handleCheckboxChange(item.amenity_name)}
+                          checked={selectedAmenities.includes(item.amenity_name)}
                         />
                       </li>
                     ))}
                   </ul>
                 )}
               </div>
-
-
             </Accordion>
           </div>
+
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
             <Accordion
               buttonContent={(open) => (
@@ -1266,13 +1183,13 @@ const EditHotel = () => {
               <div className="pt-6">
                 <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
-                  type="text"
+                  type="number"
                   id="zipcode"
                   name="zipcode"
                   value={formData.zipcode}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="4"
+                  placeholder="123456"
                 />
                 <p className="mt-6 mb-4 text-xl font-medium">Phone :<span className="astrick">*</span></p>
                 <input
@@ -1309,7 +1226,14 @@ const EditHotel = () => {
             </Accordion>
           </div>
         </div>
-      </form>
+      </div>
+
+      <Link href="#" className="btn-primary font-semibold ml-6 mb-6">
+        <span className="inline-block" onClick={handleSubmit}>
+          {" "}
+          Save & Preview{" "}
+        </span>
+      </Link>
 
       {/* Footer */}
       <Footer />

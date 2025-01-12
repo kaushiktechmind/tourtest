@@ -408,7 +408,6 @@ const Page = () => {
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Blog Title</th>
                   <th className="py-3 lg:py-4 px-2">Category Name</th>
-                  <th className="py-3 lg:py-4 px-2">Blog Heading</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
@@ -430,7 +429,6 @@ const Page = () => {
                       <td className="py-3 lg:py-4 px-2">
                         {category ? category.category_name : 'No Category'}
                       </td>
-                      <td className="py-3 lg:py-4 px-2">{blog_heading}</td>
                       <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                         <Link
                           href={`/blogs/edit-blog?blogId=${id}`}

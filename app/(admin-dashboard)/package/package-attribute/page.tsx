@@ -27,6 +27,8 @@ const Page = () => {
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
@@ -57,7 +59,7 @@ const Page = () => {
           "https://yrpitsolutions.com/tourism_api/api/admin/get_package_attribute"
         );
         const data = await response.json();
-        setAttributes(data.data); 
+        setAttributes(data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching attributes:", error);
@@ -98,9 +100,15 @@ const Page = () => {
   // Function to handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setFile(file);
+
+      // Generate preview URL for the selected image
+      const fileUrl = URL.createObjectURL(file);
+      setImagePreview(fileUrl);
     }
   };
+
 
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -110,7 +118,7 @@ const Page = () => {
     if (file) {
       formData.append("package_attribute_logo", file);
     }
-    
+
 
     const accessToken = localStorage.getItem("access_token");
 
@@ -219,7 +227,13 @@ const Page = () => {
             >
               Upload Icon :
             </label>
-            <div className="pt-6">
+            {imagePreview && (
+              <div className="mt-4">
+                <img src={imagePreview} alt="Selected Image" className="w-32 h-32 object-cover mt-2" />
+              </div>
+            )}
+
+            <div className="">
               <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                 <label
                   htmlFor="dropzone-file"

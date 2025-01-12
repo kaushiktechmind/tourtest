@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -227,7 +227,7 @@ const EditActivity = () => {
       [name]: value,
     }));
   };
-  
+
 
 
   const handleCheckboxChange = (label: string) => {
@@ -314,22 +314,22 @@ const EditActivity = () => {
         // const filteredTicketData = ticketData.filter(ticket => ticket.code || ticket.name || ticket.price || ticket.number);
         // setTickets(filteredTicketData); // Set filtered tickets
 
-       // Filter and set only the tickets with available data
-const ticketData = [
-  { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
-  { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
-  { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
-  { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
-  { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
-];
+        // Filter and set only the tickets with available data
+        const ticketData = [
+          { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
+          { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
+          { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
+          { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
+          { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
+        ];
 
-// Filter out tickets where all fields are null or empty
-const filteredTicketData = ticketData.filter(ticket => 
-  ticket.code !== null && ticket.name !== null && ticket.price !== null && ticket.number !== null
-);
+        // Filter out tickets where all fields are null or empty
+        const filteredTicketData = ticketData.filter(ticket =>
+          ticket.code !== null && ticket.name !== null && ticket.price !== null && ticket.number !== null
+        );
 
-// Set the filtered tickets
-setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
+        // Set the filtered tickets
+        setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
 
 
         // Prefill formData with the API response
@@ -693,28 +693,30 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}>
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}
+              >
                 <h3 className="h3">Tickets</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
-            initialOpen={true}>
+            initialOpen={true}
+          >
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               {tickets.map((ticket, index) => (
                 <div key={index} className="mb-6 p-4 border rounded-md">
                   <div className="flex flex-wrap gap-4 items-start">
                     <div className="w-full md:w-1/6 flex flex-col">
-                      <div>
-                        <label className="block text-sm font-medium mb-2">Code</label>
-                        <input
-                          value={ticket.code}
-                          onChange={(e) => handleInputChange(index, "code", e.target.value)}
-                          className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                          placeholder="Code"
-                        />
-                      </div>
+                      <label className="block text-sm font-medium mb-2">Code</label>
+                      <input
+                        value={ticket.code}
+                        onChange={(e) => handleInputChange(index, "code", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Code"
+                      />
                     </div>
                     <div className="w-full md:w-1/5">
                       <label className="block text-sm font-medium mb-2">Name</label>
@@ -744,13 +746,14 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
                       />
                     </div>
                     {tickets.length > 1 && (
-                      <div className="w-full md:w-1/5">
+                      <div className="w-auto flex items-center">
                         <button
                           type="button"
                           onClick={() => deleteTicket(index)}
-                          className="text-red-500"
+                          className="text-red-500 p-2 hover:bg-gray-100 rounded-full"
+                          title="Delete"
                         >
-                          Delete
+                          <TrashIcon className="w-5 h-5" />
                         </button>
                       </div>
                     )}
@@ -766,7 +769,6 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
                 Add New
               </button>
             </div>
-
           </Accordion>
 
           {/* <Accordion
@@ -1004,8 +1006,7 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
           </div>
 
 
-          <div className="rounded-2xl bg-white border mt-6 ">
-
+          <div className="rounded-2xl bg-white border mt-6">
             <Accordion
               buttonContent={(open) => (
                 <div
@@ -1022,17 +1023,21 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
               initialOpen={true}
             >
               <div className="p-6">
-                <p className="text-xl font-medium">Features:</p>
+                <p className="text-xl font-medium mb-4">Features:</p>
                 {activity_attribute.length === 0 ? (
-                  <p>No activity_attribute available</p>
+                  <p className="text-gray-500">No activity attributes available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {activity_attribute.map((item) => (
-                      <li key={item.id} className="py-2 flex items-center">
+                      <li key={item.id} className="flex items-center">
                         <CheckboxCustom
                           label={item.activity_attribute_name}
-                          onChange={() => handleCheckboxChange(item.activity_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.activity_attribute_name)} // Check if selected
+                          onChange={() =>
+                            handleCheckboxChange(item.activity_attribute_name)
+                          }
+                          checked={selectedAmenities.includes(
+                            item.activity_attribute_name
+                          )}
                         />
                       </li>
                     ))}
@@ -1041,6 +1046,7 @@ setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
               </div>
             </Accordion>
           </div>
+
         </div>
       </section>
 

@@ -125,10 +125,11 @@ const BlogDetails = () => {
                     height={600}
                     src={image}
                     alt={`blog-image-${index + 1}`}
-                    className="w-full rounded-2xl"
+                    className="w-full h-[600px] rounded-2xl object-cover"
                   />
                 </SwiperSlide>
               ))}
+
 
               <div className="absolute bottom-0 right-0 p-3 sm:p-4 md:p-5 lg:px-10 lg:py-6 bg-primary z-10 flex gap-3 text-white rounded-tl-2xl rounded-br-2xl">
                 <div className="btn-prev border border-white w-10 h-10 flex items-center justify-center rounded-full text-2xl hover:bg-white hover:text-neutral-800 duration-300 cursor-pointer">

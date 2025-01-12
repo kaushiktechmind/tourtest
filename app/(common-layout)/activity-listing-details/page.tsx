@@ -16,7 +16,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Tooltip } from "react-tooltip";
 import DatePicker from "react-datepicker";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect, useState, useRef } from "react";
 import CheckboxCustom from "@/components/Checkbox";
 import { useRouter, useSearchParams } from "next/navigation";
 function classNames(...classes: any[]) {
@@ -83,6 +83,8 @@ const ActivityListingDetails = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const activityId = searchParams.get("activityId");
+
+  const datePickerRef = useRef<any>(null);
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -852,9 +854,17 @@ const ActivityListingDetails = () => {
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
                                 onChange={(date) => setSelectedDate(date)}
+                                ref={datePickerRef} 
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                               />
-                              <span className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0">
+                             <span
+                                className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0 cursor-pointer"
+                                onClick={() => {
+                                  if (datePickerRef.current) {
+                                    datePickerRef.current.setFocus(); // Call only if ref is not null
+                                  }
+                                }}
+                              >
                                 <i className="las text-2xl la-calendar-alt"></i>
                               </span>
                             </div>
@@ -888,18 +898,7 @@ const ActivityListingDetails = () => {
                                               [`ticket${index + 1}`]: Number(e.target.value),
                                             }))}
                                           >
-                                            {/* Generate dropdown options dynamically based on ticket availability */}
-                                            {/* {[...Array(Math.min(ticketAvailability || 0, 9) + 1).keys()].map((num) => (
-                                              <option key={num} value={num}>
-                                                {num}
-                                              </option>
-                                            ))} */}
-                                            {[
-                                              ...Array(Math.min(
-                                                typeof ticketAvailability === 'number' ? ticketAvailability : 0,  // Ensure it's a number
-                                                9
-                                              ) + 1).keys()
-                                            ].map((num) => (
+                                            {[...Array(Math.min(Number(ticketAvailability) || 0, 9) + 1).keys()].map((num) => (
                                               <option key={num} value={num}>
                                                 {num}
                                               </option>

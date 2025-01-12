@@ -293,6 +293,7 @@ const EditPackage = () => {
             image: item.image
           }))
         );
+        console.log("xxxxxxxxxxxxxxxxxxx", itineraries)
 
         if (data.package_content) {
           setDescription(data.package_content); // Set the description from the API
@@ -388,9 +389,7 @@ const EditPackage = () => {
     };
 
     fetchPackageData();
-  }, [packageId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
-
-
+  }, [packageId, inclusions, exclusions]);  
 
 
   const handleSubmit = async () => {
@@ -519,7 +518,7 @@ const EditPackage = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Package Updated successfully!");
-        router.push("/package/all-package");
+        // router.push("/package/all-package");
         console.log(data);
       } else {
         alert("Failed to Update package.");
@@ -538,15 +537,7 @@ const EditPackage = () => {
     setItineraries(newItineraries);
   };
 
-  // Add new itinerary box
-  // const addNewItinerary = () => {
-  //   if (itineraries.length < 5) {
-  //     setItineraries([
-  //       ...itineraries,
-  //       { image: "", title: "", description: "", content: "" }
-  //     ]);
-  //   }
-  // };
+
   const addNewItinerary = () => {
     if (itineraries.length < 5) {
       setItineraries([
@@ -920,13 +911,7 @@ const EditPackage = () => {
                         onChange={(e) => handleEditInclusion(index, e.target.value)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
-                      {/* <button
-                        type="button"
-                        onClick={() => setSelectedInclusions((prev) => prev.filter((_, i) => i !== index))}
-                        className="text-red-500"
-                      >
-                        Remove
-                      </button> */}
+                    
                     </div>
                   ))}
                 </div>
@@ -975,14 +960,7 @@ const EditPackage = () => {
                         onChange={(e) => handleEditExclusion(index, e.target.value)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
-                      {/* Optionally add a remove button */}
-                      {/* <button
-          type="button"
-          onClick={() => setSelectedExclusions((prev) => prev.filter((_, i) => i !== index))}
-          className="text-red-500"
-        >
-          Remove
-        </button> */}
+                     
                     </div>
                   ))}
                 </div>

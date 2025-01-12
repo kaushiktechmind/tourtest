@@ -166,7 +166,7 @@ const AddNewHotel = () => {
     setFields(updatedFields);
   };
 
-  
+
   const formatDataForApi = () => {
     const formattedData: any = {};
 
@@ -235,7 +235,7 @@ const AddNewHotel = () => {
   //     }
   //   });
   // };
-  
+
   const handleCheckboxChange = (amenity: Amenity) => {
     setSelectedAmenities((prevSelected) => {
       if (prevSelected.some(item => item.id === amenity.id)) {
@@ -245,7 +245,7 @@ const AddNewHotel = () => {
       }
     });
   };
-  
+
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -418,11 +418,13 @@ const AddNewHotel = () => {
           },
         }
       );
-      console.log("API Response:", response.data);
       alert("Hotel added successfully!");
       router.push("/hotel/all-hotels");
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        alert(
+          `Failed to add hotel: ${error.response?.data?.message || error.message}`
+        );
         console.error("Axios error message:", error.message);
         console.error("Axios error response:", error.response);
       } else if (error instanceof Error) {
@@ -432,6 +434,8 @@ const AddNewHotel = () => {
       }
     }
   };
+
+
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
   // Handle file change (update formData and preview images)
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -947,12 +951,6 @@ const AddNewHotel = () => {
             </div>
           </Accordion>
 
-          <Link href="#" className="btn-primary font-semibold mt-6">
-            <span className="inline-block" onClick={handleSubmit}>
-              {" "}
-              Save & Preview{" "}
-            </span>
-          </Link>
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -1009,7 +1007,7 @@ const AddNewHotel = () => {
 
 
 
-                
+
                 <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
                 <input
                   type="text"
@@ -1019,7 +1017,7 @@ const AddNewHotel = () => {
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                   placeholder="3"
                 />
-                
+
                 <p className="mt-6 mb-4 text-xl font-medium">
                   Map Address (Script) :<span className="astrick">*</span>
                 </p>
@@ -1116,7 +1114,7 @@ const AddNewHotel = () => {
                 <p className="mb-4 text-xl font-medium">Zip/Post Code :<span className="astrick">*</span></p>
                 <input
                   type="number"
-                    id="zipcode"
+                  id="zipcode"
                   name="zipcode"
                   value={formData.zipcode}
                   onChange={handleChange}
@@ -1159,6 +1157,13 @@ const AddNewHotel = () => {
           </div>
         </div>
       </div>
+
+      <Link href="#" className="btn-primary font-semibold ml-6 mb-6">
+        <span className="inline-block" onClick={handleSubmit}>
+          {" "}
+          Save & Preview{" "}
+        </span>
+      </Link>
 
       {/* Footer */}
       <Footer />

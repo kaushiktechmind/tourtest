@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -65,8 +65,8 @@ const AddActivity = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState<Location[]>([]); 
-  
+  const [locations, setLocations] = useState<Location[]>([]);
+
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [activity_attribute, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -221,7 +221,7 @@ const AddActivity = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  
+
 
   const handleCheckboxChange = (label: string) => {
     setSelectedAmenities((prevSelected) => {
@@ -399,7 +399,7 @@ const AddActivity = () => {
   };
 
   return (
-   
+
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Add New Activity</h2>
@@ -516,7 +516,7 @@ const AddActivity = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
               />
-              
+
               <p className="mt-6 mb-4 text-xl font-medium">Full Address :</p>
               <input
                 type="text"
@@ -542,83 +542,86 @@ const AddActivity = () => {
 
 
           <Accordion
-                      buttonContent={(open) => (
-                        <div
-                          className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}>
-                          <h3 className="h3">Tickets</h3>
-                          <ChevronDownIcon
-                            className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-                          />
-                        </div>
-                      )}
-                      initialOpen={true}>
-                      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-                        {tickets.map((ticket, index) => (
-                          <div key={index} className="mb-6 p-4 border rounded-md">
-                            <div className="flex flex-wrap gap-4 items-start">
-                              <div className="w-full md:w-1/6 flex flex-col">
-                                <div>
-                                  <label className="block text-sm font-medium mb-2">Code</label>
-                                  <input
-                                    value={ticket.code}
-                                    onChange={(e) => handleInputChange(index, "code", e.target.value)}
-                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                    placeholder="Code"
-                                  />
-                                </div>
-                              </div>
-                              <div className="w-full md:w-1/5">
-                                <label className="block text-sm font-medium mb-2">Name</label>
-                                <input
-                                  value={ticket.name}
-                                  onChange={(e) => handleInputChange(index, "name", e.target.value)}
-                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                  placeholder="Name"
-                                />
-                              </div>
-                              <div className="w-full md:w-1/5">
-                                <label className="block text-sm font-medium mb-2">Price</label>
-                                <input
-                                  value={ticket.price}
-                                  onChange={(e) => handleInputChange(index, "price", e.target.value)}
-                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                  placeholder="Price"
-                                />
-                              </div>
-                              <div className="w-full md:w-1/6">
-                                <label className="block text-sm font-medium mb-2">Number</label>
-                                <input
-                                  value={ticket.number}
-                                  onChange={(e) => handleInputChange(index, "number", e.target.value)}
-                                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                  placeholder="Number"
-                                />
-                              </div>
-                              {tickets.length > 1 && (
-                                <div className="w-full md:w-1/5">
-                                  <button
-                                    type="button"
-                                    onClick={() => deleteTicket(index)}
-                                    className="text-red-500"
-                                  >
-                                    Delete
-                                  </button>
-                                </div>
-                              )}
-                            </div>
-                          </div>
-                        ))}
+            buttonContent={(open) => (
+              <div
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white mt-6`}
+              >
+                <h3 className="h3">Tickets</h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
+                />
+              </div>
+            )}
+            initialOpen={true}
+          >
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {tickets.map((ticket, index) => (
+                <div key={index} className="mb-6 p-4 border rounded-md">
+                  <div className="flex flex-wrap gap-4 items-start">
+                    <div className="w-full md:w-1/6 flex flex-col">
+                      <label className="block text-sm font-medium mb-2">Code</label>
+                      <input
+                        value={ticket.code}
+                        onChange={(e) => handleInputChange(index, "code", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Code"
+                      />
+                    </div>
+                    <div className="w-full md:w-1/5">
+                      <label className="block text-sm font-medium mb-2">Name</label>
+                      <input
+                        value={ticket.name}
+                        onChange={(e) => handleInputChange(index, "name", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Name"
+                      />
+                    </div>
+                    <div className="w-full md:w-1/5">
+                      <label className="block text-sm font-medium mb-2">Price</label>
+                      <input
+                        value={ticket.price}
+                        onChange={(e) => handleInputChange(index, "price", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Price"
+                      />
+                    </div>
+                    <div className="w-full md:w-1/6">
+                      <label className="block text-sm font-medium mb-2">Number</label>
+                      <input
+                        value={ticket.number}
+                        onChange={(e) => handleInputChange(index, "number", e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                        placeholder="Number"
+                      />
+                    </div>
+                    {tickets.length > 1 && (
+                      <div className="w-auto flex items-center">
                         <button
                           type="button"
-                          onClick={addNewTicket}
-                          className="text-blue-500"
-                          disabled={tickets.length >= 5}
+                          onClick={() => deleteTicket(index)}
+                          className="text-red-500 p-2 hover:bg-gray-100 rounded-full"
+                          title="Delete"
                         >
-                          Add New
+                          <TrashIcon className="w-5 h-5" />
                         </button>
                       </div>
-          
-                    </Accordion>
+                    )}
+                  </div>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={addNewTicket}
+                className="text-blue-500"
+                disabled={tickets.length >= 5}
+              >
+                Add New
+              </button>
+            </div>
+          </Accordion>
+
 
           {/* <Accordion
             buttonContent={(open) => (
@@ -856,17 +859,17 @@ const AddActivity = () => {
               initialOpen={true}
             >
               <div className="p-6">
-                <p className="text-xl font-medium">Features:</p>
+                <p className="text-xl font-medium mb-4">Features:</p>
                 {activity_attribute.length === 0 ? (
-                  <p>No activity_attribute available</p>
+                  <p className="text-gray-500">No activity attributes available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                     {activity_attribute.map((item) => (
-                      <li key={item.id} className="py-2 flex items-center">
+                      <li key={item.id} className="flex items-center">
                         <CheckboxCustom
                           label={item.activity_attribute_name}
-                          onChange={() => handleCheckboxChange(item.activity_attribute_name)} // Use the amenity name
-                          checked={selectedAmenities.includes(item.activity_attribute_name)} // Check if selected
+                          onChange={() => handleCheckboxChange(item.activity_attribute_name)}
+                          checked={selectedAmenities.includes(item.activity_attribute_name)}
                         />
                       </li>
                     ))}
@@ -874,18 +877,19 @@ const AddActivity = () => {
                 )}
               </div>
             </Accordion>
+
           </div>
         </div>
       </section>
 
-      
+
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
         Save & Preview
       </button>
 
       <Footer />
     </div>
-   
+
   );
 };
 

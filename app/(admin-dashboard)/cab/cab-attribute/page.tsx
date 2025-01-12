@@ -27,6 +27,8 @@ const Page = () => {
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
@@ -57,7 +59,7 @@ const Page = () => {
           "https://yrpitsolutions.com/tourism_api/api/admin/get_cab_attribute"
         );
         const data = await response.json();
-        setAttributes(data.data); 
+        setAttributes(data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching attributes:", error);
@@ -95,12 +97,18 @@ const Page = () => {
   };
 
 
-  // Function to handle file selection
+  // Function to handle file selection and display the image
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setFile(e.target.files[0]);
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+
+      // Create a temporary URL for the selected file
+      const imageUrl = URL.createObjectURL(selectedFile);
+      setPreviewImage(imageUrl); // Set the URL for preview
     }
   };
+
 
   // Function to handle form submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -217,6 +225,18 @@ const Page = () => {
             >
               Upload Icon :
             </label>
+
+            {previewImage && (
+              <div className="mt-4">
+                <Image
+                  src={previewImage}
+                  alt="Selected Attribute Icon"
+                  width={100}
+                  height={100}
+                  className="rounded-lg border"
+                />
+              </div>
+            )}  
             <div className="pt-6">
               <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                 <label
@@ -244,6 +264,8 @@ const Page = () => {
                 </label>
               </div>
             </div>
+
+          
             <div className="mt-[20px]">
               <button type="submit" className="btn-primary font-semibold">
                 <span className="inline-block"> Add New </span>

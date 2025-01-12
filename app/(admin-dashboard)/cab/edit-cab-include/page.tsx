@@ -37,7 +37,6 @@ const EditCabInclude = () => {
     if (!response.ok) return; // No error handling, just return if the response is not OK
     const data = await response.json();
     setincludeTitle(data.cab_inclusion_title); // Set include name for editing
-    router.push('/include/all-include');
     setLoading(false);
   };
   
@@ -72,7 +71,7 @@ const EditCabInclude = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Cab Include</h2>
-        <Link href="/include/all-include" className="btn-primary">
+        <Link href="/cab/cab-include" className="btn-primary">
           <PencilSquareIcon className="w-5 h-5" /> All Include
         </Link>
       </div>

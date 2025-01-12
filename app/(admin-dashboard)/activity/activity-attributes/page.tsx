@@ -27,6 +27,9 @@ const Page = () => {
   const [attributes, setAttributes] = useState<Attribute[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [preview, setPreview] = useState<string | null>(null);
+
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 5;
 
@@ -57,7 +60,7 @@ const Page = () => {
           "https://yrpitsolutions.com/tourism_api/api/admin/get_attribute_activity"
         );
         const data = await response.json();
-        setAttributes(data.data); 
+        setAttributes(data.data);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching attributes:", error);
@@ -97,8 +100,10 @@ const Page = () => {
 
   // Function to handle file selection
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setFile(e.target.files[0]);
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile)); // Generate preview URL
     }
   };
 
@@ -191,7 +196,7 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Activity Attributes</h2>
-        <Link href="/hotel/all-hotels" className="btn-primary">
+        <Link href="/activity/all-activity" className="btn-primary">
           <EyeIcon className="w-5 h-5" /> View All Activities
         </Link>
       </div>
@@ -221,6 +226,18 @@ const Page = () => {
             >
               Upload Icon :
             </label>
+
+            {preview && (
+              <div className="mt-4">
+                <Image
+                  src={preview}
+                  alt="Selected attribute icon"
+                  width={100}
+                  height={100}
+                  className="rounded-md border"
+                />
+              </div>
+            )}
             <div className="pt-6">
               <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                 <label
@@ -248,6 +265,7 @@ const Page = () => {
                 </label>
               </div>
             </div>
+
             <div className="mt-[20px]">
               <button type="submit" className="btn-primary font-semibold">
                 <span className="inline-block"> Add New </span>
