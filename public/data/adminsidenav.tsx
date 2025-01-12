@@ -142,7 +142,7 @@ export const sidenavData = [
   {
     id: 16,
     name: "Categories",
-    icon: <i className="las la-tags text-2xl"></i>,  // Updated icon for Categories
+    icon: <i className="las la-list text-2xl"></i>,  // Updated icon for Categories
     url: "/categories/all-categories",
   },
   {
@@ -157,8 +157,14 @@ export const sidenavData = [
     icon: <i className="las la-ticket-alt text-2xl"></i>,  // Icon for Coupon remains the same
     url: "/coupon",
   },
-{  
+  {
     id: 19,
+    name: "Tags",
+    icon: <i className="las la-tags text-2xl"></i>, // Icon for Coupon remains the same
+    url: "/tag/add-tag",
+  },
+{  
+    id: 20,
     name: "Total Earnings",
     icon: <i className="las la-hand-holding-usd text-2xl"></i>,
     submenus: [
@@ -169,7 +175,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 20,
+    id: 21,
     name: "General Settings",
     icon: <i className="las la-cog text-2xl"></i>,
     submenus: [
@@ -182,7 +188,7 @@ export const sidenavData = [
     ],
   },
   {
-    id: 21,
+    id: 22,
     name: "Payment Settings",
     icon: <i className="las la-credit-card text-2xl"></i>,
     submenus: [
@@ -193,13 +199,13 @@ export const sidenavData = [
     ],
   },
   {
-    id: 22,
+    id: 23,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",
   },
   {
-    id: 23,
+    id: 24,
     name: "Authentication",
     icon: <i className="las la-user-shield text-2xl"></i>,
     submenus: [

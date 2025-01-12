@@ -447,14 +447,12 @@ const EditCab = () => {
 
       formDataToSend.append("faqs[]", faqs);
 
-      if (Array.isArray(bannerImages)) {
-        bannerImages.forEach((file) => {
-          formDataToSend.append("banner_image_multiple[]", file);
-        });
-      } else {
-        console.error('bannerImages is not defined or not an array');
-      }
-
+     // Conditionally append banner images only if images are selected
+     if (Array.isArray(bannerImages) && bannerImages.length > 0) {
+      bannerImages.forEach((file) => {
+        formDataToSend.append("banner_image_multiple[]", file);
+      });
+    }
 
 
 

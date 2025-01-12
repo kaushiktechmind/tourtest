@@ -152,7 +152,7 @@ const Page = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6  mt-[40px]">
+      <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6  mt-[70px]">
         {/* <h1 className="text-2xl font-bold mb-6">Payment History</h1> */}
 
         {/* Search Field UI */}
