@@ -40,7 +40,7 @@ const FerryList = () => {
 
   const locationIds: { [key: string]: number } = {
     "Port Blair": 1,
-    "Swaraj Dweep  (Havelock)": 2,
+    "Swaraj Dweep  (Havelock) ": 2,
     "Shaheed Dweep (Neil)": 3,
   };
 
