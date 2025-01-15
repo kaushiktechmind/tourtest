@@ -35,6 +35,8 @@ import {
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
 import CheckboxCustom from "@/components/Checkbox";
+import { UrlObject } from "url";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 interface RoomPrice {
   room_price: number;
@@ -761,54 +763,69 @@ const HotelListingDetails = () => {
         <div className="container-fluid p-0">
           <div>
             <div className="col-span-12">
-              <Swiper
-                loop={true}
-                slidesPerView="auto"
-                spaceBetween={16}
-                centeredSlides={true}
-                centeredSlidesBounds={true}
-                navigation={{
-                  nextEl: ".btn-next",
-                  prevEl: ".btn-prev",
-                }}
-                breakpoints={{
-                  576: {
-                    slidesPerView: 2.25,
-                  },
-                  768: {
-                    slidesPerView: 2.5,
-                  },
-                  1200: {
-                    slidesPerView: 3.25,
-                  },
-                }}
-                modules={[Navigation]}
-                className="swiper property-gallery-slider "
-              >
-                {hotelDetails?.banner_images?.map((image, index) => (
-                  <SwiperSlide key={index} className="swiper-slide">
-                    <Link
-                      href={image}
-                      className="link block property-gallery mt-[90px]"
-                    >
-                      <Image
-                        width={618}
-                        height={618}
-                        src={image}
-                        alt={`banner image ${index + 1}`}
-                        className="rounded-2xl object-cover h-[500px] w-[618px]"
-                      />
-                    </Link>
-                  </SwiperSlide>
-                ))}
+            {hotelDetails?.banner_images?.length > 0 && (
+                <Swiper
+                  loop={true}
+                  slidesPerView="auto"
+                  spaceBetween={16}
+                  centeredSlides={true}
+                  centeredSlidesBounds={true}
+                  navigation={{
+                    nextEl: ".btn-next",
+                    prevEl: ".btn-prev",
+                  }}
+                  breakpoints={{
+                    576: {
+                      slidesPerView: 2.25,
+                    },
+                    768: {
+                      slidesPerView: 2.5,
+                    },
+                    1200: {
+                      slidesPerView: 3.25,
+                    },
+                  }}
+                  modules={[Navigation]}
+                  className="swiper property-gallery-slider"
+                >
+                  <div className="swiper-wrapper property-gallery-slider">
+                    {/* Dynamically render SwiperSlide from banner_images */}
+                    {hotelDetails.banner_images.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => {
+                      // Check if the image is a valid string (for string URLs or StaticImport)
+                      const imageUrl = typeof image === 'string' ? image : (image as UrlObject)?.href;
 
-                <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                  <ChevronLeftIcon className="w-5 h-5" />
-                </button>
-                <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                  <ChevronRightIcon className="w-5 h-5" />
-                </button>
-              </Swiper>
+                      // If the image is invalid (undefined or null), skip rendering the image
+                      if (!imageUrl) {
+                        return null;
+                      }
+
+                      return (
+                        <SwiperSlide key={index} className="swiper-slide">
+                          <Link href="#" className="link property-gallery">
+                            <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}>
+                              {/* Fixed height for all images */}
+                              <Image
+                                layout="fill"  // Ensures the image fills the parent container
+                                objectFit="cover" // Maintains aspect ratio while covering the container
+                                src={imageUrl}    // Ensures the src is a valid string
+                                alt={`cab-gallery`}
+                                className=""
+                              />
+                            </div>
+                          </Link>
+                        </SwiperSlide>
+                      );
+                    })}
+
+                  </div>
+                  <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                    <ChevronLeftIcon className="w-5 h-5" />
+                  </button>
+                  <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                    <ChevronRightIcon className="w-5 h-5" />
+                  </button>
+                </Swiper>
+              )}
             </div>
           </div>
         </div>

@@ -195,7 +195,7 @@ const CabReciept = () => {
 
               <div className="mb-3">
                 <span className="clr-neutral-400 inline-block text-sm">Total Price</span>
-                <p className="mb-0 text-lg font-medium">{totalPrice} USD</p>
+                <p className="mb-0 text-lg font-medium">₹{totalPrice}</p>
               </div>
 
               {/* <RazorpayActBtn
