@@ -105,8 +105,8 @@ const filteredPayments = payments.filter((payment) =>
         payment.cab_name,
         payment.customer_mobile_number,
       ]
-        .filter(Boolean) // Remove undefined values
-        .some((field) => field.toLowerCase().includes(term))
+        .filter(Boolean) // Remove undefined or null values
+        .some((field) => field && field.toLowerCase().includes(term))
     )
 );
 
