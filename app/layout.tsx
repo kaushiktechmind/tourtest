@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   title: "Andman Mangroves Holydays",
-  description: "A nextjs template for online booking system",
+  description: "Online booking system",
 };
 
 export default function RootLayout({

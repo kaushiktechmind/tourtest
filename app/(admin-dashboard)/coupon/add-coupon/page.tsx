@@ -46,13 +46,12 @@ const AddCoupon = () => {
   const searchParams = useSearchParams();
 
   const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [search, setSearch] = useState("");
 
 
   const [formData, setFormData] = useState<HotelFormData>({
     coupon_name: "",
     coupon_code: "",
-    type: "",
+    type: "%",
     discount_price: "",
     start_date: "",
     end_date: "",
@@ -85,12 +84,12 @@ const AddCoupon = () => {
           },
         }
       );
-  
+
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to delete coupon: ${errorMessage}`);
       }
-  
+
       alert("Coupon deleted successfully");
       setCoupons((prevCoupons) => prevCoupons.filter((coupon) => coupon.id !== id));
     } catch (error) {
@@ -98,23 +97,10 @@ const AddCoupon = () => {
       alert("Error deleting coupon: ");
     }
   };
-  
-  const filteredCoupons = coupons.filter((coupon) => {
-    const searchTerm = search.toLowerCase();
-    return (
-      coupon.coupon_name.toLowerCase().includes(searchTerm) ||
-      coupon.coupon_code.toLowerCase().includes(searchTerm) ||
-      coupon.discount_price.toString().toLowerCase().includes(searchTerm) ||
-      coupon.start_date.toLowerCase().includes(searchTerm) ||
-      coupon.end_date.toLowerCase().includes(searchTerm) || 
-      coupon.status.toLowerCase().includes(searchTerm)
-    );
-  });
-  
-  
+
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -122,7 +108,7 @@ const AddCoupon = () => {
       [name]: value,
     }));
   };
-
+  
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -218,14 +204,15 @@ const AddCoupon = () => {
               onChange={handleInputChange}
             />
             <p className="mt-6 mb-4 text-xl font-medium">Type :</p>
-            <input
-              type="text"
+            <select
               name="type"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder=""
               value={formData.type}
               onChange={handleInputChange}
-            />
+            >
+              <option value="%">%</option>
+              <option value="$">$</option>
+            </select>
             <p className="mt-6 mb-4 text-xl font-medium">Discount Price :</p>
             <input
               type="number"
@@ -269,15 +256,16 @@ const AddCoupon = () => {
               </div>
             </div>
 
-            {/* <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
-            <input
-              type="text"
+            <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
+            <select
               name="status"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="1"
               value={formData.status}
               onChange={handleInputChange}
-            /> */}
+            >
+              <option value="1">1 </option>
+              <option value="0">0 </option>
+            </select>
 
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
@@ -290,75 +278,6 @@ const AddCoupon = () => {
           </form>
         </div>
 
-        {/* Rooms List */}
-        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-      <div className="flex flex-wrap gap-3 justify-between mb-7">
-        <form className="flex flex-wrap items-center gap-3">
-          <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
-            <input
-              type="text"
-              placeholder="Search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
-            />
-            <SearchIcon />
-          </div>
-        </form>
-      </div>
-
-      <div className="overflow-x-auto">
-        <table className="w-full whitespace-nowrap">
-          <thead>
-            <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-              <th className="py-3 lg:py-4 px-2">Coupon Code</th>
-              <th className="py-3 lg:py-4 px-2">Coupon Name</th>
-              <th className="py-3 lg:py-4 px-2">Discount Price</th>
-              <th className="py-3 lg:py-4 px-2">Action</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {filteredCoupons.length > 0 ? (
-              filteredCoupons.map(({ id, coupon_code, discount_price, coupon_name }) => (
-                <tr
-                  key={id}
-                  className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                >
-                  <td className="py-3 lg:py-4 px-2">{coupon_code}</td>
-                  <td className="py-3 lg:py-4 px-2">
-                    {coupon_name}
-                  </td>
-                  <td className="py-3 lg:py-4 px-2">{discount_price}</td>
-                  
-                  <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                    <Link
-                      href={`/coupon/edit-coupon?couponId=${id}`}
-                      className="text-primary"
-                    >
-                      <PencilSquareIcon className="w-5 h-5" />
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(id)}
-                      className="text-[var(--secondary-500)]"
-                    >
-                      <TrashIcon className="w-5 h-5" />
-                    </button>
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={4} className="text-center py-3">
-                  No coupons available
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-        {/* <Pagination /> */}
-      </div>
-    </div>
       </section>
 
       {/* Footer */}

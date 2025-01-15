@@ -12,6 +12,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 const Page = () => {
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [imageSrc, setImageSrc] = useState<string>("/img/team-1.jpg");
+
   const [adminSetting, setAdminSetting] = useState<any>(null); // State for fetched data
   const [formData, setFormData] = useState<any>({
     full_name: "",
@@ -61,16 +62,19 @@ const Page = () => {
     if (files && files.length > 0) {
       const field = event.target?.dataset?.field;
       if (field) {
-        const file = files[0];
-        const imageUrl = URL.createObjectURL(file); // Generate temporary URL
+        const file = files[0]; // Get the selected file
         setFormData((prevData: any) => ({
           ...prevData,
-          [field]: imageUrl, // Set the generated URL as the image src
+          [field]: file, // Store the file in the form data
+        }));
+        const imageUrl = URL.createObjectURL(file); // Generate temporary URL for preview
+        setFormData((prevData: any) => ({
+          ...prevData,
+          [`${field}_url`]: imageUrl, // Store the image URL for immediate preview
         }));
       }
     }
   };
-  
 
   // Handle form data change
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -170,7 +174,7 @@ const Page = () => {
                             width={180}
                             height={180}
                             className="rounded-full border-[6px] border-[#F5F5FE] shadow-md"
-                            src={formData.profile_photo || imageSrc}
+                            src={formData.profile_photo_url || formData.profile_photo || imageSrc} // Use the temporary URL or the original profile photo
                             alt="avatar"
                           />
                           <span className="w-8 h-8 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
@@ -278,9 +282,10 @@ const Page = () => {
                           width={180}
                           height={180}
                           className="rounded-full border-[6px] border-[#F5F5FE] shadow-md"
-                          src={formData.logo || imageSrc}
+                          src={formData.logo_url || formData.logo || imageSrc} // Fallback to imageSrc if logo_url and logo are not set
                           alt="logo"
                         />
+
                         <span className="w-5 h-5 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
                           <PencilIcon className="w-5 h-5" />
                         </span>
@@ -309,9 +314,10 @@ const Page = () => {
                           width={180}
                           height={180}
                           className="rounded-full border-[6px] border-[#F5F5FE] shadow-md"
-                          src={formData.favicon || imageSrc}
+                          src={formData.favicon_url || formData.favicon || imageSrc} // Fallback to imageSrc if favicon_url and favicon are not set
                           alt="favicon"
                         />
+
                         <span className="w-5 h-5 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
                           <PencilIcon className="w-5 h-5" />
                         </span>

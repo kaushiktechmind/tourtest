@@ -44,7 +44,7 @@ const Page = () => {
       localStorage.setItem("access_token", data.access_token);
       localStorage.setItem("name", data.admin.name);
       localStorage.setItem("email", data.admin.email);
-      router.push("/admin-dashboard")
+      router.push("/admin")
 
       // Show the popup after successful login
       setShowPopup(true);

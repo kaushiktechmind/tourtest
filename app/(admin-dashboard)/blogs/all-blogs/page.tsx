@@ -53,6 +53,9 @@ const Page = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
+  const [tags, setTags] = useState<{ id: number; tag_name: string }[]>([]);
+  const [selectedTagId, setSelectedTagId] = useState<number | null>(null);
+
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null);
@@ -65,6 +68,30 @@ const Page = () => {
     comments: "",
     blog_image_multiple: [],
   });
+
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_tag');
+        const data = await response.json();
+        setTags(data); // Assuming the response is an array of tags
+      } catch (error) {
+        console.error('Error fetching tags:', error);
+      }
+    };
+
+    fetchTags();
+  }, []);
+
+  const handleTagChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedTagName = e.target.value;
+    setFormData((prevData) => ({
+      ...prevData,
+      tags: selectedTagName, // Update tags with tag_name
+    }));
+  };
+
 
 
 
@@ -212,14 +239,14 @@ const Page = () => {
 
       if (!response.ok) {
         const errorMessage = await response.text();
-        throw new Error(`Failed to add room: ${errorMessage}`);
+        throw new Error(`Failed to add blog: ${errorMessage}`);
       }
 
       const data = await response.json();
-      alert("Room added successfully");
+      alert("Blog added successfully");
       window.location.reload();
     } catch (error) {
-      console.error("Error occurred during room addition:", error);
+      console.error("Error occurred during blog addition:", error);
     }
   };
 
@@ -238,6 +265,9 @@ const Page = () => {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Blogs</h2>
+        <Link href="../categories/all-categories" className="btn-primary">
+          <EyeIcon className="w-5 h-5" /> Add Category
+        </Link>
       </div>
 
       {/* Add Room Form */}
@@ -263,7 +293,7 @@ const Page = () => {
                 Select a category
               </option>
               {categories.map((category) => (
-               <option key={category.id} value={category.id ?? ''}>
+                <option key={category.id} value={category.id ?? ''}>
                   {category.category_name}
                 </option>
               ))}
@@ -285,7 +315,7 @@ const Page = () => {
               htmlFor="name"
               className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium"
             >
-              Blog Name:
+              Blog Title:
             </label>
             <input
               type="text"
@@ -319,15 +349,24 @@ const Page = () => {
               value={formData.comments}
               onChange={handleInputChange}
             />
-            <p className="mt-6 mb-4 text-xl font-medium">Tags :</p>
-            <input
-              type="text"
+            <p className="mt-6 mb-4 text-xl font-medium">Tags:</p>
+            <select
+              id="tags"
               name="tags"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder=""
               value={formData.tags}
-              onChange={handleInputChange}
-            />
+              onChange={handleTagChange}
+              className="w-full border p-2 focus:outline-none rounded-md text-base"
+            >
+              <option value="" disabled>
+                Select a tag
+              </option>
+              {tags.map((tag) => (
+                <option key={tag.id} value={tag.id}>
+                  {tag.tag_name}
+                </option>
+              ))}
+            </select>
+
 
             <label
               htmlFor="icon-upload"

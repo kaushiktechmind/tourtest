@@ -26,10 +26,15 @@ export default function RootLayout({
   const path = usePathname();
 
   useEffect(() => {
-    // Update the isLoggedIn state whenever localStorage is checked
     const token = localStorage.getItem("access_token");
-    setIsLoggedIn(!!token);
-  }, [path]); // Re-run this effect when the pathname changes (on page navigation)
+
+    if (!token && path.startsWith("/admin")) {
+      // Redirect to signin page if token is not found
+      window.location.href = "/auth/signin";
+    } else {
+      setIsLoggedIn(!!token);
+    }
+  }, [path]);
 
   // Define routes where the sidebar and header should not be displayed
   const noNavRoutes = ["/auth/signin", "/auth/signup", "/auth/adminprofile"];
@@ -47,9 +52,8 @@ export default function RootLayout({
       {showNav && (
         <section className="bg-white">
           <nav
-            className={`${
-              navOpen ? "ml-0" : "ml-[-312px]"
-            } lg:ml-0 w-[270px] sm:w-[312px] transiton-all duration-300 ease-out z-20 overflow-x-hidden overflow-y-auto fixed top-0 bottom-0 bg-white flex flex-col border-r p-3 md:p-8 min-h-screen shadow-lg lg:shadow-none scrollbarthin`}>
+            className={`${navOpen ? "ml-0" : "ml-[-312px]"
+              } lg:ml-0 w-[270px] sm:w-[312px] transiton-all duration-300 ease-out z-20 overflow-x-hidden overflow-y-auto fixed top-0 bottom-0 bg-white flex flex-col border-r p-3 md:p-8 min-h-screen shadow-lg lg:shadow-none scrollbarthin`}>
             <div className="grow">
               <Link
                 href="/"
@@ -59,10 +63,9 @@ export default function RootLayout({
               <ul className="py-5">
                 <li>
                   <Link
-                    href="/admin-dashboard"
-                    className={`flex items-center hover:bg-primary hover:text-white gap-2 rounded-md px-5 py-3 duration-300 ${
-                      path == "/admin-dashboard" && "bg-primary text-white"
-                    }`}>
+                    href="/admin"
+                    className={`flex items-center hover:bg-primary hover:text-white gap-2 rounded-md px-5 py-3 duration-300 ${path == "/admin" && "bg-primary text-white"
+                      }`}>
                     <BuildingStorefrontIcon className="w-5 h-5" />
                     Dashboard
                   </Link>
@@ -75,9 +78,8 @@ export default function RootLayout({
                     {url ? (
                       <Link
                         href={url}
-                        className={`flex items-center hover:bg-primary hover:text-white gap-2 rounded-md px-5 py-3 duration-300 ${
-                          path == url && "bg-primary text-white"
-                        }`}>
+                        className={`flex items-center hover:bg-primary hover:text-white gap-2 rounded-md px-5 py-3 duration-300 ${path == url && "bg-primary text-white"
+                          }`}>
                         {icon}
                         {name}
                       </Link>
@@ -86,18 +88,16 @@ export default function RootLayout({
                         onClick={() =>
                           setOpened((prev) => (prev == id ? null : id))
                         }
-                        className={`justify-between px-5 py-3 hover:bg-primary hover:text-white rounded-md duration-300 flex w-full items-center ${
-                          id == opened && "bg-primary text-white"
-                        }`}>
+                        className={`justify-between px-5 py-3 hover:bg-primary hover:text-white rounded-md duration-300 flex w-full items-center ${id == opened && "bg-primary text-white"
+                          }`}>
                         <span className="flex gap-2 items-center">
                           {icon}
                           {name}
                         </span>
                         {submenus && (
                           <ChevronDownIcon
-                            className={`w-5 h-5 duration-300 ${
-                              id == opened && "rotate-180"
-                            }`}
+                            className={`w-5 h-5 duration-300 ${id == opened && "rotate-180"
+                              }`}
                           />
                         )}
                       </button>
@@ -111,9 +111,8 @@ export default function RootLayout({
                             <li key={item.title}>
                               <Link
                                 href={item.url}
-                                className={`flex gap-2 items-center pl-4 pr-1 py-3 hover:bg-violet-200 duration-300 rounded-md ${
-                                  item.url == path && "bg-violet-200"
-                                }`}>
+                                className={`flex gap-2 items-center pl-4 pr-1 py-3 hover:bg-violet-200 duration-300 rounded-md ${item.url == path && "bg-violet-200"
+                                  }`}>
                                 {icon}
                                 {item.title}
                               </Link>
@@ -138,26 +137,18 @@ export default function RootLayout({
             </ul>
           </nav>
           <div
-            className={`lg:ml-[312px] relative ${
-              navOpen &&
+            className={`lg:ml-[312px] relative ${navOpen &&
               "after:bg-black after:bg-opacity-70 after:absolute after:inset-0 after:z-10 after:duration-300 overflow-y-hidden"
-            }`}
+              }`}
             onClick={() => setNavOpen(false)}>
-            <header className="px-4 md:px-8 py-3 lg:py-6 flex gap-2 justify-between self-start">
+            <header className="px-4 md:px-8 py-3 lg:py-6 flex items-center justify-between">
               <button
                 onClick={handleOpen}
                 className="lg:hidden order-2 select-none">
                 <Bars3Icon className="w-8 h-8" />
               </button>
-              <form className="rounded-3xl hidden md:flex bg-[var(--bg-1)] xl:w-[332px] px-3 lg:px-4 py-2 justify-between border items-center">
-                <input
-                  type="text"
-                  className="focus:outline-none bg-[var(--bg-1)]"
-                  placeholder="Search"
-                />
-                <SearchIcon />
-              </form>
-              <div className="lg:order-2 flex gap-2 items-center">
+
+              <div className="flex-1 flex justify-end items-center gap-4">
                 {!isLoggedIn && (
                   <Link href="/auth/signin" className="btn-primary-lg hidden md:block">
                     Signin
@@ -166,6 +157,7 @@ export default function RootLayout({
                 {isLoggedIn && <AdminProfileDropdown />}
               </div>
             </header>
+
             <section>{children}</section>
           </div>
         </section>

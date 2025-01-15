@@ -90,9 +90,26 @@ const Page = () => {
   
 
   // Filtered and paginated payments
-  const filteredPayments = payments.filter((payment) =>
-    payment.customer_name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+// Filtered and paginated payments
+const filteredPayments = payments.filter((payment) =>
+  searchTerm
+    .toLowerCase()
+    .split(' ')
+    .some((term) =>
+      [
+        payment.customer_name,
+        payment.booking_id,
+        payment.hotel_name,
+        payment.package_name,
+        payment.activity_name,
+        payment.cab_name,
+        payment.customer_mobile_number,
+      ]
+        .filter(Boolean) // Remove undefined values
+        .some((field) => field.toLowerCase().includes(term))
+    )
+);
+
 
   const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
   const paginatedPayments = filteredPayments.slice(

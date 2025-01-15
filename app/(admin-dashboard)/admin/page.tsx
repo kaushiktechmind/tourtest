@@ -47,9 +47,7 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Dashboard</h2>
-        <Link href="/add-property" className="btn-primary">
-          <PlusCircleIcon className="w-5 h-5" /> Add New Listing
-        </Link>
+        
       </div>
       {/* statisticts */}
       <section className="grid z-[1] grid-cols-12 gap-4 lg:gap-6 px-3 lg:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[100px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
