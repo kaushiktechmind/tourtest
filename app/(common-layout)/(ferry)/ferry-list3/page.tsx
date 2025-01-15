@@ -38,7 +38,7 @@ const FerryList3 = () => {
 
   type Location = keyof typeof locationIds;
 
-  
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
 
@@ -80,7 +80,7 @@ const FerryList3 = () => {
       "Content-Type": "application/json",
       "Mak_Authorization": token ?? "", // Ensure it's always a string
     };
-  
+
     const requestPayload = {
       data: {
         trip_type: tripType === "single_trip" ? "single_trip" : "return_trip",
@@ -91,24 +91,24 @@ const FerryList3 = () => {
         no_of_passenger: travelData?.no_of_passengers,
       },
     };
-  
+
     const apiUrl =
       tripType === "single_trip"
         ? "https://staging.makruzz.com/booking_api/schedule_search"
         : "https://staging.makruzz.com/booking_api/return_schedule_search";
-  
+
     setLoading(true); // You may still want to set loading to true before the request
-  
+
     try {
       const response = await fetch(apiUrl, {
         method: "POST",
         headers,
         body: JSON.stringify(requestPayload),
       });
-  
+
       const data = await response.json();
       console.log("fetched data", data);
-  
+
       if (response.ok) {
         // Check for response structure
         const schedule =
@@ -116,7 +116,7 @@ const FerryList3 = () => {
             ? data.data // Direct access for single trips
             : data.data.schedule; // Nested access for multiple trips
         console.log("schedule data", schedule);
-  
+
         setScheduleData(schedule);
       }
     } catch (error) {
@@ -125,8 +125,8 @@ const FerryList3 = () => {
       setLoading(false); // Ensure loading is turned off
     }
   };
-  
-  
+
+
 
   useEffect(() => {
     if (tripType) {
@@ -165,6 +165,12 @@ const FerryList3 = () => {
   };
 
   const handleSelectFerry = (shipClassId: string) => {
+    // Check if there's an access_token in localStorage
+    if (!localStorage.getItem('access_token')) {
+      router.push("/signup"); // Redirect to signup page if no access_token
+      return; // Stop further execution if no access_token
+    }
+
     // Find the selected object from scheduleData
     const selectedFerry = scheduleData?.find(
       (item: any) => item.ship_class_id === shipClassId
@@ -182,9 +188,8 @@ const FerryList3 = () => {
 
 
 
-
   return (
-    
+
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
@@ -433,8 +438,17 @@ const FerryList3 = () => {
                         </h2>
                       </div>
                       <Link
-                        href="/ferry-details-page" onClick={() => handleSelectFerry(schedule.ship_class_id)}
-                        className="btn-outline  flex justify-center text-primary">
+                        href={localStorage.getItem('access_token') ? "/ferry-details-page" : "/signup"}
+                        onClick={(e) => {
+                          if (!localStorage.getItem('access_token')) {
+                            e.preventDefault(); // Prevent navigation if there's no access_token
+                            router.push("/signup"); // Redirect to signup page if no access_token
+                          } else {
+                            handleSelectFerry(schedule.ship_class_id); // Proceed with ferry selection if access_token exists
+                          }
+                        }}
+                        className="btn-outline flex justify-center text-primary"
+                      >
                         Select Ferry
                       </Link>
                     </div>

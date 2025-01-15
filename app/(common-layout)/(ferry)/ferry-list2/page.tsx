@@ -29,7 +29,7 @@ const FerryList2 = () => {
 
   type Location = keyof typeof locationIds;
 
-  
+
 
   // Extracting data from travelData
   const from1 = travelData?.from1;
@@ -61,7 +61,7 @@ const FerryList2 = () => {
       "Content-Type": "application/json",
       "Mak_Authorization": token ?? "",
     };
-  
+
     const requestPayload = {
       data: {
         trip_type: tripType === "single_trip" ? "single_trip" : "return_trip",
@@ -72,33 +72,33 @@ const FerryList2 = () => {
         no_of_passenger: travelData?.no_of_passengers,
       },
     };
-  
+
     const apiUrl =
       tripType === "single_trip"
         ? "https://staging.makruzz.com/booking_api/schedule_search"
         : "https://staging.makruzz.com/booking_api/return_schedule_search";
-  
+
     const response = await fetch(apiUrl, {
       method: "POST",
       headers,
       body: JSON.stringify(requestPayload),
     });
-  
+
     const data = await response.json();
-  
+
     if (response.ok) {
       // Check for response structure
       const schedule =
         tripType === "single_trip"
           ? data.data // Direct access for single trips
           : data.data.schedule; // Nested access for multiple trips
-  
+
       setScheduleData(schedule);
     }
-  
+
     setLoading(false);
   };
-  
+
   useEffect(() => {
     if (tripType) {
       fetchScheduleData();
@@ -136,11 +136,17 @@ const FerryList2 = () => {
   };
 
   const handleSelectFerry = (shipClassId: string) => {
+    // Check if there's an access_token in localStorage
+    if (!localStorage.getItem('access_token')) {
+      router.push("/signup"); // Redirect to signup page if no access_token
+      return; // Stop further execution if no access_token
+    }
+
     // Find the selected object from scheduleData
     const selectedFerry = scheduleData?.find(
       (item: any) => item.ship_class_id === shipClassId
     );
-  
+
     if (selectedFerry) {
       localStorage.setItem('selectedFerry2', JSON.stringify(selectedFerry));
       console.log('Selected ferry object:', selectedFerry);
@@ -148,12 +154,11 @@ const FerryList2 = () => {
       console.error('Ferry object not found for ship_class_id:', shipClassId);
     }
   };
-  
 
 
 
   return (
-    
+
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
@@ -353,20 +358,20 @@ const FerryList2 = () => {
                         <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
                           <span className="block text-primary">From</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                          {formatTime(schedule.departure_time)}
+                            {formatTime(schedule.departure_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.source_name}
                           </span>
                         </div>
                         <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
-                        <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                          <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
                             <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
                               {/* Replace the flight icon with a boat icon */}
                               <i className="las la-ship text-2xl"></i>
                             </div>
                           </div>
-                         
+
                           <span className="block clr-neutral-500">
                             {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
                           </span>
@@ -374,7 +379,7 @@ const FerryList2 = () => {
                         <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
                           <span className="block text-primary">To</span>
                           <h4 className="mb-0 text-2xl font-semibold">
-                          {formatTime(schedule.arrival_time)}
+                            {formatTime(schedule.arrival_time)}
                           </h4>
                           <span className="block text-[var(--neutral-700)]">
                             {schedule.destination_name}
@@ -402,8 +407,17 @@ const FerryList2 = () => {
                         </h2>
                       </div>
                       <Link
-                        href={from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page"} onClick={() => handleSelectFerry(schedule.ship_class_id)}
-                        className="btn-outline  flex justify-center text-primary">
+                        href={localStorage.getItem('access_token') ? (from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page") : "/signup"}
+                        onClick={(e) => {
+                          if (!localStorage.getItem('access_token')) {
+                            e.preventDefault(); // Prevent navigation if there's no access_token
+                            router.push("/signup"); // Redirect to signup page if no access_token
+                          } else {
+                            handleSelectFerry(schedule.ship_class_id); // Proceed with ferry selection if access_token exists
+                          }
+                        }}
+                        className="btn-outline flex justify-center text-primary"
+                      >
                         Select Ferry
                       </Link>
                     </div>

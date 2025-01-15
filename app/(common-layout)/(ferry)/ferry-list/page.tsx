@@ -239,21 +239,25 @@ const FerryList = () => {
 
 
   const handleSelectFerry = (shipClassId: string) => {
+    // Check if there's an access_token in localStorage
+    if (!localStorage.getItem('access_token')) {
+      router.push("/sign-in"); // Redirect to signup page if no access_token
+      return; // Stop further execution if no access_token
+    }
+  
     // Find the selected object from scheduleData
     const selectedFerry = scheduleData?.find(
       (item: any) => item.ship_class_id === shipClassId
     );
-
+  
     if (selectedFerry) {
       localStorage.setItem('selectedFerry', JSON.stringify(selectedFerry));
       console.log('Selected ferry object:', selectedFerry);
       router.push(storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page");
-      // href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"} 
     } else {
       console.error('Ferry object not found for ship_class_id:', shipClassId);
     }
   };
-
 
 
 
@@ -292,31 +296,31 @@ const FerryList = () => {
   const updateLocalStorage = () => {
     if (trips.length > 0) {
       const travelData: { [key: string]: string | number } = {}; // Allow dynamic keys with string or number values
-
+  
       trips.forEach((trip, index) => {
         const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
-
+  
         const formatDate = (date: Date | null) => {
           if (!date) return ""; // Return an empty string if date is null
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part
         };
-
+  
         // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
         travelData[`from${tripIndex}`] = trip.from || "";
         travelData[`to${tripIndex}`] = trip.to || "";
         travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // Format date
       });
-
+  
       travelData["adults"] = adult;
       travelData["infants"] = infants;
       travelData["no_of_passengers"] = adult + infants;
-
+  
       // Store the entire travelData object in localStorage
       localStorage.setItem("travelData", JSON.stringify(travelData));
     }
   };
-
+  
   const handleTripTypeChange = (type: string) => {
     setTripType(type);
     // Reset trips based on the trip type selected
@@ -684,98 +688,105 @@ const FerryList = () => {
             </div>
           </div>
           <div className="col-span-12 lg:col-span-8 order-1 lg:order-2">
-            <div className="grid grid-cols-1 gap-4 lg:gap-6">
-              {Array.isArray(scheduleData) && scheduleData.length > 0 ? (
-                scheduleData.map((schedule: {
-                  id: any;
-                  ship_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  departure_time: string;
-                  source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  arrival_time: string;
-                  destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_id: string;
-                }, index: any) => (
-                  <div key={schedule.id || index} className="col-span-1">
-                    <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
-                      <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
-                        <div className="flex flex-col md:flex-row justify-center items-start gap-6">
-                          <div className="flex w-full justify-center md:w-auto flex-col gap-3 md:gap-7 text-center md:text-start flex-grow">
-                            <div className="grid place-content-center w-16 h-16 rounded-full bg-white shadow-lg mx-auto ms-md-0">
-                              <Image
-                                width={52}
-                                height={27}
-                                src={'/img/makruzz.jpg'}
-                                alt="image"
-                                className="object-fit-contain"
-                              />
-                            </div>
-                            <p className="mb-0 font-medium">{schedule.ship_title}</p>
-                          </div>
-                          <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
-                            <span className="block text-primary">From</span>
-                            <h4 className="mb-0 text-2xl font-semibold">
-                              {formatTime(schedule.departure_time)}
-                            </h4>
-                            <span className="block text-[var(--neutral-700)]">
-                              {schedule.source_name}
-                            </span>
-                          </div>
-                          <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
-                            <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
-                              <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
-                                <i className="las la-ship text-2xl"></i>
-                              </div>
-                            </div>
-                            <span className="block clr-neutral-500">
-                              {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
-                            </span>
-                          </div>
-                          <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
-                            <span className="block text-primary">To</span>
-                            <h4 className="mb-0 text-2xl font-semibold">
-                              {formatTime(schedule.arrival_time)}
-                            </h4>
-                            <span className="block text-[var(--neutral-700)]">
-                              {schedule.destination_name}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
-                          <p className="mb-0">
-                            Seats:
-                            <span className="text-amber-700"> {schedule.seat}</span>
-                          </p>
-                          <p className="text-primary">•</p>
-                          <p className="mb-0">
-                            Travel Class:
-                            <span className="text-primary"> {schedule.ship_class_title}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
-                        <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
-                          <h2 className="mb-0 h2 text-[var(--neutral-700)]">
-                            ₹{schedule.ship_class_price}
-                          </h2>
-                        </div>
-                        <Link
-                          href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"}
-                          onClick={() => handleSelectFerry(schedule.ship_class_id)}
-                          className="btn-outline flex justify-center text-primary"
-                        >
-                          Select Ferry
-                        </Link>
-                      </div>
-                    </div>
+          <div className="grid grid-cols-1 gap-4 lg:gap-6">
+  {Array.isArray(scheduleData) && scheduleData.length > 0 ? (
+    scheduleData.map((schedule: {
+      id: any;
+      ship_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      departure_time: string;
+      source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      arrival_time: string;
+      destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_id: string;
+    }, index: any) => (
+      <div key={schedule.id || index} className="col-span-1">
+        <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
+          <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
+            <div className="flex flex-col md:flex-row justify-center items-start gap-6">
+              <div className="flex w-full justify-center md:w-auto flex-col gap-3 md:gap-7 text-center md:text-start flex-grow">
+                <div className="grid place-content-center w-16 h-16 rounded-full bg-white shadow-lg mx-auto ms-md-0">
+                  <Image
+                    width={52}
+                    height={27}
+                    src={'/img/makruzz.jpg'}
+                    alt="image"
+                    className="object-fit-contain"
+                  />
+                </div>
+                <p className="mb-0 font-medium">{schedule.ship_title}</p>
+              </div>
+              <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
+                <span className="block text-primary">From</span>
+                <h4 className="mb-0 text-2xl font-semibold">
+                  {formatTime(schedule.departure_time)}
+                </h4>
+                <span className="block text-[var(--neutral-700)]">
+                  {schedule.source_name}
+                </span>
+              </div>
+              <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
+                <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                  <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
+                    <i className="las la-ship text-2xl"></i>
                   </div>
-                ))
-              ) : (
-                <p>No schedule data available</p>
-              )}
+                </div>
+                <span className="block clr-neutral-500">
+                  {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
+                </span>
+              </div>
+              <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
+                <span className="block text-primary">To</span>
+                <h4 className="mb-0 text-2xl font-semibold">
+                  {formatTime(schedule.arrival_time)}
+                </h4>
+                <span className="block text-[var(--neutral-700)]">
+                  {schedule.destination_name}
+                </span>
+              </div>
             </div>
+            <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
+              <p className="mb-0">
+                Seats:
+                <span className="text-amber-700"> {schedule.seat}</span>
+              </p>
+              <p className="text-primary">•</p>
+              <p className="mb-0">
+                Travel Class:
+                <span className="text-primary"> {schedule.ship_class_title}</span>
+              </p>
+            </div>
+          </div>
+          <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
+            <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
+              <h2 className="mb-0 h2 text-[var(--neutral-700)]">
+                ₹{schedule.ship_class_price}
+              </h2>
+            </div>
+            <Link 
+  href={localStorage.getItem('access_token') ? (storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page") : "/signup"}
+  onClick={(e) => {
+    if (!localStorage.getItem('access_token')) {
+      e.preventDefault(); // Prevent navigation if there's no access_token
+      router.push("/signup"); // Redirect to signup page if no access_token
+    } else {
+      handleSelectFerry(schedule.ship_class_id); // Proceed with ferry selection if access_token exists
+    }
+  }}
+  className="btn-outline flex justify-center text-primary"
+>
+  Select Ferry
+</Link>
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>No schedule data available</p>
+  )}
+</div>
 
 
 
@@ -801,143 +812,143 @@ const FerryList = () => {
 
 
             <div className="grid grid-cols-1 gap-4 lg:gap-6">
-              {Array.isArray(scheduleData) && scheduleData.length > 0 ? (
-                scheduleData.map((schedule: {
-                  id: any;
-                  departure_time: string;
-                  source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  arrival_time: string;
-                  destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
-                  ship_class_id: string;
-                }, index: any) => (
-                  <div key={schedule.id || index} className="col-span-1">
-                    <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
-                      <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
-                        <div className="flex flex-col md:flex-row justify-center items-start gap-6">
-                          <div className="flex w-full justify-center md:w-auto flex-col gap-3 md:gap-7 text-center md:text-start flex-grow">
-                            <div className="grid place-content-center w-16 h-16 bg-white shadow-lg mx-auto ms-md-0">
-                              <Image
-                                width={52}
-                                height={27}
-                                src={'/img/nautika-logo.jpg'}
-                                alt="image"
-                                className="object-fit-contain"
-                              />
-                            </div>
-                            <p className="mb-0 font-medium">Nautika</p>
-                          </div>
-                          <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
-                            <span className="block text-primary">From</span>
-                            <h4 className="mb-0 text-2xl font-semibold">
-                              {formatTime(schedule.departure_time)}
-                            </h4>
-                            <span className="block text-[var(--neutral-700)]">
-                              {schedule.source_name}
-                            </span>
-                          </div>
-                          <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
-                            <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
-                              <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
-                                <i className="las la-ship text-2xl"></i>
-                              </div>
-                            </div>
-                            <span className="block clr-neutral-500">
-                              {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
-                            </span>
-                          </div>
-                          <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
-                            <span className="block text-primary">To</span>
-                            <h4 className="mb-0 text-2xl font-semibold">
-                              {formatTime(schedule.arrival_time)}
-                            </h4>
-                            <span className="block text-[var(--neutral-700)]">
-                              {schedule.destination_name}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
-                          <p className="mb-0">
-                            Seats:
-                            <span className="text-amber-700"> {schedule.seat}</span>
-                          </p>
-                          <p className="text-primary">•</p>
-                          <p className="mb-0">
-                            Travel Class:
-                            <span className="text-primary"> {schedule.ship_class_title}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
-                        <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
-                          <h2 className="mb-0 h2 text-[var(--neutral-700)]">
-                            ₹{schedule.ship_class_price}
-                          </h2>
-                        </div>
-                        <Link
-                          href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"}
-                          onClick={() => handleSelectFerry(schedule.ship_class_id)}
-                          className="btn-outline flex justify-center text-primary"
-                        >
-                          Select Ferry
-                        </Link>
-                      </div>
-                    </div>
+  {Array.isArray(scheduleData) && scheduleData.length > 0 ? (
+    scheduleData.map((schedule: {
+      id: any;
+      departure_time: string;
+      source_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      arrival_time: string;
+      destination_name: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      seat: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_title: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_price: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined;
+      ship_class_id: string;
+    }, index: any) => (
+      <div key={schedule.id || index} className="col-span-1">
+        <div className="md:flex bg-white border rounded-2xl mx-3 xl:mx-0">
+          <div className="flex flex-col gap-6 p-4 lg:p-6 flex-grow">
+            <div className="flex flex-col md:flex-row justify-center items-start gap-6">
+              <div className="flex w-full justify-center md:w-auto flex-col gap-3 md:gap-7 text-center md:text-start flex-grow">
+                <div className="grid place-content-center w-16 h-16 bg-white shadow-lg mx-auto ms-md-0">
+                  <Image
+                    width={52}
+                    height={27}
+                    src={'/img/nautika-logo.jpg'}
+                    alt="image"
+                    className="object-fit-contain"
+                  />
+                </div>
+                <p className="mb-0 font-medium">Nautika</p>
+              </div>
+              <div className="flex md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow w-full md:w-auto">
+                <span className="block text-primary">From</span>
+                <h4 className="mb-0 text-2xl font-semibold">
+                  {formatTime(schedule.departure_time)}
+                </h4>
+                <span className="block text-[var(--neutral-700)]">
+                  {schedule.source_name}
+                </span>
+              </div>
+              <div className="flex w-full md:w-auto justify-center flex-col gap-2 text-center flex-grow">
+                <div className="grid place-content-center w-12 h-12 shadow-lg rounded-full mx-auto">
+                  <div className="grid place-content-center w-10 h-10 bg-[var(--primary-light)] text-primary rounded-full">
+                    <i className="las la-ship text-2xl"></i>
                   </div>
-                ))
-              ) : (
-                <p>No schedule data available</p>
-              )}
-
-              <div className="col-span-1">
-                <nav>
-                  <ul className="flex gap-3 justify-center">
-                    <li className="page-item">
-                      <Link
-                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-                        href="#"
-                      >
-                        <ChevronLeftIcon className="w-5 h-5" />
-                      </Link>
-                    </li>
-                    <li className="page-item">
-                      <Link
-                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] bg-primary text-white"
-                        href="#"
-                      >
-                        1
-                      </Link>
-                    </li>
-                    <li className="page-item">
-                      <Link
-                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-                        href="#"
-                      >
-                        2
-                      </Link>
-                    </li>
-                    <li className="page-item">
-                      <Link
-                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-                        href="#"
-                      >
-                        3
-                      </Link>
-                    </li>
-                    <li className="page-item">
-                      <Link
-                        className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
-                        href="#"
-                      >
-                        <ChevronRightIcon className="w-5 h-5" />
-                      </Link>
-                    </li>
-                  </ul>
-                </nav>
+                </div>
+                <span className="block clr-neutral-500">
+                  {calculateTimeDifference(schedule.departure_time, schedule.arrival_time)}
+                </span>
+              </div>
+              <div className="flex w-full md:w-auto md:flex-col justify-between gap-2 my-6 md:my-0 flex-grow">
+                <span className="block text-primary">To</span>
+                <h4 className="mb-0 text-2xl font-semibold">
+                  {formatTime(schedule.arrival_time)}
+                </h4>
+                <span className="block text-[var(--neutral-700)]">
+                  {schedule.destination_name}
+                </span>
               </div>
             </div>
+            <div className="flex flex-wrap justify-center text-center gap-3 rounded-xl bg-[#F7F7FE] p-3">
+              <p className="mb-0">
+                Seats:
+                <span className="text-amber-700"> {schedule.seat}</span>
+              </p>
+              <p className="text-primary">•</p>
+              <p className="mb-0">
+                Travel Class:
+                <span className="text-primary"> {schedule.ship_class_title}</span>
+              </p>
+            </div>
+          </div>
+          <div className="p-3 lg:p-6 xl:pt-10 xxl:pt-14 bg-[var(--bg-2)] text-center md:text-start rounded-e-2xl">
+            <div className="flex items-center justify-center justify-content-md-start gap-2 mb-6">
+              <h2 className="mb-0 h2 text-[var(--neutral-700)]">
+                ₹{schedule.ship_class_price}
+              </h2>
+            </div>
+            <Link
+              href={storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page"}
+              onClick={() => handleSelectFerry(schedule.ship_class_id)}
+              className="btn-outline flex justify-center text-primary"
+            >
+              Select Ferry
+            </Link>
+          </div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p>No schedule data available</p>
+  )}
+
+  <div className="col-span-1">
+    <nav>
+      <ul className="flex gap-3 justify-center">
+        <li className="page-item">
+          <Link
+            className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+            href="#"
+          >
+            <ChevronLeftIcon className="w-5 h-5" />
+          </Link>
+        </li>
+        <li className="page-item">
+          <Link
+            className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] bg-primary text-white"
+            href="#"
+          >
+            1
+          </Link>
+        </li>
+        <li className="page-item">
+          <Link
+            className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+            href="#"
+          >
+            2
+          </Link>
+        </li>
+        <li className="page-item">
+          <Link
+            className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+            href="#"
+          >
+            3
+          </Link>
+        </li>
+        <li className="page-item">
+          <Link
+            className="page-link p-0 w-10 h-10 grid place-content-center lh-1 rounded-full border border-[var(--primary)] text-primary"
+            href="#"
+          >
+            <ChevronRightIcon className="w-5 h-5" />
+          </Link>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</div>
 
           </div>
 
