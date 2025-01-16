@@ -6,7 +6,7 @@ import { Tooltip } from "react-tooltip";
 import "swiper/css";
 import { Navigation } from "swiper";
 import Link from "next/link";
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, Suspense, Key } from "react";
 import { Tab } from "@headlessui/react";
 
 import "react-datepicker/dist/react-datepicker.css";
