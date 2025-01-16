@@ -277,25 +277,7 @@ const EditBlog = () => {
             <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
             <QuillEditor onChange={setDescription} value={description} />
 
-            <p className="mt-6 mb-4 text-xl font-medium">Blog Heading :</p>
-            <input
-              type="text"
-              name="blog_heading"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder=""
-              value={formData.blog_heading}
-              onChange={handleInputChange}
-            />
-
-            <p className="mt-6 mb-4 text-xl font-medium">Comments :</p>
-            <input
-              type="text"
-              name="comments"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder=""
-              value={typeof formData.comments === "string" ? formData.comments : ""}
-              onChange={handleInputChange}
-            />
+           
             <p className="mt-6 mb-4 text-xl font-medium">Tags :</p>
             <input
               type="text"
