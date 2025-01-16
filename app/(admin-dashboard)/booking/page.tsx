@@ -74,42 +74,43 @@ const Page = () => {
     const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
 
     let icon = null;
+    let text = "";
 
     if (payment.hotel_name) {
-      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
+      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
+      text = "Hotel"; // Add related text for hotel
     } else if (payment.package_name) {
-      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
+      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />;
+      text = "Package"; // Add related text for package
     } else if (payment.activity_name) {
-      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
+      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
+      text = "Activity"; // Add related text for activity
     } else if (payment.cab_name) {
-      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
+      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
+      text = "Cab"; // Add related text for cab
     }
 
-    return { icon, details }; // Return icon and details as an object
+    return { icon, details, text }; // Return icon, details, and text
   };
-  
 
-  // Filtered and paginated payments
-// Filtered and paginated payments
-const filteredPayments = payments.filter((payment) =>
-  searchTerm
-    .toLowerCase()
-    .split(' ')
-    .some((term) =>
-      [
-        payment.customer_name,
-        payment.booking_id,
-        payment.hotel_name,
-        payment.package_name,
-        payment.activity_name,
-        payment.cab_name,
-        payment.customer_mobile_number,
-      ]
-        .filter(Boolean) // Remove undefined or null values
-        .some((field) => field && field.toLowerCase().includes(term))
-    )
-);
-
+  const filteredPayments = payments.filter((payment) =>
+    searchTerm
+      .toLowerCase()
+      .split(' ')
+      .some((term) =>
+        [
+          payment.customer_name,
+          payment.booking_id,
+          payment.hotel_name,
+          payment.package_name,
+          payment.activity_name,
+          payment.cab_name,
+          payment.customer_mobile_number,
+        ]
+          .filter(Boolean)
+          .some((field) => field && field.toLowerCase().includes(term))
+      )
+  );
 
   const totalPages = Math.ceil(filteredPayments.length / itemsPerPage);
   const paginatedPayments = filteredPayments.slice(
@@ -121,15 +122,10 @@ const filteredPayments = payments.filter((payment) =>
     setCurrentPage(page);
   };
 
-
-
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Booking</h2>
-        {/* <Link href="#" className="btn-primary">
-          <PlusCircleIcon className="w-5 h-5" /> View all booking
-        </Link> */}
       </div>
 
       {/* Recent bookings */}
@@ -146,7 +142,6 @@ const filteredPayments = payments.filter((payment) =>
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
                 <SearchIcon />
-
               </div>
             </form>
           </div>
@@ -174,12 +169,15 @@ const filteredPayments = payments.filter((payment) =>
                     <td className="py-3 lg:py-4 px-2">
                       {new Date(payment.created_at).toLocaleDateString()}
                     </td>
-                    <td className="py-3 lg:py-4 px-2 flex items-center gap-2">
+                    <td className="py-3 lg:py-4 px-2 flex items-center gap-2 relative group">
                       {(() => {
-                        const { icon, details } = getDetailsAndIcon(payment); // Destructure the returned object
+                        const { icon, text } = getDetailsAndIcon(payment); // Destructure the returned object
                         return (
                           <>
                             {icon}
+                            <span className="absolute bottom-0 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity bg-black text-white text-xs p-1 rounded-md mt-2">
+                              {text}
+                            </span>
                           </>
                         );
                       })()}

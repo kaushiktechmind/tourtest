@@ -5,13 +5,13 @@ const Footer = () => {
   return (
     <footer className="py-4 flex justify-between bg-white items-center flex-wrap px-3 gap-5 lg:px-6">
       <span>
-        Copyright <span>{new Date().getFullYear()}</span>{" "}
+      © <span>{new Date().getFullYear()}</span>{" "}
         <Link className="text-primary" href="/">
           Andaman Mangroves Holidays
         </Link>{" "}
         Designed By{" "}
         <Link href="#" className="text-[var(--secondary-500)]">
-          Techmind Scape
+          Techmindscape
         </Link>
       </span>
       <ul className="flex gap-3 items-center text-xl">

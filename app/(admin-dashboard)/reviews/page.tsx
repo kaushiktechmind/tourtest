@@ -56,14 +56,17 @@ const Page = () => {
   }, []);
 
   const handleToggle = (id: string | number) => {
-    const token = localStorage.getItem("access_token");
     const newStatus = !switchStates[id];
+    console.log("Before toggle:", switchStates); // Log before toggle
+
     setSwitchStates((prev) => ({
       ...prev,
       [id]: newStatus,
     }));
 
     const reviewToUpdate = reviews.find((review) => review.id === id);
+
+    if (!reviewToUpdate) return;
 
     axios
       .put(
@@ -74,12 +77,13 @@ const Page = () => {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem("access_token")}`,
           },
         }
       )
       .then((response) => {
         console.log("Review status updated successfully:", response.data);
+        console.log("After toggle:", switchStates); // Log after toggle
       })
       .catch((error) => {
         console.error("Error updating review status:", error);
@@ -124,68 +128,68 @@ const Page = () => {
           <div className="col-span-12 lg:col-span-12">
             <div className="p-3 sm:p-4 md:p-6 border xl:p-8 bg-white rounded-2xl mb-8">
               {/* Search bar */}
-              <div className="bg-white rounded-2xl mb-4">
-                <div className="relative w-[300px]">
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    value={searchQuery}
-                    onChange={handleSearch}
-                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
-                  />
-                </div>
+
+              <div className="flex flex-wrap gap-3 justify-between mb-7">
+                <form className="flex flex-wrap items-center gap-3">
+                  <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
+                    <input
+                      type="text"
+                      placeholder="Search..."
+                      className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
+                      value={searchQuery}
+                      onChange={handleSearch}
+
+                    />
+                    <SearchIcon />
+                  </div>
+                </form>
               </div>
 
-
               {/* Review list */}
-              {paginatedReviews.map((review) => (
-                <div
-                  key={review.id}
-                  className="bg-[var(--bg-1)] rounded-2xl p-3 sm:p-4 md:p-6 mb-8"
-                >
-                  <div className="flex items-center flex-wrap justify-between gap-4">
-                    <div className="flex gap-5 items-center">
-                      <div className="flex-grow">
-                        <h5 className="mb-1 font-semibold">{review.name}</h5>
-                      </div>
-                    </div>
-                    <div className="text-sm-end">
-                      <p className="mb-1">
-                        {new Date(review.created_at).toLocaleTimeString()}
-                      </p>
-                      <p className="mb-0">
-                        {new Date(review.created_at).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="border border-dashed my-6"></div>
-                  <div className="flex gap-1 mb-3">
-                    {[...Array(5)].map((_, index) => (
-                      <StarIcon
-                        key={index}
-                        className={`w-5 h-5 ${index < review.ratings
-                            ? "text-[var(--tertiary)]"
-                            : "text-gray-300"
-                          }`}
-                      />
+              <div className="overflow-x-auto">
+                <table className="w-full table-auto">
+                  <thead>
+                    <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                      <th className="border p-2">Created At</th>
+                      <th className="border p-2">Name</th>
+                      <th className="border p-2">Ratings</th>
+                      <th className="border p-2">Description</th>
+                      <th className="border p-2">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedReviews.map((review) => (
+                      <tr key={review.id}>
+                        <td className="border p-2">{new Date(review.created_at).toLocaleDateString()}</td>
+                        <td className="border p-2">{review.name}</td>
+                        <td className="border p-2">
+                          <div className="flex items-center space-x-1">
+                            {[...Array(5)].map((_, index) => (
+                              <StarIcon
+                                key={index}
+                                className={`w-5 h-5 ${index < review.ratings ? "text-[var(--tertiary)]" : "text-gray-300"}`}
+                              />
+                            ))}
+                          </div>
+                        </td>
+                        <td className="border p-2">{review.description}</td> {/* Full description without truncation */}
+                        <td className="border p-2">
+                          {/* Custom Toggle Switch */}
+                          <div
+                            className={`w-10 h-5 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${switchStates[review.id] ? "bg-green-500" : ""}`}
+                            onClick={() => handleToggle(review.id)}
+                          >
+                            <div
+                              className={`bg-white w-4 h-4 rounded-full shadow-md transform ${switchStates[review.id] ? "translate-x-5" : ""}`}
+                            ></div>
+                          </div>
+                        </td>
+                      </tr>
                     ))}
-                  </div>
-                  <p className="mb-0 clr-neutral-500">{review.description}</p>
-                  <div className="border border-dashed my-6"></div>
+                  </tbody>
+                </table>
+              </div>
 
-                  {/* Custom Toggle Switch */}
-                  <div
-                    className={`w-10 h-5 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${switchStates[review.id] ? "bg-green-500" : ""
-                      }`}
-                    onClick={() => handleToggle(review.id)}
-                  >
-                    <div
-                      className={`bg-white w-4 h-4 rounded-full shadow-md transform ${switchStates[review.id] ? "translate-x-5" : ""
-                        }`}
-                    ></div>
-                  </div>
-                </div>
-              ))}
 
               {/* Pagination */}
               <Pagination

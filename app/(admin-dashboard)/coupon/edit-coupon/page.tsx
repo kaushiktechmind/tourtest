@@ -56,13 +56,13 @@ const EditCoupon = () => {
                     method: "GET",
                 }
             );
-    
+
             if (!response.ok) {
                 throw new Error("Failed to fetch coupon data");
             }
-    
+
             const data: Coupon = await response.json();
-    
+
             // Prefill form fields with fetched data
             setFormData({
                 coupon_name: data.coupon_name,
@@ -78,7 +78,7 @@ const EditCoupon = () => {
             alert("Failed to load coupon details.");
         }
     };
-    
+
 
     const handleInputChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -121,7 +121,7 @@ const EditCoupon = () => {
 
             const data = await response.json();
             alert("Coupon updated successfully");
-            router.push("/coupon/add-coupon"); // Redirect after successful update
+            router.push("/coupon"); // Redirect after successful update
         } catch (error) {
             console.error("Error occurred during coupon update:", error);
             alert("Error updating coupon:");
@@ -129,14 +129,14 @@ const EditCoupon = () => {
     };
 
     return (
-       
+
         <div className="bg-[var(--bg-2)]">
             <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
                 <h2 className="h2 text-white">Edit Coupon</h2>
             </div>
 
-            <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
-                <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
+            <section className="grid place-items-center z-[1] gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+            <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white w-full max-w-3xl">
                     <h3 className="border-b h3 pb-6">Edit Coupon Details</h3>
                     <form onSubmit={handleSubmit}>
                         <label
@@ -245,8 +245,8 @@ const EditCoupon = () => {
 
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-      <EditCoupon />
+        <EditCoupon />
     </Suspense>
-  );
+);
 
 export default Page;

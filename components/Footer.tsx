@@ -2,7 +2,42 @@ import { PaperPlane } from "@/public/data/icons";
 import logolight from "@/public/img/logo-light.png";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+interface Page {
+  id: number;
+  page_name: string;
+  slug: string;
+}
+
 const Footer = () => {
+
+  const [pages, setPages] = useState<Page[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    const fetchPages = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_page");
+        const data = await response.json();
+        if (data && Array.isArray(data)) {
+          setPages(data);
+        }
+      } catch (error) {
+        console.error("Error fetching pages:", error);
+      }
+    };
+
+    fetchPages();
+  }, []);
+
+  const handleClick = (id: number) => {
+    // Redirect to the `/allpages` route with the `id` as a query parameter
+    router.push(`/allpage?id=${id}`);
+  };
+
+
   return (
     <footer className="bg-[#091E43]">
       <div className="py-[60px] lg:py-[120px]">
@@ -60,33 +95,22 @@ const Footer = () => {
               </ul>
             </div>
             <div className="col-span-12 md:col-span-6 xl:col-span-3">
-              <h4 className="text-2xl font-semibold mb-6"> Quick Link </h4>
+              <h4 className="text-2xl font-semibold mb-6">Quick Links</h4>
               <ul className="flex flex-col gap-2">
-                <li>
-                  <Link href="/about-us" className="hover:text-[var(--secondary)] duration-300">
-                    About us
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/property-list" className="hover:text-[var(--secondary)] duration-300">
-                    Properties
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/agent" className="hover:text-[var(--secondary)] duration-300">
-                    Agents
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/faq" className="hover:text-[var(--secondary)] duration-300">
-                    FAQs
-                  </Link>
-                </li>
-                <li>
-                  <Link href="blog-grid" className="hover:text-[var(--secondary)] duration-300">
-                    Blog
-                  </Link>
-                </li>
+                {pages.length > 0 ? (
+                  pages.map((page) => (
+                    <li key={page.id}>
+                      <button
+                        onClick={() => handleClick(page.id)}
+                        className="hover:text-[var(--secondary)] duration-300 text-left"
+                      >
+                        {page.page_name}
+                      </button>
+                    </li>
+                  ))
+                ) : (
+                  <li>Loading...</li>
+                )}
               </ul>
             </div>
             <div className="col-span-12 md:col-span-6 xl:col-span-3">
@@ -145,11 +169,11 @@ const Footer = () => {
               <div className="grid grid-cols-12 gap-4 ">
                 <div className="col-span-12 lg:col-span-6">
                   <p className="m-0 text-center lg:text-start">
-                    Copyright &copy; {new Date().getFullYear()}
+                    &copy; {new Date().getFullYear()}
                     <span className="text-[var(--tertiary)]"> Andman Mangroves Holydays </span>. Designed By
                     <Link href="#" className="text-[var(--secondary)]">
                       {" "}
-                      Techmind Scape
+                      Techmindscape
                     </Link>
                   </p>
                 </div>

@@ -87,8 +87,8 @@ export const sidenavData = [
     name: "Blogs",
     icon: <i className="las la-blog text-2xl"></i>,  // Updated icon for Blogs
     submenus: [
-      { url: "/blogs/all-blogs", title: "All Blogs" },
-      { url: "/tag/add-tag", title: "All Tags" },
+      { url: "/blogs/add-blog", title: "Blogs" },
+      { url: "/tag/add-tag", title: "Tags" },
     ],
   },
   {

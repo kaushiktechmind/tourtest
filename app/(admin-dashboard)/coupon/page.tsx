@@ -1,115 +1,182 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
+
+import React, { Fragment, useEffect, useState } from "react";
 import {
+  EllipsisVerticalIcon,
   PencilSquareIcon,
   PlusCircleIcon,
   TrashIcon,
-  EllipsisVerticalIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import { SearchIcon } from "@/public/data/icons";
+import Pagination from "@/components/vendor-dashboard/Pagination";
+import { StarIcon } from "@heroicons/react/20/solid";
+import HeadlessList from "@/components/ListBox";
+import { Dialog, Transition } from "@headlessui/react";
 
-interface Blog {
-  id: number;
-  category_id: number;
-  blog_title: string;
-  comments: string;
-  blog_image_multiple: string | null;
-  blog_heading: string;
-  tags: string;
-  description: string;
-  created_at: string;
-  updated_at: string;
-  category: {
-    id: number;
-    category_name: string;
-    created_at: string;
-    updated_at: string;
-  };
-}
+const ITEMS_PER_PAGE = 10; // Customize the number of items per page
 
 const Page = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [couponToDelete, setCouponToDelete] = useState<string | null>(null);
+  const [couponIdToDelete, setCouponIdToDelete] = useState<string | null>(null);
+  const [coups, setCoups] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
+  const openModal = (coup: { name: string; id: string }) => {
+    setCouponToDelete(coup.name);
+    setCouponIdToDelete(coup.id);
+    setIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsOpen(false);
+    setCouponToDelete(null);
+    setCouponIdToDelete(null);
+  };
+
+  const handleDelete = async () => {
+    if (couponIdToDelete) {
+      const token = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/get_all_blogs"
+          ` /admin/delete_coupon_by_id/${couponIdToDelete}`,
+          {
+            method: "DELETE",
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.ok) {
+          setCoups((prevCoups) =>
+            prevCoups.filter((coup) => coup.id !== couponIdToDelete)
+          );
+          alert("Coupon Deleted");
+        } else {
+          console.error("Error deleting coupon:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error deleting coupon:", error);
+      } finally {
+        closeModal();
+      }
+    }
+  };  
+
+  useEffect(() => {
+    const fetchCoups = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/get_all_coupon"
         );
         const data = await response.json();
-        if (response.ok) {
-          setBlogs(data.data);
-        } else {
-          setError(data.message || "Failed to fetch blogs");
+        if (data) {
+          setCoups(data);
         }
-      } catch (err) {
-        setError("An error occurred while fetching blogs");
+      } catch (error) {
+        console.error("Error fetching coups:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchBlogs();
+    fetchCoups();
   }, []);
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (error) return <p className="text-center text-red-500">{error}</p>;
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const paginatedCoups = coups.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Blogs</h2>
-        <Link href="/blog/add-blog" className="btn-primary">
-          <PlusCircleIcon className="w-5 h-5" /> Add New Blog
+        <h2 className="h2 text-white">All Coupons</h2>
+        <Link href="/coupon/add-coupon" className="btn-primary">
+          <PlusCircleIcon className="w-5 h-5" /> Add New Coupons
         </Link>
       </div>
 
-      {/* Blog Table */}
-      <section className="bg-[var(--bg-2)] px-3 lg:px-6 mb-4 lg:mb-6 relative">
-        <div className="p-4 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white z-[1] relative">
-          <div className="flex flex-wrap gap-3 justify-between mb-7">
-            <h3 className="h3">Blog Management</h3>
-            <form className="flex flex-wrap items-center gap-3">
-              <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
-                />
-                <SearchIcon />
-              </div>
-            </form>
-          </div>
+      <section className="bg-[var(--bg-2)] px-3 lg:px-6 pb-4 lg:pb-6 relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0">
+        <div className="p-3 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white relative z-[1]">
           <div className="overflow-x-auto">
-            <table className="w-full whitespace-nowrap">
+            <table className="w-full table-auto whitespace-nowrap">
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Created At</th>
-                  <th className="py-3 lg:py-4 px-2">Blog Title</th>
-                  <th className="py-3 lg:py-4 px-2">Category</th>
-                  <th className="py-3 lg:py-4 px-2">Tags</th>
+                  <th className="py-3 lg:py-4 px-2">Date</th>
+                  <th className="py-3 lg:py-4 px-2">Coupon Name</th>
+                  <th className="py-3 lg:py-4 px-2 md:px-5">Coupon Code</th>
+                  <th className="py-3 lg:py-4 px-2">Type</th>
+                  <th className="py-3 lg:py-4 px-2">Discount Price</th>
+                  <th className="py-3 lg:py-4 px-2">Start Date</th>
+                  <th className="py-3 lg:py-4 px-2">End Date</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {blogs.map((blog) => (
+                {paginatedCoups.map((coup) => (
                   <tr
-                    key={blog.id}
+                    key={coup.id}
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                   >
-                    <td className="py-3 lg:py-4 px-2">{new Date(blog.created_at).toLocaleDateString()}</td>
-                    <td className="py-3 lg:py-4 px-2 lg:px-4">{blog.blog_title}</td>
-                    <td className="py-3 lg:py-4 px-2">{blog.category.category_name}</td>
-                    <td className="py-3 lg:py-4 px-2">{blog.tags}</td>
                     <td className="py-3 lg:py-4 px-2">
-                      <button className="text-primary px-1">
+                      {coup.created_at.split("T")[0]}
+                    </td>
+                    <td className="py-3 lg:py-4 px-2">
+                      {coup.coupon_name}
+                    </td>
+                    <td className="py-3 lg:py-4 px-2 md:px-5">
+                      <Link
+                        href={`/coupon/edit-coupon?couponId=${coup.id}`}
+                        className="text-primary"
+                      >
+                        {coup.coupon_code}
+                      </Link>
+                    </td>
+                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                      {coup.type}
+                    </td>
+
+                    
+                    <td className="py-3 lg:py-4 px-2">
+                      <span className="flex gap-1 items-center">
+                        {coup.discount_price}
+                      </span>
+                    </td>
+                    <td className="py-3 lg:py-4 px-2">
+                      <span className="flex gap-1 items-center">
+                        {coup.start_date}
+                      </span>
+                    </td>
+                    <td className="py-3 lg:py-4 px-2">
+                      <span className="flex gap-1 items-center">
+                        {coup.end_date}
+                      </span>
+                    </td>
+                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                      <a
+                        href={`/coupon/edit-coupon?couponId=${coup.id}`}
+                        className="text-primary"
+                      >
                         <PencilSquareIcon className="w-5 h-5" />
-                      </button>
-                      <button className="text-[var(--secondary-500)] px-1">
+                      </a>
+                      <button
+                        className="text-[var(--secondary-500)]"
+                        onClick={() =>
+                          openModal({ name: coup.coupon_name, id: coup.id })
+                        }
+                      >
                         <TrashIcon className="w-5 h-5" />
                       </button>
                     </td>
@@ -117,11 +184,81 @@ const Page = () => {
                 ))}
               </tbody>
             </table>
+
+            {/* Pagination */}
+            <Pagination
+              totalItems={coups.length}
+              itemsPerPage={ITEMS_PER_PAGE}
+              currentPage={currentPage}
+              onPageChange={handlePageChange}
+            />
           </div>
         </div>
       </section>
 
-      {/* Footer */}
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog as="div" className="relative z-10" onClose={closeModal}>
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="fixed inset-0 bg-black bg-opacity-25" />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                  <Dialog.Title
+                    as="h3"
+                    className="text-lg font-medium leading-6 text-gray-900"
+                  >
+                    Delete Coupon
+                  </Dialog.Title>
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-500">
+                      Are you sure you want to delete the coupon{" "}
+                      <span className="font-bold">{couponToDelete}</span>? This
+                      action cannot be undone.
+                    </p>
+                  </div>
+
+                  <div className="mt-4 flex gap-4 justify-end">
+                    <button
+                      type="button"
+                      className="btn-secondary"
+                      onClick={closeModal}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-danger"
+                      onClick={handleDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
       <Footer />
     </div>
   );

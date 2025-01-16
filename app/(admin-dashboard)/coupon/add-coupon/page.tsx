@@ -108,7 +108,7 @@ const AddCoupon = () => {
       [name]: value,
     }));
   };
-  
+
 
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -147,7 +147,7 @@ const AddCoupon = () => {
 
       const data = await response.json();
       alert("Coupon added successfully");
-      window.location.reload();
+      router.push("/coupon");
     } catch (error) {
       console.error("Error occurred during coupon addition:", error);
       alert("Error adding coupon: ");
@@ -173,8 +173,8 @@ const AddCoupon = () => {
       </div>
 
       {/* Add Room Form */}
-      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
-        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
+      <section className="grid place-items-center z-[1] gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white w-full max-w-3xl">
           <h3 className="border-b h3 pb-6">Add Coupon Details</h3>
           <form onSubmit={handleSubmit}>
 
@@ -203,16 +203,35 @@ const AddCoupon = () => {
               value={formData.coupon_code}
               onChange={handleInputChange}
             />
-            <p className="mt-6 mb-4 text-xl font-medium">Type :</p>
-            <select
-              name="type"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              value={formData.type}
-              onChange={handleInputChange}
-            >
-              <option value="%">%</option>
-              <option value="$">$</option>
-            </select>
+
+            <div className="flex gap-6 mt-6 mb-4">
+              <div className="flex-1">
+                <p className="mb-2 text-xl font-medium">Type :</p>
+                <select
+                  name="type"
+                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  value={formData.type}
+                  onChange={handleInputChange}
+                >
+                  <option value="%">%</option>
+                  <option value="$">$</option>
+                </select>
+              </div>
+
+              <div className="flex-1">
+                <p className="mb-2 text-xl font-medium">Status :</p>
+                <select
+                  name="status"
+                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  value={formData.status}
+                  onChange={handleInputChange}
+                >
+                  <option value="1">1</option>
+                  <option value="0">0</option>
+                </select>
+              </div>
+            </div>
+
             <p className="mt-6 mb-4 text-xl font-medium">Discount Price :</p>
             <input
               type="number"
@@ -222,6 +241,7 @@ const AddCoupon = () => {
               value={formData.discount_price}
               onChange={handleInputChange}
             />
+
             <div className="flex gap-6 mt-6 mb-4">
               <div className="flex-1">
                 <p className="mb-2 text-xl font-medium">Start Date :</p>
@@ -256,29 +276,15 @@ const AddCoupon = () => {
               </div>
             </div>
 
-            <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
-            <select
-              name="status"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              value={formData.status}
-              onChange={handleInputChange}
-            >
-              <option value="1">1 </option>
-              <option value="0">0 </option>
-            </select>
-
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
-                <span className="inline-block" onClick={handleSubmit}>
-                  {" "}
-                  Add New{" "}
-                </span>
+                <span className="inline-block" onClick={handleSubmit}> Add New </span>
               </Link>
             </div>
           </form>
         </div>
-
       </section>
+
 
       {/* Footer */}
       <Footer />
