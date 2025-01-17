@@ -64,32 +64,25 @@ const Page = () => {
 
   const handleAddPAGE = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     const accessToken = localStorage.getItem("access_token");
-
+  
     try {
-      const tempElement = document.createElement("div");
-      tempElement.innerHTML = description;
-      const plainTextDescription =
-        tempElement.textContent || tempElement.innerText || "";
-
-      const response = await fetch(
-        "https://yrpitsolutions.com/tourism_api/api/admin/save_page",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({
-            page_name: page_name,
-            page_description: plainTextDescription,
-          }),
-        }
-      );
-
+      // Pass the raw HTML content (description) directly instead of stripping it
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_page", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          page_name: page_name,
+          page_description: description, // Send as HTML string
+        }),
+      });
+  
       const result = await response.json();
-
+  
       if (result.data) {
         const newPage: Page = {
           id: result.data.id,
@@ -98,13 +91,14 @@ const Page = () => {
         };
         setPages((prevPages) => [newPage, ...prevPages]);
         setPageTitle("");
-        setDescription("");
+        setDescription(""); // Clear the editor after submission
         alert("PAGE added Successfully");
       }
     } catch (error) {
       console.error("Error adding PAGE:", error);
     }
   };
+  
 
   const handleDeletePAGE = async (id: number) => {
     const accessToken = localStorage.getItem("access_token");

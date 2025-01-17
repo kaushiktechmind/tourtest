@@ -10,7 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Key, Suspense, useEffect, useState } from "react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -18,16 +18,25 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { SearchIcon } from "@/public/data/icons";
+import axios from "axios";
 
 interface Category {
+  id: Key | null | undefined;
   category_name: string;
 }
+
+interface Tag {
+  id: number;
+  tag_name: string;
+  created_at: string;
+  updated_at: string;
+}
+
 
 interface Blog {
   blog_title: string;
   created_at: Date;
   category: Category; // Specify category as Category type
-  comments: string;
   blog_heading: string;
   description: string;
   tags: string;
@@ -39,10 +48,13 @@ const BlogDetails = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const blogId = searchParams.get("blogId");
+  const [tags, setTags] = useState<Tag[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
 
 
 
   const [blog, setBlog] = useState<Blog | null>(null);
+  const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -67,7 +79,57 @@ const BlogDetails = () => {
     fetchBlog();
   }, [blogId]);
 
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/get_all_blogs"
+        );
+        const data = await response.json();
+        if (data && data.data) {
+          setBlogs(data.data);
+        }
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+
   const blogImages = blog?.blog_image_multiple || [];
+
+  useEffect(() => {
+    // Fetch tags from API
+    axios
+      .get("https://yrpitsolutions.com/tourism_api/api/get_tag")
+      .then((response) => {
+        setTags(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching tags:", error);
+      });
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_category");
+        const data: Category[] = await response.json(); // Directly treat response as an array
+        setCategories(data); // Set the array to state
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
 
   return (
     <div className="py-[60px] lg:py-[60px] bg-[var(--bg-2)] px-3">
@@ -95,15 +157,6 @@ const BlogDetails = () => {
                   <p className="mb-0">
                     {blog?.category.category_name}
                   </p>
-                </div>
-              </li>
-              <li className="text-primary">•</li>
-              <li>
-                <div className="flex gap-2 items-center">
-                  <ChatBubbleLeftRightIcon className="w-5 h-5" />
-                  <Link href="#" className="mb-0">
-                    {blog?.comments}
-                  </Link>
                 </div>
               </li>
             </ul>
@@ -147,707 +200,91 @@ const BlogDetails = () => {
                     <h2 className="h2 mb-8">
                       {blog?.blog_heading}
                     </h2>
-                    <p className="clr-neutral-500 mb-6">
-                      {blog?.description}
-                    </p>
+                    <p className="clr-neutral-500 mb-6" dangerouslySetInnerHTML={{ __html: blog?.description || "" }} />
 
-                    <figure className="p-6 bg-[var(--bg-2)] mb-10">
-                      <blockquote className="blockquote text-lg">
-                        <p>
-                          I had a great experience working with to sell my home.
-                          They were very professional, knowledgeable, and
-                          responsive throughout the entire process.
-                        </p>
-                      </blockquote>
-                      <figcaption className="blockquote-footer mt-4">
-                        Someone famous in
-                        <cite title="Source Title">Courtney Henry</cite>
-                      </figcaption>
-                    </figure>
-                    <h3 className="mb-8 h3">
-                      The Guideline for Journal Real Estate
-                    </h3>
-                    <div className="grid grid-cols-12 gap-4">
-                      <div className="col-span-12 xl:col-span-6">
-                        <ul className="flex flex-col gap-5">
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Determine your budget
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Get pre-approved for a mortgage
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Choose a reputable real estate agent
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Research the market
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Conduct a home inspection
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Review the contract carefully
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Consider additional costs
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Plan for the future
-                              </span>
-                            </div>
-                          </li>
-                          <li>
-                            <div className="flex items-center gap-2">
-                              <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                <i className="las la-check text-lg text-primary"></i>
-                              </div>
-                              <span className="inline-block text-lg font-medium">
-                                Location is key
-                              </span>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                      <div className="col-span-12 xl:col-span-6">
-                        <Image
-                          width={384}
-                          height={441}
-                          src="/img/blog-details-img-2.jpg"
-                          alt="image"
-                          className=""
-                        />
-                      </div>
-                    </div>
-                    <h4 className="mt-10 mb-6 text-2xl font-semibold">
-                      {" "}
-                      Overview{" "}
-                    </h4>
-                    <p className="clr-neutral-500 mb-10">
-                      Overall, The Wall Street Journal&apos;s Real Estate
-                      section is a valuable resource for anyone interested in
-                      the real estate market. Its in-depth reporting and
-                      analysis provide insights into the trends and
-                      opportunities in the industry, and its articles are widely
-                      read and highly regarded by real estate professionals and
-                      investors.
-                    </p>
-                    <Image
-                      width={792}
-                      height={441}
-                      src="/img/blog-details-img-3.jpg"
-                      alt="image"
-                      className="w-full rounded-2xl mb-10"
-                    />
-                    <h5 className="mb-6 text-xl"> Advantage </h5>
-                    <p className="mb-10 clr-neutral-500">
-                      Overall, The Wall Street Journal&apos;s Real Estate
-                      section is a valuable resource for anyone interested in
-                      the real estate market. Its in-depth reporting and
-                      analysis provide insights into the trends and
-                      opportunities in the industry, and its articles are widely
-                      read and highly regarded by real estate professionals and
-                      investors.
-                    </p>
+
+
                     <div className="hr-dashed mb-6"></div>
-                    <div className="flex items-center justify-between flex-wrap gap-4">
-                      <ul className="flex items-center flex-wrap gap-3">
-                        <li>
-                          <p className="mb-0 font-medium text-lg text-primary">
-                            Tag -
-                          </p>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white text-sm">
-                            Real Estate
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white text-sm">
-                            Building
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white text-sm">
-                            House
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white text-sm">
-                            Resort
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white text-sm">
-                            Studio
-                          </Link>
-                        </li>
-                      </ul>
-                      <ul className="flex items-center flex-wrap gap-3">
-                        <li>
-                          <p className="mb-0 font-medium text-lg text-primary">
-                            Share -
-                          </p>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link grid place-content-center w-9 h-9 rounded-full border border-[var(--primary)] text-primary hover:bg-primary hover:text-white">
-                            <i className="text-xl lab la-facebook-f"></i>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link grid place-content-center w-9 h-9 rounded-full border border-[var(--primary)] text-primary hover:bg-primary hover:text-white">
-                            <i className="text-xl lab la-twitter"></i>
-                          </Link>
-                        </li>
-                        <li>
-                          <Link
-                            href="#"
-                            className="link grid place-content-center w-9 h-9 rounded-full border border-[var(--primary)] text-primary hover:bg-primary hover:text-white">
-                            <i className="text-xl lab la-linkedin-in"></i>
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
+
                   </div>
 
-                  <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
-                    <div className="flex items-center gap-4 justify-between flex-wrap mb-10">
-                      <div className="flex items-center gap-2">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <h3 className="mb-0 h3"> 4.7 (21 reviews) </h3>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <p className="mb-0 clr-neutral-500 shrink-0">
-                          {" "}
-                          Sort By :{" "}
-                        </p>
-                        <div className="border rounded-full">
-                          <select className="w-full bg-transparent px-5 py-3 focus:outline-none">
-                            <option>Latest</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-2)] rounded-2xl p-3 sm:p-4 lg:p-6 mb-8">
-                      <div className="flex items-center flex-wrap justify-between gap-4 ">
-                        <div className="flex gap-5 items-center">
-                          <div className="w-15 h-15 shrink-0 rounded-full overflow-hidden">
-                            <Image
-                              width={60}
-                              height={60}
-                              src="/img/user-1.jpg"
-                              alt="image"
-                              className=" w-full h-full object-fit-cover"
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <h5 className="mb-1 font-semibold"> Kiss Laura </h5>
-                            <p className="mb-0 clr-neutral-500">
-                              {" "}
-                              Product Designer{" "}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm-end">
-                          <p className="mb-1"> 09:01 am </p>
-                          <p className="mb-0"> Mar 03, 2023 </p>
-                        </div>
-                      </div>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex gap-1 mb-3">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                      </div>
-                      <p className="mb-0 clr-neutral-500">
-                        I highly recommend [real estate agent&apos;s name] as a
-                        professional and knowledgeable real estate agent. They
-                        provided valuable guidance throughout the selling
-                        process
-                      </p>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex flex-wrap items-center gap-10 mb-6">
-                        <div className="flex items-center gap-2 text-primary">
-                          <HandThumbUpIcon className="w-5 h-5" />
-                          <span className="inline-block"> 178 </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-primary">
-                          <ChatBubbleLeftRightIcon className="w-5 h-5" />
-                          <span className="inline-block"> Reply </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-5 items-center">
-                        <div className="w-15 h-15 shrink-0 rounded-full overflow-hidden">
-                          <Image
-                            width={60}
-                            height={60}
-                            src="/img/user-2.jpg"
-                            alt="image"
-                            className=" w-full h-full object-fit-cover"
-                          />
-                        </div>
-                        <div className="flex-grow">
-                          <input
-                            className="border text-base py-4 px-5 rounded-full focus:outline-none w-full"
-                            type="text"
-                            placeholder="Join the discussion"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-2)] rounded-2xl p-3 sm:p-4 lg:p-6 mb-8">
-                      <div className="flex items-center flex-wrap justify-between gap-4">
-                        <div className="flex gap-5 items-center">
-                          <div className="w-15 h-15 shrink-0 rounded-full overflow-hidden">
-                            <Image
-                              width={60}
-                              height={60}
-                              src="/img/user-3.jpg"
-                              alt="image"
-                              className=" w-full h-full object-fit-cover"
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <h5 className="mb-1 font-semibold">
-                              {" "}
-                              Kristin Watson{" "}
-                            </h5>
-                            <p className="mb-0 clr-neutral-500">
-                              {" "}
-                              Product Designer{" "}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm-end">
-                          <p className="mb-1"> 09:01 am </p>
-                          <p className="mb-0"> Mar 03, 2023 </p>
-                        </div>
-                      </div>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex gap-1 mb-3">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                      </div>
-                      <p className="mb-0 clr-neutral-500">
-                        I highly recommend [real estate agent&apos;s name] as a
-                        professional and knowledgeable real estate agent. They
-                        provided valuable guidance throughout the selling
-                        process
-                      </p>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex flex-wrap items-center gap-10">
-                        <div className="flex items-center gap-2 text-primary">
-                          <HandThumbUpIcon className="w-5 h-5" />
-                          <span className="inline-block"> 178 </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-primary">
-                          <ChatBubbleLeftRightIcon className="w-5 h-5" />
-                          <span className="inline-block"> Reply </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="bg-[var(--bg-2)] rounded-2xl p-3 sm:p-4 lg:p-6 mb-8">
-                      <div className="flex items-center flex-wrap justify-between gap-4">
-                        <div className="flex gap-5 items-center">
-                          <div className="w-15 h-15 shrink-0 rounded-full overflow-hidden">
-                            <Image
-                              width={60}
-                              height={60}
-                              src="/img/user-4.jpg"
-                              alt="image"
-                              className=" w-full h-full object-fit-cover"
-                            />
-                          </div>
-                          <div className="flex-grow">
-                            <h5 className="mb-1 font-semibold">
-                              {" "}
-                              Marvin McKinney{" "}
-                            </h5>
-                            <p className="mb-0 clr-neutral-500">
-                              {" "}
-                              Product Designer{" "}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="text-sm-end">
-                          <p className="mb-1"> 09:01 am </p>
-                          <p className="mb-0"> Mar 03, 2023 </p>
-                        </div>
-                      </div>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex gap-1 mb-3">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                      </div>
-                      <p className="mb-0 clr-neutral-500">
-                        I highly recommend [real estate agent&apos;s name] as a
-                        professional and knowledgeable real estate agent. They
-                        provided valuable guidance throughout the selling
-                        process
-                      </p>
-                      <div className="border border-dashed my-6"></div>
-                      <div className="flex flex-wrap items-center gap-10">
-                        <div className="flex items-center gap-2 text-primary">
-                          <HandThumbUpIcon className="w-5 h-5" />
-                          <span className="inline-block"> 178 </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-primary">
-                          <ChatBubbleLeftRightIcon className="w-5 h-5" />
-                          <span className="inline-block"> Reply </span>
-                        </div>
-                      </div>
-                    </div>
-                    <Link
-                      href="#"
-                      className="featured-tab link font-semibold clr-primary-400 inline-block py-3 px-6 bg-[var(--primary-light)] hover:bg-primary hover:text-white rounded-full active">
-                      See All Reviews
-                    </Link>
-                  </div>
-
-                  <div>
-                    <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
-                      <h4 className="mb-0 text-2xl font-semibold">
-                        Write a review
-                      </h4>
-                      <div className="border border-dashed my-6"></div>
-                      <p className="text-xl mb-3 font-medium">Rating *</p>
-                      <div className="flex gap-1 mb-3">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                      </div>
-                      <form action="#">
-                        <div className="grid grid-cols-12 gap-4">
-                          <div className="col-span-12">
-                            <label
-                              htmlFor="review-name"
-                              className="text-xl font-medium block mb-3">
-                              Name *
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                              placeholder="Enter Name.."
-                              id="review-name"
-                            />
-                          </div>
-                          <div className="col-span-12">
-                            <label
-                              htmlFor="review-email"
-                              className="text-xl font-medium block mb-3">
-                              Email *
-                            </label>
-                            <input
-                              type="text"
-                              className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                              placeholder="Enter Email.."
-                              id="review-email"
-                            />
-                          </div>
-                          <div className="col-span-12">
-                            <label
-                              htmlFor="review-review"
-                              className="text-xl font-medium block mb-3">
-                              Review *
-                            </label>
-                            <textarea
-                              id="review-review"
-                              rows={5}
-                              placeholder="Write a Review"
-                              className="bg-[var(--bg-1)] border rounded-2xl py-3 px-5 w-full focus:outline-none"></textarea>
-                          </div>
-                          <div className="col-span-12">
-                            <Link href="#" className="btn-primary">
-                              Submit Review
-                            </Link>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
                 </div>
                 <div className="col-span-12 lg:col-span-4">
-                  <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-                    <h4 className="mb-6 text-2xl font-semibold"> Search </h4>
-                    <div className="flex items-center border border-neutral-40 px-6 py-3 rounded-full">
-                      <input
-                        type="text"
-                        className="w-full text-[var(--neutral-700)] border-0 focus:outline-none bg-transparent ::placeholder-neutral-300"
-                        placeholder="Type Properties Name"
-                      />
-                      <SearchIcon />
-                    </div>
-                  </div>
-                  <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-                    <h4 className="mb-6 text-2xl font-semibold"> Services </h4>
+                  <div className="bg-white rounded-2xl p-3 sm:p-4 md:p-6 mb-6">
+                    <h4 className="mb-6 text-2xl font-semibold">Categories</h4>
 
-                    <ul className="flex flex-col gap-3">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-industry text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Real estate sales{" "}
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-city text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Property management{" "}
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-taxi text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Home inspection{" "}
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-building text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Real estate brokerage{" "}
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-graduation-cap text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Education and Training{" "}
-                          </p>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full">
-                          <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
-                            <i className="las la-sliders-h text-primary text-xl"></i>
-                          </span>
-                          <p className="mb-0 text-base sm:text-lg">
-                            {" "}
-                            Consulting services{" "}
-                          </p>
-                        </Link>
-                      </li>
-                    </ul>
+                    {loading ? (
+                      <p>Loading...</p>
+                    ) : categories.length > 0 ? (
+                      <ul className="flex flex-col gap-3">
+                        {categories.map((category) => (
+                          <li key={category.id}>
+                            <Link
+                              href="#"
+                              className="link flex items-center gap-3 duration-300 bg-[var(--bg-2)] hover:bg-primary text-[var(--neutral-700)] hover:text-white py-3 px-5 rounded-full"
+                            >
+                              <span className="grid place-content-center w-8 h-8 bg-white rounded-full shrink-0">
+                                <i className="las la-industry text-primary text-xl"></i>
+                              </span>
+                              <p className="mb-0 text-base sm:text-lg">{category.category_name}</p>
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p>No categories found.</p>
+                    )}
                   </div>
+
                   <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
-                    <h4 className="mb-6 text-2xl font-semibold">
-                      {" "}
-                      Recent Posts{" "}
-                    </h4>
-                    <div className="flex gap-6">
-                      <div className="w-20 h-20 rounded-2xl shrink-0">
-                        <Image
-                          width={80}
-                          height={60}
-                          src="/img/recent-post-1.jpg"
-                          alt="image"
-                          className="w-full rounded-2xl"
-                        />
+                    <h4 className="mb-6 text-2xl font-semibold">Recent Posts</h4>
+                    {blogs.slice(0, 5).map((blog) => ( // Restrict display to 5 blogs
+                      <div key={blog.id} className="flex gap-6 mb-6">
+                        <div className="w-20 h-12 rounded-2xl shrink-0 overflow-hidden">
+                          <Image
+                            width={80}  // Fixed width
+                            height={64} // Adjusted height to fit within the container
+                            src={blog.blog_image_multiple[0]}
+                            alt={blog.blog_title}
+                            className="rounded-2xl object-cover" // Ensures the image covers the area without distorting
+                          />
+                        </div>
+
+                        <div className="flex-grow">
+                          <h5 className="mb-0">
+                            <Link
+                              href={`blog-details/${blog.id}`}
+                              className="link text-[var(--neutral-700)] hover:text-primary"
+                            >
+                              {blog.blog_title}
+                            </Link>
+                          </h5>
+                          <p className="mb-0 clr-neutral-500">
+                            {new Date(blog.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
                       </div>
-                      <div className="flex-grow">
-                        <h5 className="mb-0">
-                          <Link
-                            href="blog-details"
-                            className="link text-[var(--neutral-700)] hover:text-primary">
-                            US Pending Home Sales Drop for Second
-                          </Link>
-                        </h5>
-                        <p className="mb-0 clr-neutral-500"> 23 Mar, 2023 </p>
-                      </div>
-                    </div>
+                    ))}
                     <div className="border border-dashed my-6"></div>
-                    <div className="flex gap-6">
-                      <div className="w-20 h-20 rounded-2xl shrink-0">
-                        <Image
-                          width={80}
-                          height={60}
-                          src="/img/recent-post-2.jpg"
-                          alt="image"
-                          className="w-full rounded-2xl"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h5 className="mb-0">
-                          <Link
-                            href="blog-details"
-                            className="link text-[var(--neutral-700)] hover:text-primary">
-                            Home Prices in Canada Surge to Record Highs
-                          </Link>
-                        </h5>
-                        <p className="mb-0 clr-neutral-500"> 23 Mar, 2023 </p>
-                      </div>
-                    </div>
-                    <div className="border border-dashed my-6"></div>
-                    <div className="flex gap-6">
-                      <div className="w-20 h-20 rounded-2xl shrink-0">
-                        <Image
-                          width={80}
-                          height={60}
-                          src="/img/recent-post-3.jpg"
-                          alt="image"
-                          className="w-full rounded-2xl"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h5 className="mb-0">
-                          <Link
-                            href="blog-details"
-                            className="link text-[var(--neutral-700)] hover:text-primary">
-                            New York City Renters Return in Droves
-                          </Link>
-                        </h5>
-                        <p className="mb-0 clr-neutral-500"> 23 Mar, 2023 </p>
-                      </div>
-                    </div>
-                    <div className="border border-dashed my-6"></div>
-                    <div className="flex gap-6">
-                      <div className="w-20 h-20 rounded-2xl shrink-0">
-                        <Image
-                          width={80}
-                          height={60}
-                          src="/img/recent-post-4.jpg"
-                          alt="image"
-                          className="w-full rounded-2xl"
-                        />
-                      </div>
-                      <div className="flex-grow">
-                        <h5 className="mb-0">
-                          <Link
-                            href="blog-details"
-                            className="link text-[var(--neutral-700)] hover:text-primary">
-                            New York City&apos;s Luxury Real Estate Market
-                          </Link>
-                        </h5>
-                        <p className="mb-0 clr-neutral-500"> 23 Mar, 2023 </p>
-                      </div>
-                    </div>
                   </div>
+
                   <div className="bg-white rounded-2x p-3 sm:p-4 lg:p-6">
-                    <h4 className="mb-6 text-2xl font-semibold">
-                      {" "}
-                      Popular Tag{" "}
-                    </h4>
+                    <h4 className="mb-6 text-2xl font-semibold">Popular Tags</h4>
                     <ul className="flex flex-wrap gap-3">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white">
-                          {blog?.tags}
-                        </Link>
-                      </li>
+                      {tags.length > 0 ? (
+                        tags.map((tag) => (
+                          <li key={tag.id}>
+                            <Link
+                              href="#"
+                              className="link inline-block text-center px-4 py-2 border border-neutral-40 rounded-full bg-white clr-neutral-500 hover:bg-primary hover:text-white"
+                            >
+                              {tag.tag_name}
+                            </Link>
+                          </li>
+                        ))
+                      ) : (
+                        <p className="text-neutral-500">No tags available.</p>
+                      )}
                     </ul>
                   </div>
                 </div>

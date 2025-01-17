@@ -1,4 +1,5 @@
 "use client";
+
 import {
   ArrowRightIcon,
   ChatBubbleLeftRightIcon,
@@ -7,7 +8,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { StarIcon } from "@heroicons/react/20/solid";
+import { StarIcon, InformationCircleIcon } from "@heroicons/react/20/solid";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -33,6 +34,7 @@ const Page = () => {
   const [switchStates, setSwitchStates] = useState<SwitchStates>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedReview, setSelectedReview] = useState<Review | null>(null); // For modal
   const itemsPerPage = 3; // Set number of items per page
 
   useEffect(() => {
@@ -57,7 +59,6 @@ const Page = () => {
 
   const handleToggle = (id: string | number) => {
     const newStatus = !switchStates[id];
-    console.log("Before toggle:", switchStates); // Log before toggle
 
     setSwitchStates((prev) => ({
       ...prev,
@@ -83,7 +84,6 @@ const Page = () => {
       )
       .then((response) => {
         console.log("Review status updated successfully:", response.data);
-        console.log("After toggle:", switchStates); // Log after toggle
       })
       .catch((error) => {
         console.error("Error updating review status:", error);
@@ -111,6 +111,14 @@ const Page = () => {
     setCurrentPage(page);
   };
 
+  const handleOpenDialog = (review: Review) => {
+    setSelectedReview(review);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedReview(null);
+  };
+
   // Paginated data
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedReviews = filteredReviews.slice(
@@ -128,7 +136,6 @@ const Page = () => {
           <div className="col-span-12 lg:col-span-12">
             <div className="p-3 sm:p-4 md:p-6 border xl:p-8 bg-white rounded-2xl mb-8">
               {/* Search bar */}
-
               <div className="flex flex-wrap gap-3 justify-between mb-7">
                 <form className="flex flex-wrap items-center gap-3">
                   <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
@@ -138,7 +145,6 @@ const Page = () => {
                       className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                       value={searchQuery}
                       onChange={handleSearch}
-
                     />
                     <SearchIcon />
                   </div>
@@ -154,7 +160,7 @@ const Page = () => {
                       <th className="border p-2">Name</th>
                       <th className="border p-2">Ratings</th>
                       <th className="border p-2">Description</th>
-                      <th className="border p-2">Status</th>
+                      <th className="border p-2">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -172,15 +178,25 @@ const Page = () => {
                             ))}
                           </div>
                         </td>
-                        <td className="border p-2">{review.description}</td> {/* Full description without truncation */}
+                        <td className="border p-2">
+                          <p>{`${review.description.slice(0, 50)}...`}</p>
+                          <InformationCircleIcon
+                            className="w-6 h-6 text-blue-500 cursor-pointer inline"
+                            onClick={() => handleOpenDialog(review)}
+                          />
+                        </td>
                         <td className="border p-2">
                           {/* Custom Toggle Switch */}
                           <div
-                            className={`w-10 h-5 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${switchStates[review.id] ? "bg-green-500" : ""}`}
+                            className={`w-10 h-5 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer ${
+                              switchStates[review.id] ? "bg-green-500" : ""
+                            }`}
                             onClick={() => handleToggle(review.id)}
                           >
                             <div
-                              className={`bg-white w-4 h-4 rounded-full shadow-md transform ${switchStates[review.id] ? "translate-x-5" : ""}`}
+                              className={`bg-white w-4 h-4 rounded-full shadow-md transform ${
+                                switchStates[review.id] ? "translate-x-5" : ""
+                              }`}
                             ></div>
                           </div>
                         </td>
@@ -189,7 +205,6 @@ const Page = () => {
                   </tbody>
                 </table>
               </div>
-
 
               {/* Pagination */}
               <Pagination
@@ -202,6 +217,22 @@ const Page = () => {
           </div>
         </div>
       </div>
+
+      {/* Modal Dialog */}
+      {selectedReview && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[80%]">
+            <h3 className="text-xl font-bold mb-4">{selectedReview.name}</h3>
+            <p className="text-gray-700">{selectedReview.description}</p>
+            <button
+              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+              onClick={handleCloseDialog}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

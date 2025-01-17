@@ -70,10 +70,7 @@ export const sidenavData = [
     id: 8,
     name: "Guests",
     icon: <i className="las la-user-circle text-2xl"></i>,
-    submenus: [
-      { url: "/guest/guests-list", title: "Guests List" },
-      { url: "/guest/guests-details", title: "Guests Details" },
-    ],
+    url: "/guest/guests-list",
   },
  
   {

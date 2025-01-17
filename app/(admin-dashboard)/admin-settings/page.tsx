@@ -231,7 +231,7 @@ const Page = () => {
                             placeholder="Enter number"
                           />
                         </div>
-                        <div className="col-span-12">
+                        <div className="col-span-5">
                           <button
                             type="submit"
                             className="btn btn-primary w-full mt-4"

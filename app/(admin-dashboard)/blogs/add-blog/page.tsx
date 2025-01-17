@@ -242,10 +242,10 @@ const Page = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // e.preventDefault();
-
+  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-
+  
     // Append all formData fields except images
     for (const key in formData) {
       if (key === "blog_image_multiple") {
@@ -256,13 +256,10 @@ const Page = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-
-    // Append the plain text description
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = description;
-    const plainTextDescription = tempElement.textContent || tempElement.innerText || "";
-    formDataToSend.append("description", plainTextDescription);
-
+  
+    // Append the HTML description directly (without stripping HTML tags)
+    formDataToSend.append("description", description);
+  
     try {
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/save_blog",
@@ -274,12 +271,12 @@ const Page = () => {
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add blog: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
       alert("Blog added successfully");
       window.location.reload();
@@ -287,6 +284,7 @@ const Page = () => {
       console.error("Error occurred during blog addition:", error);
     }
   };
+  
 
   <div className="mt-[20px]">
     <button

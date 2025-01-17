@@ -52,7 +52,7 @@ const PageDetails = () => {
       <div className="bg-[var(--bg-2)] relative before:absolute before:w-full before:h-[150px] before:top-0 before:left-0 before:bg-[var(--dark)] mb-[60px] lg:mb-[120px]">
         <div className="container px-3 relative z-[1] p-5 md:p-8 lg:p-10 rounded-2xl bg-white">
           <h3 className="h3">{pageDetails.page_name}</h3>
-          <p className="mt-4">{pageDetails.page_description}</p>
+          <p className="mt-4" dangerouslySetInnerHTML={{ __html: pageDetails?.page_description }} />
           <div className="border border-t border-dashed my-4 lg:my-6 xl:my-8"></div>
           {/* <ul className="marker:text-primary list-disc list-inside flex flex-col gap-3">
             <li>

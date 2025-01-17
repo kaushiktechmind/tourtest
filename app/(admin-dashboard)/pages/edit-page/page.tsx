@@ -43,19 +43,16 @@ const EditPage = () => {
   // Function to handle PAGE update
   const handleUpdatePage = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     const accessToken = localStorage.getItem("access_token"); // Get the bearer token from localStorage
-
+  
     if (!accessToken) {
       console.error("Access token is missing");
       return;
     }
-
+  
     try {
-      const tempElement = document.createElement("div");
-      tempElement.innerHTML = description;
-      const plainTextDescription =
-      tempElement.textContent || tempElement.innerText || "";
+      // Send the raw HTML content (description) directly, no need to strip HTML tags
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_page_by_id/${pageId}`,
         {
@@ -66,13 +63,13 @@ const EditPage = () => {
           },
           body: JSON.stringify({
             page_name: pageTitle,
-            page_description: plainTextDescription,
+            page_description: description, // Send the HTML description as is
           }),
         }
       );
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
         alert("Page is Updated Successfully:");
         // Redirect or show success message here
@@ -84,6 +81,7 @@ const EditPage = () => {
       console.error("Error updating PAGE:", error);
     }
   };
+  
 
   return (
     <div className="bg-[var(--bg-2)]">

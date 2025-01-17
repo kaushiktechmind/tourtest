@@ -109,8 +109,16 @@ const Footer = () => {
                     </li>
                   ))
                 ) : (
-                  <li>Loading...</li>
+                  <li></li>
                 )}
+                <li>
+                  <Link
+                    href="/blog-grid"
+                    className="hover:text-[var(--secondary)] duration-300 text-left"
+                  >
+                    Blogs
+                  </Link>
+                </li>
               </ul>
             </div>
             <div className="col-span-12 md:col-span-6 xl:col-span-3">

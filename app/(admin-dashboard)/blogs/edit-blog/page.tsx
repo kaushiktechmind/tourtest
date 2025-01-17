@@ -158,11 +158,11 @@ const EditBlog = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-
+    // e.preventDefault(); // Uncomment if you want to prevent default form submission behavior
+  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-
+  
     // Append all formData fields except images
     for (const key in formData) {
       if (key === "blog_image_multiple") {
@@ -173,14 +173,11 @@ const EditBlog = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-
-    // Append the plain text description
-    const tempElement = document.createElement("div");
-    tempElement.innerHTML = description;
-    const plainTextDescription = tempElement.textContent || tempElement.innerText || "";
-    formDataToSend.append("description", plainTextDescription);
+  
+    // Append the raw HTML description (preserve the HTML formatting)
+    formDataToSend.append("description", description); // Directly append the description (HTML content)
     formDataToSend.append("_method", "PUT");
-
+  
     try {
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_blog_by_id/${blogId}`,
@@ -192,19 +189,20 @@ const EditBlog = () => {
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add room: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
       alert("Blog Updated successfully");
-      router.push("/blogs/all-blogs")
+      router.push("/blogs/add-blog");
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
   };
+  
 
   <div className="mt-[20px]">
     <button
@@ -252,7 +250,7 @@ const EditBlog = () => {
                 Select a category
               </option>
               {categories.map((category) => (
-               <option key={category.id} value={category.id ?? ''}>
+                <option key={category.id} value={category.id ?? ''}>
                   {category.category_name}
                 </option>
               ))}
@@ -277,7 +275,7 @@ const EditBlog = () => {
             <p className="mt-6 mb-4 text-xl font-medium">Description :</p>
             <QuillEditor onChange={setDescription} value={description} />
 
-           
+
             <p className="mt-6 mb-4 text-xl font-medium">Tags :</p>
             <input
               type="text"
@@ -325,26 +323,25 @@ const EditBlog = () => {
 
               </div>
             </div>
-            {/* <div className="flex flex-wrap gap-4">
-              {bannerImageUrls.map((url, index) => (
-                <div key={index} className="w-32 h-32">
-                  <img src={url} alt={`Banner Image ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
-                </div>
-              ))}
-            </div> */}
 
             <div className="flex flex-wrap gap-4">
               {/* Only show prefilled images if no new image is selected */}
-              {formData.blog_image_multiple.length === 0 && bannerImageUrls.length > 0 && (
-                <div>
-                  {bannerImageUrls.map((url, index) => (
-                    <div key={index} className="w-32 h-32">
-                      <img src={url} alt={`Banner Image ${index + 1}`} className="w-full h-full object-cover rounded-lg" />
-                    </div>
-                  ))}
-                </div>
-              )}
+              {formData.blog_image_multiple.length === 0 &&
+                bannerImageUrls.length > 0 &&
+                bannerImageUrls.map((url, index) => (
+                  <div
+                    key={index}
+                    className="w-32 h-32 bg-gray-200 rounded-lg overflow-hidden"
+                  >
+                    <img
+                      src={url}
+                      alt={`Banner Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                ))}
             </div>
+
 
             {/* Display selected images */}
             <div className="mt-6 grid grid-cols-3 gap-4">
@@ -363,7 +360,7 @@ const EditBlog = () => {
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>
                   {" "}
-                  Add New{" "}
+                  Update{" "}
                 </span>
               </Link>
             </div>

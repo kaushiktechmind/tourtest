@@ -13,6 +13,7 @@ import Pagination from "@/components/vendor-dashboard/Pagination";
 import { StarIcon } from "@heroicons/react/20/solid";
 import HeadlessList from "@/components/ListBox";
 import { Dialog, Transition } from "@headlessui/react";
+import { SearchIcon } from "@/public/data/icons";
 
 const ITEMS_PER_PAGE = 10; // Customize the number of items per page
 
@@ -23,6 +24,7 @@ const Page = () => {
   const [cabItems, setCabItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(""); 
 
   const openModal = (cabItem: { name: string; id: string }) => {
     setCabToDelete(cabItem.name);
@@ -90,10 +92,18 @@ const Page = () => {
     setCurrentPage(page);
   };
 
-  const paginatedCabItems = cabItems.slice(
+  const filteredCabItems = cabItems.filter((cabItem) =>
+    Object.values(cabItem).some((value) =>
+      String(value).toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
+
+  const paginatedCabItems = filteredCabItems.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+
 
   if (loading) {
     return <div>Loading...</div>;
@@ -110,6 +120,20 @@ const Page = () => {
 
       <section className="bg-[var(--bg-2)] px-3 lg:px-6 pb-4 lg:pb-6 relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0">
         <div className="p-3 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white relative z-[1]">
+          <div className="flex flex-wrap gap-3 justify-between mb-7">
+            <form className="flex flex-wrap items-center gap-3">
+              <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
+                <input
+                  type="text"
+                  placeholder="Search"
+                  className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
+                  value={searchQuery} // Bind the search input to state
+                  onChange={(e) => setSearchQuery(e.target.value)} // Update the search query
+                />
+                <SearchIcon />
+              </div>
+            </form>
+          </div>
           <div className="overflow-x-auto">
             <table className="w-full table-auto whitespace-nowrap">
               <thead>
