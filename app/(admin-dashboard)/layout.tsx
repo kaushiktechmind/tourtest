@@ -27,8 +27,9 @@ export default function RootLayout({
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
+    const email = localStorage.getItem("email");
 
-    if (!token && path.startsWith("/admin")) {
+    if (email!=="admin@gmail.com" && path.startsWith("/admin")) {
       // Redirect to signin page if token is not found
       window.location.href = "/auth/signin";
     } else {
