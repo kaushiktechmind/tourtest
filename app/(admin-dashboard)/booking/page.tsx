@@ -136,7 +136,7 @@ const Page = () => {
               <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
                 <input
                   type="text"
-                  placeholder="Search by customer name"
+                  placeholder="Search..."
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

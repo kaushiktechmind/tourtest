@@ -177,7 +177,10 @@ const Page = () => {
                             src={formData.profile_photo_url || formData.profile_photo || imageSrc} // Use the temporary URL or the original profile photo
                             alt="avatar"
                           />
-                          <span className="w-8 h-8 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
+                          <span 
+      onClick={() => handleImageClick("profile_photo")}
+      className="w-8 h-8 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary"
+    >
                             <PencilIcon className="w-5 h-5" />
                           </span>
                         </div>
@@ -286,8 +289,8 @@ const Page = () => {
                           alt="logo"
                         />
 
-                        <span className="w-5 h-5 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
-                          <PencilIcon className="w-5 h-5" />
+                        <span onClick={() => handleImageClick("logo")} className="w-5 h-5 absolute cursor-pointer text-primary top-1 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
+                          <PencilIcon className="w-3 h-3" />
                         </span>
                       </div>
                     </div>
@@ -318,8 +321,8 @@ const Page = () => {
                           alt="favicon"
                         />
 
-                        <span className="w-5 h-5 absolute cursor-pointer text-primary top-4 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
-                          <PencilIcon className="w-5 h-5" />
+                        <span onClick={() => handleImageClick("favicon")} className="w-5 h-5 absolute cursor-pointer text-primary top-1 right-4 hover:bg-primary duration-300 hover:text-white rounded-full bg-white flex justify-center items-center border border-primary">
+                          <PencilIcon className="w-3 h-3" />
                         </span>
                       </div>
                     </div>

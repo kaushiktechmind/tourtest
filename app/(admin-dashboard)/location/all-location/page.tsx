@@ -114,7 +114,7 @@ const Page = () => {
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-            <div className="flex flex-wrap gap-3 justify-between mb-7">
+            {/* <div className="flex flex-wrap gap-3 justify-between mb-7">
               <form className="flex items-center gap-3">
                 <div className="border rounded-full flex items-center p-1 pr-2 bg-[var(--bg-1)]">
                   <input
@@ -125,7 +125,7 @@ const Page = () => {
                   <SearchIcon />
                 </div>
               </form>
-            </div>
+            </div> */}
             <div className="overflow-x-auto">
               <table className="w-full whitespace-nowrap">
                 <thead>

@@ -25,11 +25,10 @@ interface Amenity {
 }
 
 interface Policy {
-  id: number;
-  policy_title: any;
-  policy_description: any; // Ensure the correct field name here
+  id: number; // Use number if your API returns numeric IDs
+  policy_title: string;
+  policy_description: string; // Corrected spelling from 'policy_description' to 'policy_description'
 }
-
 
 interface FAQ {
   id: number; // Change to the actual type based on your API response
@@ -535,7 +534,10 @@ const EditHotel = () => {
     // Append selected policies
     selectedPolicies.forEach((policy, index) => {
       formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
-      formDataToSend.append(`policy_description${index + 1}`, policy.policy_description);
+      formDataToSend.append(
+        `policy_description${index + 1}`,
+        policy.policy_description
+      );
     });
 
     // Append selected FAQs
@@ -864,10 +866,13 @@ const EditHotel = () => {
             )}
             initialOpen={true}
           >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+           <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               {policies.length > 0 ? (
                 <div className="mb-4">
-                  <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+                  <label
+                    htmlFor="policyDropdown"
+                    className="text-lg font-bold mb-2 block"
+                  >
                     Select a Policy
                   </label>
                   <select
@@ -879,9 +884,14 @@ const EditHotel = () => {
                       );
                       if (
                         selectedPolicy &&
-                        !selectedPolicies.some((p) => p.id === selectedPolicy.id)
+                        !selectedPolicies.some(
+                          (p) => p.id === selectedPolicy.id
+                        )
                       ) {
-                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                        setSelectedPolicies((prev) => [
+                          ...prev,
+                          selectedPolicy,
+                        ]);
                       }
                     }}
                   >
@@ -912,12 +922,13 @@ const EditHotel = () => {
                     <input
                       type="text"
                       className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_description} // Use 'policy_description' directly
+                      value={policy.policy_description}
                       onChange={(e) => {
-                        const updatedPolicies = selectedPolicies.map((p) =>
-                          p.id === policy.id
-                            ? { ...p, policy_decription: e.target.value }
-                            : p
+                        const updatedPolicies = selectedPolicies.map(
+                          (p) =>
+                            p.id === policy.id
+                              ? { ...p, policy_description: e.target.value }
+                              : p // Ensure proper key name here
                         );
                         setSelectedPolicies(updatedPolicies);
                       }}

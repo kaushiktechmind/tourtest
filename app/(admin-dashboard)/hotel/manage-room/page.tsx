@@ -20,6 +20,7 @@ interface Room {
   id: number;
   room_name: string;
   room_price: string;
+  sale_price: string;
   status: string;
 }
 interface Amenity {
@@ -32,6 +33,7 @@ interface HotelFormData {
   hotel_id: string;
   room_name: string;
   room_price: string;
+  sale_price: string;
   extra_bed_price: string;
   child_price: string;
   no_of_beds: string;
@@ -58,6 +60,7 @@ const ManageRoom = () => {
     hotel_id: hotelId ?? "",
     room_name: "",
     room_price: "",
+    sale_price: "",
     extra_bed_price: "",
     child_price: "",
     no_of_beds: "",
@@ -180,31 +183,33 @@ const ManageRoom = () => {
       amenities: selectedAmenities.map((item) => item.toString()), // Convert to string[]
     }));
   }, [selectedAmenities]);
-  
+
 
 
   const handleSubmit = async (e: React.FormEvent) => {
     // e.preventDefault();
-
+  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-
+  
+    // Ensure amenities are sorted before appending
+    const sortedAmenities = [...selectedAmenities].sort((a, b) => a - b); // Sort numerically in ascending order
+  
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
           formDataToSend.append("featured_images[]", file);
         });
       } else if (key === "amenities") {
-        // Append all selected amenity IDs as an array
-        selectedAmenities.forEach((amenityId) => {
-          formDataToSend.append("amenities[]", amenityId.toString()); // Use the array format "amenities[]"
+        // Append sorted amenity IDs
+        sortedAmenities.forEach((amenityId) => {
+          formDataToSend.append("amenities[]", amenityId.toString());
         });
       } else {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-
-
+  
     try {
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms",
@@ -216,19 +221,20 @@ const ManageRoom = () => {
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add room: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
       alert("Room added successfully");
-      window.location.reload();
+      // window.location.reload();
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
   };
+  
   <div className="mt-[20px]">
     <button
       type="submit"
@@ -286,16 +292,25 @@ const ManageRoom = () => {
 
             <p className="mt-6 mb-4 text-xl font-medium">Room Price :</p>
             <input
-              type="text"
+              type="number"
               name="room_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="3000"
               value={formData.room_price}
               onChange={handleInputChange}
             />
+            <p className="mt-6 mb-4 text-xl font-medium">Sale Price :</p>
+            <input
+              type="number"
+              name="sale_price"
+              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+              placeholder="3000"
+              value={formData.sale_price}
+              onChange={handleInputChange}
+            />
             <p className="mt-6 mb-4 text-xl font-medium">Extra Bed Price :</p>
             <input
-              type="text"
+              type="number"
               name="extra_bed_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="1000"
@@ -304,7 +319,7 @@ const ManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Child Price :</p>
             <input
-              type="text"
+              type="number"
               name="child_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="1"
@@ -313,7 +328,7 @@ const ManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">No of Beds :</p>
             <input
-              type="text"
+              type="number"
               name="no_of_beds"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="10"
@@ -379,7 +394,7 @@ const ManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Adult :</p>
             <input
-              type="text"
+              type="number"
               name="max_adults"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"
@@ -388,7 +403,7 @@ const ManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Childs :</p>
             <input
-              type="text"
+              type="number"
               name="max_childs"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"
@@ -397,7 +412,7 @@ const ManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Infants :</p>
             <input
-              type="text"
+              type="number"
               name="max_infants"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"
@@ -440,24 +455,7 @@ const ManageRoom = () => {
               </Accordion>
             </div>
 
-            {/* <p className="mt-6 mb-4 text-xl font-medium">Status :</p>
-            <input
-              type="text"
-              name="status"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="Available"
-              value={formData.status}
-              onChange={handleInputChange}
-            />
-            <p className="mt-6 mb-4 text-xl font-medium">Agent Price :</p>
-            <input
-              type="text"
-              name="agent_price"
-              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="2800"
-              value={formData.agent_price}
-              onChange={handleInputChange}
-            /> */}
+    
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>

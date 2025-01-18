@@ -23,7 +23,27 @@ export default function RootLayout({
   const [navOpen, setNavOpen] = useState(false);
   const [opened, setOpened] = useState<null | number>(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [logoUrl, setLogoUrl] = useState<string>("");
   const path = usePathname();
+
+  const fetchAdminSettings = async () => {
+    try {
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/get_admin_setting/1"
+      );
+      const data = await response.json();
+      console.log(data);
+      if (data?.data?.logo) {
+        setLogoUrl(data.data.logo); // Set the logo URL from the API response
+      }
+    } catch (error) {
+      console.error("Error fetching admin settings:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAdminSettings();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
@@ -59,7 +79,7 @@ export default function RootLayout({
               <Link
                 href="/"
                 className="inline-flex items-center pb-4 lg:pb-9 border-b border-dashed">
-                <Image src={Logo} alt="logo" />
+                <Image  src="https://www.andamanmangroves.com/static/media/logo.00922eff5313640b23f9.png" width={150} height={150} alt="logo" />
               </Link>
               <ul className="py-5">
                 <li>
@@ -126,7 +146,7 @@ export default function RootLayout({
                 ))}
               </ul>
             </div>
-            <ul>
+            {/* <ul>
               <li>
                 <Link
                   href="/"
@@ -135,7 +155,7 @@ export default function RootLayout({
                   Log out
                 </Link>
               </li>
-            </ul>
+            </ul> */}
           </nav>
           <div
             className={`lg:ml-[312px] relative ${navOpen &&

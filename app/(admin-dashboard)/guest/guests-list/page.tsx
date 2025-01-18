@@ -71,24 +71,16 @@ const Page = () => {
   useEffect(() => {
     const fetchGuestItems = async () => {
       try {
-        const token = localStorage.getItem("access_token"); // Get the token from localStorage
-
-        if (!token) {
-          console.error("No access token found");
-          return;
-        }
-
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/user/get_all_users",
           {
             method: "GET",
             headers: {
-              "Authorization": `Bearer ${token}`, // Pass the token in the Authorization header
               "Content-Type": "application/json" // Optional, depending on API requirements
             }
           }
         );
-
+  
         const data = await response.json();
         if (data) {
           setGuestItems(data);
@@ -99,9 +91,10 @@ const Page = () => {
         setLoading(false);
       }
     };
-
+  
     fetchGuestItems();
   }, []);
+  
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

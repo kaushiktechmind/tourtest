@@ -29,8 +29,8 @@ const EditHotelPolicy = () => {
 
           // Set the values for title and description
           setPolicyTitle(data.policy_title);
-          setDescription(data.policy_decription);
-          console.log("Description from API:", data.policy_decription);
+          setDescription(data.policy_description);
+          console.log("Description from API:", data.policy_description);
         } catch (error) {
           console.error("Error fetching policy data:", error);
         }
@@ -67,7 +67,7 @@ const EditHotelPolicy = () => {
           },
           body: JSON.stringify({
             policy_title: policyTitle,
-            policy_decription: plainTextDescription,
+            policy_description: plainTextDescription,
           }),
         }
       );

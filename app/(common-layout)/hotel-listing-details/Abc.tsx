@@ -659,7 +659,7 @@ const HotelListingDetails = () => {
 
           setRoomData(formattedRooms);
         } else {
-          setMsg("No Room Available for This Specific Entry");
+          setMsg("No Room Available for This Entry");
         }
       } catch (error) {
         console.error("Error fetching room data:", error);

@@ -94,7 +94,7 @@ const Page = () => {
           },
           body: JSON.stringify({
             policy_title: policyTitle,
-            policy_decription: plainTextDescription,
+            policy_description: plainTextDescription,
           }),
         }
       );

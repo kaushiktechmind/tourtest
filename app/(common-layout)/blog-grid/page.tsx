@@ -227,7 +227,7 @@ const Page = () => {
                   <div className="flex-grow">
                     <h5 className="mb-0">
                       <Link
-                        href={`blog-details/${blog.id}`}
+                        href={`blog-details?blogId=${blog.id}`}
                         className="link text-[var(--neutral-700)] hover:text-primary"
                       >
                         {blog.blog_title}

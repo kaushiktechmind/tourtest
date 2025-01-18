@@ -20,6 +20,7 @@ interface Room {
   id: number;
   room_name: string;
   room_price: string;
+  sale_price: string;
   status: string;
 }
 interface Amenity {
@@ -32,6 +33,7 @@ interface HotelFormData {
   hotel_id: string;
   room_name: string;
   room_price: string;
+  sale_price: string;
   extra_bed_price: string;
   child_price: string;
   no_of_beds: string;
@@ -59,6 +61,7 @@ const EditManageRoom = () => {
     hotel_id: hotelId ?? "",
     room_name: "",
     room_price: "",
+    sale_price: "",
     extra_bed_price: "",
     child_price: "",
     no_of_beds: "",
@@ -129,6 +132,7 @@ const EditManageRoom = () => {
               ...prevData,
               room_name: roomData.room_name,
               room_price: roomData.room_price,
+              sale_price: roomData.sale_price,
               extra_bed_price: roomData.extra_bed_price,
               child_price: roomData.child_price,
               no_of_beds: roomData.no_of_beds,
@@ -297,16 +301,25 @@ const EditManageRoom = () => {
 
             <p className="mt-6 mb-4 text-xl font-medium">Room Price :</p>
             <input
-              type="text"
+              type="number"
               name="room_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="3000"
               value={formData.room_price}
               onChange={handleInputChange}
             />
+            <p className="mt-6 mb-4 text-xl font-medium">Sale Price :</p>
+            <input
+              type="number"
+              name="sale_price"
+              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+              placeholder="3000"
+              value={formData.sale_price}
+              onChange={handleInputChange}
+            />
             <p className="mt-6 mb-4 text-xl font-medium">Extra Bed Price :</p>
             <input
-              type="text"
+              type="number"
               name="extra_bed_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="1000"
@@ -315,7 +328,7 @@ const EditManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Child Price :</p>
             <input
-              type="text"
+              type="number"
               name="child_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="1"
@@ -324,7 +337,7 @@ const EditManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">No of Beds :</p>
             <input
-              type="text"
+              type="number"
               name="no_of_beds"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="10"
@@ -369,7 +382,7 @@ const EditManageRoom = () => {
 
             <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
             <input
-              type="text"
+              type="number"
               name="room_size"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="200 sq ft"
@@ -378,7 +391,7 @@ const EditManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Adult :</p>
             <input
-              type="text"
+              type="number"
               name="max_adults"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"
@@ -387,7 +400,7 @@ const EditManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Childs :</p>
             <input
-              type="text"
+              type="number"
               name="max_childs"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"
@@ -396,7 +409,7 @@ const EditManageRoom = () => {
             />
             <p className="mt-6 mb-4 text-xl font-medium">Max Infants :</p>
             <input
-              type="text"
+              type="number"
               name="max_infants"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="2"

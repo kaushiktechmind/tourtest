@@ -52,9 +52,20 @@ const Page = () => {
     fetchEnquiries();
   }, []);
 
-  const filteredEnquiries = enquiries.filter((enquiry) =>
-    enquiry.name?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredEnquiries = enquiries.filter((enquiry) => {
+    const searchLower = searchTerm.toLowerCase();
+    const enquiryDate = new Date(enquiry.created_at).toLocaleDateString().toLowerCase(); // Format date
+  
+    return (
+      enquiry.name?.toLowerCase().includes(searchLower) ||
+      enquiry.email?.toLowerCase().includes(searchLower) ||
+      enquiry.phone?.toLowerCase().includes(searchLower) ||
+      enquiry.service_type?.toLowerCase().includes(searchLower) ||
+      enquiry.message?.toLowerCase().includes(searchLower) ||
+      enquiryDate.includes(searchLower) // Check if the formatted date matches the search term
+    );
+  });
+  
 
   const totalPages = Math.ceil(filteredEnquiries.length / itemsPerPage);
   const paginatedEnquiries = filteredEnquiries.slice(
@@ -90,7 +101,7 @@ const Page = () => {
               <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
                 <input
                   type="text"
-                  placeholder="Search by customer name"
+                  placeholder="Search..."
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}

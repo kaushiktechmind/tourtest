@@ -7,7 +7,8 @@ const HeaderTop = () => {
       <div className="container mx-auto flex justify-between py-3 lg:py-5 gap-1">
         <Link href="/" className="flex items-center">
           <Image
-            src="https://www.andamanmangroves.com/static/media/logo.00922eff5313640b23f9.png"
+            // src="https://www.andamanmangroves.com/static/media/logo.00922eff5313640b23f9.png"
+            src="https://www.andamanmangroves.com/static/media/lf9.png"
             className="self-center hidden xl:block"
             width={172}
             height={48}

@@ -27,7 +27,7 @@ interface Amenity {
 interface Policy {
   id: number; // Use number if your API returns numeric IDs
   policy_title: string;
-  policy_decription: string; // Corrected spelling from 'policy_decription' to 'policy_decription'
+  policy_description: string; // Corrected spelling from 'policy_description' to 'policy_description'
 }
 
 interface FAQ {
@@ -390,7 +390,7 @@ const AddNewHotel = () => {
       formDataToSend.append(`policy_title${index + 1}`, policy.policy_title);
       formDataToSend.append(
         `policy_description${index + 1}`,
-        policy.policy_decription
+        policy.policy_description
       );
     });
 
@@ -793,12 +793,12 @@ const AddNewHotel = () => {
                     <input
                       type="text"
                       className="w-1/2 border p-2 rounded-md"
-                      value={policy.policy_decription}
+                      value={policy.policy_description}
                       onChange={(e) => {
                         const updatedPolicies = selectedPolicies.map(
                           (p) =>
                             p.id === policy.id
-                              ? { ...p, policy_decription: e.target.value }
+                              ? { ...p, policy_description: e.target.value }
                               : p // Ensure proper key name here
                         );
                         setSelectedPolicies(updatedPolicies);
