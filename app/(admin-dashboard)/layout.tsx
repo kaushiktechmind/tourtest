@@ -92,7 +92,7 @@ export default function RootLayout({
                   </Link>
                 </li>
               </ul>
-              <span className="text-xs">Pages</span>
+              {/* <span className="text-xs">Pages</span> */}
               <ul className="py-5 flex flex-col gap-1 font-medium">
                 {sidenavData.map(({ icon, id, name, submenus, url }) => (
                   <li key={id}>

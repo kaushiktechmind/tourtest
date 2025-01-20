@@ -111,66 +111,72 @@ const Page = () => {
       <section className="bg-[var(--bg-2)] px-3 lg:px-6 pb-4 lg:pb-6 relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0">
         <div className="p-3 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white relative z-[1]">
           <div className="overflow-x-auto">
-            <table className="w-full table-auto whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Location</th>
-                  <th className="py-3 lg:py-4 px-2 md:px-5">Activity Name</th>
-                  <th className="py-3 lg:py-4 px-2">Sale Price</th>
-                  <th className="py-3 lg:py-4 px-2">Duration</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedActs.map((act) => (
-                  <tr
-                    key={act.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {act.created_at.split("T")[0]}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {act.location_name}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/activity/edit-activity?activityId=${act.id}`}
-                        className="text-primary"
-                      >
-                        {act.activity_title}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {act.sale_price}
-                    </td>
-
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
-                        {act.duration}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a
-                        href={`/activity/edit-activity?activityId=${act.id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </a>
-                      <button
-                        className="text-[var(--secondary-500)]"
-                        onClick={() =>
-                          openModal({ name: act.activity_name, id: act.id })
-                        }
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </td>
+          {acts.length === 0 ? (
+              <div className="text-center py-5 text-gray-500">
+                No activity found
+              </div>
+            ) : (
+              <table className="w-full table-auto whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2">Location</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5">Activity Name</th>
+                    <th className="py-3 lg:py-4 px-2">Sale Price</th>
+                    <th className="py-3 lg:py-4 px-2">Duration</th>
+                    <th className="py-3 lg:py-4 px-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedActs.map((act) => (
+                    <tr
+                      key={act.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {act.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        {act.location_name}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/activity/edit-activity?activityId=${act.id}`}
+                          className="text-primary"
+                        >
+                          {act.activity_title}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {act.sale_price}
+                      </td>
+
+                      <td className="py-3 lg:py-4 px-2">
+                        <span className="flex gap-1 items-center">
+                          {act.duration}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                        <a
+                          href={`/activity/edit-activity?activityId=${act.id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </a>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() =>
+                            openModal({ name: act.activity_name, id: act.id })
+                          }
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
             {/* Pagination */}
             <Pagination

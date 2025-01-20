@@ -257,12 +257,6 @@ const HotelDetailsFeaturedRoom = ({
               </button>
             </div>
 
-            {/* Display total prices */}
-            {/* <div className="mt-4">
-              <div>Total Adult Price: ₹{totalPrices.adultTotal}</div>
-              <div>Total Child Price: ₹{totalPrices.childTotal}</div>
-              <div>Total Extra Bed Price: ₹{totalPrices.extraBedTotal}</div>
-            </div> */}
           </div>
         </div>
       </div>

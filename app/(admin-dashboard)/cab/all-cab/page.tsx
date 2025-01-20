@@ -134,73 +134,77 @@ const Page = () => {
               </div>
             </form>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Location</th>
-                  <th className="py-3 lg:py-4 px-2 md:px-5">Cab Name</th>
-                  <th className="py-3 lg:py-4 px-2">Price</th>
-                  <th className="py-3 lg:py-4 px-2">Sale Price</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedCabItems.map((cabItem) => (
-                  <tr
-                    key={cabItem.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {cabItem.created_at.split("T")[0]}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {cabItem.location}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/cab/edit-cab?cabId=${cabItem.id}`}
-                        className="text-primary"
-                      >
-                        {cabItem.cab_name}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {cabItem.price}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {cabItem.sale_price}
-                    </td>
-                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a
-                        href={`/cab/edit-cab?cabId=${cabItem.id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </a>
-                      <button
-                        className="text-[var(--secondary-500)]"
-                        onClick={() =>
-                          openModal({ name: cabItem.cab_name, id: cabItem.id })
-                        }
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </td>
+          {filteredCabItems.length === 0 ? (
+            <div className="text-center py-5 text-gray-500">No cabs found</div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full table-auto whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2">Location</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5">Cab Name</th>
+                    <th className="py-3 lg:py-4 px-2">Price</th>
+                    <th className="py-3 lg:py-4 px-2">Sale Price</th>
+                    <th className="py-3 lg:py-4 px-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedCabItems.map((cabItem) => (
+                    <tr
+                      key={cabItem.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {cabItem.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        {cabItem.location}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/cab/edit-cab?cabId=${cabItem.id}`}
+                          className="text-primary"
+                        >
+                          {cabItem.cab_name}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {cabItem.price}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {cabItem.sale_price}
+                      </td>
+                      <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                        <a
+                          href={`/cab/edit-cab?cabId=${cabItem.id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </a>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() =>
+                            openModal({ name: cabItem.cab_name, id: cabItem.id })
+                          }
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-            {/* Pagination */}
-            <Pagination
-              totalItems={cabItems.length}
-              itemsPerPage={ITEMS_PER_PAGE}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          </div>
+              {/* Pagination */}
+              <Pagination
+                totalItems={cabItems.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </section>
 

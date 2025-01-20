@@ -34,7 +34,7 @@ export default function RootLayout({
                   <input
                     type="text"
                     className="w-full bg-transparent border-0 focus:outline-none"
-                    placeholder="Search by car name"
+                    placeholder="Search by package name"
                   />
                   <button
                     type="button"
@@ -42,41 +42,8 @@ export default function RootLayout({
                     <SearchIcon />
                   </button>
                 </div>
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Types of Tour
-                </p>
-                <ul className="flex flex-col gap-3">
-                  {tourtypes.map((tour) => (
-                    <li
-                      key={tour.id}
-                      className="flex justify-between items-center">
-                      <CheckboxCustom label={tour.title} />
-                      <span>{tour.number}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Pricing scale
-                </p>
-                <CustomRangeSlider />
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Types of Places
-                </p>
-                <ul className="flex flex-col gap-3">
-                  {placeTypes.map((place) => (
-                    <li
-                      className="flex justify-between items-center"
-                      key={place.id}>
-                      <CheckboxCustom label={place.title} />
-                      <span>{place.number}</span>
-                    </li>
-                  ))}
-                </ul>
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
+               
+                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium my-6">
                   Star Category
                 </p>
                 <ul className="flex flex-col gap-3">
@@ -142,12 +109,12 @@ export default function RootLayout({
                   <div className="bg-white rounded-lg py-2 px-6 shadow-lg">
                     <ul className="flex justify-between items-center flex-wrap gap-3 ">
                       <li className="hidden xl:block">
-                        <p className="mb-0 clr-neutral-500">
+                        {/* <p className="mb-0 clr-neutral-500">
                           Showing 5 of 20 Results
-                        </p>
+                        </p> */}
                       </li>
                       <li className="flex-grow">
-                        <ul className="flex flex-wrap justify-center justify-content-lg-start justify-content-xl-center gap-4">
+                        <ul className="flex flex-wrap justify-end justify-content-lg-start justify-content-xl-center gap-4">
                           <li>
                             <Link
                               href="/package-listing-grid"
@@ -172,30 +139,7 @@ export default function RootLayout({
                               </span>
                             </Link>
                           </li>
-                          {/* <li>
-                            <Link
-                              href="/tour-listing-map"
-                              className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/package-listing-map" && "text-primary"
-                              }`}>
-                              <MapPinIcon className="w-5 h-5" />
-                              <span className="inline-block font-medium">
-                                Map
-                              </span>
-                            </Link>
-                          </li> */}
                         </ul>
-                      </li>
-                      <li className="hidden lg:flex items-center">
-                        <p className="mb-0 clr-neutral-500 flex-grow whitespace-nowrap">
-                          Sort By :
-                        </p>
-                        <select className="w-full bg-transparent px-5 py-2 focus:outline-none border-0">
-                          <option>latest</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
-                        </select>
                       </li>
                     </ul>
                   </div>

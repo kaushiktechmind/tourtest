@@ -42,39 +42,14 @@ export default function RootLayout({
                     <SearchIcon />
                   </button>
                 </div>
-                <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Types of Tour
-                </p>
-                <ul className="flex flex-col gap-3">
-                  {tourtypes.map((tour) => (
-                    <li
-                      key={tour.id}
-                      className="flex justify-between items-center">
-                      <CheckboxCustom label={tour.title} />
-                      <span>{tour.number}</span>
-                    </li>
-                  ))}
-                </ul>
+                
                 <div className="border-t border-dashed my-6"></div>
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
                   Pricing scale
                 </p>
                 <CustomRangeSlider />
                 <div className="border-t border-dashed my-6"></div>
-                <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
-                  Types of Places
-                </p>
-                <ul className="flex flex-col gap-3">
-                  {placeTypes.map((place) => (
-                    <li
-                      className="flex justify-between items-center"
-                      key={place.id}>
-                      <CheckboxCustom label={place.title} />
-                      <span>{place.number}</span>
-                    </li>
-                  ))}
-                </ul>
+               
                 <div className="border-t border-dashed my-6"></div>
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium">
                   Star Category
@@ -142,9 +117,9 @@ export default function RootLayout({
                   <div className="bg-white rounded-lg py-2 px-6 shadow-lg">
                     <ul className="flex justify-between items-center flex-wrap gap-3 ">
                       <li className="hidden xl:block">
-                        <p className="mb-0 clr-neutral-500">
+                        {/* <p className="mb-0 clr-neutral-500">
                           Showing 5 of 20 Results
-                        </p>
+                        </p> */}
                       </li>
                       <li className="flex-grow">
                         <ul className="flex flex-wrap justify-end justify-content-lg-end justify-content-xl-center gap-4">

@@ -993,7 +993,7 @@ const AddNewHotel = () => {
                     />
                   </label>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-4 mt-6 justify-center">
                   {selectedImages.map((preview, index) => (
                     <div key={index} className="relative w-24 h-24">
                       <img
@@ -1015,7 +1015,7 @@ const AddNewHotel = () => {
                   value={formData.video_link}
                   onChange={handleChange}
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="3"
+                  placeholder="www.yt.com"
                 />
 
                 <p className="mt-6 mb-4 text-xl font-medium">
@@ -1027,7 +1027,7 @@ const AddNewHotel = () => {
                   value={formData.i_frame_link}
                   onChange={handleChange}
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="3"
+                  placeholder="<iframe>...."
                 />
                 <p className="mt-6 mb-4 text-xl font-medium">Full Address :<span className="astrick">*</span></p>
                 <input
@@ -1149,7 +1149,7 @@ const AddNewHotel = () => {
                   value={formData.company_website}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter website"
+                  placeholder="Webisite Link"
                 />
 
               </div>

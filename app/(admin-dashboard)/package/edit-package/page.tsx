@@ -293,7 +293,6 @@ const EditPackage = () => {
             image: item.image
           }))
         );
-        console.log("xxxxxxxxxxxxxxxxxxx", itineraries)
 
         if (data.package_content) {
           setDescription(data.package_content); // Set the description from the API
@@ -518,7 +517,7 @@ const EditPackage = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Package Updated successfully!");
-        // router.push("/package/all-package");
+        router.push("/package/all-package");
         console.log(data);
       } else {
         alert("Failed to Update package.");
@@ -1184,7 +1183,7 @@ const EditPackage = () => {
         </Accordion>
       </div>
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
-        Save & Preview
+        Update Package
       </button>
 
       <Footer />

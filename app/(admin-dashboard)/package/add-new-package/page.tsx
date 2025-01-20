@@ -531,7 +531,7 @@ const AddNewPackage = () => {
                 value={formData.tour_max_people}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder=""
               />
 
               <p className="mt-6 mb-4 text-xl font-medium">Min People :</p>
@@ -541,7 +541,7 @@ const AddNewPackage = () => {
                 value={formData.tour_min_people}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder=""
               />
               <p className="mt-6 mb-4 text-xl font-medium">Duration</p>
               <input
@@ -550,7 +550,7 @@ const AddNewPackage = () => {
                 value={formData.duration}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder=""
               />
               <p className="mt-6 mb-4 text-xl font-medium">Pickup Point :</p>
               <input
@@ -559,7 +559,7 @@ const AddNewPackage = () => {
                 value={formData.pickup_point}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder=""
               />
 
 
@@ -711,7 +711,7 @@ const AddNewPackage = () => {
                   value={formData.youtube_video_link}
                   onChange={handleChange}
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="0"
+                  placeholder="www.yt.com"
                 />
               </div>
             </Accordion>

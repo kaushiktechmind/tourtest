@@ -31,7 +31,10 @@ const Page = () => {
   const itemsPerPage = 6;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPAGEs = filteredPAGEs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentPAGEs = Array.isArray(filteredPAGEs) 
+  ? filteredPAGEs.slice(indexOfFirstItem, indexOfLastItem)
+  : [];
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [pageToDelete, setPageToDelete] = useState<number | null>(null);
 
@@ -44,15 +47,25 @@ const Page = () => {
           "https://yrpitsolutions.com/tourism_api/api/get_page"
         );
         const data: Page[] = await response.json();
-        setPages(data);
-        setFilteredPAGEs(data); // Initialize filtered PAGEs
+        
+        if (Array.isArray(data)) {
+          setPages(data);
+          setFilteredPAGEs(data); // Initialize filteredPAGEs if the data is a valid array
+        } else {
+          console.error("Received invalid data:", data);
+          setPages([]);
+          setFilteredPAGEs([]);
+        }
       } catch (error) {
         console.error("Error fetching PAGEs:", error);
+        setPages([]);
+        setFilteredPAGEs([]);
       }
     };
+  
     fetchPAGEs();
   }, []);
-
+  
   // Filter PAGEs based on search query
   useEffect(() => {
     const filtered = pages.filter((page) =>

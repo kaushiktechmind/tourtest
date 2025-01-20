@@ -78,7 +78,7 @@ const EditCab = () => {
     location_name: "",
   });
 
-  const [locations, setLocations] = useState<Location[]>([]); 
+  const [locations, setLocations] = useState<Location[]>([]);
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
@@ -249,7 +249,6 @@ const EditCab = () => {
       try {
         const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`);
         const data = await response.json();
-        console.log("sssssssssss", data)
 
 
         // Extract attribute names dynamically
@@ -282,42 +281,16 @@ const EditCab = () => {
         }
 
 
-
-        // Process inclusion field
-        const rawInclusion = data.inclusion && data.inclusion[0] ? data.inclusion[0] : "";
-        const inclusions = rawInclusion
-          .replace(/^\[/, "") // Remove leading square bracket
-          .replace(/\]$/, "") // Remove trailing square bracket
-          .split(",") // Split items by comma
-          .map((item: string) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
-
-        // Map parsed inclusions to selectedInclusions format
-        const prefilledInclusions = inclusions.map((title: string, index: number) => ({
-          id: index + 1, // Temporary unique ID
+        const prefilledInclusions = data.inclusion.map((title: string, index: number) => ({
+          id: index + 1,
           cab_inclusion_title: title,
         }));
-
-        // Set inclusions in the state
         setSelectedInclusions(prefilledInclusions);
 
-
-
-
-        // Process inclusion field
-        const rawExclusion = data.exclusion && data.exclusion[0] ? data.exclusion[0] : "";
-        const exclusions = rawExclusion
-          .replace(/^\[/, "") // Remove leading square bracket
-          .replace(/\]$/, "") // Remove trailing square bracket
-          .split(",") // Split items by comma
-          .map((item: string) => item.trim().replace(/^['"]|['"]$/g, "")); // Trim and remove leading/trailing quotes
-
-        // Map parsed inclusions to selectedInclusions format
-        const prefilledExclusions = exclusions.map((title: string, index: number) => ({
-          id: index + 1, // Temporary unique ID
+        const prefilledExclusions = data.exclusion.map((title: string, index: number) => ({
+          id: index + 1,
           cab_exclusion_title: title,
         }));
-
-        // Set inclusions in the state
         setSelectedExclusions(prefilledExclusions);
 
 
@@ -447,12 +420,12 @@ const EditCab = () => {
 
       formDataToSend.append("faqs[]", faqs);
 
-     // Conditionally append banner images only if images are selected
-     if (Array.isArray(bannerImages) && bannerImages.length > 0) {
-      bannerImages.forEach((file) => {
-        formDataToSend.append("banner_image_multiple[]", file);
-      });
-    }
+      // Conditionally append banner images only if images are selected
+      if (Array.isArray(bannerImages) && bannerImages.length > 0) {
+        bannerImages.forEach((file) => {
+          formDataToSend.append("banner_image_multiple[]", file);
+        });
+      }
 
 
 
@@ -481,7 +454,7 @@ const EditCab = () => {
 
 
   return (
-  
+
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Cab</h2>
@@ -705,18 +678,26 @@ const EditCab = () => {
                 <select
                   name="cab_inclusion_title"
                   onChange={handleAddInclusion}
-                  value=""  // Add value attribute to ensure no default selection
+                  value="" // Ensures the dropdown resets after selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Inclusion
                   </option>
-                  {inclusions.map((inclusion) => (
-                    <option key={inclusion.id} value={inclusion.cab_inclusion_title}>
-                      {inclusion.cab_inclusion_title}
-                    </option>
-                  ))}
+                  {inclusions
+                    .filter(
+                      (inclusion) =>
+                        !selectedInclusions.some(
+                          (selected) => selected.cab_inclusion_title === inclusion.cab_inclusion_title
+                        )
+                    ) // Exclude already selected inclusions
+                    .map((inclusion) => (
+                      <option key={inclusion.id} value={inclusion.cab_inclusion_title}>
+                        {inclusion.cab_inclusion_title}
+                      </option>
+                    ))}
                 </select>
+
 
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
@@ -752,18 +733,26 @@ const EditCab = () => {
                 <select
                   name="cab_exclusion_title"
                   onChange={handleAddExclusion}
-                  value=""  // Add value attribute to prevent default selection
+                  value="" // Ensures the dropdown resets after selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Exclusion
                   </option>
-                  {exclusions.map((exclusion) => (
-                    <option key={exclusion.id} value={exclusion.cab_exclusion_title}>
-                      {exclusion.cab_exclusion_title}
-                    </option>
-                  ))}
+                  {exclusions
+                    .filter(
+                      (exclusion) =>
+                        !selectedExclusions.some(
+                          (selected) => selected.cab_exclusion_title === exclusion.cab_exclusion_title
+                        )
+                    ) // Exclude already selected exclusions
+                    .map((exclusion) => (
+                      <option key={exclusion.id} value={exclusion.cab_exclusion_title}>
+                        {exclusion.cab_exclusion_title}
+                      </option>
+                    ))}
                 </select>
+
 
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
@@ -799,71 +788,77 @@ const EditCab = () => {
               )}
               initialOpen={true}
             >
-              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-                {faqs.length > 0 ? (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="faqDropdown"
-                      className="text-lg font-bold mb-2 block"
-                    >
-                      Select a FAQ
-                    </label>
-                    <select
-                      id="faqDropdown"
-                      className="w-full border p-2 rounded-md"
-                      onChange={(e) => {
-                        const selectedFAQ = faqs.find(
-                          (faq) => faq.id === parseInt(e.target.value)
-                        );
-                        if (
-                          selectedFAQ &&
-                          !selectedFAQs.some((f) => f.id === selectedFAQ.id)
-                        ) {
-                          setSelectedFAQs((prev) => [...prev, selectedFAQ]);
-                        }
-                      }}
-                    >
-                      <option value="" disabled selected>
-                        Select a FAQ...
-                      </option>
-                      {faqs.map((faq) => (
-                        <option key={faq.id} value={faq.id}>
-                          {faq.cab_faq_title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <p>No FAQs available</p>
-                )}
+             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+  {faqs.length > 0 ? (
+    <div className="mb-4">
+      <label
+        htmlFor="faqDropdown"
+        className="text-lg font-bold mb-2 block"
+      >
+        Select a FAQ
+      </label>
+      <select
+        id="faqDropdown"
+        className="w-full border p-2 rounded-md"
+        onChange={(e) => {
+          const selectedFAQ = faqs.find(
+            (faq) => faq.id === parseInt(e.target.value)
+          );
+          if (
+            selectedFAQ &&
+            !selectedFAQs.some((f) => f.id === selectedFAQ.id)
+          ) {
+            setSelectedFAQs((prev) => [...prev, selectedFAQ]);
+          }
+        }}
+      >
+        <option value="" disabled>
+          Select a FAQ...
+        </option>
+        {faqs
+          .filter(
+            (faq) =>
+              !selectedFAQs.some((selected) => selected.id === faq.id)
+          ) // Exclude already selected FAQs
+          .map((faq) => (
+            <option key={faq.id} value={faq.id}>
+              {faq.cab_faq_title}
+            </option>
+          ))}
+      </select>
+    </div>
+  ) : (
+    <p>No FAQs available</p>
+  )}
 
-                {/* Render input fields for each selected FAQ */}
-                {selectedFAQs.map((faq) => (
-                  <div key={faq.id} className="mb-4">
-                    <div className="flex gap-4">
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.cab_faq_title}
-                        readOnly
-                      />
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.cab_faq_description}
-                        onChange={(e) => {
-                          const updatedFAQs = selectedFAQs.map((f) =>
-                            f.id === faq.id
-                              ? { ...f, cab_faq_description: e.target.value }
-                              : f
-                          );
-                          setSelectedFAQs(updatedFAQs);
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+  {/* Render input fields for each selected FAQ */}
+  {selectedFAQs.map((faq) => (
+    <div key={faq.id} className="mb-4">
+      <div className="flex gap-4">
+        <input
+          type="text"
+          className="w-1/2 border p-2 rounded-md"
+          value={faq.cab_faq_title}
+          readOnly
+        />
+        <input
+          type="text"
+          className="w-1/2 border p-2 rounded-md"
+          value={faq.cab_faq_description}
+          onChange={(e) => {
+            const updatedFAQs = selectedFAQs.map((f) =>
+              f.id === faq.id
+                ? { ...f, cab_faq_description: e.target.value }
+                : f
+            );
+            setSelectedFAQs(updatedFAQs);
+          }}
+        />
+      </div>
+    </div>
+  ))}
+</div>
+
             </Accordion>
           </div>
 

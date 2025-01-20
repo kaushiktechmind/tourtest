@@ -24,7 +24,7 @@ const Page = () => {
   const [hostels, setHostels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
 
   const openModal = (hotel: { name: string; id: string }) => {
     setHotelToDelete(hotel.name);
@@ -99,8 +99,8 @@ const Page = () => {
       String(value).toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
-  
-  
+
+
   const paginatedHostels = filteredHostels.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -137,76 +137,86 @@ const Page = () => {
             </form>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full table-auto whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Service Type</th>
-                  <th className="py-3 lg:py-4 px-2 md:px-5">Hotel Name</th>
-                  <th className="py-3 lg:py-4 px-2">Location</th>
-                  <th className="py-3 lg:py-4 px-2">Review</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedHostels.map((hostel) => (
-                  <tr
-                    key={hostel.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {hostel.created_at.split("T")[0]}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {hostel.hotel_or_home_stay}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
-                        className="text-primary"
-                      >
-                        {hostel.hotel_name}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {hostel.full_address}
-                    </td>
-
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
-                        <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
-                        {hostel.ratings}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a
-                        href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </a>
-                      <button
-                        className="text-[var(--secondary-500)]"
-                        onClick={() =>
-                          openModal({ name: hostel.hotel_name, id: hostel.id })
-                        }
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </td>
+            {/* Check if there are no hotels */}
+            {filteredHostels.length === 0 ? (
+              <div className="text-center py-5 text-gray-500">
+                No hotel found
+              </div>
+            ) : (
+              <table className="w-full table-auto whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2">Service Type</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5">Hotel Name</th>
+                    <th className="py-3 lg:py-4 px-2">Location</th>
+                    <th className="py-3 lg:py-4 px-2">Review</th>
+                    <th className="py-3 lg:py-4 px-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedHostels.map((hostel) => (
+                    <tr
+                      key={hostel.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {hostel.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        {hostel.hotel_or_home_stay}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
+                          className="text-primary"
+                        >
+                          {hostel.hotel_name}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {hostel.full_address}
+                      </td>
+
+                      <td className="py-3 lg:py-4 px-2">
+                        <span className="flex gap-1 items-center">
+                          <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
+                          {hostel.ratings}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                        <a
+                          href={`/hotel/edit-hotel?hotelId=${hostel.id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </a>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() =>
+                            openModal({ name: hostel.hotel_name, id: hostel.id })
+                          }
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
             {/* Pagination */}
-            <Pagination
-              totalItems={hostels.length}
-              itemsPerPage={ITEMS_PER_PAGE}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
+            {filteredHostels.length > 0 && (
+              <Pagination
+                totalItems={filteredHostels.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
+
         </div>
       </section>
 

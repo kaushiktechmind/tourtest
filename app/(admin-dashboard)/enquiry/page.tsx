@@ -32,7 +32,7 @@ const Page = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showModal, setShowModal] = useState(false); // Track modal visibility
   const [modalMessage, setModalMessage] = useState<string | null>(null); // Store the message to display in the modal
-  const itemsPerPage = 10;
+  const itemsPerPage = 5;
 
   const fetchEnquiries = async () => {
     try {
@@ -52,7 +52,7 @@ const Page = () => {
     fetchEnquiries();
   }, []);
 
-  const filteredEnquiries = enquiries.filter((enquiry) => {
+  const filteredEnquiries = (Array.isArray(enquiries) ? enquiries : []).filter((enquiry) => {
     const searchLower = searchTerm.toLowerCase();
     const enquiryDate = new Date(enquiry.created_at).toLocaleDateString().toLowerCase(); // Format date
   
@@ -123,26 +123,34 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedEnquiries.map((enquiry) => (
-                  <tr
-                    key={enquiry.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {new Date(enquiry.created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">{enquiry.service_type}</td>
-                    <td className="py-3 lg:py-4 px-2">{enquiry.name}</td>
-                    <td className="py-3 lg:py-4 px-2">{enquiry.email}</td>
-                    <td className="py-3 lg:py-4 px-2">{enquiry.phone}</td>
-                    <td className="py-3 lg:py-4 px-2 relative">
-                      <InformationCircleIcon
-                        className="w-5 h-5 text-gray-500 cursor-pointer"
-                        onClick={() => openModal(enquiry.message)} // Open modal on icon click
-                      />
+                {paginatedEnquiries.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="py-4 text-center text-gray-500">
+                      No enquiries found.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  paginatedEnquiries.map((enquiry) => (
+                    <tr
+                      key={enquiry.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {new Date(enquiry.created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">{enquiry.service_type}</td>
+                      <td className="py-3 lg:py-4 px-2">{enquiry.name}</td>
+                      <td className="py-3 lg:py-4 px-2">{enquiry.email}</td>
+                      <td className="py-3 lg:py-4 px-2">{enquiry.phone}</td>
+                      <td className="py-3 lg:py-4 px-2 relative">
+                        <InformationCircleIcon
+                          className="w-5 h-5 text-gray-500 cursor-pointer"
+                          onClick={() => openModal(enquiry.message)} // Open modal on icon click
+                        />
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
             <Pagination
@@ -164,7 +172,7 @@ const Page = () => {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={closeModal}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-green-600"
               >
                 Close
               </button>

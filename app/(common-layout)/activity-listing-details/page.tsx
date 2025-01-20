@@ -185,7 +185,7 @@ const ActivityListingDetails = () => {
     const accessToken = localStorage.getItem("access_token");
 
     if (!isDateSelected) {
-      alert("Select Date First");
+      alert("Please Select Date");
       return;
     }
 

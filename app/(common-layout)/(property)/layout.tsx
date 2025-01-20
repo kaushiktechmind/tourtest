@@ -183,9 +183,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 <div className="bg-white rounded-lg py-2 px-6 shadow-lg">
                   <ul className="flex justify-between items-center flex-wrap gap-3 ">
                     <li className="hidden xl:block">
-                      <p className="mb-0 clr-neutral-500">
+                      {/* <p className="mb-0 clr-neutral-500">
                         Showing 5 of 20 Results
-                      </p>
+                      </p> */}
                     </li>
                     <li className="flex-grow">
                       <ul className="flex flex-wrap justify-center justify-content-lg-start justify-content-xl-center gap-4">

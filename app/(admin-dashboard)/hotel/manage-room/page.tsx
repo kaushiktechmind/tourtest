@@ -56,6 +56,10 @@ const ManageRoom = () => {
 
   const [rooms, setRooms] = useState<Room[]>([]);
 
+  const [searchQuery, setSearchQuery] = useState<string>(""); // Search query
+  const [currentPage, setCurrentPage] = useState<number>(1); // Current page
+  const [itemsPerPage] = useState<number>(3); // Items per page
+
   const [formData, setFormData] = useState<HotelFormData>({
     hotel_id: hotelId ?? "",
     room_name: "",
@@ -152,6 +156,7 @@ const ManageRoom = () => {
 
       setRooms((prevRooms) => prevRooms.filter((room) => room.id !== roomId));
       alert(`Room Deleted Successfully`);
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }
@@ -177,6 +182,31 @@ const ManageRoom = () => {
     }
   };
 
+
+
+
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to the first page on search
+  };
+
+  // Filtered and paginated rooms
+  const filteredRooms = rooms.filter((room) => {
+    const query = searchQuery.toLowerCase();
+    return Object.values(room).some((value) =>
+      value && value.toString().toLowerCase().includes(query) // Add check for null/undefined values
+    );
+  });
+
+
+  const totalItems = filteredRooms.length;
+  const paginatedRooms = filteredRooms.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
   useEffect(() => {
     setFormData((prevData) => ({
       ...prevData,
@@ -188,13 +218,13 @@ const ManageRoom = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // e.preventDefault();
-  
+
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-  
+
     // Ensure amenities are sorted before appending
     const sortedAmenities = [...selectedAmenities].sort((a, b) => a - b); // Sort numerically in ascending order
-  
+
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
@@ -209,7 +239,7 @@ const ManageRoom = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-  
+
     try {
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms",
@@ -221,20 +251,23 @@ const ManageRoom = () => {
           body: formDataToSend,
         }
       );
-  
+
       if (!response.ok) {
-        const errorMessage = await response.text();
-        throw new Error(`Failed to add room: ${errorMessage}`);
+        const errorData = await response.json(); // Attempt to parse as JSON
+        console.error("Error response data:", errorData);
+        alert(`Error: ${errorData.message || 'Unknown error'}`); // Handle error message from JSON response
+        return;
       }
-  
+      
+
       const data = await response.json();
       alert("Room added successfully");
-      // window.location.reload();
+      window.location.reload();
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
   };
-  
+
   <div className="mt-[20px]">
     <button
       type="submit"
@@ -455,7 +488,7 @@ const ManageRoom = () => {
               </Accordion>
             </div>
 
-    
+
             <div className="mt-[20px]">
               <Link href="#" className="btn-primary font-semibold">
                 <span className="inline-block" onClick={handleSubmit}>
@@ -475,6 +508,8 @@ const ManageRoom = () => {
                 <input
                   type="text"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                 />
                 <SearchIcon />
@@ -494,26 +529,26 @@ const ManageRoom = () => {
               </thead>
 
               <tbody>
-                {(rooms ?? []).length > 0 ? (
-                  rooms.map(({ id, room_name, room_price, status }) => (
+                {paginatedRooms.length > 0 ? (
+                  paginatedRooms.map((room) => (
                     <tr
-                      key={id}
+                      key={room.id}
                       className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                     >
-                      <td className="py-3 lg:py-4 px-2">{room_name}</td>
-                      <td className="py-3 lg:py-4 px-2">{room_price}</td>
+                      <td className="py-3 lg:py-4 px-2">{room.room_name}</td>
+                      <td className="py-3 lg:py-4 px-2">{room.room_price}</td>
                       <td className="py-3 lg:py-4 px-2">
-                        {status === "1" ? "Active" : "Inactive"}
+                        {room.status === "1" ? "Active" : "Inactive"}
                       </td>
                       <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                         <Link
-                          href={`/hotel/edit-manage-room?hotelId=${hotelId}&roomId=${id}`}
+                          href={`/hotel/edit-manage-room?hotelId=${hotelId}&roomId=${room.id}`}
                           className="text-primary"
                         >
                           <PencilSquareIcon className="w-5 h-5" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(id)}
+                          onClick={() => handleDelete(room.id)}
                           className="text-[var(--secondary-500)]"
                         >
                           <TrashIcon className="w-5 h-5" />
@@ -530,7 +565,12 @@ const ManageRoom = () => {
                 )}
               </tbody>
             </table>
-            {/* <Pagination /> */}
+            <Pagination
+              totalItems={totalItems}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </div>
       </section>
@@ -540,6 +580,8 @@ const ManageRoom = () => {
     </div>
   );
 };
+
+
 
 const Page = () => (
   <Suspense fallback={<div>Loading...</div>}>

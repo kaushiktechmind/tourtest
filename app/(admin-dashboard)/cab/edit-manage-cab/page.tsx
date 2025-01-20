@@ -136,96 +136,96 @@ const EditManageCab = () => {
   return (
     
     <div className="bg-[var(--bg-2)]">
-      <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Edit Manage Cab</h2>
-        <Link href={`/cab/all-cab`} className="btn-primary">
-          All Cabs
-        </Link>
-      </div>
-
-      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative">
-        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Cab Details</h3>
-          <form onSubmit={handleSubmit}>
-            <input
-              type="hidden"
-              name="cab_main_form_id"
-              value={formData.cab_main_form_id}
-              readOnly
-            />
-
-            <label htmlFor="min_pax" className="py-4 inline-block text-base">
-              Min Pax
-            </label>
-            <input
-              type="number"
-              id="min_pax"
-              name="min_pax"
-              placeholder="2"
-              className="w-full border py-3 px-3 lg:px-6 rounded-md"
-              value={formData.min_pax}
-              onChange={handleInputChange}
-            />
-
-            <label htmlFor="max_pax" className="py-4 inline-block text-base">
-              Max Pax
-            </label>
-            <input
-              type="number"
-              name="max_pax"
-              placeholder="6"
-              className="w-full border py-3 px-3 lg:px-6 rounded-md"
-              value={formData.max_pax}
-              onChange={handleInputChange}
-            />
-
-            <label htmlFor="car_count" className="py-4 inline-block text-base">
-              No of Cars
-            </label>
-            <input
-              type="number"
-              name="car_count"
-              placeholder="10"
-              className="w-full border py-3 px-3 lg:px-6 rounded-md"
-              value={formData.car_count}
-              onChange={handleInputChange}
-            />
-
-            <label htmlFor="cargo_count" className="py-4 inline-block text-base">
-              No of Cargo
-            </label>
-            <input
-              type="number"
-              name="cargo_count"
-              placeholder="5"
-              className="w-full border py-3 px-3 lg:px-6 rounded-md"
-              value={formData.cargo_count}
-              onChange={handleInputChange}
-            />
-
-            <label htmlFor="price" className="py-4 inline-block text-base">
-              Price
-            </label>
-            <input
-              type="number"
-              name="price"
-              placeholder="1000"
-              className="w-full border py-3 px-3 lg:px-6 rounded-md"
-              value={formData.price}
-              onChange={handleInputChange}
-            />
-
-            <div className="mt-[20px]">
-              <button type="submit" className="btn-primary font-semibold">
-                Update Cab
-              </button>
-            </div>
-          </form>
-        </div>
-      </section>
-
-      <Footer />
+    <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
+      <h2 className="h2 text-white">Edit Manage Cab</h2>
+      <Link href={`/cab/all-cab`} className="btn-primary">
+        All Cabs
+      </Link>
     </div>
+  <section className="relative flex items-center justify-center z-[1] px-3 md:px-6 bg-[var(--bg-2)] after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+      <div className="p-4 md:p-6 lg:p-10 rounded-2xl bg-white w-full max-w-3xl">
+        <h3 className="border-b h3 pb-6">Cab Details</h3>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="hidden"
+            name="cab_main_form_id"
+            value={formData.cab_main_form_id}
+            readOnly
+          />
+  
+          <label htmlFor="min_pax" className="py-4 inline-block text-base">
+            Min Pax
+          </label>
+          <input
+            type="number"
+            id="min_pax"
+            name="min_pax"
+            placeholder="2"
+            className="w-full border py-3 px-3 lg:px-6 rounded-md"
+            value={formData.min_pax}
+            onChange={handleInputChange}
+          />
+  
+          <label htmlFor="max_pax" className="py-4 inline-block text-base">
+            Max Pax
+          </label>
+          <input
+            type="number"
+            name="max_pax"
+            placeholder="6"
+            className="w-full border py-3 px-3 lg:px-6 rounded-md"
+            value={formData.max_pax}
+            onChange={handleInputChange}
+          />
+  
+          <label htmlFor="car_count" className="py-4 inline-block text-base">
+            No of Cars
+          </label>
+          <input
+            type="number"
+            name="car_count"
+            placeholder="10"
+            className="w-full border py-3 px-3 lg:px-6 rounded-md"
+            value={formData.car_count}
+            onChange={handleInputChange}
+          />
+  
+          <label htmlFor="cargo_count" className="py-4 inline-block text-base">
+            No of Cargo
+          </label>
+          <input
+            type="number"
+            name="cargo_count"
+            placeholder="5"
+            className="w-full border py-3 px-3 lg:px-6 rounded-md"
+            value={formData.cargo_count}
+            onChange={handleInputChange}
+          />
+  
+          <label htmlFor="price" className="py-4 inline-block text-base">
+            Price
+          </label>
+          <input
+            type="number"
+            name="price"
+            placeholder="1000"
+            className="w-full border py-3 px-3 lg:px-6 rounded-md"
+            value={formData.price}
+            onChange={handleInputChange}
+          />
+  
+          <div className="mt-[20px]">
+            <button type="submit" className="btn-primary font-semibold">
+              Update Cab
+            </button>
+          </div>
+        </form>
+      </div>
+    </section>
+  
+    <Footer />
+  </div>
+  
   );
 };
 const Page = () => (

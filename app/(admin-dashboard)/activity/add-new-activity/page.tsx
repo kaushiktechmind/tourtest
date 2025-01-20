@@ -884,7 +884,7 @@ const AddActivity = () => {
 
 
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
-        Save & Preview
+        Update Activity
       </button>
 
       <Footer />

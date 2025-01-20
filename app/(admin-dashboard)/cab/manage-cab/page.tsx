@@ -46,6 +46,11 @@ const ManageCab = () => {
 
   const [cabs, setCabs] = useState<Cab[]>([]);
   const [cabName, setCabName] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredCabs, setFilteredCabs] = useState<Cab[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Number of items per page
+
 
   const [formData, setFormData] = useState<CabFormData>({
     cab_main_form_id: cabId ?? "",
@@ -83,6 +88,36 @@ const ManageCab = () => {
 
     fetchCabs();
   }, []);
+
+
+
+
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+  };
+
+  useEffect(() => {
+    // Filter cabs based on the search query
+    const filtered = cabs.filter((cab) => {
+      const query = searchQuery.toLowerCase();
+      return (
+        (cab.cab_main_form?.cab_name?.toLowerCase() || "").includes(query) ||
+        (cab.price?.toLowerCase() || "").includes(query) ||
+        (cab.car_count?.toLowerCase() || "").includes(query) ||
+        (cab.max_pax?.toLowerCase() || "").includes(query) ||
+        (cab.status?.toLowerCase() || "").includes(query)
+      );
+    });
+    setFilteredCabs(filtered);
+    setCurrentPage(1); // Reset to the first page when search changes
+  }, [searchQuery, cabs]);
+  
+  // Paginate the filtered cabs
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredCabs.slice(indexOfFirstItem, indexOfLastItem);
 
   const handleDelete = async (cabId: number) => {
     const token = localStorage.getItem("access_token");
@@ -284,6 +319,8 @@ const ManageCab = () => {
                 <input
                   type="text"
                   placeholder="Search"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
                 />
                 <SearchIcon />
@@ -303,30 +340,30 @@ const ManageCab = () => {
               </thead>
 
               <tbody>
-                {(cabs ?? []).length > 0 ? (
-                  cabs.map(({ id, cab_main_form, car_count, price, max_pax, status }) => (
+              {currentItems.length > 0 ? (
+                  currentItems.map((cab) => (
                     <tr
-                      key={id}
+                      key={cab.id}
                       className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                     >
                       {/* Displaying cab_name from cab_main_form */}
-                      <td className="py-3 lg:py-4 px-2">{cab_main_form?.cab_name}</td>
+                      <td className="py-3 lg:py-4 px-2">{cab.cab_main_form?.cab_name}</td>
 
                       {/* Displaying price */}
-                      <td className="py-3 lg:py-4 px-2">{price}</td>
+                      <td className="py-3 lg:py-4 px-2">{cab.price}</td>
 
-                      <td className="py-3 lg:py-4 px-2">{car_count}</td>
+                      <td className="py-3 lg:py-4 px-2">{cab.car_count}</td>
 
                       {/* Action buttons */}
                       <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                         <Link
-                          href={`/cab/edit-manage-cab?cabId=${cabId}&cabSubId=${id}`}
+                          href={`/cab/edit-manage-cab?cabId=${cabId}&cabSubId=${cab.id}`}
                           className="text-primary"
                         >
                           <PencilSquareIcon className="w-5 h-5" />
                         </Link>
                         <button
-                          onClick={() => handleDelete(id)}
+                          onClick={() => handleDelete(cab.id)}
                           className="text-[var(--secondary-500)]"
                         >
                           <TrashIcon className="w-5 h-5" />
@@ -344,7 +381,12 @@ const ManageCab = () => {
               </tbody>
 
             </table>
-            {/* <Pagination /> */}
+            <Pagination
+               totalItems={filteredCabs.length}
+              itemsPerPage={itemsPerPage}
+              currentPage={currentPage}
+              onPageChange={(page) => setCurrentPage(page)}
+            />
           </div>
         </div>
       </section>

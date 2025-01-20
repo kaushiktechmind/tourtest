@@ -70,7 +70,7 @@ export const sidenavData = [
     id: 8,
     name: "Guests",
     icon: <i className="las la-user-circle text-2xl"></i>,
-    url: "/guest/guests-list",
+    url: "/guest",
   },
  
   {

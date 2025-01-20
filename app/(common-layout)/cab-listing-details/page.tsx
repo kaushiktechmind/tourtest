@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper";
 import Link from "next/link";
 import ModalVideo from "react-modal-video";
-import { useState, useEffect, Key } from "react";
+import { useState, useEffect, Key, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Suspense } from "react";
@@ -52,6 +52,8 @@ interface CabDetails {
   max_passenger: number;
   inclusions: string;
   exclusions: string;
+  inclusion?: string[];
+  exclusion?: string[];
   faqs?: string[]; // Assuming 'faqs' is an array of strings
 }
 
@@ -180,15 +182,11 @@ const CabListingDetails = () => {
 
 
   // Process inclusions
-  const inclusions = cabDetails?.inclusions
-    ? cabDetails.inclusions[0].split(',').map((item: string) => item.trim())
-    : [];
+  const inclusions = cabDetails?.inclusion || [];
+  const exclusions = cabDetails?.exclusion || [];
 
 
-  // Process exclusions
-  const exclusions = cabDetails?.exclusions
-    ? cabDetails.exclusions[0].split(',').map((item: string) => item.trim())
-    : [];
+
 
 
 
@@ -249,7 +247,7 @@ const CabListingDetails = () => {
     const accessToken = localStorage.getItem("access_token");
 
     if (!selectedDate) {
-      alert("Select Date First");
+      alert("please Select Date");
       return;
     }
 
@@ -294,72 +292,72 @@ const CabListingDetails = () => {
       <section className="">
 
         <div >
-            <div >
-              {/* Only render the Swiper if cabDetails and banner_image_multiple are available */}
-              {cabDetails?.banner_image_multiple?.length > 0 && (
-                <Swiper
-                  loop={true}
-                  slidesPerView="auto"
-                  spaceBetween={16}
-                  centeredSlides={true}
-                  centeredSlidesBounds={true}
-                  navigation={{
-                    nextEl: ".btn-next",
-                    prevEl: ".btn-prev",
-                  }}
-                  breakpoints={{
-                    576: {
-                      slidesPerView: 2.25,
-                    },
-                    768: {
-                      slidesPerView: 2.5,
-                    },
-                    1200: {
-                      slidesPerView: 3.25,
-                    },
-                  }}
-                  modules={[Navigation]}
-                  className="swiper property-gallery-slider"
-                >
-                  <div className="swiper-wrapper property-gallery-slider">
-                    {/* Dynamically render SwiperSlide from banner_image_multiple */}
-                    {cabDetails.banner_image_multiple.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => {
-                      // Check if the image is a valid string (for string URLs or StaticImport)
-                      const imageUrl = typeof image === 'string' ? image : (image as UrlObject)?.href;
+          <div >
+            {/* Only render the Swiper if cabDetails and banner_image_multiple are available */}
+            {cabDetails?.banner_image_multiple?.length > 0 && (
+              <Swiper
+                loop={true}
+                slidesPerView="auto"
+                spaceBetween={16}
+                centeredSlides={true}
+                centeredSlidesBounds={true}
+                navigation={{
+                  nextEl: ".btn-next",
+                  prevEl: ".btn-prev",
+                }}
+                breakpoints={{
+                  576: {
+                    slidesPerView: 2.25,
+                  },
+                  768: {
+                    slidesPerView: 2.5,
+                  },
+                  1200: {
+                    slidesPerView: 3.25,
+                  },
+                }}
+                modules={[Navigation]}
+                className="swiper property-gallery-slider"
+              >
+                <div className="swiper-wrapper property-gallery-slider">
+                  {/* Dynamically render SwiperSlide from banner_image_multiple */}
+                  {cabDetails.banner_image_multiple.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => {
+                    // Check if the image is a valid string (for string URLs or StaticImport)
+                    const imageUrl = typeof image === 'string' ? image : (image as UrlObject)?.href;
 
-                      // If the image is invalid (undefined or null), skip rendering the image
-                      if (!imageUrl) {
-                        return null;
-                      }
+                    // If the image is invalid (undefined or null), skip rendering the image
+                    if (!imageUrl) {
+                      return null;
+                    }
 
-                      return (
-                        <SwiperSlide key={index} className="swiper-slide">
-                          <Link href="#" className="link property-gallery">
-                            <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}>
-                              {/* Fixed height for all images */}
-                              <Image
-                                layout="fill"  // Ensures the image fills the parent container
-                                objectFit="cover" // Maintains aspect ratio while covering the container
-                                src={imageUrl}    // Ensures the src is a valid string
-                                alt={`cab-gallery`}
-                                className=""
-                              />
-                            </div>
-                          </Link>
-                        </SwiperSlide>
-                      );
-                    })}
+                    return (
+                      <SwiperSlide key={index} className="swiper-slide">
+                        <Link href="#" className="link property-gallery">
+                          <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}>
+                            {/* Fixed height for all images */}
+                            <Image
+                              layout="fill"  // Ensures the image fills the parent container
+                              objectFit="cover" // Maintains aspect ratio while covering the container
+                              src={imageUrl}    // Ensures the src is a valid string
+                              alt={`cab-gallery`}
+                              className=""
+                            />
+                          </div>
+                        </Link>
+                      </SwiperSlide>
+                    );
+                  })}
 
-                  </div>
-                  <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                    <ChevronLeftIcon className="w-5 h-5" />
-                  </button>
-                  <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
-                    <ChevronRightIcon className="w-5 h-5" />
-                  </button>
-                </Swiper>
-              )}
-            </div>
+                </div>
+                <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                  <ChevronLeftIcon className="w-5 h-5" />
+                </button>
+                <button className="btn-next absolute top-[45%] right-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
+                  <ChevronRightIcon className="w-5 h-5" />
+                </button>
+              </Swiper>
+            )}
+          </div>
         </div>
       </section>
 
@@ -425,7 +423,7 @@ const CabListingDetails = () => {
                   <h6 className="mb-4 font-semibold">Inclusions</h6>
                   <ul className="flex flex-col gap-4 mb-10">
                     {inclusions.length > 0 ? (
-                      inclusions.map((item, index) => (
+                      inclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
                         <li key={index}>
                           <div className="flex items-center gap-2">
                             <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
@@ -1038,7 +1036,7 @@ const CabListingDetails = () => {
           </div>
         </div>
       </div>
-      </>
+    </>
   );
 };
 

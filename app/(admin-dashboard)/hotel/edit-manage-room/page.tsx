@@ -53,7 +53,7 @@ const EditManageRoom = () => {
   const searchParams = useSearchParams();
   const hotelId = searchParams.get("hotelId");
   const roomId = searchParams.get("roomId");
-//   alert(roomId)
+  //   alert(roomId)
 
   const [rooms, setRooms] = useState<Room[]>([]);
 
@@ -77,7 +77,7 @@ const EditManageRoom = () => {
   const [selectedAmenities, setSelectedAmenities] = useState<number[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  
+
   const handleCheckboxChange = (amenityId: number) => {
     setSelectedAmenities((prevSelected) => {
       if (prevSelected.includes(amenityId)) {
@@ -88,7 +88,7 @@ const EditManageRoom = () => {
     });
   };
 
-  
+
 
   useEffect(() => {
     const fetchAmenities = async () => {
@@ -119,14 +119,14 @@ const EditManageRoom = () => {
             `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`
           );
           const jsonResponse = await response.json();
-  
+
           if (jsonResponse.room) { // Directly access `room` instead of `data.room`
             const roomData = jsonResponse.room;
             console.log("Room Data:", roomData);
-  
+
             // Map amenity IDs
             const roomAmenityIds = roomData.amenities.map((amenity: { id: number }) => amenity.id);
-  
+
             // Set form data with fetched room data
             setFormData((prevData) => ({
               ...prevData,
@@ -141,9 +141,10 @@ const EditManageRoom = () => {
               max_childs: roomData.max_childs,
               max_infants: roomData.max_infants,
               amenities: roomAmenityIds, // Store only IDs in form data
+              featured_images: roomData.featured_images || [], 
               status: "1",
             }));
-  
+
             // Set selected amenities
             setSelectedAmenities(roomAmenityIds);
           }
@@ -151,13 +152,13 @@ const EditManageRoom = () => {
           console.error("Error fetching room data:", error);
         }
       };
-  
+
       fetchRoomData();
     }
   }, [roomId]);
-  
 
-  
+
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -186,64 +187,53 @@ const EditManageRoom = () => {
   }, [selectedAmenities]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const agentPrice = 1000;
+    // e.preventDefault();
 
-  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-    formDataToSend.append("status", "1");
-    formDataToSend.append("agent_price", agentPrice.toString()); 
 
-  
-    // Append form fields to FormData
+    // Ensure amenities are sorted before appending
+    const sortedAmenities = [...selectedAmenities].sort((a, b) => a - b); // Sort numerically in ascending order
+
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
           formDataToSend.append("featured_images[]", file);
         });
       } else if (key === "amenities") {
-        // Append all selected amenity IDs as an array
-        selectedAmenities.forEach((amenityId) => {
-          formDataToSend.append("amenities[]", amenityId.toString()); // Use the array format "amenities[]"
+        // Append sorted amenity IDs
+        sortedAmenities.forEach((amenityId) => {
+          formDataToSend.append("amenities[]", amenityId.toString());
         });
       } else {
-        formDataToSend.append(
-          key,
-          formData[key as keyof HotelFormData] as string
-        );
+        formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-  
-    // Add _method field to simulate PUT method in a POST request
-    formDataToSend.append("_method", "PUT");
-  
+
     try {
-      // Assuming `roomId` is available for updating
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
+        "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms",
         {
-          method: "POST",  // Keep POST method
+          method: "POST",
           headers: {
             Authorization: `Bearer ${token}`,
           },
           body: formDataToSend,
         }
       );
-  
+
       if (!response.ok) {
         const errorMessage = await response.text();
-        throw new Error(`Failed to update room: ${errorMessage}`);
+        throw new Error(`Failed to add room: ${errorMessage}`);
       }
-  
+
       const data = await response.json();
-      alert("Room updated successfully");
-      router.push(`/hotel/manage-room?hotelId=${hotelId}`);
+      alert("Room added successfully");
+      window.location.reload();
     } catch (error) {
-      console.error("Error occurred during room update:", error);
+      console.error("Error occurred during room addition:", error);
     }
   };
-  
   <div className="mt-[20px]">
     <button
       type="submit"
@@ -268,11 +258,10 @@ const EditManageRoom = () => {
       </div>
 
       {/* Add Room Form */}
-      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
-        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
+      <section className="grid place-items-center z-[1] gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
+        <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white w-full max-w-3xl">
           {/* <h3 className="border-b h3 pb-6">Add Rooms</h3> */}
           <form onSubmit={handleSubmit}>
-            <p className="mt-6 mb-4 text-xl font-medium">Hotel ID :</p>
             <input
               type="hidden"
               name="hotel_id"
@@ -280,7 +269,7 @@ const EditManageRoom = () => {
               readOnly
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
 
-              // assuming you have a setHotelId function for updating hotelId
+            // assuming you have a setHotelId function for updating hotelId
             />
 
             <label
@@ -345,7 +334,7 @@ const EditManageRoom = () => {
               onChange={handleInputChange}
             />
 
-            <label
+         <label
               htmlFor="icon-upload"
               className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium"
             >
@@ -379,10 +368,26 @@ const EditManageRoom = () => {
                 </label>
               </div>
             </div>
-
+            {/* Display selected images */}
+            <div className="mt-6 grid grid-cols-3 gap-4">
+              {(formData.featured_images.length > 0 ? formData.featured_images : formData.featured_images).map(
+                (file, index) => (
+                  <div
+                    key={index}
+                    className="w-full h-32 bg-gray-200 rounded-lg overflow-hidden"
+                  >
+                    <img
+                      src={file instanceof File ? URL.createObjectURL(file) : file}
+                      alt={`Selected Image ${index + 1}`}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )
+              )}
+            </div>
             <p className="mt-6 mb-4 text-xl font-medium">Room Size :</p>
             <input
-              type="number"
+              type="text"
               name="room_size"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
               placeholder="200 sq ft"
@@ -422,9 +427,8 @@ const EditManageRoom = () => {
                   <div className="rounded-2xl flex justify-between">
                     <h3 className="h3">Attributes</h3>
                     <ChevronDownIcon
-                      className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${
-                        open ? "rotate-180" : ""
-                      }`}
+                      className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
                 )}

@@ -24,7 +24,7 @@ const Page = () => {
   const [pkgs, setPkgs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
 
   const openModal = (pkg: { name: string; id: string }) => {
     setPackageToDelete(pkg.name);
@@ -97,7 +97,7 @@ const Page = () => {
       String(value).toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
-  
+
   const paginatedPkgs = filteredPkgs.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
@@ -124,7 +124,7 @@ const Page = () => {
           <div className="flex flex-wrap gap-3 justify-between mb-7">
             <form className="flex flex-wrap items-center gap-3">
               <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
-              <input
+                <input
                   type="text"
                   placeholder="Search"
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
@@ -136,75 +136,79 @@ const Page = () => {
             </form>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full table-auto whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Location</th>
-                  <th className="py-3 lg:py-4 px-2 md:px-5">Package Name</th>
-                  <th className="py-3 lg:py-4 px-2">Sale Price</th>
-                  <th className="py-3 lg:py-4 px-2">Pickup Point</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedPkgs.map((pkg) => (
-                  <tr
-                    key={pkg.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {pkg.created_at.split("T")[0]}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {pkg.location_name}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/package/edit-package?packageId=${pkg.id}`}
-                        className="text-primary"
-                      >
-                        {pkg.package_title}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {pkg.sale_price}
-                    </td>
-
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
-                        {pkg.pickup_point}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a
-                        href={`/package/edit-package?packageId=${pkg.id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </a>
-                      <button
-                        className="text-[var(--secondary-500)]"
-                        onClick={() =>
-                          openModal({ name: pkg.package_name, id: pkg.id })
-                        }
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </td>
+            {/* Check if there are no packages */}
+            {filteredPkgs.length === 0 ? (
+              <div className="text-center py-5 text-gray-500">
+                No package found
+              </div>
+            ) : (
+              <table className="w-full table-auto whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2">Location</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5">Package Name</th>
+                    <th className="py-3 lg:py-4 px-2">Sale Price</th>
+                    <th className="py-3 lg:py-4 px-2">Pickup Point</th>
+                    <th className="py-3 lg:py-4 px-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedPkgs.map((pkg) => (
+                    <tr
+                      key={pkg.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {pkg.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">{pkg.location_name}</td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/package/edit-package?packageId=${pkg.id}`}
+                          className="text-primary"
+                        >
+                          {pkg.package_title}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {pkg.sale_price}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">{pkg.pickup_point}</td>
+                      <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                        <a
+                          href={`/package/edit-package?packageId=${pkg.id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </a>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() =>
+                            openModal({ name: pkg.package_name, id: pkg.id })
+                          }
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
 
             {/* Pagination */}
-            <Pagination
-              totalItems={pkgs.length}
-              itemsPerPage={ITEMS_PER_PAGE}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
+            {filteredPkgs.length > 0 && (
+              <Pagination
+                totalItems={filteredPkgs.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            )}
           </div>
+
+
         </div>
       </section>
 

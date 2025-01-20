@@ -76,8 +76,8 @@ const Page = () => {
           {
             method: "GET",
             headers: {
-              "Content-Type": "application/json" // Optional, depending on API requirements
-            }
+              "Content-Type": "application/json", // Optional, depending on API requirements
+            },
           }
         );
   
@@ -121,15 +121,13 @@ const Page = () => {
         <h2 className="h2 text-white">All Guest</h2>
       </div>
 
-
-
       <section className="bg-[var(--bg-2)] px-3 lg:px-6 pb-4 lg:pb-6 relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0">
         <div className="p-3 md:py-6 lg:py-8 md:px-8 lg:px-10 border rounded-2xl bg-white relative z-[1]">
 
           <div className="flex flex-wrap gap-3 justify-between mb-7">
             <form className="flex flex-wrap items-center gap-3">
               <div className="border rounded-full flex items-center p-1 pr-2 xl:pr-4 bg-[var(--bg-1)]">
-              <input
+                <input
                   type="text"
                   placeholder="Search"
                   className="rounded-full bg-transparent focus:outline-none p-2 xl:px-4"
@@ -140,60 +138,66 @@ const Page = () => {
               </div>
             </form>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full table-auto whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2 md:px-5">Guest Name</th>
-                  <th className="py-3 lg:py-4 px-2">Email</th>
-                  <th className="py-3 lg:py-4 px-2">Mobile Number</th>
-                  <th className="py-3 lg:py-4 px-2">Address</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedGuestItems.map((guestItem) => (
-                  <tr
-                    key={guestItem.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {guestItem.created_at.split("T")[0]}
-                    </td>
-                    
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/guest/edit-guest?guestId=${guestItem.id}`}
-                        className="text-primary"
-                      >
-                        {guestItem.name}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {guestItem.email}
-                    </td>
-
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
-                        {guestItem.mobile_number}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {guestItem.address}
-                    </td>
+          
+          {/* Show "No guest found" if there are no guests */}
+          {guestItems.length === 0 ? (
+            <div className="text-center py-4">
+              <p>No guest found</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full table-auto whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5">Guest Name</th>
+                    <th className="py-3 lg:py-4 px-2">Email</th>
+                    <th className="py-3 lg:py-4 px-2">Mobile Number</th>
+                    <th className="py-3 lg:py-4 px-2">Address</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {paginatedGuestItems.map((guestItem) => (
+                    <tr
+                      key={guestItem.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {guestItem.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/guest/edit-guest?guestId=${guestItem.id}`}
+                          className="text-primary"
+                        >
+                          {guestItem.name}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {guestItem.email}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        <span className="flex gap-1 items-center">
+                          {guestItem.mobile_number}
+                        </span>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        {guestItem.address}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
 
-            {/* Pagination */}
-            <Pagination
-              totalItems={guestItems.length}
-              itemsPerPage={ITEMS_PER_PAGE}
-              currentPage={currentPage}
-              onPageChange={handlePageChange}
-            />
-          </div>
+              {/* Pagination */}
+              <Pagination
+                totalItems={guestItems.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                currentPage={currentPage}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -227,31 +231,26 @@ const Page = () => {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Delete Guest
+                    Are you sure you want to delete this guest?
                   </Dialog.Title>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">
-                      Are you sure you want to delete the guest{" "}
-                      <span className="font-bold">{guestToDelete}</span>? This
-                      action cannot be undone.
-                    </p>
-                  </div>
-
-                  <div className="mt-4 flex gap-4 justify-end">
-                    <button
-                      type="button"
-                      className="btn-secondary"
-                      onClick={closeModal}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="btn-danger"
-                      onClick={handleDelete}
-                    >
-                      Delete
-                    </button>
+                  <div className="mt-4">
+                    <p>{guestToDelete}</p>
+                    <div className="mt-4 flex justify-between gap-4">
+                      <button
+                        type="button"
+                        className="bg-red-500 text-white px-4 py-2 rounded-md"
+                        onClick={handleDelete}
+                      >
+                        Delete
+                      </button>
+                      <button
+                        type="button"
+                        className="bg-gray-300 px-4 py-2 rounded-md"
+                        onClick={closeModal}
+                      >
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

@@ -961,7 +961,7 @@ const HotelListingDetails = () => {
                   <AddRoom />
                   {/* </div> */}
 
-                  <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-gray-100 rounded-full p-3 border ">
+                  <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-white rounded-full p-3 border ">
                     <DatePicker
                       placeholderText="Select Date"
                       selectsRange={true}

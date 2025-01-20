@@ -124,6 +124,9 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Categories</h2>
+        <Link href="../blogs/add-blog" className="btn-primary">
+          <EyeIcon className="w-5 h-5" /> All Blogs
+        </Link>
       </div>
 
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative">
