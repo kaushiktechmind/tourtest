@@ -1110,14 +1110,7 @@ const HotelListingDetails = () => {
                       )}
                   </ul>
 
-                  {/* <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link> */}
+                 
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
@@ -1143,7 +1136,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title2 &&
                             hotelDetails.faq_description2 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1158,7 +1151,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title3 &&
                             hotelDetails.faq_description3 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1173,7 +1166,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title4 &&
                             hotelDetails.faq_description4 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1188,7 +1181,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title5 &&
                             hotelDetails.faq_description5 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1203,7 +1196,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title6 &&
                             hotelDetails.faq_description6 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1218,7 +1211,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title7 &&
                             hotelDetails.faq_description7 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1233,7 +1226,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title8 &&
                             hotelDetails.faq_description8 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1248,7 +1241,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title9 &&
                             hotelDetails.faq_description9 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1263,7 +1256,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title10 &&
                             hotelDetails.faq_description10 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1278,7 +1271,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title11 &&
                             hotelDetails.faq_description11 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1292,7 +1285,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title12 &&
                             hotelDetails.faq_description12 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1307,7 +1300,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title13 &&
                             hotelDetails.faq_description13 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1322,7 +1315,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title14 &&
                             hotelDetails.faq_description14 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1337,7 +1330,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title15 &&
                             hotelDetails.faq_description15 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1352,7 +1345,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title16 &&
                             hotelDetails.faq_description16 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1366,7 +1359,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title17 &&
                             hotelDetails.faq_description17 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1381,7 +1374,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title18 &&
                             hotelDetails.faq_description18 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1396,7 +1389,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title19 &&
                             hotelDetails.faq_description19 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1411,7 +1404,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title20 &&
                             hotelDetails.faq_description20 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1425,7 +1418,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title21 &&
                             hotelDetails.faq_description21 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1440,7 +1433,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title22 &&
                             hotelDetails.faq_description22 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1455,7 +1448,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title23 &&
                             hotelDetails.faq_description23 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1470,7 +1463,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title24 &&
                             hotelDetails.faq_description24 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1485,7 +1478,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title25 &&
                             hotelDetails.faq_description25 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1500,7 +1493,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title26 &&
                             hotelDetails.faq_description26 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1515,7 +1508,7 @@ const HotelListingDetails = () => {
 
                           {hotelDetails.faq_title27 &&
                             hotelDetails.faq_description27 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1529,7 +1522,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title28 &&
                             hotelDetails.faq_description28 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1543,7 +1536,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title29 &&
                             hotelDetails.faq_description29 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1557,7 +1550,7 @@ const HotelListingDetails = () => {
                             )}
                           {hotelDetails.faq_title30 &&
                             hotelDetails.faq_description30 && (
-                              <div className="flex gap-4">
+                              <div className="flex gap-4 mt-4">
                                 <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
                                   <i className="las la-check text-lg text-primary"></i>
                                 </div>
@@ -1575,29 +1568,6 @@ const HotelListingDetails = () => {
                   </ul>
                 </div>
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <Link
-                      href="#"
-                      className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-1"
-                    >
-                      <ArrowLongLeftIcon className="w-5 h-5" />
-                      <span className="inline-block font-semibold">
-                        Prev Hotel
-                      </span>
-                    </Link>
-
-                    <Link
-                      href="#"
-                      className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2"
-                    >
-                      <span className="inline-block font-semibold">
-                        Next Hotel
-                      </span>
-                      <ArrowLongRightIcon className="w-5 h-5" />
-                    </Link>
-                  </div>
-                </div>
               </div>
             </div>
 

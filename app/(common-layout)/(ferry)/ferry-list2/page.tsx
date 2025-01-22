@@ -138,7 +138,7 @@ const FerryList2 = () => {
   const handleSelectFerry = (shipClassId: string) => {
     // Check if there's an access_token in localStorage
     if (!localStorage.getItem('access_token')) {
-      router.push("/signup"); // Redirect to signup page if no access_token
+      router.push("/sign-in"); // Redirect to sign-in page if no access_token
       return; // Stop further execution if no access_token
     }
 
@@ -407,11 +407,11 @@ const FerryList2 = () => {
                         </h2>
                       </div>
                       <Link
-                        href={localStorage.getItem('access_token') ? (from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page") : "/signup"}
+                        href={localStorage.getItem('access_token') ? (from3 ? `/ferry-list3?tripType=${tripType}` : "/ferry-details-page") : "/sign-in"}
                         onClick={(e) => {
                           if (!localStorage.getItem('access_token')) {
                             e.preventDefault(); // Prevent navigation if there's no access_token
-                            router.push("/signup"); // Redirect to signup page if no access_token
+                            router.push("/sign-in"); // Redirect to sign-in page if no access_token
                           } else {
                             handleSelectFerry(schedule.ship_class_id); // Proceed with ferry selection if access_token exists
                           }

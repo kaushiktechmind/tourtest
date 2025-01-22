@@ -338,172 +338,172 @@ const FerryPayment = () => {
 
 
 
-  const handleDownloadTicket = async (bookingId: any) => {
-    try {
-      const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-        },
-        body: JSON.stringify({
-          data: {
-            booking_id: bookingId,
-          },
-        }),
-      });
+  // const handleDownloadTicket = async (bookingId: any) => {
+  //   try {
+  //     const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
+  //       },
+  //       body: JSON.stringify({
+  //         data: {
+  //           booking_id: bookingId,
+  //         },
+  //       }),
+  //     });
   
-      if (downloadResponse.ok) {
-        const base64String = await downloadResponse.text();
+  //     if (downloadResponse.ok) {
+  //       const base64String = await downloadResponse.text();
   
-        if (base64String) {
-          console.log("Base64 string received:", base64String);
+  //       if (base64String) {
+  //         console.log("Base64 string received:", base64String);
   
-          // Prepare data to be sent to the store_payment API
-          const paymentData = {
-            invoice_pdf: base64String, // Save the PDF in the `invoice_pdf` key
-            service_type: "Ferry",
-            invoice_id: "XXXXX",
-            booking_id: bookingID,
-            customer_id: "7",
-            customer_name: storedName, // Replace with your field and value
-            customer_email: storedEmail, // Replace with your field and value
-            ammount: totalPrice,
-            starting_date: travelDate1,
-            adults: adults,
-          };
+  //         // Prepare data to be sent to the store_payment API
+  //         const paymentData = {
+  //           invoice_pdf: base64String, // Save the PDF in the `invoice_pdf` key
+  //           service_type: "Ferry",
+  //           invoice_id: "XXXXX",
+  //           booking_id: bookingID,
+  //           customer_id: "7",
+  //           customer_name: storedName, // Replace with your field and value
+  //           customer_email: storedEmail, // Replace with your field and value
+  //           ammount: totalPrice,
+  //           starting_date: travelDate1,
+  //           adults: adults,
+  //         };
   
-          const storeResponse = await fetch("https://yrpitsolutions.com/tourism_api/api/user/store_payment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-            body: JSON.stringify(paymentData),
-          });
+  //         const storeResponse = await fetch("https://yrpitsolutions.com/tourism_api/api/user/store_payment", {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+  //           },
+  //           body: JSON.stringify(paymentData),
+  //         });
   
-          if (storeResponse.ok) {
-            const storeResult = await storeResponse.json();
-            console.log("Data saved to store_payment API:", storeResult);
-            alert("PDF and data saved successfully!");
-          } else {
-            console.error("Error saving data to store_payment:", storeResponse.statusText);
-            alert("Error saving data.");
-          }
-        } else {
-          console.error("No PDF data received in the response.");
-          alert("Error: No PDF data received.");
-        }
-      } else {
-        console.error("Error downloading ticket:", downloadResponse.statusText);
-        alert("Error downloading ticket.");
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-      alert("An error occurred while processing your request.");
-    }
-  };
+  //         if (storeResponse.ok) {
+  //           const storeResult = await storeResponse.json();
+  //           console.log("Data saved to store_payment API:", storeResult);
+  //           alert("PDF and data saved successfully!");
+  //         } else {
+  //           console.error("Error saving data to store_payment:", storeResponse.statusText);
+  //           alert("Error saving data.");
+  //         }
+  //       } else {
+  //         console.error("No PDF data received in the response.");
+  //         alert("Error: No PDF data received.");
+  //       }
+  //     } else {
+  //       console.error("Error downloading ticket:", downloadResponse.statusText);
+  //       alert("Error downloading ticket.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Request failed:", error);
+  //     alert("An error occurred while processing your request.");
+  //   }
+  // };
   
 
 
 
 
-  const handleSubmit = async () => {
-    const passenger = passengerData.reduce<Record<number, typeof passengerData[0]>>((acc, data, index) => {
-      acc[index + 1] = data;
-      return acc;
-    }, {});
+  // const handleSubmit = async () => {
+  //   const passenger = passengerData.reduce<Record<number, typeof passengerData[0]>>((acc, data, index) => {
+  //     acc[index + 1] = data;
+  //     return acc;
+  //   }, {});
   
-    const payload = {
-      data: {
-        passenger,
-        ...contactDetails,
-      },
-    };
+  //   const payload = {
+  //     data: {
+  //       passenger,
+  //       ...contactDetails,
+  //     },
+  //   };
   
-    try {
-      // First, save passengers' data
-      const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-        },
-        body: JSON.stringify(payload),
-      });
+  //   try {
+  //     // First, save passengers' data
+  //     const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
 
-      if (response.ok) {
-        const result = await response.json();
-        console.log("Success:", result);
-        alert("Success!");
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       console.log("Success:", result);
+  //       alert("Success!");
 
-        // Extract the booking_id(s) from the result
-        const { booking_id, return_booking_id } = result.data;
+  //       // Extract the booking_id(s) from the result
+  //       const { booking_id, return_booking_id } = result.data;
 
-        let confirmResponse;
-        if (return_booking_id) {
-          // For multiple trips, both booking_id and return_booking_id are present
-          confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking_v2", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-            },
-            body: JSON.stringify({
-              data: {
-                booking_id: [booking_id, return_booking_id],
-              },
-            }),
-          });
-        } else {
-          // For a single trip, only booking_id is present
-          confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-            },
-            body: JSON.stringify({
-              data: {
-                booking_id,
-              },
-            }),
-          });
-        }
+  //       let confirmResponse;
+  //       if (return_booking_id) {
+  //         // For multiple trips, both booking_id and return_booking_id are present
+  //         confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking_v2", {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
+  //           },
+  //           body: JSON.stringify({
+  //             data: {
+  //               booking_id: [booking_id, return_booking_id],
+  //             },
+  //           }),
+  //         });
+  //       } else {
+  //         // For a single trip, only booking_id is present
+  //         confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking", {
+  //           method: "POST",
+  //           headers: {
+  //             "Content-Type": "application/json",
+  //             Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
+  //           },
+  //           body: JSON.stringify({
+  //             data: {
+  //               booking_id,
+  //             },
+  //           }),
+  //         });
+  //       }
 
-        if (confirmResponse.ok) {
-          const confirmResult = await confirmResponse.json();
-          console.log("Booking confirmed:", confirmResult);
-          alert("Booking confirmed!");
+  //       if (confirmResponse.ok) {
+  //         const confirmResult = await confirmResponse.json();
+  //         console.log("Booking confirmed:", confirmResult);
+  //         alert("Booking confirmed!");
 
-          // Trigger ticket download after booking confirmation
-          // Pass the correct booking_id to the handleDownloadTicket function
-          handleDownloadTicket(booking_id); // Call handleDownloadTicket with booking_id
-          localStorage.removeItem("selectedFerry");
-          localStorage.removeItem("selectedFerry2");
-          localStorage.removeItem("selectedFerry3");
-          localStorage.removeItem("travelData");
-          router.push("/ferry-payment");
-        } else {
-          console.error("Error confirming booking:", confirmResponse.statusText);
-        }
-      } else {
-        console.error("Error saving passengers:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Request failed:", error);
-    }
-  };
-
-
+  //         // Trigger ticket download after booking confirmation
+  //         // Pass the correct booking_id to the handleDownloadTicket function
+  //         handleDownloadTicket(booking_id); // Call handleDownloadTicket with booking_id
+  //         localStorage.removeItem("selectedFerry");
+  //         localStorage.removeItem("selectedFerry2");
+  //         localStorage.removeItem("selectedFerry3");
+  //         localStorage.removeItem("travelData");
+  //         router.push("/ferry-payment");
+  //       } else {
+  //         console.error("Error confirming booking:", confirmResponse.statusText);
+  //       }
+  //     } else {
+  //       console.error("Error saving passengers:", response.statusText);
+  //     }
+  //   } catch (error) {
+  //     console.error("Request failed:", error);
+  //   }
+  // };
 
 
 
 
-  const handlePaymentSuccess = (paymentData: any) => {
-    console.log('Payment Success Data:', paymentData);
-    handleSubmit();
-  };
+
+
+  // const handlePaymentSuccess = (paymentData: any) => {
+  //   console.log('Payment Success Data:', paymentData);
+  //   handleSubmit();
+  // };
 
 
 

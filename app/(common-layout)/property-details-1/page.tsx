@@ -83,12 +83,6 @@ const Page = () => {
                 </div>
                 <div className="col-span-12 relative">
                   <Link
-                    href="#"
-                    className="absolute btn-outline bottom-6 bg-white border-none left-6">
-                    <PhotoIcon className="w-6 h-6" />
-                    See All Images
-                  </Link>
-                  <Link
                     href="/img/property-details-img-3.png"
                     className="link property-gallery">
                     <Image

@@ -127,7 +127,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({ grandTotal, name, email
         try {
           localStorage.setItem("address", address);
           // Navigate to receipt page with query parameters
-          router.push(`/receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&roomId=${roomId}`);
+          router.replace(`/receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&roomId=${roomId}`);
           
           // Create payment data
           const paymentData = {

@@ -25,9 +25,9 @@ const page = () => {
         <Category />
         <Property />
         <HowItWork />
-        <DiscoverLocation />
-        <MobileApp />
-        <Explore />
+        {/* <DiscoverLocation /> */}
+        {/* <MobileApp /> */}
+        {/* <Explore /> */}
         <Counter />
         <Testimonial />
         <Agents />

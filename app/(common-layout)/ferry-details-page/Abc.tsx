@@ -148,11 +148,12 @@ const FerryDetailsPage = () => {
       fexpdate: "",
     }))
   ]);
-  
+
 
   const storedName = localStorage.getItem("name");
   const storedEmail = localStorage.getItem("email");
   const storedMobile = localStorage.getItem("mobile_number");
+  const storedCustomerId = localStorage.getItem("id");
 
 
   const [contactDetails, setContactDetails] = useState({
@@ -340,48 +341,64 @@ const FerryDetailsPage = () => {
 
   const handleDownloadTicket = async (bookingId: any) => {
     try {
-      const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
-        },
-        body: JSON.stringify({
-          data: {
-            booking_id: bookingId,
+      // Step 1: Download the ticket PDF as a base64 string
+      const downloadResponse = await fetch(
+        "https://staging.makruzz.com/booking_api/download_ticket_pdf",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
           },
-        }),
-      });
-
+          body: JSON.stringify({
+            data: {
+              booking_id: bookingId,
+            },
+          }),
+        }
+      );
+  
       if (downloadResponse.ok) {
         const base64String = await downloadResponse.text();
-
+  
         if (base64String) {
           console.log("Base64 string received:", base64String);
-
-          // Prepare data to be sent to the store_payment API
-          const paymentData = {
-            invoice_pdf: base64String, // Save the PDF in the `invoice_pdf` key
-            service_type: "Ferry",
-            invoice_id: "XXXXX",
-            booking_id: bookingID,
-            customer_id: "7",
-            customer_name: storedName, // Replace with your field and value
-            customer_email: storedEmail, // Replace with your field and value
-            ammount: totalPrice,
-            starting_date: travelDate1,
-            adults: adults,
-          };
-
-          const storeResponse = await fetch("https://yrpitsolutions.com/tourism_api/api/user/store_payment", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-            },
-            body: JSON.stringify(paymentData),
-          });
-
+  
+          // Step 2: Convert base64 string to a Blob
+          const byteCharacters = atob(base64String);
+          const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+          const byteArray = new Uint8Array(byteNumbers);
+          const pdfBlob = new Blob([byteArray], { type: "application/pdf" });
+  
+          // Step 3: Create FormData and append the Blob as a file
+          const formData = new FormData();
+          formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
+          formData.append("service_type", "Ferry");
+          formData.append("invoice_id", "XXXXX");
+          formData.append("booking_id", "123");
+          formData.append("customer_id", storedCustomerId || "");
+          formData.append("customer_name", storedName || "");
+          formData.append("customer_email", storedEmail || "");
+          formData.append("customer_mobile_number", storedMobile || "");
+          formData.append("amount", String(totalPrice));
+          formData.append("starting_date", "12-02-2025");
+          formData.append("adults", adults);
+          formData.append("payment_method", "Razorpay");
+          formData.append("razorpay_payment_id", "aaa");
+          formData.append("arrival_place", to3 || to2 || t1);
+  
+          // Step 4: Send the FormData to the store_payment API
+          const storeResponse = await fetch(
+            "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+              body: formData,
+            }
+          );
+  
           if (storeResponse.ok) {
             const storeResult = await storeResponse.json();
             console.log("Data saved to store_payment API:", storeResult);
@@ -403,6 +420,7 @@ const FerryDetailsPage = () => {
       alert("An error occurred while processing your request.");
     }
   };
+  
 
 
 
@@ -447,7 +465,7 @@ const FerryDetailsPage = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization")?? "",
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
             },
             body: JSON.stringify({
               data: {
@@ -461,7 +479,7 @@ const FerryDetailsPage = () => {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              Mak_Authorization: localStorage.getItem("Mak_Authorization")?? "",
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
             },
             body: JSON.stringify({
               data: {

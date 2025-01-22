@@ -26,12 +26,12 @@ const page = () => {
         <Property />
         <HowItWork />
         <DiscoverLocation />
-        <MobileApp />
+        {/* <MobileApp /> */}
         <Explore />
         <Counter />
         <Testimonial />
         <Agents />
-        <Faq />
+        {/* <Faq /> */}
       </main>
       <Footer />
     </>

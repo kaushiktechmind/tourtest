@@ -117,7 +117,7 @@ const RazorpayActBtn: React.FC<RazorpayActBtnProps> = ({ grandTotal, name, email
         const customerId = localStorage.getItem('id');
 
         if (!accessToken) {
-            router.push('/sign-in');
+            router.replace('/sign-in');
             return;
         }
 

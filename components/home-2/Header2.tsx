@@ -54,7 +54,7 @@ const Header2 = () => {
   return (
     <header
       className={`z-30 fixed w-full ${
-        scrolled || !isHomePage ? "z-50 shadow-md bg-[#fff]" : "bg-white"
+        scrolled || !isHomePage ? "z-50 shadow-md bg-[white]" : "bg-transparent"
       } duration-300`}
     >
       <div className="container flex justify-between items-center relative px-3 py-2 lg:py-0 lg:px-0">

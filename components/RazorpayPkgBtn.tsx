@@ -143,7 +143,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, name, email
         try {
           localStorage.setItem("address", address);
           // Navigate to receipt page with query parameters
-          router.push(`/package-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&packageId=${packageId}`);
+          router.replace(`/package-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&packageId=${packageId}`);
 
           // Create payment data
           const paymentData = {

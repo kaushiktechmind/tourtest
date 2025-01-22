@@ -58,7 +58,7 @@ const ManageRoom = () => {
 
   const [searchQuery, setSearchQuery] = useState<string>(""); // Search query
   const [currentPage, setCurrentPage] = useState<number>(1); // Current page
-  const [itemsPerPage] = useState<number>(3); // Items per page
+  const [itemsPerPage] = useState<number>(10); // Items per page
 
   const [formData, setFormData] = useState<HotelFormData>({
     hotel_id: hotelId ?? "",
@@ -355,7 +355,7 @@ const ManageRoom = () => {
               type="number"
               name="child_price"
               className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-              placeholder="1"
+              placeholder="1000"
               value={formData.child_price}
               onChange={handleInputChange}
             />

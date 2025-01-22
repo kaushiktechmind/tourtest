@@ -47,7 +47,34 @@ const Footer = () => {
               <Link href="./home-2" className="inline-block mb-6">
                 <Image src={logolight} alt="image" className="" />
               </Link>
-              <p className="clr-neutral-30 mb-6">
+
+              <div className="col-span-12 md:col-span-6 xl:col-span-3">
+              <ul className="flex flex-col gap-4">
+                <li>
+                  <div className="flex items-center gap-4">
+                    <i className="las la-phone-volume bg-primary text-white text-xl p-2 rounded-full"></i>
+                    <Link href="tel:3165550116" className="mb-0 clr-neutral-30">
+                      (316) 555-0116
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="flex items-center gap-4">
+                    <i className="las la-envelope-open bg-[var(--secondary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
+                    <Link href="mailto:example@mail.com" className="mb-0 clr-neutral-30">
+                      example@mail.com
+                    </Link>
+                  </div>
+                </li>
+                <li>
+                  <div className="flex items-center gap-4">
+                    <i className="las la-map-marker-alt bg-[var(--tertiary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
+                    <p className="mb-0 clr-neutral-30">31 Brandy Way, Sutton, SM2 6SE</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+              <p className="clr-neutral-30 mb-6 mt-6">
                 Welcome to our booking website, where you can easily book all of your travel needs in one place. We
                 offer a comprehensive selection of flights, hotels, and rental cars to help you plan the perfect trip.
               </p>
@@ -123,7 +150,7 @@ const Footer = () => {
             </div>
             <div className="col-span-12 md:col-span-6 xl:col-span-3">
               <h4 className="text-2xl font-semibold mb-6"> Contact </h4>
-              <ul className="flex flex-col gap-4">
+              {/* <ul className="flex flex-col gap-4">
                 <li>
                   <div className="flex items-center gap-4">
                     <i className="las la-phone-volume bg-primary text-white text-xl p-2 rounded-full"></i>
@@ -146,7 +173,7 @@ const Footer = () => {
                     <p className="mb-0 clr-neutral-30">31 Brandy Way, Sutton, SM2 6SE</p>
                   </div>
                 </li>
-              </ul>
+              </ul> */}
             </div>
             <div className="col-span-12 md:col-span-6 xl:col-span-3">
               <h4 className="text-2xl font-semibold mb-6"> Newsletter </h4>
@@ -179,7 +206,7 @@ const Footer = () => {
                   <p className="m-0 text-center lg:text-start">
                     &copy; {new Date().getFullYear()}
                     <span className="text-[var(--tertiary)]"> Andman Mangroves Holydays </span>. Designed By
-                    <Link href="#" className="text-[var(--secondary)]">
+                    <Link href="https://techmindscape.in/" className="text-[var(--secondary)]">
                       {" "}
                       Techmindscape
                     </Link>
@@ -188,19 +215,40 @@ const Footer = () => {
                 <div className="col-span-12 lg:col-span-6">
                   <ul className="flex items-center flex-wrap gap-6 justify-center lg:justify-end">
                     <li>
-                      <Link href="/help-center" className="hover:text-[var(--secondary)] duration-300">
-                        Help Center
-                      </Link>
+                      <Image
+                        width={83}
+                        height={34}
+                        src="/img/paypal.png"
+                        alt="image"
+                        className=""
+                      />
                     </li>
                     <li>
-                      <Link href="/privacy-policy" className="hover:text-[var(--secondary)] duration-300">
-                        Privacy Policy
-                      </Link>
+                      <Image
+                        width={83}
+                        height={34}
+                        src="/img/payoneer.png"
+                        alt="image"
+                        className=""
+                      />
                     </li>
                     <li>
-                      <Link href="/terms" className="hover:text-[var(--secondary)] duration-300">
-                        Terms of Service
-                      </Link>
+                      <Image
+                        width={83}
+                        height={34}
+                        src="/img/visa.png"
+                        alt="image"
+                        className=""
+                      />
+                    </li>
+                    <li>
+                      <Image
+                        width={83}
+                        height={34}
+                        src="/img/master-card.png"
+                        alt="image"
+                        className=""
+                      />
                     </li>
                   </ul>
                 </div>

@@ -96,7 +96,7 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, name, email
                 try {
                     localStorage.setItem("address", address);
                     // Navigate to receipt page with query parameters
-                    router.push(`/cab-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&cabId=${cabId}`);
+                    router.replace(`/cab-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&cabId=${cabId}`);
 
                     // Create payment data
                     const paymentData = {

@@ -381,9 +381,7 @@ const FerryHome = () => {
             <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
               Your One-Stop Shop for All Hi-Speed
             </h1>
-            <p className="mb-10 text-lg max-w-lg">
-              The Simplest Process Ever. Book Ferry in 3 Steps
-            </p>
+           
           </div>
         </div>
       </div>

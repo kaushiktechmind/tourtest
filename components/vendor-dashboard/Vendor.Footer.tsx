@@ -10,7 +10,7 @@ const Footer = () => {
           Andaman Mangroves Holidays
         </Link>{" "}
         Designed By{" "}
-        <Link href="#" className="text-[var(--secondary-500)]">
+        <Link href="https://techmindscape.in/" className="text-[var(--secondary-500)]">
           Techmindscape
         </Link>
       </span>

@@ -25,7 +25,7 @@ const RazorpayFerryBtn: React.FC<RazorpayFerryBtnProps> = ({ grandTotal, currenc
     const handlePayment = async () => {
       const accessToken = localStorage.getItem('access_token');
       if (!accessToken) {
-        router.push('/sign-in');
+        router.replace('/sign-in');
         return;
       }
   

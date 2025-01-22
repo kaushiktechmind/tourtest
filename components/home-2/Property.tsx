@@ -25,7 +25,7 @@ const Property = () => {
       <div className="container">
         <div className="max-w-[570px] mx-auto flex flex-col items-center text-center">
           <SubHeadingBtn text="Properties" classes="bg-white" />
-          <h2 className="h2 mt-3 ">Featured Listed Property</h2>
+          <h2 className="h2 mt-3 ">Featured Listed Hotels</h2>
           <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
             Real estate can be bought, sold, leased, or rented, and can be a
             valuable investment opportunity. The value of real estate can be...
@@ -65,13 +65,7 @@ const Property = () => {
               ))}
             </Tab.Panels>
           </Tab.Group>
-          <div className="flex justify-center mt-10">
-            <Link
-              href="#"
-              className="btn-primary flex items-center gap-2 font-medium">
-              <i className="las la-hourglass-start text-2xl"></i> Show More
-            </Link>
-          </div>
+
         </div>
       </div>
     </section>

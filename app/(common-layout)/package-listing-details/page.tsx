@@ -63,10 +63,10 @@ interface PackageData {
 }
 
 interface ItineraryItem {
-  day: string; 
-  title: string; 
-  description: string; 
-  image: string; 
+  day: string;
+  title: string;
+  description: string;
+  image: string;
 }
 
 
@@ -82,7 +82,7 @@ const PackageListingDetails = () => {
     name: "",
     phone: "",
     email: "",
-    service_type: "Package", 
+    service_type: "Package",
     message: "",
   });
 
@@ -214,7 +214,7 @@ const PackageListingDetails = () => {
       return; // Stop execution here if access token is not found
     }
 
-    
+
 
     // Calculate package data and store it in localStorage
     const formattedDate = selectedDate.toISOString().split("T")[0];
@@ -336,7 +336,7 @@ const PackageListingDetails = () => {
       });
       if (response.ok) {
         alert("Enquiry submitted successfully!");
-        setFormData({ name: "", phone: "", email: "", message: "", service_type: ""});
+        setFormData({ name: "", phone: "", email: "", message: "", service_type: "" });
       } else {
         alert("Failed to submit enquiry. Please try again.");
       }
@@ -375,12 +375,6 @@ const PackageListingDetails = () => {
                   </div>
                   {/* Button and Image */}
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative h-[288px]">
-                    <Link
-                      href="#"
-                      className="absolute btn-outline bottom-6 bg-white border-none left-6">
-                      <PhotoIcon className="w-6 h-6" />
-                      See All Images
-                    </Link>
                     <Link
                       href="/img/tour-details-img-2.jpg"
                       className="link property-gallery">
@@ -475,14 +469,14 @@ const PackageListingDetails = () => {
                       <li className="py-2">
                         <p className="mb-0">
                           Location:
-                          <span className="text-primary">{packageData.location_name}</span>
+                          <span className="text-primary"> {packageData.location_name}</span>
                         </p>
                       </li>
                       <li className="py-2">
                         <div className="flex items-center gap-1">
                           <span>
                             Min People:{" "}
-                            <span className="text-primary">{packageData.tour_max_people}</span>
+                            <span className="text-primary"> {packageData.tour_max_people}</span>
                           </span>
                         </div>
                       </li>
@@ -490,7 +484,7 @@ const PackageListingDetails = () => {
                         <div className="flex items-center gap-1">
                           <span>
                             Max People:{" "}
-                            <span className="text-primary">{packageData.tour_min_people}</span>
+                            <span className="text-primary"> {packageData.tour_min_people}</span>
                           </span>
                         </div>
                       </li>
@@ -499,7 +493,7 @@ const PackageListingDetails = () => {
                       <li className="py-2">
                         <p className="mb-0">
                           Duration:
-                          <span className="text-primary">{packageData.duration}</span>
+                          <span className="text-primary"> {packageData.duration}</span>
                         </p>
                       </li>
                       <li className="py-2">
@@ -602,14 +596,6 @@ const PackageListingDetails = () => {
                         </ul>
                       )}
                     </div>
-                    <Link
-                      href="#"
-                      className="link flex items-center gap-2 text-primary mt-8">
-                      <span className="font-semibold inline-block">
-                        Book Now
-                      </span>
-                      <ArrowRightIcon className="w-5 h-5" />
-                    </Link>
                   </div>
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-0 text-2xl font-semibold">
@@ -656,15 +642,6 @@ const PackageListingDetails = () => {
                       )}
                     </ul>
 
-
-                    <Link
-                      href="#"
-                      className="link flex items-center gap-2 text-primary mt-8">
-                      <span className="font-semibold inline-block">
-                        Read More
-                      </span>
-                      <ArrowRightIcon className="w-5 h-5" />
-                    </Link>
                   </div>
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
@@ -684,58 +661,8 @@ const PackageListingDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-white rounded-2xl my-10">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-1">
-                    <ArrowLongLeftIcon className="w-5 h-5" />
-                    <span className="inline-block font-semibold">
-                      Prev Tour
-                    </span>
-                  </Link>
-                  <ul className="flex flex-wrap gap-3 justify-center order-3 flex-grow md:order-2">
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-facebook-f"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-twitter"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-linkedin-in"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-dribbble"></i>
-                      </Link>
-                    </li>
-                  </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2">
-                    <span className="inline-block font-semibold">
-                      Next Tour
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
+              {/* <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
                 <div className="flex items-center gap-4 justify-between flex-wrap mb-10">
                   <div className="flex items-center gap-2">
                     <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
@@ -927,89 +854,88 @@ const PackageListingDetails = () => {
                   className="featured-tab link font-semibold clr-primary-400 inline-block py-3 px-6 bg-[var(--primary-light)] hover:bg-primary hover:text-white rounded-full active">
                   See All Reviews
                 </Link>
-              </div>
+              </div> */}
 
-              <div className="mb-10 lg:mb-14">
-      <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
-        <h4 className="mb-0 text-2xl font-semibold">Write a review</h4>
-        <div className="border border-dashed my-6"></div>
+              {/* <div className="mb-10 lg:mb-14">
+                <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
+                  <h4 className="mb-0 text-2xl font-semibold">Write a review</h4>
+                  <div className="border border-dashed my-6"></div>
 
-        <p className="text-xl font-medium mb-2">Rating *</p>
-        <div className="flex gap-1 mb-3">
-          {[1, 2, 3, 4, 5].map((value) => (
-            <StarIcon
-              key={value}
-              className={`w-5 h-5 cursor-pointer ${
-                (hoverRating || rating) >= value
-                  ? 'text-yellow-400'
-                  : 'text-gray-400'
-              }`}
-              onClick={() => handleRatingClick(value)}
-              onMouseEnter={() => handleRatingHover(value)}
-              onMouseLeave={handleRatingLeave}
-            />
-          ))}
-        </div>
+                  <p className="text-xl font-medium mb-2">Rating *</p>
+                  <div className="flex gap-1 mb-3">
+                    {[1, 2, 3, 4, 5].map((value) => (
+                      <StarIcon
+                        key={value}
+                        className={`w-5 h-5 cursor-pointer ${(hoverRating || rating) >= value
+                            ? 'text-yellow-400'
+                            : 'text-gray-400'
+                          }`}
+                        onClick={() => handleRatingClick(value)}
+                        onMouseEnter={() => handleRatingHover(value)}
+                        onMouseLeave={handleRatingLeave}
+                      />
+                    ))}
+                  </div>
 
-        <form onSubmit={handleReviewSubmit}>
-          <div className="grid grid-cols-12 gap-4">
-            <div className="col-span-12">
-              <label
-                htmlFor="review-name"
-                className="text-xl font-medium block mb-3"
-              >
-                Name *
-              </label>
-              <input
-                type="text"
-                className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                placeholder="Enter Name.."
-                id="review-name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
-            <div className="col-span-12">
-              <label
-                htmlFor="review-email"
-                className="text-xl font-medium block mb-3"
-              >
-                Email *
-              </label>
-              <input
-                type="email"
-                className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
-                placeholder="Enter Email.."
-                id="review-email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div className="col-span-12">
-              <label
-                htmlFor="review-review"
-                className="text-xl font-medium block mb-3"
-              >
-                Review *
-              </label>
-              <textarea
-                id="review-review"
-                rows={5}
-                className="bg-[var(--bg-1)] border rounded-2xl py-3 px-5 w-full focus:outline-none"
-                placeholder="Write your review here..."
-                value={review}
-                onChange={(e) => setReview(e.target.value)}
-              ></textarea>
-            </div>
-            <div className="col-span-12">
-              <button type="submit" className="btn-primary">
-                Submit Review
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+                  <form onSubmit={handleReviewSubmit}>
+                    <div className="grid grid-cols-12 gap-4">
+                      <div className="col-span-12">
+                        <label
+                          htmlFor="review-name"
+                          className="text-xl font-medium block mb-3"
+                        >
+                          Name *
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
+                          placeholder="Enter Name.."
+                          id="review-name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-span-12">
+                        <label
+                          htmlFor="review-email"
+                          className="text-xl font-medium block mb-3"
+                        >
+                          Email *
+                        </label>
+                        <input
+                          type="email"
+                          className="w-full bg-[var(--bg-1)] border border-neutral-40 rounded-full py-3 px-5 focus:outline-none"
+                          placeholder="Enter Email.."
+                          id="review-email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                        />
+                      </div>
+                      <div className="col-span-12">
+                        <label
+                          htmlFor="review-review"
+                          className="text-xl font-medium block mb-3"
+                        >
+                          Review *
+                        </label>
+                        <textarea
+                          id="review-review"
+                          rows={5}
+                          className="bg-[var(--bg-1)] border rounded-2xl py-3 px-5 w-full focus:outline-none"
+                          placeholder="Write your review here..."
+                          value={review}
+                          onChange={(e) => setReview(e.target.value)}
+                        ></textarea>
+                      </div>
+                      <div className="col-span-12">
+                        <button type="submit" className="btn-primary">
+                          Submit Review
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div> */}
 
             </div>
 
@@ -1026,15 +952,15 @@ const PackageListingDetails = () => {
                   </div>
 
                   <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
-            <Tab.List className="flex gap-3 about-tab mb-7">
-              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                Booking Form
-              </Tab>
-              <span>|</span>
-              <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
-                Enquiry Form
-              </Tab>
-            </Tab.List>
+                    <Tab.List className="flex gap-3 about-tab mb-7">
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Booking Form
+                      </Tab>
+                      <span>|</span>
+                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                        Enquiry Form
+                      </Tab>
+                    </Tab.List>
                     <Tab.Panels className="tab-content mb-8">
                       <Tab.Panel>
                         <div className="grid grid-cols-1 gap-3">
@@ -1045,6 +971,7 @@ const PackageListingDetails = () => {
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
                                 onChange={(date) => setSelectedDate(date)}
+                                minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                                 ref={datePickerRef} // Attach the ref to DatePicker
                               />
@@ -1292,14 +1219,14 @@ const PackageListingDetails = () => {
                   </Tab.Group>
 
                   {selectedIndex === 0 && (
-                  <Link
-                    href={`package-payment?packageId=${packageId}`}
-                    className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
-                    onClick={handleBookingClick}  // Use the new function here
-                  >
-                    <span className="inline-block"> Proceed Booking </span>
-                  </Link>
-                     )}
+                    <Link
+                      href={`package-payment?packageId=${packageId}`}
+                      className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
+                      onClick={handleBookingClick}  // Use the new function here
+                    >
+                      <span className="inline-block"> Proceed Booking </span>
+                    </Link>
+                  )}
                 </div>
               </div>
             </div>

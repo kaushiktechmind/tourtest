@@ -122,7 +122,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
           />
         </>
       ) : (
-        <Link href={items.url as string} className="text-[#6c6c6c] hover:text-gray-900 font-bold font-montserrat" onClick={handleLinkClick}>{items.title}</Link>
+        <Link href={items.url as string} className="text-[#525151] hover:text-gray-900" onClick={handleLinkClick}>{items.title}</Link>
       )}
     </li>
   );

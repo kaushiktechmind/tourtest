@@ -42,8 +42,8 @@ export default function ProfileDropdown() {
 
       if (response.ok) {
         // Step 4: Check if the response is successful
-        localStorage.removeItem("name"); 
-        localStorage.removeItem("access_token"); 
+        localStorage.removeItem("name");
+        localStorage.removeItem("access_token");
         localStorage.removeItem("mobile_number");
         localStorage.removeItem("email");
         localStorage.removeItem("noOfNights");
@@ -63,12 +63,13 @@ export default function ProfileDropdown() {
       <Menu as="div" className="relative inline-block top-1 md:top-[2px]">
         <Menu.Button className="flex justify-center items-center rounded-full focus:outline-none">
           <Image
-            className="rounded-full"
+            className="rounded-full object-cover w-[45px] h-[45px]"
             src={profilePhoto}
             width={45}
             height={45}
             alt="profile"
           />
+
         </Menu.Button>
 
         <Transition
@@ -87,10 +88,17 @@ export default function ProfileDropdown() {
                   <Image
                     src={profilePhoto}
                     alt="profile"
-                    className="rounded-full"
+                    className="rounded-full object-cover"
                     width={55}
                     height={55}
+                    style={{
+                      width: "50px", // Fix width to 55px
+                      height: "50px", // Fix height to 55px
+                      objectFit: "cover", // Ensures image fills the circle without distortion
+                      borderRadius: "50%", // Ensures a perfect circle
+                    }}
                   />
+
                   <div className="flex flex-col">
                     <span className="text-gray-800 text-xl font-semibold">
                       {name}

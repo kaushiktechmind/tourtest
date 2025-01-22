@@ -134,11 +134,11 @@ const FerryList = () => {
   useEffect(() => {
     const fetchTripData = async () => {
       const requestBody = {
-        date: "20-11-2022",
+        date: "20-03-2025",
         from: "Port Blair",
         to: "Swaraj Dweep",
-        userName: "agent",
-        token: "U2FsdGVkX18wFH8L127Sgd0wBwCSQMhE3y2kxDFXgc5zItPTXXqvjfTLuSAeD1ySsGVF5lj9i5LUoR/JhwJvSQ=="
+        userName: "mangroves",
+        token: "U2FsdGVkX1/Vt650aC9j+62YZmC0qZKnmhTtskLKQt4mDfWIJndWKxS+CqFZS46hGlCIMMGrKW62H5It7eumzw=="
       };
 
       console.log("Fetching data...");
@@ -241,7 +241,7 @@ const FerryList = () => {
   const handleSelectFerry = (shipClassId: string) => {
     // Check if there's an access_token in localStorage
     if (!localStorage.getItem('access_token')) {
-      router.push("/sign-in"); // Redirect to signup page if no access_token
+      router.push("/sign-in"); // Redirect to sign-in page if no access_token
       return; // Stop further execution if no access_token
     }
 
@@ -766,11 +766,11 @@ const FerryList = () => {
                           </h2>
                         </div>
                         <Link
-                          href={localStorage.getItem('access_token') ? (storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page") : "/signup"}
+                          href={localStorage.getItem('access_token') ? (storedFrom2 ? `/ferry-list2?tripType=${storedTripType}` : "/ferry-details-page") : "/sign-in"}
                           onClick={(e) => {
                             if (!localStorage.getItem('access_token')) {
                               e.preventDefault(); // Prevent navigation if there's no access_token
-                              router.push("/signup"); // Redirect to signup page if no access_token
+                              router.push("/sign-in"); // Redirect to sign-in page if no access_token
                             } else {
                               handleSelectFerry(schedule.ship_class_id); // Proceed with ferry selection if access_token exists
                             }

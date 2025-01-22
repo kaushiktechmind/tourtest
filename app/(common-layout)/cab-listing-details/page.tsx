@@ -286,7 +286,6 @@ const CabListingDetails = () => {
 
 
 
-
   return (
     <>
       <section className="">
@@ -415,48 +414,7 @@ const CabListingDetails = () => {
                     <ArrowRightIcon className="w-5 h-5" />
                   </Link>
                 </div>
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                  <h4 className="mb-0 text-2xl font-semibold">Inclusions & Exclusions</h4>
-                  <div className="border border-dashed my-5"></div>
 
-                  {/* Inclusions */}
-                  <h6 className="mb-4 font-semibold">Inclusions</h6>
-                  <ul className="flex flex-col gap-4 mb-10">
-                    {inclusions.length > 0 ? (
-                      inclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
-                        <li key={index}>
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">{item}</span>
-                          </div>
-                        </li>
-                      ))
-                    ) : (
-                      <li>Not Available</li>
-                    )}
-                  </ul>
-
-                  {/* Exclusions */}
-                  <h6 className="mb-4 font-semibold">Exclusions</h6>
-                  <ul className="flex flex-col gap-4 mb-10">
-                    {exclusions.length > 0 ? (
-                      exclusions.map((item, index) => (
-                        <li key={index}>
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
-                              <i className="las la-times text-xl text-[#9C742B]"></i>
-                            </div>
-                            <span className="inline-block">{item}</span>
-                          </div>
-                        </li>
-                      ))
-                    ) : (
-                      <li>Not Available</li>
-                    )}
-                  </ul>
-                </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">{cabDetails.cab_name}</h4>
 
@@ -514,6 +472,49 @@ const CabListingDetails = () => {
                     </table>
                   </div>
                 </div>
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                  <h4 className="mb-0 text-2xl font-semibold">Inclusions & Exclusions</h4>
+                  <div className="border border-dashed my-5"></div>
+
+                  {/* Inclusions */}
+                  <h6 className="mb-4 font-semibold">Inclusions</h6>
+                  <ul className="flex flex-col gap-4 mb-10">
+                    {inclusions.length > 0 ? (
+                      inclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
+                        <li key={index}>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                              <i className="las la-check text-lg text-primary"></i>
+                            </div>
+                            <span className="inline-block">{item}</span>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Not Available</li>
+                    )}
+                  </ul>
+
+                  {/* Exclusions */}
+                  <h6 className="mb-4 font-semibold">Exclusions</h6>
+                  <ul className="flex flex-col gap-4 mb-10">
+                    {exclusions.length > 0 ? (
+                      exclusions.map((item, index) => (
+                        <li key={index}>
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
+                              <i className="las la-times text-xl text-[#9C742B]"></i>
+                            </div>
+                            <span className="inline-block">{item}</span>
+                          </div>
+                        </li>
+                      ))
+                    ) : (
+                      <li>Not Available</li>
+                    )}
+                  </ul>
+                </div>
+
 
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
@@ -531,58 +532,8 @@ const CabListingDetails = () => {
                   )}
                 </div>
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-white rounded-2xl">
-                  <div className="flex items-center justify-between gap-4 flex-wrap">
-                    <Link
-                      href="#"
-                      className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-1">
-                      <ArrowLongLeftIcon className="w-5 h-5" />
-                      <span className="inline-block font-semibold">
-                        Prev Cab
-                      </span>
-                    </Link>
-                    <ul className="flex flex-wrap gap-3 justify-center order-3 flex-grow md:order-2">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                          <i className="lab text-xl la-facebook-f"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                          <i className="lab text-xl la-twitter"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                          <i className="lab text-xl la-linkedin-in"></i>
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                          <i className="lab text-xl la-dribbble"></i>
-                        </Link>
-                      </li>
-                    </ul>
-                    <Link
-                      href="#"
-                      className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2">
-                      <span className="inline-block font-semibold">
-                        Next Cab
-                      </span>
-                      <ArrowLongRightIcon className="w-5 h-5" />
-                    </Link>
-                  </div>
-                </div>
               </div>
-              <div>
+              {/* <div>
                 <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
                   <div className="flex items-center gap-4 justify-between flex-wrap mb-10">
                     <div className="flex items-center gap-2">
@@ -594,14 +545,7 @@ const CabListingDetails = () => {
                         {" "}
                         Sort By :{" "}
                       </p>
-                      {/* <div className="border rounded-full pr-3">
-                        <select className="w-full bg-transparent px-5 py-3 focus:outline-none ">
-                          <option>Latest</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
-                        </select>
-                      </div> */}
+                     
                     </div>
                   </div>
                   <div className="bg-[var(--bg-2)] rounded-2xl p-3 sm:p-4 lg:p-6 mb-8">
@@ -847,7 +791,7 @@ const CabListingDetails = () => {
                     </form>
                   </div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="col-span-12 xl:col-span-4">
@@ -900,6 +844,7 @@ const CabListingDetails = () => {
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
                                 onChange={(date) => setSelectedDate(date)}
+                                minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                               />
                               <span className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0">

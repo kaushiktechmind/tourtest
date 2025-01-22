@@ -312,12 +312,6 @@ const ActivityListingDetails = () => {
                   {/* Button and Image */}
                   <div className="col-span-12 sm:col-span-6 xl:col-span-12 relative h-[288px]">
                     <Link
-                      href="#"
-                      className="absolute btn-outline bottom-6 bg-white border-none left-6">
-                      <PhotoIcon className="w-6 h-6" />
-                      See All Images
-                    </Link>
-                    <Link
                       href="/img/tour-details-img-2.jpg"
                       className="link property-gallery">
                       <Image
@@ -410,7 +404,7 @@ const ActivityListingDetails = () => {
                       <li className="py-2">
                         <p className="mb-0">
                           Location:
-                          <span className="text-primary">{activityData.location_name}</span>
+                          <span className="text-primary"> {activityData.location_name}</span>
                         </p>
                       </li>
                       <li className="py-2">
@@ -508,58 +502,8 @@ const ActivityListingDetails = () => {
                   </div>
                 </div>
               </div>
-              <div className="p-6 bg-white rounded-2xl my-10">
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-1">
-                    <ArrowLongLeftIcon className="w-5 h-5" />
-                    <span className="inline-block font-semibold">
-                      Prev Tour
-                    </span>
-                  </Link>
-                  <ul className="flex flex-wrap gap-3 justify-center order-3 flex-grow md:order-2">
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-facebook-f"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-twitter"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-linkedin-in"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-dribbble"></i>
-                      </Link>
-                    </li>
-                  </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2">
-                    <span className="inline-block font-semibold">
-                      Next Tour
-                    </span>
-                    <ArrowLongRightIcon className="w-5 h-5" />
-                  </Link>
-                </div>
-              </div>
 
-              <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
+              {/* <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5 mb-10 lg:mb-14">
                 <div className="flex items-center gap-4 justify-between flex-wrap mb-10">
                   <div className="flex items-center gap-2">
                     <StarIcon className="w-5 h-5 text-[var(--tertiary)]" />
@@ -751,9 +695,9 @@ const ActivityListingDetails = () => {
                   className="featured-tab link font-semibold clr-primary-400 inline-block py-3 px-6 bg-[var(--primary-light)] hover:bg-primary hover:text-white rounded-full active">
                   See All Reviews
                 </Link>
-              </div>
+              </div> */}
 
-              <div className="mb-10 lg:mb-14">
+              {/* <div className="mb-10 lg:mb-14">
                 <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
                   <h4 className="mb-0 text-2xl font-semibold">
                     Write a review
@@ -814,7 +758,7 @@ const ActivityListingDetails = () => {
                     </div>
                   </form>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="col-span-12 xl:col-span-4">
