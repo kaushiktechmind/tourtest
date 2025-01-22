@@ -385,7 +385,7 @@ const FerryDetailsPage = () => {
           formData.append("adults", adults);
           formData.append("payment_method", "Razorpay");
           formData.append("razorpay_payment_id", "aaa");
-          formData.append("arrival_place", to3 || to2 || t1);
+          formData.append("arrival_place", to3 || to2 || to1);
   
           // Step 4: Send the FormData to the store_payment API
           const storeResponse = await fetch(
