@@ -7,6 +7,14 @@ import { Children, Suspense } from "react";
 import { useEffect, useState } from "react";
 import RazorpayPkgBtn from "@/components/RazorpayPkgBtn";
 
+interface ItineraryItem {
+  day: string;
+  title: string;
+  description: string;
+  image: string;
+}
+
+
 const date = new Date();
 const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
@@ -24,6 +32,11 @@ const infantPrice = Number(packageData?.infantPrice || 0);
 const totalPrice = Number(packageData?.totalPrice);
 const extraPrice = Number(packageData?.extraPrice);
 const serviceFee = Number(packageData?.serviceFee);
+const reservationDate = packageData?.date; // "2025-02-19"
+const [year, month, day] = reservationDate.split('-');
+const formattedDate2 = `${day}-${month}-${year}`;
+
+
 
 const generateBookingID = () => {
   // Generate a random number with a fixed length
@@ -39,13 +52,17 @@ const PackagePayment = () => {
   const [packageItem, setPackageItem] = useState<any>(null);
   const [bookingID, setBookingID] = useState('');
 
-   // Check if package data exists in localStorage
-   const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
+  // Check if package data exists in localStorage
+  const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
     setBookingID(generateBookingID());
   }, []);
+
+  const [itineraryData, setItineraryData] = useState<ItineraryItem[]>([]);
+  const inclusions = packageItem ? JSON.parse(packageItem.package_includes) : [];
+  const exclusions = packageItem ? JSON.parse(packageItem.package_excludes) : [];
 
 
 
@@ -101,7 +118,9 @@ const PackagePayment = () => {
 
         if (response.ok) {
           const data = await response.json();
+          const itinerary = JSON.parse(data.itinerary || "[]");
           setPackageItem(data);
+          setItineraryData(itinerary);
         } else {
           alert("Failed to fetch package details.");
         }
@@ -112,6 +131,10 @@ const PackagePayment = () => {
 
     fetchPackageItem();
   }, [packageId]);
+
+
+
+
 
 
   return (
@@ -127,24 +150,34 @@ const PackagePayment = () => {
                 <div className="border border-dashed my-6"></div>
 
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                  <div className="col-span-12 md:col-span-6">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="clr-neutral-400 inline-block text-sm">
-                        Booking Date
-                      </span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Booking Date
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                     </div>
                   </div>
-                  
-                 
-                  <div className="col-span-12 md:col-span-6">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="clr-neutral-400 inline-block text-sm">
-                        Total Pax
-                      </span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Reservation Date
+                        </span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{formattedDate2}</p>
+                    </div>
+                  </div>
+
+
+                  <div className="col-span-12 md:col-span-4">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Total Pax
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{Number(adult) + Number(child1) + Number(child2) + Number(child3) + Number(infant1) + Number(infant2)}</p>
                     </div>
@@ -242,13 +275,11 @@ const PackagePayment = () => {
                               </span>
                             </li>
                             <li className="flex gap-2 items-center">
-                            <i className="las la-clock text-xl text-[#22804A]"></i>
+                              <i className="las la-clock text-xl text-[#22804A]"></i>
                               <span className="block text-sm">
                                 {packageItem?.duration || "Duration"}
                               </span>
                             </li>
-                            
-
                           </ul>
                         </div>
                       </div>
@@ -256,6 +287,96 @@ const PackagePayment = () => {
                   </div>
                 </div>
               </div>
+
+
+
+
+              <div className="p-4 bg-[var(--bg-1)] rounded-lg border border-neutral-40 mb-6 lg:mb-10">
+                <h4 className="mb-4 text-xl font-semibold">Itinerary</h4>
+                {itineraryData.length > 0 && (
+                  <ul className="space-y-4">
+                    {itineraryData.map(({ day, title, description, image }, index) => (
+                      <li key={index} className="flex items-start gap-4">
+                        {/* Day */}
+                        <div className="flex items-center justify-center w-12 h-12 bg-primary text-white rounded-full shrink-0">
+                          <span className="text-sm font-medium">Day</span>
+                          <span className="text-lg font-bold ml-1">{day}</span>
+                        </div>
+
+                        {/* Content */}
+                        <div className="flex-grow">
+                          <h5 className="text-lg font-semibold mb-2">{title}</h5>
+                          <div className="flex items-start gap-3">
+                            {/* Image */}
+                            <div className="w-20 h-14 shrink-0">
+                              <Image
+                                width={80}
+                                height={56}
+                                src={image}
+                                alt="Image"
+                                className="rounded-lg object-cover"
+                              />
+                            </div>
+                            {/* Description */}
+                            <p className="text-sm text-neutral-500">{description}</p>
+                          </div>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                <h4 className="mb-0 text-2xl font-semibold">
+                  Inclusions & Exclusions
+                </h4>
+                <div className="border border-dashed my-5"></div>
+
+                <h6 className="mb-4 font-semibold">Inclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {(inclusions || []).length > 0 ? (
+                    inclusions.map((item: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined, index: React.Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
+
+
+                <h6 className="mb-4 font-semibold">Exclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {(exclusions || []).length > 0 ? (
+                    exclusions.map((item: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined, index: React.Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
+                            <i className="las la-times text-xl text-[#9C742B]"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
+
+              </div>
+
+
+
+
+
+
 
 
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">

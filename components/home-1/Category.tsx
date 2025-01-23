@@ -17,12 +17,8 @@ const Category = () => {
         <div className="max-w-[570px] mx-auto flex flex-col items-center text-center z-1">
           <SubHeadingBtn text="Category" classes="bg-[var(--primary-light)]" />
           <h2 className="h2 mt-5">Choose Our Category</h2>
-          <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
-            Real estate can be bought, sold, leased, or rented, and can be a
-            valuable investment opportunity. The value of real estate can be...
-          </p>
         </div>
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-6 mt-12">
           {categoryData.map(({ id, desc, icon, title, color }) => (
             <div
               key={id}

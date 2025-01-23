@@ -27,7 +27,6 @@ const cabData = storedCabDetails[0];
 
 
 const generateBookingID = () => {
-  // Generate a random number with a fixed length
   const randomNumber = Math.floor(Math.random() * 100000); // Generates a random number between 0 and 99999
   return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
 };

@@ -12,9 +12,6 @@ const Page = () => {
   const type = searchParams.get("type");
   const loc = searchParams.get("loc");
 
-  // const noOfRooms = Number(localStorage.getItem('noOfRooms'));
-  // const startdate = localStorage.getItem('startDate');
-  // const enddate = localStorage.getItem('endDate');
 
   const [noOfRooms, setNoOfRooms] = useState<number | null>(null);
   const [startdate, setStartdate] = useState<string | null>(null);
@@ -47,7 +44,6 @@ const Page = () => {
       let response;
 
       if (type == "Hotel" || type=="HomeStay"){
-        console.log("give data based on Type");
         // Fetch data based on "type"
         response = await axios.get(
           `https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`
@@ -62,8 +58,6 @@ const Page = () => {
         setError("Please provide valid search parameters.");
         return;
       }
-
-      console.log("API Response:", response.data);
 
       // Normalize data structure to only include the necessary fields
       let normalizedData = [];
@@ -230,11 +224,6 @@ const Page = () => {
   
 };
 
-// const Page = () => (
-//   <Suspense fallback={<div>Loading...</div>}>
-//     <HotelListing />
-//   </Suspense>
-// );
 
 export default Page;  
 	

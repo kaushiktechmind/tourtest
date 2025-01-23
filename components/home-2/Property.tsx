@@ -1,75 +1,86 @@
 "use client";
-import categoryEl from "@/public/img/category-section-el.png";
-import Image from "next/image";
-import SubHeadingBtn from "../SubHeadingBtn";
-import { useState } from "react";
-import { Tab } from "@headlessui/react";
-import { featuredItems } from "@/public/data/featured";
-import FeaturedCardHome2 from "./FeaturedCardHome2";
-import Link from "next/link";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
+import {
+  MapPinIcon,
+  ShareIcon,
+} from "@heroicons/react/24/outline";
+import {
+  ArrowUpIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+} from "@heroicons/react/24/solid";
+import Footer from "@/components/Footer";
+import MobileMenu from "@/components/MobileMenu";
+import Category from "@/components/home-1/Category";
+import Agents from "@/components/home-2/Agents";
+import Counter from "@/components/home-2/Counter";
+import Header2 from "@/components/home-2/Header2";
+import Hero from "@/components/home-2/Hero";
+import HowItWork from "@/components/home-2/HowItWork";
+import Property from "@/components/home-2/Property";
+import Testimonial from "@/components/home-2/Testimonial";
+import Featured from "@/components/home-2/Featured";
+import { useEffect, useState } from "react";
 
-const Property = () => {
-  const [categories, setCategories] = useState(featuredItems);
+const Page = () => {
+  const [showScroll, setShowScroll] = useState(false);
+
+  // Show scroll to top button when scrolling down
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {
+        setShowScroll(true);
+      } else {
+        setShowScroll(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Function to scroll to top
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
-    <section className="bg-[var(--bg-2)] py-[60px] lg:py-[120px] relative">
-      <Image
-        className="absolute hidden lg:block top-12 right-12"
-        src={categoryEl}
-        alt="img"
-      />
-      <div className="container">
-        <div className="max-w-[570px] mx-auto flex flex-col items-center text-center">
-          <SubHeadingBtn text="Properties" classes="bg-white" />
-          <h2 className="h2 mt-3 ">Featured Listed Hotels</h2>
-          <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
-            Real estate can be bought, sold, leased, or rented, and can be a
-            valuable investment opportunity. The value of real estate can be...
-          </p>
-        </div>
-        <div className="">
-          <Tab.Group>
-            <div className="flex justify-between flex-wrap items-center mb-6 gap-4 px-3">
-              <Tab.List className="flex gap-3 flex-wrap">
-                {Object.keys(categories).map((category) => (
-                  <Tab
-                    key={category}
-                    className={({ selected }) =>
-                      classNames(
-                        "rounded-full px-7 py-4 leading-5 duration-300 font-semibold",
-                        selected
-                          ? "bg-primary shadow text-white outline-none"
-                          : "text-neutral-600 hover:bg-primary bg-[var(--primary-light)] hover:text-white"
-                      )
-                    }>
-                    {category}
-                  </Tab>
-                ))}
-              </Tab.List>
-              <Link href="#" className="btn-outline  flex items-center gap-2">
-                View All
-                <i className="las la-long-arrow-alt-right text-2xl"></i>
-              </Link>
-            </div>
-            <Tab.Panels className="mt-2">
-              {Object.values(categories).map((posts, idx) => (
-                <Tab.Panel key={idx} className="grid grid-cols-12 gap-6">
-                  {posts.map((post) => (
-                    <FeaturedCardHome2 key={post.id} item={post} />
-                  ))}
-                </Tab.Panel>
-              ))}
-            </Tab.Panels>
-          </Tab.Group>
+    <>
+      <Header2 />
+      <MobileMenu />
+      <main>
+        <Hero />
+        <Category />
+        <Property />
+        <Featured />
+        <HowItWork />
+        <Counter />
+        <Testimonial />
+        <Agents />
+      </main>
+      <Footer />
 
-        </div>
-      </div>
-    </section>
+      {/* WhatsApp Icon */}
+      <a
+        href="https://wa.me/9306288532" // Replace with your WhatsApp number
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-16 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
+      >
+        <ChatBubbleOvalLeftEllipsisIcon className="h-8 w-8" />
+      </a>
+
+      {/* Scroll to Top Button */}
+      {showScroll && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-16 right-16 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition"
+        >
+          <ArrowUpIcon className="h-8 w-8" />
+        </button>
+      )}
+    </>
   );
 };
 
-export default Property;
+export default Page;

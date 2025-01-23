@@ -140,9 +140,12 @@ const Page = () => {
                           aria-label="Default select example"
                           {...register("service", { required: true })}>
                           <option>Apartments</option>
-                          <option value="1">New York</option>
-                          <option value="2">Chicago</option>
-                          <option value="3">Atlanta</option>
+                          <option value="1">Hotel</option>
+                          <option value="2">Homestay</option>
+                          <option value="3">Package</option>
+                          <option value="3">Activity</option>
+                          <option value="3">Cab</option>
+                          <option value="3">Ferry</option>
                         </select>
                       </div>
                     </div>

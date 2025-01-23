@@ -1,30 +1,31 @@
-// Import Swiper React components
+"use client";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { HeartIcon } from "@heroicons/react/20/solid";
-import { HeartIconOutline } from "@/public/data/icons";
 import toast, { Toaster } from "react-hot-toast";
-const notifyAdd = () => toast.success("Added to Wishlist.");
-const notifyRemove = () => toast.error("Removed From Wishlist.");
 
 const FeaturedCardHome2 = ({ item }: any) => {
-  const [favourite, setFavourite] = useState(false);
-  const { id, address, area, bath, bed, img, price, rooms, title, type } = item;
-  const handleFavorite = () => {
-    setFavourite(!favourite);
-    favourite ? notifyRemove() : notifyAdd();
+  const { id, address, area, bath, bed, img, highest_price, starting_price, rooms, title, type } = item;
+
+  const capitalizeFirstLetter = (str: string) => {
+    if (!str) return str; // Handle empty or undefined strings
+    return str.charAt(0).toUpperCase() + str.slice(1);
   };
+  
+  // Usage:
+  const capitalizedType = capitalizeFirstLetter(type);
+  
+
   return (
     <div key={id} className="col-span-12 xl:col-span-6 px-3 xl:px-0">
-      <div className="bg-white hover:shadow-lg duration-300 grid grid-cols-12 rounded-2xl p-2">
-        <div className="rounded-2xl col-span-12 md:col-span-5 relative group">
+      <div className="bg-white hover:shadow-lg duration-300 grid grid-cols-12 rounded-2xl p-2 h-full">
+        {/* Image Section */}
+        <div className="rounded-2xl col-span-12 md:col-span-5 relative group h-70">
           {img.length > 1 ? (
             <Swiper
               loop={true}
@@ -64,33 +65,23 @@ const FeaturedCardHome2 = ({ item }: any) => {
               />
             </div>
           )}
-
-          <Link
-            href="/property-list"
-            className="absolute top-4 z-10 inline-block text-primary left-4 bg-white rounded-full py-2 px-4">
-            For {type}
-          </Link>
-          <button
-            onClick={handleFavorite}
-            className="absolute z-10 inline-block text-primary top-4 right-4 rounded-full bg-white p-2.5 ">
-            {favourite ? (
-              <HeartIcon className="w-5 h-5 text-[var(--tertiary)]" />
-            ) : (
-              <HeartIconOutline />
-            )}
-          </button>
         </div>
-        <div className="col-span-12 md:col-span-7">
+
+        {/* Content Section */}
+        <div className="col-span-12 md:col-span-7 flex flex-col justify-between h-full">
           <div>
+            {/* Address */}
             <div className="flex items-center pt-3 gap-1 mb-3 pl-4 mt-2">
               <i className="las la-map-marker-alt text-lg text-[#9C742B]"></i>
               <span className="inline-block">{address}</span>
             </div>
+            {/* Title */}
             <Link
               href="property-details-1"
               className="text-xl font-medium text-neutral-700 pl-4">
               {title.substr(0, 20)}
             </Link>
+            {/* Room, Bed, Bath, Area */}
             <ul className="flex flex-wrap divide-x divide-dashed justify-between mt-5 pl-3 mb-5">
               <li className="flex flex-col px-2 gap-1">
                 <i className="las la-city text-xl"></i>
@@ -101,26 +92,27 @@ const FeaturedCardHome2 = ({ item }: any) => {
                 <span className="block"> {bed} Bed </span>
               </li>
               <li className="flex flex-col px-1 xxl:px-2 gap-1">
-                <i className="las la-bath text-xl"></i>
-                <span className="block"> {bath} Bath </span>
+              <i className="las la-arrows-alt text-xl"></i>
+                <span className="block"> {area}</span>
               </li>
-              <li className="flex flex-col px-1 xxl:px-2 gap-1">
-                <i className="las la-arrows-alt text-xl"></i>
-                <span className="block"> {area} sft </span>
-              </li>
+             
             </ul>
           </div>
           <div className="mx-3 lg:mx-5">
-            <div className=" border-t border-dash-long"></div>
+            <div className="border-t border-dash-long"></div>
           </div>
           <div className="px-3 sm:px-5 pb-5 pt-4">
+            {/* Price Section */}
             <div className="flex flex-wrap gap-3 justify-between items-center">
-              <span className="text-primary text-xl font-medium">
+              {/* <span className="text-primary text-xl font-medium">
                 ${price}
-                <span className="text-base text-neutral-700">/month</span>
+              </span> */}
+              <span className="block  font-medium line-through">
+                ₹{starting_price}
+                <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
               </span>
-              <Link href="/property-details-1" className="btn-outline ">
-                Read More
+              <Link href={`/hotel-listing-details?hotelDetailsId=${id}&type=${capitalizedType}`} className="btn-outline ">
+                Book Now
               </Link>
             </div>
           </div>

@@ -13,6 +13,7 @@ import HowItWork from "@/components/home-2/HowItWork";
 import MobileApp from "@/components/home-2/MobileApp";
 import Property from "@/components/home-2/Property";
 import Testimonial from "@/components/home-2/Testimonial";
+import Featured from "@/components/home-6/Featured";
 
 const page = () => {
   return (
@@ -29,6 +30,7 @@ const page = () => {
         {/* <MobileApp /> */}
         {/* <Explore /> */}
         <Counter />
+        <Featured/>
         <Testimonial />
         <Agents />
         <Faq />

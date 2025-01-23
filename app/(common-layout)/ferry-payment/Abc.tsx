@@ -18,6 +18,7 @@ function classNames(...classes: any[]) {
 }
 
 interface Passenger {
+  [key: string]: string | number;
   title: string;
   name: string;
   age: string;
@@ -30,20 +31,26 @@ interface Passenger {
 
 
 
-const FerryPayment = () => {
+const FerryDetailsPage = () => {
   const router = useRouter();
   // Parse travelData from localStorage, default to an empty object if not available
   const travelData = JSON.parse(localStorage.getItem("travelData") || "{}");
   const [bookingID, setBookingID] = useState('');
+
+  useEffect(() => {
+    // Generate a unique booking ID when the component mounts
+    setBookingID(generateBookingID());
+  }, []);
+
+
 
   const adults = travelData.adults ?? 0; // Default to 0 if not available
   const infants = travelData.infants ?? 0; // Default to 0 if not available
 
   // Parse selected ferries from localStorage, default to null if not available
   const selectedFerry = JSON.parse(localStorage.getItem("selectedFerry") || "null");
-
   const selectedFerry2 = JSON.parse(localStorage.getItem("selectedFerry2") || "null");
-  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") ||" null");
+  const selectedFerry3 = JSON.parse(localStorage.getItem("selectedFerry3") || "null");
 
   // Assign values only if the selected ferry objects exist
   const shipTitle1 = selectedFerry?.ship_title;
@@ -91,33 +98,45 @@ const FerryPayment = () => {
 
 
 
-  const calculateTimeDifference = (departureTime: string, arrivalTime: string) => {
-    const formatTime = (time: string) => {
-      const [hours, minutes, seconds] = time.split(':').map(Number);
-      const date = new Date();
-      date.setHours(hours, minutes, seconds, 0);
-      return date;
-    };
-
-    const departureDate = formatTime(departureTime);
-    const arrivalDate = formatTime(arrivalTime);
-
-    const timeDifference = arrivalDate.getTime() - departureDate.getTime();
-
-    // Convert time difference from milliseconds to hours and minutes
-    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-
-    return `${hours}h ${minutes}m`;
-  };
-
   const formatTime = (time: string) => {
+    if (!time || typeof time !== "string") {
+      console.error("Invalid time format:", time);
+      return "Invalid time"; // Return a fallback value
+    }
     const [hours, minutes] = time.split(":").map(Number);
     const period = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12; // Convert 0 or 12-hour to 12-hour clock
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
-
+  
+  const calculateTimeDifference = (departureTime: string, arrivalTime: string) => {
+    const formatTime = (time: string) => {
+      if (!time || typeof time !== "string") {
+        console.error("Invalid time format:", time);
+        return new Date(0); // Return a fallback date
+      }
+      const [hours, minutes, seconds] = time.split(":").map(Number);
+      const date = new Date();
+      date.setHours(hours, minutes, seconds || 0, 0);
+      return date;
+    };
+  
+    const departureDate = formatTime(departureTime);
+    const arrivalDate = formatTime(arrivalTime);
+  
+    if (departureDate.getTime() === 0 || arrivalDate.getTime() === 0) {
+      return "Invalid time difference"; // Return fallback value if invalid
+    }
+  
+    const timeDifference = arrivalDate.getTime() - departureDate.getTime();
+  
+    // Convert time difference from milliseconds to hours and minutes
+    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  
+    return `${hours}h ${minutes}m`;
+  };
+  
 
   const [bookingId, setBookingId] = useState(null);
 
@@ -129,16 +148,15 @@ const FerryPayment = () => {
     Array.from({ length: adults + infants }).fill("Indian")
   );
 
-
   const handleNationalityChange = (index: number, nationality: unknown) => {
     const updatedNationalities = [...nationalities];
     updatedNationalities[index] = nationality;
     setNationalities(updatedNationalities);
   };
-  
 
-  const [passengerData, setPassengerData] = useState<Passenger[]>(
-    Array.from({ length: adults + infants }, () => ({
+
+  const [passengerData, setPassengerData] = useState<Passenger[]>([
+    ...Array.from({ length: adults + infants }, () => ({
       title: "Mr",
       name: "",
       age: "",
@@ -148,11 +166,13 @@ const FerryPayment = () => {
       fpassport: "",
       fexpdate: "",
     }))
-  );
-  
+  ]);
+
+
   const storedName = localStorage.getItem("name");
   const storedEmail = localStorage.getItem("email");
   const storedMobile = localStorage.getItem("mobile_number");
+  const storedCustomerId = localStorage.getItem("id");
 
 
   const [contactDetails, setContactDetails] = useState({
@@ -201,309 +221,215 @@ const FerryPayment = () => {
     }
   }, []); // Empty dependency array ensures this runs only once on mount.
 
-  const handlePassengerChange = (index: number, field: keyof Passenger, value: string) => {
+  const handlePassengerChange = (index: number, field: string, value: string) => {
     const updatedData = [...passengerData];
+
     updatedData[index][field] = value;
     setPassengerData(updatedData);
   };
-  
 
   const handleContactChange = (field: string, value: string) => {
-    setContactDetails({ ...contactDetails, [field]: value });
+    setContactDetails((prevDetails) => ({ ...prevDetails, [field]: value }));
   };
-
-  // const handleSubmit = async () => {
-  //   const passenger = passengerData.reduce((acc, data, index) => {
-  //     acc[index + 1] = data;
-  //     return acc;
-  //   }, {});
-
-  //   const payload = {
-  //     data: {
-  //       passenger,
-  //       ...contactDetails,
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization"),
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-
-  //     if (response.ok) {
-  //       const result = await response.json();
-  //       console.log("Successssssss:", result);
-  //       alert("Success:");
-  //     } else {
-  //       console.error("Error:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //   }
-  // };
   
+
   const generateBookingID = () => {
     // Generate a random number with a fixed length
     const randomNumber = Math.floor(Math.random() * 100000); // Generates a random number between 0 and 99999
     return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
   };
 
-    useEffect(() => {
-      // Generate a unique booking ID when the component mounts
-      setBookingID(generateBookingID());
-    }, []);
-  
+  useEffect(() => {
+    setBookingID(generateBookingID());
+  }, []);
 
 
 
 
-  // const handleDownloadTicket = async (bookingId) => {
-  //   try {
-  //     const response = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization"),
-  //       },
-  //       body: JSON.stringify({
-  //         data: {
-  //           booking_id: bookingId,
-  //         },
-  //       }),
-  //     });
 
-  //     if (response.ok) {
-  //       // The response is expected to be a base64-encoded string (not JSON)
-  //       const result = await response.text(); // Get response as text, not JSON
-  //       console.log("Response from download_ticket_pdf API:", result);
+  const handleDownloadTicket = async (bookingId: any, paymentData: any) => {
+    try {
+      // Step 1: Download the ticket PDF as a base64 string
+      const downloadResponse = await fetch(
+        "https://staging.makruzz.com/booking_api/download_ticket_pdf",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
+          },
+          body: JSON.stringify({
+            data: {
+              booking_id: bookingId,
+            },
+          }),
+        }
+      );
 
-  //       // Decode the base64 string
-  //       const base64String = result;
+      if (downloadResponse.ok) {
+        const base64String = await downloadResponse.text();
 
-  //       if (base64String) {
-  //         // Debugging step: Check the base64 string's contents
-  //         console.log("Base64 string received:", base64String);
+        if (base64String) {
+          console.log("Base64 string received:", base64String);
 
-  //         try {
-  //           // Decode the base64 string into a byte array
-  //           const byteCharacters = atob(base64String);
-  //           const byteArrays = [];
+          // Step 2: Convert base64 string to a Blob
+          const byteCharacters = atob(base64String);
+          const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
+          const byteArray = new Uint8Array(byteNumbers);
+          const pdfBlob = new Blob([byteArray], { type: "application/pdf" });
 
-  //           // Convert the base64 string into an array of bytes
-  //           for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-  //             const slice = byteCharacters.slice(offset, offset + 1024);
-  //             const byteNumbers = new Array(slice.length);
-  //             for (let i = 0; i < slice.length; i++) {
-  //               byteNumbers[i] = slice.charCodeAt(i);
-  //             }
-  //             const byteArray = new Uint8Array(byteNumbers);
-  //             byteArrays.push(byteArray);
-  //           }
+          // Step 3: Create FormData and append the Blob as a file
+            const formData = new FormData();
+            formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
+            formData.append("service_type", "Ferry");
+            formData.append("ferry_name", "Makruzz")
+            formData.append("invoice_id", paymentData?.razorpay_payment_id);
+            formData.append("booking_id", bookingID);
+            formData.append("customer_id", storedCustomerId || "");
+            formData.append("customer_name", contactDetails.c_name || "");
+            formData.append("customer_email", contactDetails.c_email || "");
+            formData.append("customer_mobile_number", contactDetails.c_mobile || "");
+            formData.append("amount", String(totalPrice));
+            formData.append("starting_date", travelDate1);
+            formData.append("adults", adults);
+            formData.append("payment_method", "Razorpay");
+            formData.append("arrival_place", to3 || to2 || to1);
 
-  //           // Combine all byte arrays into one Uint8Array
-  //           const byteArray = new Uint8Array(byteArrays.reduce((acc, arr) => acc.concat(Array.from(arr)), []));
+            // Step 4: Send the FormData to the store_payment API
+            const storeResponse = await fetch(
+              "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
+              {
+                method: "POST",
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+              },
+              body: formData,
+            }
+          );
 
-  //           // Create a Blob from the byte array (PDF format)
-  //           const blob = new Blob([byteArray], { type: "application/pdf" });
-
-  //           // Create an object URL for the Blob
-  //           const link = document.createElement("a");
-  //           link.href = URL.createObjectURL(blob);
-  //           link.download = `ticket_${bookingId}.pdf`; // Customize the file name
-  //           link.click(); // Trigger the download
-
-  //           alert("Ticket PDF download...");
-  //         } catch (error) {
-  //           console.error("Error decoding base64 or downloading the file:", error);
-  //           alert("Error decoding the ticket or downloading the file.");
-  //         }
-  //       } else {
-  //         console.error("No PDF data received in the response.");
-  //         alert("Error: No PDF data received.");
-  //       }
-  //     } else {
-  //       console.error("Error downloading ticket:", response.statusText);
-  //       alert("Error downloading ticket.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //     alert("An error occurred while processing your request.");
-  //   }
-  // };
-
-
-
-  // const handleDownloadTicket = async (bookingId: any) => {
-  //   try {
-  //     const downloadResponse = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-  //       },
-  //       body: JSON.stringify({
-  //         data: {
-  //           booking_id: bookingId,
-  //         },
-  //       }),
-  //     });
-  
-  //     if (downloadResponse.ok) {
-  //       const base64String = await downloadResponse.text();
-  
-  //       if (base64String) {
-  //         console.log("Base64 string received:", base64String);
-  
-  //         // Prepare data to be sent to the store_payment API
-  //         const paymentData = {
-  //           invoice_pdf: base64String, // Save the PDF in the `invoice_pdf` key
-  //           service_type: "Ferry",
-  //           invoice_id: "XXXXX",
-  //           booking_id: bookingID,
-  //           customer_id: "7",
-  //           customer_name: storedName, // Replace with your field and value
-  //           customer_email: storedEmail, // Replace with your field and value
-  //           ammount: totalPrice,
-  //           starting_date: travelDate1,
-  //           adults: adults,
-  //         };
-  
-  //         const storeResponse = await fetch("https://yrpitsolutions.com/tourism_api/api/user/store_payment", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-  //           },
-  //           body: JSON.stringify(paymentData),
-  //         });
-  
-  //         if (storeResponse.ok) {
-  //           const storeResult = await storeResponse.json();
-  //           console.log("Data saved to store_payment API:", storeResult);
-  //           alert("PDF and data saved successfully!");
-  //         } else {
-  //           console.error("Error saving data to store_payment:", storeResponse.statusText);
-  //           alert("Error saving data.");
-  //         }
-  //       } else {
-  //         console.error("No PDF data received in the response.");
-  //         alert("Error: No PDF data received.");
-  //       }
-  //     } else {
-  //       console.error("Error downloading ticket:", downloadResponse.statusText);
-  //       alert("Error downloading ticket.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //     alert("An error occurred while processing your request.");
-  //   }
-  // };
-  
-
-
-
-
-  // const handleSubmit = async () => {
-  //   const passenger = passengerData.reduce<Record<number, typeof passengerData[0]>>((acc, data, index) => {
-  //     acc[index + 1] = data;
-  //     return acc;
-  //   }, {});
-  
-  //   const payload = {
-  //     data: {
-  //       passenger,
-  //       ...contactDetails,
-  //     },
-  //   };
-  
-  //   try {
-  //     // First, save passengers' data
-  //     const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-
-  //     if (response.ok) {
-  //       const result = await response.json();
-  //       console.log("Success:", result);
-  //       alert("Success!");
-
-  //       // Extract the booking_id(s) from the result
-  //       const { booking_id, return_booking_id } = result.data;
-
-  //       let confirmResponse;
-  //       if (return_booking_id) {
-  //         // For multiple trips, both booking_id and return_booking_id are present
-  //         confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking_v2", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-  //           },
-  //           body: JSON.stringify({
-  //             data: {
-  //               booking_id: [booking_id, return_booking_id],
-  //             },
-  //           }),
-  //         });
-  //       } else {
-  //         // For a single trip, only booking_id is present
-  //         confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking", {
-  //           method: "POST",
-  //           headers: {
-  //             "Content-Type": "application/json",
-  //             Mak_Authorization: localStorage.getItem("Mak_Authorization") || "",
-  //           },
-  //           body: JSON.stringify({
-  //             data: {
-  //               booking_id,
-  //             },
-  //           }),
-  //         });
-  //       }
-
-  //       if (confirmResponse.ok) {
-  //         const confirmResult = await confirmResponse.json();
-  //         console.log("Booking confirmed:", confirmResult);
-  //         alert("Booking confirmed!");
-
-  //         // Trigger ticket download after booking confirmation
-  //         // Pass the correct booking_id to the handleDownloadTicket function
-  //         handleDownloadTicket(booking_id); // Call handleDownloadTicket with booking_id
-  //         localStorage.removeItem("selectedFerry");
-  //         localStorage.removeItem("selectedFerry2");
-  //         localStorage.removeItem("selectedFerry3");
-  //         localStorage.removeItem("travelData");
-  //         router.push("/ferry-payment");
-  //       } else {
-  //         console.error("Error confirming booking:", confirmResponse.statusText);
-  //       }
-  //     } else {
-  //       console.error("Error saving passengers:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //   }
-  // };
+          if (storeResponse.ok) {
+            const storeResult = await storeResponse.json();
+            console.log("Data saved to store_payment API:", storeResult);
+            alert("PDF and data saved successfully!");
+          } else {
+            console.error("Error saving data to store_payment:", storeResponse.statusText);
+            alert("Error saving data.");
+          }
+        } else {
+          console.error("No PDF data received in the response.");
+          alert("Error: No PDF data received.");
+        }
+      } else {
+        console.error("Error downloading ticket:", downloadResponse.statusText);
+        alert("Error downloading ticket.");
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+      alert("An error occurred while processing your request.");
+    }
+  };
 
 
 
 
 
 
-  // const handlePaymentSuccess = (paymentData: any) => {
-  //   console.log('Payment Success Data:', paymentData);
-  //   handleSubmit();
-  // };
+  const handleSubmit = async (paymentData: any) => {
+    const passenger = passengerData.reduce<{ [key: number]: typeof passengerData[0] }>((acc, data, index) => {
+      acc[index + 1] = data;
+      return acc;
+    }, {});
+
+    const payload = {
+      data: {
+        passenger,
+        ...contactDetails,
+      },
+    };
+
+    try {
+      // First, save passengers' data
+      const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("Success:", result);
+        alert("Success!");
+
+        // Extract the booking_id(s) from the result
+        const { booking_id, return_booking_id } = result.data;
+
+        let confirmResponse;
+        if (return_booking_id) {
+          // For multiple trips, both booking_id and return_booking_id are present
+          confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking_v2", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
+            },
+            body: JSON.stringify({
+              data: {
+                booking_id: [booking_id, return_booking_id],
+              },
+            }),
+          });
+        } else {
+          // For a single trip, only booking_id is present
+          confirmResponse = await fetch("https://staging.makruzz.com/booking_api/confirm_booking", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Mak_Authorization: localStorage.getItem("Mak_Authorization") ?? "",
+            },
+            body: JSON.stringify({
+              data: {
+                booking_id,
+              },
+            }),
+          });
+        }
+
+        if (confirmResponse.ok) {
+          const confirmResult = await confirmResponse.json();
+          console.log("Booking confirmed:", confirmResult);
+          alert("Booking confirmed!");
+
+          // Trigger ticket download after booking confirmation
+          // Pass the correct booking_id to the handleDownloadTicket function
+          handleDownloadTicket(booking_id, paymentData);// Call handleDownloadTicket with booking_id
+          localStorage.removeItem("selectedFerry");
+          localStorage.removeItem("selectedFerry2");
+          localStorage.removeItem("selectedFerry3");
+          localStorage.removeItem("travelData");
+          router.replace("/ferry-payment");
+        } else {
+          console.error("Error confirming booking:", confirmResponse.statusText);
+        }
+      } else {
+        console.error("Error saving passengers:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Request failed:", error);
+    }
+  };
+
+
+
+
+
+
+  const handlePaymentSuccess = (paymentData: any) => {
+    console.log('Payment Success Data:', paymentData);
+    handleSubmit(paymentData);
+  };
 
 
 
@@ -641,7 +567,7 @@ const FerryPayment = () => {
                                 <input
                                   type="number"
                                   placeholder="Age"
-                                  className="border border-neutral-300 rounded-lg p-2 w-24 focus:outline-none" 
+                                  className="border border-neutral-300 rounded-lg p-2 w-24 focus:outline-none"
                                   onChange={(e) => handlePassengerChange(index, "age", e.target.value)}
                                 />
 
@@ -738,6 +664,7 @@ const FerryPayment = () => {
                           type="tel"
                           placeholder="Alternative Number"
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
+                          value={contactDetails.p_contact || ""}
                           onChange={(e) => handleContactChange("p_contact", e.target.value)}
                         />
 
@@ -829,221 +756,49 @@ const FerryPayment = () => {
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-2)] rounded-2xl border border-neutral-40 mb-10">
                   <h4 className="mb-0 text-2xl font-semibold">
                     {" "}
-                    Cancellation Charges:{" "}
+                    Terms & Conditions:{" "}
                   </h4>
                   <div className="hr-dashed my-5"></div>
                   <h6 className="mb-4"> Passengers traveling </h6>
                   <ul className="list-disc pl-4 gap-3 mb-8">
                     <li>
-                      Cancellation 48 hours or more before ferry departure: Rs 250 per ticket.
+                      Passengers are requested to re-confirm their booking one day in advance,Contact Number : Tel: 03192-236677, 237788 | M:+91-8001240006(0900hrs to
+                      1700hrs).
                     </li>
                     <li>
-                      Cancellation between 24 and 48 hours before departure: 50% of the ticket price.
+                      Correction of NAME is not permitted in ticket ONCE BOOKED. So please make sure for correct NAME.
                     </li>
                     <li>
-                      Cancellation within 24 hours of departure: 100% of the ticket price.
+                      Reporting should be 2 hrs prior to departure.
                     </li>
                   </ul>
-                  <h6 className="mb-4"> Guidelines </h6>
                   <ul className="pl-4 list-disc gap-3 mb-8">
                     <li>
-                      Bring all necessary documentation, including your passport
-                      or ID card, visa (if required)
+                      Passenger should carry a PHOTO IDENTITY CARD & RTPCR report hard copy at the time of Check-In
                     </li>
                     <li>
-                      Check the baggage allowance for your flight and pack
-                      accordingly.
+                      . Cancellation Charges Before 48Hrs of Departure - Rs100 + Taxes are applicable (Documentation Charges Per Ticket No.), Before 24Hrs of Departure - 50% +
+                      Taxes are applicable, WITHIN 24 Hrs of Departure - No Refund.
+
                     </li>
                     <li>
-                      Check in online or at the airport, following the
-                      airline&apos;s guidelines for check-in times
+                      Tickets are Non Transferable and Non Re-routable.
                     </li>
                     <li>
-                      Go through security screening and follow the guidelines
-                      for liquids, gels, in your carry-on luggage.
+                      . LIQUOR & SMOKING is NOT ALLOWED in the vessel by LAW.
                     </li>
                     <li>
-                      Board your flight when your boarding group is called,
-                      following the instructions of the airline staff.
+                      . Passenger belongings carried in hand will be at their own risk carrier is no way liable in any lose or damage from what so ever it may cause
                     </li>
                     <li>
-                      During the flight, follow the instructions of the flight
-                      crew and stay in your seat with your seat belt fastened
-                      when the seat belt sign is on.
+                      The carrier reserves the right to cancel or change the published voyage for any official purpose and in any manner or to any extent. The carrier shall bear no
+                      liability for any loss that passenger may suffer, any consequences thereof or in respect of any changes in scheduled due to Bad weather or Technical reasons, In this
+                      case passenger can either claim full refund or can rescheduled His/her Journey on availability
                     </li>
                   </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center gap-2 text-primary">
-                    <span className="font-semibold inline-block">
-                      Read More
-                    </span>
-                    <ArrowRightIcon className="w-5 h-5" />
-                  </Link>
+
                 </div>
 
-                {/* <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-2)] rounded-2xl border border-neutral-40 mb-10">
-                  <h4 className="mb-0 text-2xl font-semibold">
-                    {" "}
-                    Traveler Details{" "}
-                  </h4>
-                  <div className="hr-dashed my-5"></div>
-                  <form action="#" className="grid grid-cols-12 gap-4">
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        First Name
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Enter First Name"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Last Name
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Enter Last Name"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Email
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="email"
-                        placeholder="Enter Email"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Phone
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Enter Phone"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Date Of Birth
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="date"
-                        placeholder="Select date of birth"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Nationality
-                      </label>
-                      <div className="property-search__select property-search__col rounded-full flex items-center gap-2 px-6 flex-grow bg-white">
-                        <select
-                          className="w-full bg-transparent px-5 py-3 focus:outline-none"
-                          aria-label="Default select example">
-                          <option>Location</option>
-                          <option value="1">New York</option>
-                          <option value="2">Chicago</option>
-                          <option value="3">Atlanta</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div className="col-span-12">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Passport Number
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Passport Number"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Issuing Country
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Country Name"
-                      />
-                    </div>
-                    <div className="col-span-12 md:col-span-6">
-                      <label className="block font-medium text-[var(--neutral-700)] text-lg mb-3">
-                        Passport Expiry
-                      </label>
-                      <input
-                        className="w-full focus:outline-none text-base py-3 px-5 rounded-full"
-                        type="text"
-                        placeholder="Passport Date"
-                      />
-                    </div>
-                    <div className="col-span-12">
-                      <Link
-                        href="#"
-                        className="link flex items-center gap-2 text-primary">
-                        <span className="font-semibold inline-block">
-                          Add New Adult
-                        </span>
-                        <ArrowRightIcon className="w-5 h-5" />
-                      </Link>
-                    </div>
-                  </form>
-                </div> */}
-                <div className="flex items-center justify-between gap-4 flex-wrap">
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-1">
-                    <ArrowLeftIcon className="w-5 h-5" />
-                    <span className="inline-block font-semibold">
-                      Previous Flight
-                    </span>
-                  </Link>
-                  <ul className="flex flex-wrap gap-3 justify-center order-3 flex-grow md:order-2">
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-facebook-f"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-twitter"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-linkedin-in"></i>
-                      </Link>
-                    </li>
-                    <li>
-                      <Link
-                        href="#"
-                        className="link grid place-content-center w-9 h-9 rounded-full bg-[var(--primary-light)] text-primary hover:bg-primary hover:text-white">
-                        <i className="lab text-xl la-dribbble"></i>
-                      </Link>
-                    </li>
-                  </ul>
-                  <Link
-                    href="#"
-                    className="link flex items-center clr-neutral-500 hover:text-primary gap-1 order-2">
-                    <span className="inline-block font-semibold">
-                      Next Flight
-                    </span>
-                    <ArrowRightIcon className="w-5 h-5" />
-                  </Link>
-                </div>
               </div>
             </div>
           </div>
@@ -1296,16 +1051,14 @@ const FerryPayment = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-between pl-6 pt-6 pr-6">
+            <div className="flex items-center justify-between pl-6 pr-6">
               <p className="mb-0 clr-neutral-500">
                 {" "}
                 Total Price{" "}
               </p>
               <p className="mb-0 font-medium"> ₹{totalPrice} </p>
             </div>
-          
-
-
+            
 
           </div>
         </div>
@@ -1316,7 +1069,7 @@ const FerryPayment = () => {
 
 const Page = () => (
   <Suspense fallback={<div>Loading...</div>}>
-    <FerryPayment />
+    <FerryDetailsPage />
   </Suspense>
 );
 

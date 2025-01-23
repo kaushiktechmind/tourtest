@@ -576,7 +576,6 @@ const HotelListingDetails = () => {
     setShowFullDescription(!showFullDescription);
   };
 
-  // console.log("dataaaaaaaaaaaaaaaaaaaaa", location, startdate, enddate, totalRooms);
 
   useEffect(() => {
     const fromHome = localStorage.getItem("fromHome");
@@ -908,7 +907,7 @@ const HotelListingDetails = () => {
 
                   </ul>
                   <div className="border border-dashed my-8"></div>
-                  <ul className="flex items-center flex-wrap gap-3">
+                  <ul className="flex items-center flex-wrap gap-8">
                     {amenities.map((amenity, index) => (
                       <li key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
                         {/* Tooltip trigger container */}
@@ -956,11 +955,8 @@ const HotelListingDetails = () => {
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
-                  {/* <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-gray-100 rounded-full p-3 border "> */}
+                <div className="flex flex-wrap gap-5 mt-6 bg-[var(--bg-1)] border p-5 rounded-xl shadow-lg justify-center items-center mt-[30px] mb-[30px]">
                   <AddRoom />
-                  {/* </div> */}
-
                   <div className="relative w-full md:w-[65%] xl:w-[35%] flex items-center bg-white rounded-full p-3 border ">
                     <DatePicker
                       placeholderText="Select Date"

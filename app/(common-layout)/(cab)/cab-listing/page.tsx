@@ -19,6 +19,8 @@ interface Activity {
 const Page = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);  // Track current page
+  const [itemsPerPage] = useState(6);  // Set items per page
 
   useEffect(() => {
     const fetchActivities = async () => {
@@ -51,9 +53,22 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
+  // Logic for slicing the activities array for pagination
+  const indexOfLastActivity = currentPage * itemsPerPage;
+  const indexOfFirstActivity = indexOfLastActivity - itemsPerPage;
+  const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(activities.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
-      {activities.map(
+      {currentActivities.map(
         ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price }) => (
           <div key={id} className="col-span-12 ">
             <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
@@ -113,9 +128,11 @@ const Page = () => {
           </div>
         )
       )}
-      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
-        throw new Error("Function not implemented.");
-      } } />
+      <CardPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };

@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountainSun, faCalendarDays, faHotel, faCar } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
+import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
 import {
   EllipsisVerticalIcon,
   PencilSquareIcon,
@@ -42,7 +42,7 @@ interface Payment {
   package_name?: string;
   activity_name?: string;
   cab_name?: string;
-  // Other properties of Payment
+  ferry_name?: string;
 }
 
 const Page = () => {
@@ -71,7 +71,7 @@ const Page = () => {
   }, []);
 
   const getDetailsAndIcon = (payment: Payment) => {
-    const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
+    const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || payment.ferry_name || "N/A";
 
     let icon = null;
     let text = "";
@@ -88,6 +88,9 @@ const Page = () => {
     } else if (payment.cab_name) {
       icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
       text = "Cab"; // Add related text for cab
+    } else if (payment.ferry_name) {
+      icon = <FontAwesomeIcon icon={faShip} className="w-5 h-5" />;
+      text = "Ferry"; // Add related text for cab
     }
 
     return { icon, details, text }; // Return icon, details, and text
@@ -105,6 +108,7 @@ const Page = () => {
           payment.package_name,
           payment.activity_name,
           payment.cab_name,
+          payment.ferry_name,
           payment.customer_mobile_number,
         ]
           .filter(Boolean)

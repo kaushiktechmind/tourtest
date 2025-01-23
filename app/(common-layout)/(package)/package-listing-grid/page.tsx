@@ -23,6 +23,8 @@ interface Package {
 const Page = () => {
   const [packages, setPackages] = useState<Package[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);  // Track current page
+  const [itemsPerPage] = useState(6);  // Set items per page
 
   useEffect(() => {
     const fetchPackages = async () => {
@@ -55,16 +57,28 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
+  // Logic for slicing the packages array for pagination
+  const indexOfLastPackage = currentPage * itemsPerPage;
+  const indexOfFirstPackage = indexOfLastPackage - itemsPerPage;
+  const currentPackages = packages.slice(indexOfFirstPackage, indexOfLastPackage);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(packages.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
-      {packages.map(
-     ({ id, banner_image, location_name, package_title, duration, sale_price }) => (
+      {currentPackages.map(
+        ({ id, banner_image, location_name, package_title, duration, sale_price }) => (
           <div key={id} className="col-span-12 md:col-span-6 group">
             <div className="bg-white rounded-2xl p-3">
               <div className="relative">
                 <div className="rounded-2xl">
-                <Image
+                  <Image
                     width={386}
                     height={224}
                     src={banner_image[0]}
@@ -82,11 +96,11 @@ const Page = () => {
                   </Link>
                 </div>
                 <div className="flex justify-between mb-6">
-                    <div className="flex items-center gap-1">
-                      <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
-                      <span className="inline-block">{location_name}</span>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
+                    <span className="inline-block">{location_name}</span>
                   </div>
+                </div>
                 <ul className="grid grid-cols-2 gap-3">
                   <li className="col-span-1">
                     <div className="flex items-center gap-2">
@@ -102,7 +116,7 @@ const Page = () => {
               <div className="p-4">
                 <div className="flex flex-wrap justify-between items-center">
                   <span className="block text-xl font-medium text-primary">
-                  ₹{sale_price}
+                    ₹{sale_price}
                     <span className="inline-block font-normal text-base">
                       /Pax
                     </span>
@@ -118,9 +132,11 @@ const Page = () => {
           </div>
         )
       )}
-      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
-        throw new Error("Function not implemented.");
-      } } />
+      <CardPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };

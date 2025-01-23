@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CardPagination from "@/components/CardPagination";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountainSun, faCalendarDays, faHotel, faCar } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
+import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
 
 interface PaymentData {
   booking_id: number;
@@ -24,24 +24,15 @@ interface Payment {
   package_name: any;
   activity_name: any;
   cab_name: any;
+  ferry_name: any;
 }
-import {
-  EllipsisVerticalIcon,
-  PencilSquareIcon,
-  PlusCircleIcon,
-  TrashIcon,
-  HomeIcon,
-  CubeIcon,
-  ClipboardIcon,
-  TruckIcon 
-  // CarIcon,
-} from "@heroicons/react/24/outline";
+
 
 const Page = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const [tourName, setTourName] = useState<string | null>(null); 
+
+  const [tourName, setTourName] = useState<string | null>(null);
 
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
@@ -107,34 +98,18 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
-  // const getDetailsAndIcon = (payment: Payment) => {
-  //   const details = payment.hotel_name || payment.package_name || payment.activity_name || payment.cab_name || "N/A";
-
-  //   let icon = null;
-
-  //   if (payment.hotel_name) {
-  //     icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />; // FontAwesome icon for hotel
-  //   } else if (payment.package_name) {
-  //     icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />; // FontAwesome icon for package (mountain sun)
-  //   } else if (payment.activity_name) {
-  //     icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />; // FontAwesome icon for activity (calendar days)
-  //   } else if (payment.cab_name) {
-  //     icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />; // FontAwesome icon for cab (car)
-  //   }
-
-  //   return { icon, details }; // Return icon and details as an object
-  // };
 
   const getDetailsAndIcon = (payment: PaymentData | Payment) => {
-    const details = 
-      (payment as Payment).hotel_name || 
-      (payment as Payment).package_name || 
-      (payment as Payment).activity_name || 
-      (payment as Payment).cab_name || 
+    const details =
+      (payment as Payment).hotel_name ||
+      (payment as Payment).package_name ||
+      (payment as Payment).activity_name ||
+      (payment as Payment).cab_name ||
+      (payment as Payment).ferry_name ||
       "N/A";
-  
+
     let icon = null;
-  
+
     if ((payment as Payment).hotel_name) {
       icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
     } else if ((payment as Payment).package_name) {
@@ -143,12 +118,14 @@ const Page = () => {
       icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
     } else if ((payment as Payment).cab_name) {
       icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
+    } else if ((payment as Payment).ferry_name) {
+      icon = <FontAwesomeIcon icon={faShip} className="w-5 h-5" />;
     }
-  
+
     return { icon, details };
   };
-  
-  
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
@@ -198,28 +175,28 @@ const Page = () => {
                       })}
                     </td>
                     <td className="border p-2"> {(() => {
-                        const { icon } = getDetailsAndIcon(payment); // Destructure the returned object
-                        return (
-                          <>
-                            {icon}
-                          </>
-                        );
-                      })()}</td>  
-                    <td className="border p-2">{payment.booking_id}</td>  
+                      const { icon } = getDetailsAndIcon(payment); // Destructure the returned object
+                      return (
+                        <>
+                          {icon}
+                        </>
+                      );
+                    })()}</td>
+                    <td className="border p-2">{payment.booking_id}</td>
                     <td className="border p-2">{payment.customer_name}</td>
                     <td className="border p-2"> {(() => {
-                        const { details } = getDetailsAndIcon(payment); // Destructure the returned object
-                        return (
-                          <>
-                            {details}
-                          </>
-                        );
-                      })()}</td>
+                      const { details } = getDetailsAndIcon(payment); // Destructure the returned object
+                      return (
+                        <>
+                          {details}
+                        </>
+                      );
+                    })()}</td>
                     <td className="border p-2">{payment.invoice_id}</td>
                     <td className="border p-2">₹{payment.amount}/-</td>
                     <td className="border p-2">
                       <a
-                        ref={payment.invoice_pdf}
+                        href={payment.invoice_pdf || undefined} // Use href for URLs
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-500 underline flex items-center space-x-2"
@@ -232,9 +209,10 @@ const Page = () => {
                         >
                           <path d="M19 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V6l-5-4zM13 9h-2v6h2v-2h2v-2h-2V9zm-7 8H5v-2h1v2zm0-4H5v-2h1v2zm0-4H5V7h1v2zm12 9H8V4h5v5h5v10z" />
                         </svg>
-                        <span className="sr-only">View Invoice</span> {/* For accessibility */}
+                        <span className="sr-only">View Invoice</span>
                       </a>
                     </td>
+
                   </tr>
                 ))}
               </tbody>

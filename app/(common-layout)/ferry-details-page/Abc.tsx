@@ -37,6 +37,13 @@ const FerryDetailsPage = () => {
   const travelData = JSON.parse(localStorage.getItem("travelData") || "{}");
   const [bookingID, setBookingID] = useState('');
 
+  useEffect(() => {
+    // Generate a unique booking ID when the component mounts
+    setBookingID(generateBookingID());
+  }, []);
+
+
+
   const adults = travelData.adults ?? 0; // Default to 0 if not available
   const infants = travelData.infants ?? 0; // Default to 0 if not available
 
@@ -91,33 +98,45 @@ const FerryDetailsPage = () => {
 
 
 
-  const calculateTimeDifference = (departureTime: string, arrivalTime: string) => {
-    const formatTime = (time: string) => {
-      const [hours, minutes, seconds] = time.split(':').map(Number);
-      const date = new Date();
-      date.setHours(hours, minutes, seconds, 0);
-      return date;
-    };
-
-    const departureDate = formatTime(departureTime);
-    const arrivalDate = formatTime(arrivalTime);
-
-    const timeDifference = arrivalDate.getTime() - departureDate.getTime();
-
-    // Convert time difference from milliseconds to hours and minutes
-    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-
-    return `${hours}h ${minutes}m`;
-  };
-
   const formatTime = (time: string) => {
+    if (!time || typeof time !== "string") {
+      console.error("Invalid time format:", time);
+      return "Invalid time"; // Return a fallback value
+    }
     const [hours, minutes] = time.split(":").map(Number);
     const period = hours >= 12 ? "PM" : "AM";
     const formattedHours = hours % 12 || 12; // Convert 0 or 12-hour to 12-hour clock
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
-
+  
+  const calculateTimeDifference = (departureTime: string, arrivalTime: string) => {
+    const formatTime = (time: string) => {
+      if (!time || typeof time !== "string") {
+        console.error("Invalid time format:", time);
+        return new Date(0); // Return a fallback date
+      }
+      const [hours, minutes, seconds] = time.split(":").map(Number);
+      const date = new Date();
+      date.setHours(hours, minutes, seconds || 0, 0);
+      return date;
+    };
+  
+    const departureDate = formatTime(departureTime);
+    const arrivalDate = formatTime(arrivalTime);
+  
+    if (departureDate.getTime() === 0 || arrivalDate.getTime() === 0) {
+      return "Invalid time difference"; // Return fallback value if invalid
+    }
+  
+    const timeDifference = arrivalDate.getTime() - departureDate.getTime();
+  
+    // Convert time difference from milliseconds to hours and minutes
+    const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+    const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+  
+    return `${hours}h ${minutes}m`;
+  };
+  
 
   const [bookingId, setBookingId] = useState(null);
 
@@ -210,43 +229,9 @@ const FerryDetailsPage = () => {
   };
 
   const handleContactChange = (field: string, value: string) => {
-    setContactDetails({ ...contactDetails, [field]: value });
+    setContactDetails((prevDetails) => ({ ...prevDetails, [field]: value }));
   };
-
-  // const handleSubmit = async () => {
-  //   const passenger = passengerData.reduce((acc, data, index) => {
-  //     acc[index + 1] = data;
-  //     return acc;
-  //   }, {});
-
-  //   const payload = {
-  //     data: {
-  //       passenger,
-  //       ...contactDetails,
-  //     },
-  //   };
-
-  //   try {
-  //     const response = await fetch("https://staging.makruzz.com/booking_api/savePassengers", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization"),
-  //       },
-  //       body: JSON.stringify(payload),
-  //     });
-
-  //     if (response.ok) {
-  //       const result = await response.json();
-  //       console.log("Successssssss:", result);
-  //       alert("Success:");
-  //     } else {
-  //       console.error("Error:", response.statusText);
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //   }
-  // };
+  
 
   const generateBookingID = () => {
     // Generate a random number with a fixed length
@@ -255,7 +240,6 @@ const FerryDetailsPage = () => {
   };
 
   useEffect(() => {
-    // Generate a unique booking ID when the component mounts
     setBookingID(generateBookingID());
   }, []);
 
@@ -263,83 +247,7 @@ const FerryDetailsPage = () => {
 
 
 
-  // const handleDownloadTicket = async (bookingId) => {
-  //   try {
-  //     const response = await fetch("https://staging.makruzz.com/booking_api/download_ticket_pdf", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //         Mak_Authorization: localStorage.getItem("Mak_Authorization"),
-  //       },
-  //       body: JSON.stringify({
-  //         data: {
-  //           booking_id: bookingId,
-  //         },
-  //       }),
-  //     });
-
-  //     if (response.ok) {
-  //       // The response is expected to be a base64-encoded string (not JSON)
-  //       const result = await response.text(); // Get response as text, not JSON
-  //       console.log("Response from download_ticket_pdf API:", result);
-
-  //       // Decode the base64 string
-  //       const base64String = result;
-
-  //       if (base64String) {
-  //         // Debugging step: Check the base64 string's contents
-  //         console.log("Base64 string received:", base64String);
-
-  //         try {
-  //           // Decode the base64 string into a byte array
-  //           const byteCharacters = atob(base64String);
-  //           const byteArrays = [];
-
-  //           // Convert the base64 string into an array of bytes
-  //           for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
-  //             const slice = byteCharacters.slice(offset, offset + 1024);
-  //             const byteNumbers = new Array(slice.length);
-  //             for (let i = 0; i < slice.length; i++) {
-  //               byteNumbers[i] = slice.charCodeAt(i);
-  //             }
-  //             const byteArray = new Uint8Array(byteNumbers);
-  //             byteArrays.push(byteArray);
-  //           }
-
-  //           // Combine all byte arrays into one Uint8Array
-  //           const byteArray = new Uint8Array(byteArrays.reduce((acc, arr) => acc.concat(Array.from(arr)), []));
-
-  //           // Create a Blob from the byte array (PDF format)
-  //           const blob = new Blob([byteArray], { type: "application/pdf" });
-
-  //           // Create an object URL for the Blob
-  //           const link = document.createElement("a");
-  //           link.href = URL.createObjectURL(blob);
-  //           link.download = `ticket_${bookingId}.pdf`; // Customize the file name
-  //           link.click(); // Trigger the download
-
-  //           alert("Ticket PDF download...");
-  //         } catch (error) {
-  //           console.error("Error decoding base64 or downloading the file:", error);
-  //           alert("Error decoding the ticket or downloading the file.");
-  //         }
-  //       } else {
-  //         console.error("No PDF data received in the response.");
-  //         alert("Error: No PDF data received.");
-  //       }
-  //     } else {
-  //       console.error("Error downloading ticket:", response.statusText);
-  //       alert("Error downloading ticket.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Request failed:", error);
-  //     alert("An error occurred while processing your request.");
-  //   }
-  // };
-
-
-
-  const handleDownloadTicket = async (bookingId: any) => {
+  const handleDownloadTicket = async (bookingId: any, paymentData: any) => {
     try {
       // Step 1: Download the ticket PDF as a base64 string
       const downloadResponse = await fetch(
@@ -357,48 +265,48 @@ const FerryDetailsPage = () => {
           }),
         }
       );
-  
+
       if (downloadResponse.ok) {
         const base64String = await downloadResponse.text();
-  
+
         if (base64String) {
           console.log("Base64 string received:", base64String);
-  
+
           // Step 2: Convert base64 string to a Blob
           const byteCharacters = atob(base64String);
           const byteNumbers = new Array(byteCharacters.length).fill(0).map((_, i) => byteCharacters.charCodeAt(i));
           const byteArray = new Uint8Array(byteNumbers);
           const pdfBlob = new Blob([byteArray], { type: "application/pdf" });
-  
+
           // Step 3: Create FormData and append the Blob as a file
-          const formData = new FormData();
-          formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
-          formData.append("service_type", "Ferry");
-          formData.append("invoice_id", "XXXXX");
-          formData.append("booking_id", "123");
-          formData.append("customer_id", storedCustomerId || "");
-          formData.append("customer_name", storedName || "");
-          formData.append("customer_email", storedEmail || "");
-          formData.append("customer_mobile_number", storedMobile || "");
-          formData.append("amount", String(totalPrice));
-          formData.append("starting_date", "12-02-2025");
-          formData.append("adults", adults);
-          formData.append("payment_method", "Razorpay");
-          formData.append("razorpay_payment_id", "aaa");
-          formData.append("arrival_place", to3 || to2 || to1);
-  
-          // Step 4: Send the FormData to the store_payment API
-          const storeResponse = await fetch(
-            "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
-            {
-              method: "POST",
+            const formData = new FormData();
+            formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
+            formData.append("service_type", "Ferry");
+            formData.append("ferry_name", "Makruzz")
+            formData.append("invoice_id", paymentData?.razorpay_payment_id);
+            formData.append("booking_id", bookingID);
+            formData.append("customer_id", storedCustomerId || "");
+            formData.append("customer_name", contactDetails.c_name || "");
+            formData.append("customer_email", contactDetails.c_email || "");
+            formData.append("customer_mobile_number", contactDetails.c_mobile || "");
+            formData.append("amount", String(totalPrice));
+            formData.append("starting_date", travelDate1);
+            formData.append("adults", adults);
+            formData.append("payment_method", "Razorpay");
+            formData.append("arrival_place", to3 || to2 || to1);
+
+            // Step 4: Send the FormData to the store_payment API
+            const storeResponse = await fetch(
+              "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
+              {
+                method: "POST",
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               },
               body: formData,
             }
           );
-  
+
           if (storeResponse.ok) {
             const storeResult = await storeResponse.json();
             console.log("Data saved to store_payment API:", storeResult);
@@ -420,13 +328,13 @@ const FerryDetailsPage = () => {
       alert("An error occurred while processing your request.");
     }
   };
-  
 
 
 
 
 
-  const handleSubmit = async () => {
+
+  const handleSubmit = async (paymentData: any) => {
     const passenger = passengerData.reduce<{ [key: number]: typeof passengerData[0] }>((acc, data, index) => {
       acc[index + 1] = data;
       return acc;
@@ -496,12 +404,12 @@ const FerryDetailsPage = () => {
 
           // Trigger ticket download after booking confirmation
           // Pass the correct booking_id to the handleDownloadTicket function
-          handleDownloadTicket(booking_id); // Call handleDownloadTicket with booking_id
-          localStorage.removeItem("selectedFerry");
-          localStorage.removeItem("selectedFerry2");
-          localStorage.removeItem("selectedFerry3");
-          localStorage.removeItem("travelData");
-          router.push("/ferry-payment");
+          handleDownloadTicket(booking_id, paymentData);// Call handleDownloadTicket with booking_id
+          // localStorage.removeItem("selectedFerry");
+          // localStorage.removeItem("selectedFerry2");
+          // localStorage.removeItem("selectedFerry3");
+          // localStorage.removeItem("travelData");
+          router.replace("/ferry-payment");
         } else {
           console.error("Error confirming booking:", confirmResponse.statusText);
         }
@@ -520,7 +428,7 @@ const FerryDetailsPage = () => {
 
   const handlePaymentSuccess = (paymentData: any) => {
     console.log('Payment Success Data:', paymentData);
-    handleSubmit();
+    handleSubmit(paymentData);
   };
 
 
@@ -756,6 +664,7 @@ const FerryDetailsPage = () => {
                           type="tel"
                           placeholder="Alternative Number"
                           className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
+                          value={contactDetails.p_contact || ""}
                           onChange={(e) => handleContactChange("p_contact", e.target.value)}
                         />
 
@@ -1197,22 +1106,17 @@ const FerryDetailsPage = () => {
               </div>
             )}
 
-            <div className="flex items-center justify-between pl-6 pt-6 pr-6">
+            <div className="flex items-center justify-between pl-6 pr-6">
               <p className="mb-0 clr-neutral-500">
                 {" "}
                 Total Price{" "}
               </p>
               <p className="mb-0 font-medium"> ₹{totalPrice} </p>
             </div>
-            {/* <Link
-              href="/ferry-payment"
-              className="mt-6 link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-medium w-full justify-center mb-6">
-              <span className="inline-block"> Proceed Booking </span>
-            </Link> */}
+            
 
             <RazorpayFerryBtn
               grandTotal={Number(totalPrice) * 100} // convert to paise
-              // grandTotal={2 * 100} // convert to paise
               currency="INR"
               onPaymentSuccess={handlePaymentSuccess} // Pass the success handler here
             >

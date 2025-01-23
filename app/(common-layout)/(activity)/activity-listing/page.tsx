@@ -3,17 +3,15 @@
 import { useEffect, useState } from "react";
 import CardPagination from "@/components/CardPagination";
 import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
-import 'font-awesome/css/font-awesome.min.css';
 import Image from "next/image";
 import Link from "next/link";
 
 interface Activity {
   id: number;
   banner_image_multiple: string[];
-  location_name: string;
-  activity_title: string;
+  location: string;
+  cab_name: string;
   start_time: string;
-  duration: string;
   price: string;
   sale_price: number;
 }
@@ -21,13 +19,14 @@ interface Activity {
 const Page = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);  // Track current page
+  const [itemsPerPage] = useState(6);  // Set items per page
 
   useEffect(() => {
     const fetchActivities = async () => {
       try {
         const response = await fetch(
-          // "https://yrpitsolutions.com/tourism_api/api/admin/get_activity",
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_all_activity",
+          "https://yrpitsolutions.com/tourism_api/api/cab-main-forms",
           {
             method: "GET",
             headers: {
@@ -54,10 +53,23 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
+  // Logic for slicing the activities array for pagination
+  const indexOfLastActivity = currentPage * itemsPerPage;
+  const indexOfFirstActivity = indexOfLastActivity - itemsPerPage;
+  const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
+
+  // Calculate total number of pages
+  const totalPages = Math.ceil(activities.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
     <>
-      {activities.map(
-        ({ id, banner_image_multiple, location_name, activity_title, start_time, duration, price, sale_price }) => (
+      {currentActivities.map(
+        ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price }) => (
           <div key={id} className="col-span-12 ">
             <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
               <div className="relative">
@@ -75,31 +87,25 @@ const Page = () => {
                 <div className="property-card__body ">
                   <div className="flex justify-between mb-2">
                     <Link
-                      href={`/activity-listing-details?activityId=${id}`}
+                      href={`/cab-listing-details?cabId=${id}`}
                       className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
-                      {activity_title}
+                      {cab_name}
                     </Link>
                   </div>
                   <div className="flex justify-between mb-6">
                     <div className="flex items-center gap-1">
                       <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
-                      <span className="inline-block">{location_name}</span>
+                      <span className="inline-block">{location}</span>
                     </div>
                   </div>
-                  <ul className="flex gap-3">
+                  {/* <ul className="flex gap-3">
                     <li className="col-6">
                       <div className="flex items-center gap-2">
                         <ClockIcon className="w-5 h-5 text-[var(--secondary-500)]" />
                         <span className="block text-sm">{start_time}</span>
                       </div>
                     </li>
-                    <li className="col-6">
-                      <div className="flex items-center gap-2">
-                      <i className="fa fa-hourglass-half text-xl text-[#22804A]"></i>
-                        <span className="block text-sm">{duration}</span>
-                      </div>
-                    </li>
-                  </ul>
+                  </ul> */}
                 </div>
                 <div className="my-4">
                   <div className="border border-dashed"></div>
@@ -111,7 +117,7 @@ const Page = () => {
                       <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
                     </span>
                     <Link
-                      href={`/activity-listing-details?activityId=${id}`}
+                      href={`/cab-listing-details?cabId=${id}`}
                       className="btn-outline py-2 text-primary font-semibold">
                       Book Now
                     </Link>
@@ -122,9 +128,11 @@ const Page = () => {
           </div>
         )
       )}
-      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
-        throw new Error("Function not implemented.");
-      } } />
+      <CardPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
     </>
   );
 };
