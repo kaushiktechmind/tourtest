@@ -42,7 +42,7 @@ const Page = () => {
 
     try {
       let response;
-
+console.log("a")
       if (loc !== null && loc !== "") {
         // Fetch data based on "type"
         response = await axios.get(
