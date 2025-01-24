@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { menus } from "@/public/data/menu";
+import { usePathname } from "next/navigation";
 
 interface MenuItem {
   title: string | JSX.Element;
@@ -47,6 +48,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
   const [dropdown, setDropdown] = useState(false);
   const ref = useRef<HTMLLIElement>(null);
 
+
   const onMouseEnter = () => {
     window.innerWidth > 992 && setDropdown(true);
   };
@@ -78,21 +80,18 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
 
   function handleLinkClick(event: React.MouseEvent<HTMLAnchorElement>): void { 
   
-     localStorage.removeItem("startDate");
-     localStorage.removeItem("endDate");
-     localStorage.removeItem("roomId");
-     localStorage.removeItem("noOfNights");
-     localStorage.removeItem("addedRooms");
-     localStorage.removeItem("storedAdultPrice");
-     localStorage.removeItem("storedChildPrice");
-     localStorage.removeItem("storedExtraBedPrice");
-     localStorage.removeItem("storedTotalPrice");
-     localStorage.removeItem("totalCounts");
-     localStorage.removeItem("fromHome");
+     localStorage.clear();
     throw new Error("Function not implemented.");
   }
+  const pathname= usePathname();
+  const basePathname = pathname.split('?')[0];
+
+  const isActive = basePathname === items.url || (basePathname.includes(items.url) && items.url !== "/");
+
+
 
   return (
+    
     <li
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
@@ -102,6 +101,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
       ref={ref}
     >
       {items.submenu ? (
+        
         <>
           <span
             aria-haspopup="menu"
@@ -122,13 +122,14 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
           />
         </>
       ) : (
-        <Link href={items.url as string} className="text-[#525151] hover:text-gray-900" onClick={handleLinkClick}>{items.title}</Link>
+        <Link href={items.url as string} className={isActive ? "text-[red] hover:text-gray-900" : "text-[#525151] hover:text-gray-900"} onClick={handleLinkClick}>{items.title}</Link>
       )}
     </li>
   );
 };
 
 const Navbar: React.FC = () => {
+
   return (
     <ul className="flex flex-col lg:flex-row menus absolute left-0 top-full bg-white lg:bg-transparent shadow w-full lg:w-auto lg:shadow-none lg:static px-2 lg:px-0">
       {menus.map((menu, index) => {
