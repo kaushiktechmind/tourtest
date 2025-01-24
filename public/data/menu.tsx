@@ -8,12 +8,12 @@ export const menus = [
   {
     // title: "Hotels",
         title: "Hotels",
-        url: "/hotel-listing?type=Hotel",
+        url: "/hotel-listing",
   },
   {
     // title: "Home",
         title: "Homestay",
-        url: "/hotel-listing?type=HomeStay",
+        url: "/homestay-listing",
   },
   {
     // title: "Home",

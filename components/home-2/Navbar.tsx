@@ -84,9 +84,9 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
     throw new Error("Function not implemented.");
   }
   const pathname= usePathname();
-  const basePathname = pathname.split('?')[0];
 
-  const isActive = basePathname === items.url || (basePathname.includes(items.url) && items.url !== "/");
+  const isActive = pathname === items.url || (pathname.includes(items.url || "") && items.url !== "/");
+
 
 
 
@@ -122,7 +122,7 @@ const MenuItems: React.FC<MenuItemsProps> = ({ items, depthLevel }) => {
           />
         </>
       ) : (
-        <Link href={items.url as string} className={isActive ? "text-[red] hover:text-gray-900" : "text-[#525151] hover:text-gray-900"} onClick={handleLinkClick}>{items.title}</Link>
+        <Link href={items.url as string} className={isActive ? "text-[blue] hover:text-gray-900" : "text-[#525151] hover:text-gray-900"} onClick={handleLinkClick}>{items.title}</Link>
       )}
     </li>
   );

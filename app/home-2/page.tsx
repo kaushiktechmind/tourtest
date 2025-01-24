@@ -1,7 +1,13 @@
 "use client";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faWhatsapp } from "@fortawesome/free-brands-svg-icons";
-import { faArrowUp } from "@fortawesome/free-solid-svg-icons";
+
+import {
+  MapPinIcon,
+  ShareIcon,
+} from "@heroicons/react/24/outline";
+import {
+  ArrowUpIcon,
+  ChatBubbleOvalLeftEllipsisIcon,
+} from "@heroicons/react/24/solid";
 import Footer from "@/components/Footer";
 import MobileMenu from "@/components/MobileMenu";
 import Category from "@/components/home-1/Category";
@@ -15,7 +21,7 @@ import Testimonial from "@/components/home-2/Testimonial";
 import Featured from "@/components/home-2/Featured";
 import { useEffect, useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [showScroll, setShowScroll] = useState(false);
 
   // Show scroll to top button when scrolling down
@@ -56,25 +62,26 @@ const page = () => {
 
       {/* WhatsApp Icon */}
       <a
-        href="https://wa.me/9306288532"  // Replace with your WhatsApp number
+        href="https://wa.me/9999999999" // Replace with your WhatsApp number
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-16 right-4 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
+        className="fixed bottom-16 right-3 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
       >
-        <FontAwesomeIcon icon={faWhatsapp} size="2x" />
+        <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6" />
       </a>
 
       {/* Scroll to Top Button */}
       {showScroll && (
-        <button
-          onClick={scrollToTop}
-          className="fixed bottom-16 right-16 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition"
-        >
-          <FontAwesomeIcon icon={faArrowUp} size="2x" />
-        </button>
-      )}
+  <button
+    onClick={scrollToTop}
+    className="fixed bottom-16 right-16 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition z-50"
+  >
+    <ArrowUpIcon className="h-6 w-6" />
+  </button>
+)}
+
     </>
   );
 };
 
-export default page;
+export default Page;

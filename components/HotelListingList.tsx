@@ -68,7 +68,7 @@ const HotelListingList = ({
   );
 
   // Debugging: Log validAmenities to ensure they are strings
-  console.log("Valid Amenities:", validAmenities);
+  // console.log("Valid Amenities:", validAmenities);
 
   return (
     <div key={id || hotel_id} className="col-span-12">

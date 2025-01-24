@@ -1,20 +1,57 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import LocationEntry from "../home-3/LocationEntry";
-import "react-datepicker/dist/react-datepicker.css";
+
+// Icons for each category
+import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa"; // Use your preferred icons
 
 const Hero = () => {
   const [locationName, setLocationName] = useState(""); // State to hold the location name
+  const [selectedCategory, setSelectedCategory] = useState("Hotel"); // State for the selected category
+
   const handleSearch = () => {
     localStorage.setItem("fromHome", "200");
+    localStorage.setItem("storedLocation", locationName);
     if (!locationName) {
       alert("Please fill all fields before searching.");
       return;
     }
-    const searchUrl = `/hotel-listing?loc=${encodeURIComponent(locationName)}`;
+
+    // Determine the path based on the selected category
+    let searchUrl = "";
+    switch (selectedCategory) {
+      case "Hotel":
+        searchUrl = `/hotel-listing`;
+        break;
+      case "Homestay":
+        searchUrl = `/homestay-listing`;
+        break;
+      case "Package":
+        searchUrl = `/package-listing`;
+        break;
+      case "Cab":
+        searchUrl = `/cab-listing`;
+        break;
+      case "Activity":
+        searchUrl = `/activity-listing`;
+        break;
+      default:
+        searchUrl = `/hotel-listing`;
+        break;
+    }
+
+    // Navigate to the appropriate URL
     window.location.href = searchUrl;
   };
+
+  const categories = [
+    { name: "Hotel", icon: FaHotel },
+    { name: "Homestay", icon: FaHome },
+    { name: "Package", icon: FaSuitcase },
+    { name: "Cab", icon: FaCar },
+    { name: "Activity", icon: FaMountain },
+  ];
 
   return (
     <section className="bg-[url('/img/andban-hero.jpg')] bg-cover bg-no-repeat relative isolate min-h-screen flex items-center py-20 z-[10]">
@@ -23,9 +60,37 @@ const Hero = () => {
           Welcome to Andman Mangroves
         </h1>
 
-        {/* <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center"> */}
-        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center w-[40%] mx-auto">
+        {/* Category Buttons */}
+        <div className="flex justify-center gap-6 mb-8">
+          {categories.map((category) => {
+            const Icon = category.icon;
+            return (
+              <button
+                key={category.name}
+                onClick={() => setSelectedCategory(category.name)}
+                className={`flex flex-col items-center gap-2 text-white font-bold transition-all duration-300 ease-in-out ${
+                  selectedCategory === category.name
+                    ? "hover:text-white "
+                    : "hover:text-white/80"
+                }`}
+              >
+                <div
+                  className={`p-3 rounded-full transition-all ${
+                    selectedCategory === category.name
+                      ? "bg-white text-primary shadow-lg"
+                      : "bg-transparent text-white border border-white"
+                  }`}
+                >
+                  <Icon size={24} />
+                </div>
+                <span>{category.name}</span>
+              </button>
+            );
+          })}
+        </div>
 
+        {/* Search Input and Button */}
+        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center w-[40%] mx-auto">
           <LocationEntry
             placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
