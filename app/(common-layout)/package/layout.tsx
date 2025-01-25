@@ -125,17 +125,17 @@ export default function RootLayout({
                         <ul className="flex flex-wrap justify-end justify-content-lg-end justify-content-xl-center gap-4">
                           <li className="flex items-center gap-2">
                             <Link
-                              href="/hotel-listing"
+                              href="/hotels"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/hotel-listing" && "text-primary"
+                                path === "/hotels" && "text-primary"
                               }`}
                             >
                               <Squares2X2Icon className="w-5 h-5" />
                             </Link>
                             <Link
-                              href="/hotel-listing-grid"
+                              href="/hotelgrid"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/hotel-listing-grid" && "text-primary"
+                                path === "/hotelgrid" && "text-primary"
                               }`}
                             >
                               <span className="inline-block font-medium">Grid</span>

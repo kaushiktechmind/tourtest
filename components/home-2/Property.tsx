@@ -103,7 +103,7 @@ const Property = () => {
                 ))}
               </Tab.List>
               <Link
-                href="hotel-listing?type=Hotel"
+                href="hotels?type=Hotel"
                 className="btn-outline flex items-center gap-2">
                 View All
                 <i className="las la-long-arrow-alt-right text-2xl"></i>

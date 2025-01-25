@@ -22,10 +22,10 @@ const Hero = () => {
     let searchUrl = "";
     switch (selectedCategory) {
       case "Hotel":
-        searchUrl = `/hotel-listing`;
+        searchUrl = `/hotels`;
         break;
       case "Homestay":
-        searchUrl = `/homestay-listing`;
+        searchUrl = `/homestays`;
         break;
       case "Package":
         searchUrl = `/package-listing`;
@@ -37,7 +37,7 @@ const Hero = () => {
         searchUrl = `/activity-listing`;
         break;
       default:
-        searchUrl = `/hotel-listing`;
+        searchUrl = `/hotels`;
         break;
     }
 

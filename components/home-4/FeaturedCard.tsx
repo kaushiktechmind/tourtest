@@ -47,7 +47,7 @@ const FeaturedCard = ({ item }: any) => {
         <div className="mt-4 p-4">
           <div className="flex justify-between mb-2">
             <Link
-              href="/componentshotel-listing-details"
+              href="/components/hotel"
               className="block text-xl font-medium">
               {name}
             </Link>
@@ -211,7 +211,7 @@ const FeaturedCard = ({ item }: any) => {
               </span> */}
             </span>
             <Link
-              href="/hotel-listing-details"
+              href="/hotel"
               className="btn-outline  text-primary">
               Book Now
             </Link>

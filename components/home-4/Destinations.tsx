@@ -38,7 +38,7 @@ const Destinations = () => {
                 <div className="absolute top-0 left-0 flex flex-col justify-between h-full w-full before:w-full before:absolute before:h-full before:bottom-0 before:left-0 before:bg-gradient-to-t before:rounded-b-2xl before:from-slate-800 before:to-transparent group-hover:after:w-full group-hover:after:absolute group-hover:after:h-full group-hover:after:bottom-0 group-hover:after:left-0 group-hover:after:bg-gradient-to-t group-hover:after:rounded-b-2xl group-hover:after:from-[var(--primary)] group-hover:after:to-transparent group-hover:after:opacity-60">
                   <div>
                     <Link
-                      href="hotel-listing-grid"
+                      href="hotelgrid"
                       className="inline-block py-2 px-5 rounded-full bg-[var(--tertiary)] absolute top-6 left-6 w-max">
                       25+ New
                     </Link>
@@ -54,7 +54,7 @@ const Destinations = () => {
                       <span className="text-white text-lg">320+ Hotel</span>
                     </div>
                     <Link
-                      href="/hotel-listing-grid"
+                      href="/hotelgrid"
                       className="inline-flex w-11 h-11 rounded-full border items-center justify-center group-hover:bg-[var(--secondary)] text-[var(--secondary)] group-hover:text-neutral-900 duration-300 border-[var(--secondary)]">
                       <i className="las la-angle-right text-3xl"></i>
                     </Link>
@@ -81,7 +81,7 @@ const Destinations = () => {
                       <span className="text-white text-lg">320+ Hotel</span>
                     </div>
                     <Link
-                      href="/hotel-listing-grid"
+                      href="/hotelgrid"
                       className="inline-flex w-11 h-11 rounded-full border items-center justify-center group-hover:bg-[var(--secondary)] text-[var(--secondary)] group-hover:text-neutral-900 duration-300 border-[var(--secondary)]">
                       <i className="las la-angle-right text-3xl"></i>
                     </Link>
@@ -102,7 +102,7 @@ const Destinations = () => {
               <div className="absolute top-0 left-0 w-full flex items-end h-full before:w-full before:absolute before:h-full before:bottom-0 before:left-0 before:bg-gradient-to-t before:rounded-b-2xl before:from-slate-800 before:to-transparent group-hover:after:w-full group-hover:after:absolute group-hover:after:h-full group-hover:after:bottom-0 group-hover:after:left-0 group-hover:after:bg-gradient-to-t group-hover:after:rounded-b-2xl group-hover:after:from-[var(--primary)] group-hover:after:to-transparent group-hover:after:opacity-60">
                 <div className="flex items-center">
                   <Link
-                    href="hotel-listing-grid"
+                    href="hotelgrid"
                     className="inline-block py-2 px-5 rounded-full bg-[var(--tertiary)] absolute top-6 left-6 w-max">
                     36+ New
                   </Link>
@@ -118,7 +118,7 @@ const Destinations = () => {
                     <span className="text-white text-lg">320+ Hotel</span>
                   </div>
                   <Link
-                    href="/hotel-listing-grid"
+                    href="/hotelgrid"
                     className="inline-flex w-11 h-11 rounded-full border items-center justify-center group-hover:bg-[var(--secondary)] text-[var(--secondary)] group-hover:text-neutral-900 duration-300 border-[var(--secondary)]">
                     <i className="las la-angle-right text-3xl"></i>
                   </Link>
@@ -148,7 +148,7 @@ const Destinations = () => {
                       <span className="text-white text-lg">320+ Hotel</span>
                     </div>
                     <Link
-                      href="/hotel-listing-grid"
+                      href="/hotelgrid"
                       className="inline-flex w-11 h-11 rounded-full border items-center justify-center group-hover:bg-[var(--secondary)] text-[var(--secondary)] group-hover:text-neutral-900 duration-300 border-[var(--secondary)]">
                       <i className="las la-angle-right text-3xl"></i>
                     </Link>
@@ -167,7 +167,7 @@ const Destinations = () => {
                 <div className="absolute top-0 left-0 flex flex-col h-full w-full justify-between before:w-full before:absolute before:h-full before:bottom-0 before:left-0 before:bg-gradient-to-t before:rounded-b-2xl before:from-slate-800 before:to-transparent group-hover:after:w-full group-hover:after:absolute group-hover:after:h-full group-hover:after:bottom-0 group-hover:after:left-0 group-hover:after:bg-gradient-to-t group-hover:after:rounded-b-2xl group-hover:after:from-[var(--primary)] group-hover:after:to-transparent group-hover:after:opacity-60">
                   <div className="flex items-center">
                     <Link
-                      href="hotel-listing-grid"
+                      href="hotelgrid"
                       className="inline-block py-2 px-5 rounded-full bg-[var(--tertiary)] absolute top-6 left-6 w-max">
                       25+ New
                     </Link>
@@ -183,7 +183,7 @@ const Destinations = () => {
                       <span className="text-white text-lg">320+ Hotel</span>
                     </div>
                     <Link
-                      href="/hotel-listing-grid"
+                      href="/hotelgrid"
                       className="inline-flex w-11 h-11 rounded-full border items-center justify-center group-hover:bg-[var(--secondary)] text-[var(--secondary)] group-hover:text-neutral-900 duration-300 border-[var(--secondary)]">
                       <i className="las la-angle-right text-3xl"></i>
                     </Link>
@@ -195,7 +195,7 @@ const Destinations = () => {
         </div>
       </div>
       <div className="mt-10 flex justify-center">
-        <Link href="/hotel-listing-grid" className="btn-outline  text-primary">
+        <Link href="/hotelgrid" className="btn-outline  text-primary">
           See All Destination
         </Link>
       </div>

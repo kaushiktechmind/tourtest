@@ -72,6 +72,7 @@ interface HotelFormData {
   video_link: string;
   full_address: string;
   i_frame_link: string;
+  seo_title: string;
 }
 
 const EditHotel = () => {
@@ -106,6 +107,7 @@ const EditHotel = () => {
     video_link: "",
     full_address: "",
     i_frame_link: "",
+    seo_title: "",
   });
 
   const [imageInput, setImageInput] = useState("");
@@ -466,6 +468,7 @@ const EditHotel = () => {
             video_link: hotelData.data.video_link,
             full_address: hotelData.data.full_address,
             i_frame_link: hotelData.data.i_frame_link,
+            seo_title: hotelData.data.seo_title
           });
 
           setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
@@ -951,93 +954,93 @@ const EditHotel = () => {
 
 
           <Accordion
-  buttonContent={(open) => (
-    <div
-      className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
-    >
-      <h3 className="h3">Hotel FAQ</h3>
-      <ChevronDownIcon
-        className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-      />
-    </div>
-  )}
-  initialOpen={true}
->
-  <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-    {faqs.length > 0 ? (
-      <div className="mb-4">
-        <label
-          htmlFor="faqDropdown"
-          className="text-lg font-bold mb-2 block"
-        >
-          Select a FAQ
-        </label>
-        <select
-          id="faqDropdown"
-          className="w-full border p-2 rounded-md"
-          onChange={(e) => {
-            const selectedFaqId = parseInt(e.target.value);
-            const selectedFaq = faqs.find(
-              (faq) => faq.id === selectedFaqId
-            );
+            buttonContent={(open) => (
+              <div
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+              >
+                <h3 className="h3">Hotel FAQ</h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                />
+              </div>
+            )}
+            initialOpen={true}
+          >
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              {faqs.length > 0 ? (
+                <div className="mb-4">
+                  <label
+                    htmlFor="faqDropdown"
+                    className="text-lg font-bold mb-2 block"
+                  >
+                    Select a FAQ
+                  </label>
+                  <select
+                    id="faqDropdown"
+                    className="w-full border p-2 rounded-md"
+                    onChange={(e) => {
+                      const selectedFaqId = parseInt(e.target.value);
+                      const selectedFaq = faqs.find(
+                        (faq) => faq.id === selectedFaqId
+                      );
 
-            // Check if the FAQ is already selected before adding
-            if (
-              selectedFaq &&
-              !selectedFAQs.some((f) => f.id === selectedFaq.id)
-            ) {
-              setSelectedFAQs((prev) => [...prev, selectedFaq]);
-            }
-          }}
-        >
-          <option value="" disabled selected>
-            Select a FAQ...
-          </option>
-          {faqs
-            .filter(
-              (faq) =>
-                !selectedFAQs.some((selectedFaq) => selectedFaq.id === faq.id) &&
-                !selectedFAQs.some((selectedFaq) => selectedFaq.faq_title === faq.faq_title) // Exclude pre-filled FAQs
-            ) // Exclude selected and pre-filled FAQs
-            .map((faq) => (
-              <option key={faq.id} value={faq.id}>
-                {faq.faq_title}
-              </option>
-            ))}
-        </select>
-      </div>
-    ) : (
-      <p>No FAQs available</p>
-    )}
+                      // Check if the FAQ is already selected before adding
+                      if (
+                        selectedFaq &&
+                        !selectedFAQs.some((f) => f.id === selectedFaq.id)
+                      ) {
+                        setSelectedFAQs((prev) => [...prev, selectedFaq]);
+                      }
+                    }}
+                  >
+                    <option value="" disabled selected>
+                      Select a FAQ...
+                    </option>
+                    {faqs
+                      .filter(
+                        (faq) =>
+                          !selectedFAQs.some((selectedFaq) => selectedFaq.id === faq.id) &&
+                          !selectedFAQs.some((selectedFaq) => selectedFaq.faq_title === faq.faq_title) // Exclude pre-filled FAQs
+                      ) // Exclude selected and pre-filled FAQs
+                      .map((faq) => (
+                        <option key={faq.id} value={faq.id}>
+                          {faq.faq_title}
+                        </option>
+                      ))}
+                  </select>
+                </div>
+              ) : (
+                <p>No FAQs available</p>
+              )}
 
-    {/* Render input fields for each selected FAQ */}
-    {selectedFAQs.map((faq) => (
-      <div key={faq.id} className="mb-4">
-        <div className="flex gap-4">
-          <input
-            type="text"
-            className="w-1/2 border p-2 rounded-md"
-            value={faq.faq_title}
-            readOnly
-          />
-          <input
-            type="text"
-            className="w-1/2 border p-2 rounded-md"
-            value={faq.faq_description}
-            onChange={(e) => {
-              const updatedFAQs = selectedFAQs.map((f) =>
-                f.id === faq.id
-                  ? { ...f, faq_description: e.target.value }
-                  : f
-              );
-              setSelectedFAQs(updatedFAQs);
-            }}
-          />
-        </div>
-      </div>
-    ))}
-  </div>
-</Accordion>
+              {/* Render input fields for each selected FAQ */}
+              {selectedFAQs.map((faq) => (
+                <div key={faq.id} className="mb-4">
+                  <div className="flex gap-4">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.faq_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.faq_description}
+                      onChange={(e) => {
+                        const updatedFAQs = selectedFAQs.map((f) =>
+                          f.id === faq.id
+                            ? { ...f, faq_description: e.target.value }
+                            : f
+                        );
+                        setSelectedFAQs(updatedFAQs);
+                      }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Accordion>
 
 
 
@@ -1179,6 +1182,17 @@ const EditHotel = () => {
                   id="full_address"
                   name="full_address"
                   value={formData.full_address}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Enter Address"
+                />
+
+                <p className="mt-6 mb-4 text-xl font-medium">SEO Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_title"
+                  name="seo_title"
+                  value={formData.seo_title}
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Address"

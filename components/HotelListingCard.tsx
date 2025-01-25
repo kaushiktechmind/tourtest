@@ -76,7 +76,7 @@ const HotelListingCard = ({
         <div className="mt-4 p-4">
           <div className="flex justify-between mb-2">
             <Link
-              href={`/hotel-listing-details?hotelName=${id || hotel_id
+              href={`/hotel?hotelName=${id || hotel_id
                 }`}
               className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
             >
@@ -132,9 +132,9 @@ const HotelListingCard = ({
               <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
             </span>
             <Link
-              // href={`/hotel-listing-details?hotelName=${id || hotel_id
+              // href={`/hotel?hotelName=${id || hotel_id
               //   }`}
-              href={`/hotel-listing-details?hotelName=${hotel_name
+              href={`/hotel?hotelName=${hotel_name
               }`}
               className="btn-outline font-semibold"
             >

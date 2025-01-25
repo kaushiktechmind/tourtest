@@ -28,7 +28,7 @@ const Featured = () => {
               </h2>
             </div>
 
-            <Link href="/hotel-listing" className="btn-outline  font-semibold">
+            <Link href="/hotels" className="btn-outline  font-semibold">
               See All Hotel
             </Link>
           </div>

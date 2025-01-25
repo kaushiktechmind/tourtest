@@ -217,7 +217,7 @@ const Reciept = () => {
                       <div className="p-4 w-full md:w-2/3">
                         <div className="property-card__body">
                           <Link
-                            href="hotel-listing-details"
+                            href="hotel"
                             className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5"
                           >
                             {roomData.room_name}

@@ -111,7 +111,7 @@ const FeaturedCardHome2 = ({ item }: any) => {
                 ₹{starting_price}
                 <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
               </span>
-              <Link href={`/hotel-listing-details?hotelDetailsId=${id}&type=${capitalizedType}`} className="btn-outline ">
+              <Link href={`/hotel?hotelDetailsId=${id}&type=${capitalizedType}`} className="btn-outline ">
                 Book Now
               </Link>
             </div>

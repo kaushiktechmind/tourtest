@@ -221,7 +221,7 @@ const HotelListingDetails = () => {
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
 
-    const searchUrl = `/hotel-listing-details?hotelName=${hotelName}`;
+    const searchUrl = `/hotel?hotelName=${hotelName}`;
 
     window.location.href = searchUrl;
     localStorage.removeItem("noOfNights");

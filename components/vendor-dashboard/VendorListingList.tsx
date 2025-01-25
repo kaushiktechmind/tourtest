@@ -39,7 +39,7 @@ const VendorListingList = ({ item }: any) => {
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href="/hotel-listing-details"
+                href="/hotel"
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
                 {name}
               </Link>
@@ -164,11 +164,11 @@ const VendorListingList = ({ item }: any) => {
               </span> */}
             </span>
             <div className="flex flex-wrap gap-3">
-              <Link href="/hotel-listing-details" className="btn-outline">
+              <Link href="/hotel" className="btn-outline">
                 <PaintBrushIcon className="w-5 h-5" />
                 Edit
               </Link>
-              <Link href="/hotel-listing-details" className="btn-outline">
+              <Link href="/hotel" className="btn-outline">
                 <TrashIcon className="w-5 h-5" />
                 Delete
               </Link>

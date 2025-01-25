@@ -76,7 +76,7 @@ const page = () => {
                         <span className="text-base text-white">/month</span>
                       </span>
                       <Link
-                        href="/hotel-listing-grid"
+                        href="/hotelgrid"
                         className="text-[var(--secondary)] font-semibold flex items-center gap-1">
                         Read More
                         <ArrowRightIcon className="w-5 h-5" />
@@ -108,7 +108,7 @@ const page = () => {
                         <span className="text-base text-white">/month</span>
                       </span>
                       <Link
-                        href="/hotel-listing-grid"
+                        href="/hotelgrid"
                         className="text-[var(--secondary)] font-semibold flex items-center gap-1">
                         Read More
                         <ArrowRightIcon className="w-5 h-5" />

@@ -101,15 +101,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <ul className="flex flex-wrap justify-end justify-content-lg-end justify-content-xl-center gap-4">
                           <li className="flex items-center gap-4">
                             <Link
-                              href={`/hotel-listing-grid`}
-                              className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotel-listing-grid" && "text-primary"}`}>
+                              href={`/hotelgrid`}
+                              className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotelgrid" && "text-primary"}`}>
                               <Squares2X2Icon className="w-5 h-5" />
                               <span className="inline-block font-medium">Grid</span>
                             </Link>
 
                             <Link
-                              href={`/hotel-listing`}
-                              className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotel-listing" && "text-primary"}`}>
+                              href={`/hotels`}
+                              className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotels" && "text-primary"}`}>
                               <ListBulletIcon className="w-5 h-5" />
                               <span className="inline-block font-medium">List</span>
                             </Link>

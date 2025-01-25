@@ -37,7 +37,7 @@ const DiscountCard = () => {
                       Explore The World Tour Hotel Booking
                     </p>
                     <Link
-                      href="/hotel-listing"
+                      href="/hotels"
                       className="inline-block py-3 px-6 font-semibold rounded-lg bg-white text-primary">
                       Book Now
                     </Link>
@@ -59,7 +59,7 @@ const DiscountCard = () => {
                       Book Your Valuable Dream Vacation Today
                     </p>
                     <Link
-                      href="/hotel-listing"
+                      href="/hotels"
                       className="inline-block py-3 px-6 font-semibold rounded-lg bg-white text-primary">
                       Book Now
                     </Link>

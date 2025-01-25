@@ -7,9 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 ;
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
-import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -72,6 +70,7 @@ interface HotelFormData {
   video_link: string;
   full_address: string;
   i_frame_link: string;
+  seo_title: string;
 }
 
 interface Amenity {
@@ -108,6 +107,7 @@ const AddNewHotel = () => {
     video_link: "",
     full_address: "",
     i_frame_link: "",
+    seo_title: "",
   });
 
   const [imageInput, setImageInput] = useState("");
@@ -1038,6 +1038,16 @@ const AddNewHotel = () => {
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Address"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">SEO Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_title"
+                  name="seo_title"
+                  value={formData.seo_title}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="URL Name"
                 />
 
                 <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>

@@ -4,13 +4,14 @@ import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Pagination } from "swiper";
+import HotelListingCard from "@/components/HotelListingCard";
 
-const Page = () => {
+const HotelListingGrid = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const type = "Hotel";
+  const type ="HomeStay";
   const loc = localStorage.getItem("storedLocation");
+
 
 
   const [noOfRooms, setNoOfRooms] = useState<number | null>(null);
@@ -25,6 +26,7 @@ const Page = () => {
   }, []);
 
 
+
   // alert(noOfRooms)
 
 
@@ -34,6 +36,7 @@ const Page = () => {
   const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Number of items per page
+
 
 
   const fetchHotels = useCallback(async () => {
@@ -115,9 +118,6 @@ const Page = () => {
   }, [type, loc]);
 
 
-
-
-
   // Fetch hotels when component mounts
   useEffect(() => {
     fetchHotels();
@@ -136,39 +136,55 @@ const Page = () => {
     setCurrentPage(page);
   };
 
+  // const noOfHotels = Number(localStorage.getItem("noOfHotels"));
+  // let noOfCurHotels;
+
+  // if (noOfHotels >= itemsPerPage) {
+  //   noOfCurHotels = itemsPerPage;
+  // }
+  // else
+  //   noOfCurHotels = noOfHotels;
+  // localStorage.setItem("noOfCurHotels", String(noOfCurHotels));
+
 
   return (
-    <Suspense fallback={<div>Loading hotels...</div>}>
-      {loading ? (
-        <div>Loading...</div>
-      ) : hotels.length > 0 ? (
-        // Deduplicate hotels before pagination
-        [...new Map(hotels.map((item) => [item.hotel_id, item])).values()]
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((uniqueItem) => (
-            <HotelListingList
-              key={uniqueItem.hotel_id}
-              item={uniqueItem}
-              noOfRooms={Number(noOfRooms)}
-              loc={loc || ''}
-              type={type || ''}
-              startdate={startdate || ''}
-              enddate={enddate || ''} adults={0} numChildren={0} infants={0} />
-          ))
-      ) : (
-        <div>No hotels available.</div>
-      )}
+    <>
+        {loading ? (
+          <div>Loading...</div>
+        ) : hotels.length > 0 ? (
+          // Deduplicate hotels before pagination
+          [...new Map(hotels.map((item) => [item.hotel_id, item])).values()]
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((uniqueItem) => (
+              <HotelListingCard
+                key={uniqueItem.hotel_id}
+                item={uniqueItem}
+                noOfRooms={Number(noOfRooms)}
+                loc={loc || ""}
+                type={type || ""}
+                startdate={startdate || ""}
+                enddate={enddate || ""} adults={0} numChildren={0} infants={0} />
+            ))
+        ) : (
+          <div>No hotels available.</div>
+        )}
 
-      {/* Pass pagination props */}
-      <CardPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-    </Suspense>
+        {/* Pass pagination props */}
+        <CardPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+        </>
   );
-
 };
 
 
-export default Page;
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <HotelListingGrid />
+  </Suspense>
+);
+
+export default Page;  

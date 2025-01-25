@@ -167,7 +167,7 @@ const HotelDetailsFeaturedRoom = ({
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href="hotel-listing-details"
+                href="hotel"
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {title}

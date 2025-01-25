@@ -9,7 +9,7 @@ import { Pagination } from "swiper";
 const Page = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const type = "HomeStay";
+  const type = "Hotel";
   const loc = localStorage.getItem("storedLocation");
 
 
@@ -54,6 +54,7 @@ const Page = () => {
           id: hotel.id,
           hotel_id: hotel.id,
           hotel_name: hotel.hotel_name,
+          seo_title: hotel.seo_title,
           location_name: hotel.location_name,
           ratings: hotel.ratings || "",
           banner_images: hotel.banner_images || "",
