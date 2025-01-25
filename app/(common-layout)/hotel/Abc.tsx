@@ -122,7 +122,7 @@ const HotelListingDetails = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hotelName = searchParams.get("hotelName");
+  const id = searchParams.get("id");
   const type = "Hotel";
 
   const [formData, setFormData] = useState({
@@ -221,7 +221,7 @@ const HotelListingDetails = () => {
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
 
-    const searchUrl = `/hotel?hotelName=${hotelName}&type=${type}`;
+    const searchUrl = `/hotel?id=${id}&type=${type}`;
 
     window.location.href = searchUrl;
     localStorage.removeItem("noOfNights");
@@ -392,10 +392,10 @@ const HotelListingDetails = () => {
 
   useEffect(() => {
     const fetchHotelData = async () => {
-      if (hotelName) {
+      if (id) {
         try {
           const response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/admin/hotel/${hotelName}`
+            `https://yrpitsolutions.com/tourism_api/api/admin/hotel/${id}`
           );
           const result = await response.json();
 
@@ -570,7 +570,7 @@ const HotelListingDetails = () => {
     };
 
     fetchHotelData();
-  }, [hotelName]);
+  }, [id]);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -585,13 +585,13 @@ const HotelListingDetails = () => {
         if (type == "Hotel" || type == "HomeStay" || fromHome == "200") {
           console.log("Fetching data with hotel id");
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelName}/rooms`
+            `https://yrpitsolutions.com/tourism_api/api/hotels/${id}/rooms`
           );
         }
         else {
           console.log("Fetching data with loc and date", location);
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${hotelName}/${location}/${startdate}/${enddate}/${totalRooms}`
+            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${id}/${location}/${startdate}/${enddate}/${totalRooms}`
           );
         }
 
@@ -666,7 +666,7 @@ const HotelListingDetails = () => {
     };
 
     fetchRooms();
-  }, [startdate, enddate, hotelName, location, totalRooms, type]);
+  }, [startdate, enddate, id, location, totalRooms, type]);
 
   const handleRestrict = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -691,7 +691,7 @@ const HotelListingDetails = () => {
     }
 
     localStorage.setItem("grandTotal", grandTotal.toString());
-    router.push(`/payment-method?hotelId=${hotelName}`);
+    router.push(`/payment-method?hotelId=${id}`);
   };
 
 
@@ -1721,7 +1721,7 @@ const HotelListingDetails = () => {
                   {/* Conditionally hide the "Proceed Booking" button based on the selected tab */}
                   {selectedIndex === 0 && (
                     <Link
-                      href={`/payment-method?hotelId=${hotelName}`}
+                      href={`/payment-method?hotelId=${id}`}
                       onClick={handleRestrict}
                       className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                     >

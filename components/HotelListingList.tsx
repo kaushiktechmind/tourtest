@@ -94,7 +94,7 @@ const HotelListingList = ({
             <div className="flex justify-between mb-2">
               <Link
                 // href={`/hotel?hotelName=${id || hotel_id}`}
-                href={`/hotel?hotelName=${seo_title}`}
+                href={`/hotel?id=${seo_title}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
@@ -147,7 +147,7 @@ const HotelListingList = ({
               </span>
               <Link
                 // href={`/hotel?hotelName=${id || hotel_id}`}
-                href={`/hotel?hotelName=${seo_title}`}
+                href={`/hotel?id=${seo_title}`}
                 className="btn-outline font-semibold"
               >
                 Book Now

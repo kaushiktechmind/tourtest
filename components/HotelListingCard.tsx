@@ -76,7 +76,7 @@ const HotelListingCard = ({
         <div className="mt-4 p-4">
           <div className="flex justify-between mb-2">
             <Link
-              href={`/hotel?hotelName=${id || hotel_id
+              href={`/hotel?id=${id || hotel_id
                 }`}
               className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
             >
@@ -134,7 +134,7 @@ const HotelListingCard = ({
             <Link
               // href={`/hotel?hotelName=${id || hotel_id
               //   }`}
-              href={`/hotel?hotelName=${hotel_name
+              href={`/hotel?id=${hotel_name
               }`}
               className="btn-outline font-semibold"
             >
