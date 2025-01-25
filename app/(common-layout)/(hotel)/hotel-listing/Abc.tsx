@@ -32,126 +32,75 @@ const Page = () => {
   const [hotels, setHotels] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentPage, setCurrentPage  ] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5; // Number of items per page
-  
 
-  const fetchHotels =  useCallback(async () => {
+
+  const fetchHotels = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      let response;
-console.log("a")
-      if (loc !== null && loc !== "") {
-        // Fetch data based on "type"
-        response = await axios.get(
-          `https://yrpitsolutions.com/tourism_api/api/filter_hotels_by_location/${loc}`
-       
-        );
-      } else  {
-        // Fetch data based on "location" and dates
-        response = await axios.get(
-             `https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`
-        );
-      }
+      // Fetch data from the type API
+      const response = await axios.get(
+        `https://yrpitsolutions.com/tourism_api/api/hotels/filter_by_type/${type}`
+      );
 
-      // Normalize data structure to only include the necessary fields
       let normalizedData = [];
 
       if (Array.isArray(response.data.data)) {
-        if (loc !== null && loc !== "") {
-          // Normalization for 'filter' API response (location and date-based)
-          normalizedData = response.data.data.map((item: { hotel_id: any; hotel_name: any; location_name: any; ratings: any; banner_images: any; starting_price: any; highest_price: any; amenity_name1: any; amenity_name2: any; amenity_name3: any; amenity_name4: any; amenity_name5: any; amenity_name6: any; amenity_name7: any; amenity_name8: any; amenity_name9: any; amenity_name10: any; amenity_name11: any; amenity_name12: any; amenity_name13: any; amenity_name14: any; amenity_name15: any; amenity_logo1: any; amenity_logo2: any; amenity_logo3: any; amenity_logo4: any; amenity_logo5: any; amenity_logo6: any; amenity_logo7: any; amenity_logo8: any; amenity_logo9: any; amenity_logo10: any; amenity_logo11: any; amenity_logo12: any; amenity_logo13: any; amenity_logo14: any; amenity_logo15: any; }) => ({
-            id: item.hotel_id, // Adjusted for the new API response
-            hotel_id: item.hotel_id, // Adjusted for the new API response
-            hotel_name: item.hotel_name,
-            location_name: item.location_name,
-            ratings: item.ratings || "",
-            banner_images: item.banner_images || [],
-            starting_price: item.starting_price,
-            highest_price: item.highest_price,
-            amenity_name1: item.amenity_name1 || {},
-            amenity_name2: item.amenity_name2 || {},
-            amenity_name3: item.amenity_name3 || {},
-            amenity_name4: item.amenity_name4 || {},
-            amenity_name5: item.amenity_name5 || {},
-            amenity_name6: item.amenity_name6 || {},
-            amenity_name7: item.amenity_name7 || {},
-            amenity_name8: item.amenity_name8 || {},
-            amenity_name9: item.amenity_name9 || {},
-            amenity_name10: item.amenity_name10 || {},
-            amenity_name11: item.amenity_name11 || {},
-            amenity_name12: item.amenity_name12 || {},
-            amenity_name13: item.amenity_name13 || {},
-            amenity_name14: item.amenity_name14 || {},
-            amenity_name15: item.amenity_name15 || {},
-            amenity_logo1: item.amenity_logo1 || {},
-            amenity_logo2: item.amenity_logo2 || {},
-            amenity_logo3: item.amenity_logo3 || {},
-            amenity_logo4: item.amenity_logo4 || {},
-            amenity_logo5: item.amenity_logo5 || {},
-            amenity_logo6: item.amenity_logo6 || {},
-            amenity_logo7: item.amenity_logo7 || {},
-            amenity_logo8: item.amenity_logo8 || {},
-            amenity_logo9: item.amenity_logo9 || {},
-            amenity_logo10: item.amenity_logo10 || {},
-            amenity_logo11: item.amenity_logo11 || {},
-            amenity_logo12: item.amenity_logo12 || {},
-            amenity_logo13: item.amenity_logo13 || {},
-            amenity_logo14: item.amenity_logo14 || {},
-            amenity_logo15: item.amenity_logo15 || {}
-          }));
+        // Normalize the response data
+        normalizedData = response.data.data.map((hotel: any) => ({
+          id: hotel.id,
+          hotel_id: hotel.id,
+          hotel_name: hotel.hotel_name,
+          location_name: hotel.location_name,
+          ratings: hotel.ratings || "",
+          banner_images: hotel.banner_images || "",
+          starting_price: hotel.starting_price || "",
+          highest_price: hotel.highest_price || "",
+          // Add amenities and other fields as required
+          amenity_name1: hotel.amenity_name1 || {},
+          amenity_logo1: hotel.amenity_logo1 || {},
+          amenity_name2: hotel.amenity_name2 || {},
+          amenity_logo2: hotel.amenity_logo2 || {},
+          amenity_name3: hotel.amenity_name3 || {},
+          amenity_logo3: hotel.amenity_logo3 || {},
+          amenity_name4: hotel.amenity_name4 || {},
+          amenity_logo4: hotel.amenity_logo4 || {},
+          amenity_name5: hotel.amenity_name5 || {},
+          amenity_logo5: hotel.amenity_logo5 || {},
+          amenity_name6: hotel.amenity_name6 || {},
+          amenity_logo6: hotel.amenity_logo6 || {},
+          amenity_name7: hotel.amenity_name7 || {},
+          amenity_logo7: hotel.amenity_logo7 || {},
+          amenity_name8: hotel.amenity_name8 || {},
+          amenity_logo8: hotel.amenity_logo8 || {},
+          amenity_name9: hotel.amenity_name9 || {},
+          amenity_logo9: hotel.amenity_logo9 || {},
+          amenity_name10: hotel.amenity_name10 || {},
+          amenity_logo10: hotel.amenity_logo10 || {},
+          amenity_name11: hotel.amenity_name11 || {},
+          amenity_logo11: hotel.amenity_logo11 || {},
+          amenity_name12: hotel.amenity_name12 || {},
+          amenity_logo12: hotel.amenity_logo12 || {},
+          amenity_name13: hotel.amenity_name13 || {},
+          amenity_logo13: hotel.amenity_logo13 || {},
+          amenity_name14: hotel.amenity_name14 || {},
+          amenity_logo14: hotel.amenity_logo14 || {},
+          amenity_name15: hotel.amenity_name15 || {},
+          amenity_logo15: hotel.amenity_logo15 || {}
+
+
+        }));
+
+        // Filter hotels by location if `loc` is set
+        if (loc && loc.trim() !== "") {
+          normalizedData = normalizedData.filter(
+            (hotel: { location_name: string; }) => hotel.location_name === loc
+          );
         }
-       else {
-          // Normalization for 'filter_by_type' API response
-          normalizedData = response.data.data.map((hotel: { id: any; hotel_name: any; location_name: any; ratings: any; banner_images: any; starting_price: any; highest_price: any; amenity_name1: any; amenity_name2: any; amenity_name3: any; amenity_name4: any; amenity_name5: any; amenity_name6: any; amenity_name7: any; amenity_name8: any; amenity_name9: any; amenity_name10: any; amenity_name11: any; amenity_name12: any; amenity_name13: any; amenity_name14: any; amenity_name15: any; amenity_logo1: any; amenity_logo2: any; amenity_logo3: any; amenity_logo4: any; amenity_logo5: any; amenity_logo6: any; amenity_logo7: any; amenity_logo8: any; amenity_logo9: any; amenity_logo10: any; amenity_logo11: any; amenity_logo12: any; amenity_logo13: any; amenity_logo14: any; amenity_logo15: any; }) => ({
-            id: hotel.id,
-            hotel_id: hotel.id, // Use id as hotel_id if not explicitly provided
-            hotel_name: hotel.hotel_name,
-            location_name: hotel.location_name,
-            ratings: hotel.ratings || "",
-            banner_images: hotel.banner_images || "", // Adjust field if present in actual data
-            starting_price: hotel.starting_price || "",
-            highest_price: hotel.highest_price || "",
-            amenity_name1: hotel.amenity_name1 || {},
-            amenity_name2: hotel.amenity_name2 || {},
-            amenity_name3: hotel.amenity_name3 || {},
-            amenity_name4: hotel.amenity_name4 || {},
-            amenity_name5: hotel.amenity_name5 || {},
-            amenity_name6: hotel.amenity_name6 || {},
-            amenity_name7: hotel.amenity_name7 || {},
-            amenity_name8: hotel.amenity_name8 || {},
-            amenity_name9: hotel.amenity_name9 || {},
-            amenity_name10: hotel.amenity_name10 || {},
-            amenity_name11: hotel.amenity_name11 || {},
-            amenity_name12: hotel.amenity_name12 || {},
-            amenity_name13: hotel.amenity_name13 || {},
-            amenity_name14: hotel.amenity_name14 || {},
-            amenity_name15: hotel.amenity_name15 || {},
-            amenity_logo1: hotel.amenity_logo1 || {},
-            amenity_logo2: hotel.amenity_logo2 || {},
-            amenity_logo3: hotel.amenity_logo3 || {},
-            amenity_logo4: hotel.amenity_logo4 || {},
-            amenity_logo5: hotel.amenity_logo5 || {},
-            amenity_logo6: hotel.amenity_logo6 || {},
-            amenity_logo7: hotel.amenity_logo7 || {},
-            amenity_logo8: hotel.amenity_logo8 || {},
-            amenity_logo9: hotel.amenity_logo9 || {},
-            amenity_logo10: hotel.amenity_logo10 || {},
-            amenity_logo11: hotel.amenity_logo11 || {},
-            amenity_logo12: hotel.amenity_logo12 || {},
-            amenity_logo13: hotel.amenity_logo13 || {},
-            amenity_logo14: hotel.amenity_logo14 || {},
-            amenity_logo15: hotel.amenity_logo15 || {}
-          }));
-        } 
-        
-        localStorage.setItem("noOfHotels", String(normalizedData.length));
-        
-          // localStorage.setItem("storedLocation", normalizedData[0].location_name); // Save the location name of the first hotel
-        
-  
+
         setHotels(normalizedData);
       } else {
         console.warn("No hotels found in response.");
@@ -165,9 +114,8 @@ console.log("a")
     }
   }, [type, loc]);
 
-  
 
- 
+
 
 
   // Fetch hotels when component mounts
@@ -205,23 +153,22 @@ console.log("a")
               loc={loc || ''}
               type={type || ''}
               startdate={startdate || ''}
-              enddate={enddate || ''} adults={0} numChildren={0} infants={0}            />
+              enddate={enddate || ''} adults={0} numChildren={0} infants={0} />
           ))
       ) : (
         <div>No hotels available.</div>
       )}
-  
+
       {/* Pass pagination props */}
       <CardPagination
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={handlePageChange}
       />
-     </Suspense>
+    </Suspense>
   );
-  
+
 };
 
 
-export default Page;  
-	
+export default Page;

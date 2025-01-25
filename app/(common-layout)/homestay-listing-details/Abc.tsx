@@ -122,8 +122,8 @@ const HotelListingDetails = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const hotelDetailsId = searchParams.get("hotelDetailsId");
-  const type = searchParams.get("type");
+  const hotelName = searchParams.get("hotelName");
+  const type = "HomeStay";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -221,7 +221,7 @@ const HotelListingDetails = () => {
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
 
-    const searchUrl = `/hotel-listing-details?hotelDetailsId=${hotelDetailsId}&type=${type}`;
+    const searchUrl = `/hotel-listing-details?hotelName=${hotelName}`;
 
     window.location.href = searchUrl;
     localStorage.removeItem("noOfNights");
@@ -392,10 +392,10 @@ const HotelListingDetails = () => {
 
   useEffect(() => {
     const fetchHotelData = async () => {
-      if (hotelDetailsId) {
+      if (hotelName) {
         try {
           const response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelDetailsId}`
+            `https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelName}`
           );
           const result = await response.json();
 
@@ -570,7 +570,7 @@ const HotelListingDetails = () => {
     };
 
     fetchHotelData();
-  }, [hotelDetailsId]);
+  }, [hotelName]);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
@@ -582,16 +582,16 @@ const HotelListingDetails = () => {
     const fetchRooms = async () => {
       try {
         let response;
-        if (type == "Hotel" || type == "HomeStay" || fromHome == "200") {
+        if (type == "HomeStay" || fromHome == "200") {
           console.log("Fetching data with hotel id");
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelDetailsId}/rooms`
+            `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelName}/rooms`
           );
         }
         else {
           console.log("Fetching data with loc and date", location);
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${hotelDetailsId}/${location}/${startdate}/${enddate}/${totalRooms}`
+            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${hotelName}/${location}/${startdate}/${enddate}/${totalRooms}`
           );
         }
 
@@ -607,7 +607,7 @@ const HotelListingDetails = () => {
           let formattedRooms: Room[] = [];
 
 
-          if (type === "null" && result.rooms_by_room_id) {
+          if (type != "HomeStay" && result.rooms_by_room_id) {
             let totalRoomPricesByRoomId: Record<string, number> = {};
             // Flatten the rooms_by_room_id object into unique room objects
             for (const roomId in result.rooms_by_room_id) {
@@ -666,7 +666,7 @@ const HotelListingDetails = () => {
     };
 
     fetchRooms();
-  }, [startdate, enddate, hotelDetailsId, location, totalRooms, type]);
+  }, [startdate, enddate, hotelName, location, totalRooms, type]);
 
   const handleRestrict = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -691,7 +691,7 @@ const HotelListingDetails = () => {
     }
 
     localStorage.setItem("grandTotal", grandTotal.toString());
-    router.push(`/payment-method?hotelId=${hotelDetailsId}`);
+    router.push(`/payment-method?hotelId=${hotelName}`);
   };
 
 
@@ -1721,7 +1721,7 @@ const HotelListingDetails = () => {
                   {/* Conditionally hide the "Proceed Booking" button based on the selected tab */}
                   {selectedIndex === 0 && (
                     <Link
-                      href={`/payment-method?hotelId=${hotelDetailsId}`}
+                      href={`/payment-method?hotelId=${hotelName}`}
                       onClick={handleRestrict}
                       className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                     >

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { Key, useEffect, useState } from "react";
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper";
@@ -7,9 +7,28 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
 import SubHeadingBtn from "../SubHeadingBtn";
+import { StaticImport } from "next/dist/shared/lib/get-img-props";
+
+
+interface Package {
+  id: number;
+  location_name: string;
+  package_title: string;
+  package_content: string;
+  youtube_video_link: string;
+  duration: string;
+  tour_min_people: number;
+  tour_max_people: number;
+  pickup_point: string;
+  banner_image: string[]; // Assuming it's an array of strings
+  tour_price: number;
+  sale_price: number | null; // Sale price can be null
+}
+
 
 const Featured = () => {
-  const [packages, setPackages] = useState([]);
+  const [packages, setPackages] = useState<Package[]>([]);
+
   
   // Fetch the API data on component mount
   useEffect(() => {
@@ -57,7 +76,7 @@ const Featured = () => {
                         modules={[Navigation, Pagination]}
                         className="swiper property-card-slider"
                       >
-                        {banner_image.map((item, index) => (
+                        {banner_image.map((item: string | StaticImport, index: Key | null | undefined) => (
                           <SwiperSlide key={index}>
                             <Image
                               width={400}

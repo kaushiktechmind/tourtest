@@ -14,7 +14,7 @@ const Hero = () => {
     localStorage.setItem("fromHome", "200");
     localStorage.setItem("storedLocation", locationName);
     if (!locationName) {
-      alert("Please fill all fields before searching.");
+      alert("Please Select Location.");
       return;
     }
 

@@ -92,7 +92,8 @@ const HotelListingList = ({
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}`}
+                // href={`/hotel-listing-details?hotelName=${id || hotel_id}`}
+                href={`/hotel-listing-details?hotelName=${hotel_name}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
               >
                 {hotel_name}
@@ -144,7 +145,8 @@ const HotelListingList = ({
                 <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
               </span>
               <Link
-                href={`/hotel-listing-details?hotelDetailsId=${id || hotel_id}&type=${type}&loc=${loc}`}
+                // href={`/hotel-listing-details?hotelName=${id || hotel_id}`}
+                href={`/hotel-listing-details?hotelName=${hotel_name}`}
                 className="btn-outline font-semibold"
               >
                 Book Now
