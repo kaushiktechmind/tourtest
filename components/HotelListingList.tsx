@@ -8,14 +8,7 @@ import { Tooltip } from "react-tooltip";
 
 const HotelListingList = ({
   item,
-  adults,
-  numChildren,
-  infants,
   loc,
-  type,
-  startdate,
-  enddate,
-  noOfRooms
 }: {
   item: any;
   adults: number;
@@ -37,11 +30,16 @@ const HotelListingList = ({
     ratings,
     hotel_name,
     seo_title,
-    amenity_name1, amenity_logo1,
-    amenity_name2, amenity_logo2,
-    amenity_name3, amenity_logo3,
-    amenity_name4, amenity_logo4,
-    amenity_name5, amenity_logo5
+    amenity_name1,
+    amenity_logo1,
+    amenity_name2,
+    amenity_logo2,
+    amenity_name3,
+    amenity_logo3,
+    amenity_name4,
+    amenity_logo4,
+    amenity_name5,
+    amenity_logo5,
   } = item;
 
   if (!loc) {
@@ -65,7 +63,8 @@ const HotelListingList = ({
 
   // Filter out any invalid amenities
   const validAmenities = amenities.filter(
-    (amenity) => typeof amenity.name === "string" && typeof amenity.logo === "string"
+    (amenity) =>
+      typeof amenity.name === "string" && typeof amenity.logo === "string"
   );
 
   // Debugging: Log validAmenities to ensure they are strings
@@ -93,16 +92,26 @@ const HotelListingList = ({
           <div className="property-card__body">
             <div className="flex justify-between mb-2">
               <Link
-                // href={`/hotel?hotelName=${id || hotel_id}`}
-                href={`/hotel?id=${seo_title}`}
+                // href={`/hotel?hotelDetailsId=${id || hotel_id}`}
+                // href={`/hotel/${seo_title}`}
+                href={`/hotel/${id || hotel_id}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
+                onClick={() => {
+                  if (location_name) {
+                    localStorage.setItem("storedLocation", location_name);
+                    localStorage.setItem("fromHome", "200");
+                  }
+                }}
               >
                 {hotel_name}
               </Link>
               <div className="flex items-center shrink-0">
                 <div className="flex">
                   {Array.from({ length: Math.round(ratings) }, (_, index) => (
-                    <StarIcon key={index} className="w-5 h-5 text-[var(--tertiary)]" />
+                    <StarIcon
+                      key={index}
+                      className="w-5 h-5 text-[var(--tertiary)]"
+                    />
                   ))}
                 </div>
               </div>
@@ -113,7 +122,7 @@ const HotelListingList = ({
                 <span className="inline-block">{location_name}</span>
               </div>
             </div>
-            <ul className="flex items-center flex-wrap gap-3">
+            <ul className="flex items-center flex-wrap gap-7">
               {validAmenities.map((amenity, index) => (
                 <li key={index}>
                   <div
@@ -143,12 +152,22 @@ const HotelListingList = ({
             <div className="flex flex-wrap justify-between items-center">
               <span className="block  font-medium line-through">
                 ₹{starting_price}
-                <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
+                <span className="inline-block font-medium text-xl text-primary pl-2">
+                  {" "}
+                  ₹{highest_price}
+                </span>
               </span>
               <Link
-                // href={`/hotel?hotelName=${id || hotel_id}`}
-                href={`/hotel?id=${seo_title}`}
+                // href={`/hotel?hotelDetailsId=${id || hotel_id}`}
+                // href={`/hotel/${seo_title}`}
+                href={`/hotel/${id || hotel_id}`}
                 className="btn-outline font-semibold"
+                onClick={() => {
+                  if (location_name) {
+                    localStorage.setItem("storedLocation", location_name);
+                    localStorage.setItem("fromHome", "200");
+                  }
+                }}
               >
                 Book Now
               </Link>

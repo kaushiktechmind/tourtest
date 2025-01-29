@@ -58,6 +58,9 @@ const Page = () => {
       localStorage.setItem("address", data.user.address);
       localStorage.setItem("mobile_number", data.user.mobile_number);
       localStorage.setItem("profile_photo", data.user.profile_photo);
+
+
+      window.dispatchEvent(new Event("userLogin"));
       
 
 

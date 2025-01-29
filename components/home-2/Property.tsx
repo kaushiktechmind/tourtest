@@ -35,10 +35,10 @@ const Property = () => {
       setCategories((prevCategories) => ({
         ...prevCategories,
         [location]: apiData.length > 0
-          ? apiData.map((item: { id: any; hotel_name: any; full_address: any; no_of_bedrooms: any; hotel_or_home_stay: any; no_of_beds: any; no_of_bathrooms: any; room_size: any; starting_price: any; highest_price: any; banner_images: any; }) => ({
+          ? apiData.map((item: { id: any; hotel_name: any; location_name: any; no_of_bedrooms: any; hotel_or_home_stay: any; no_of_beds: any; no_of_bathrooms: any; room_size: any; starting_price: any; highest_price: any; banner_images: any; }) => ({
               id: item.id,
               title: item.hotel_name,
-              address: item.full_address,
+              address: item.location_name,
               rooms: item.no_of_bedrooms,
               type: item.hotel_or_home_stay,
               bed: item.no_of_beds,
@@ -103,7 +103,7 @@ const Property = () => {
                 ))}
               </Tab.List>
               <Link
-                href="hotels?type=Hotel"
+                href="hotels"
                 className="btn-outline flex items-center gap-2">
                 View All
                 <i className="las la-long-arrow-alt-right text-2xl"></i>

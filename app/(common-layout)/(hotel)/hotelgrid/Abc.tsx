@@ -11,7 +11,6 @@ const HotelListingGrid = () => {
   const searchParams = useSearchParams();
   const type = "Hotel";
   const loc = localStorage.getItem("storedLocation");
-  // console.log("Locationnnnnnnnnnnnnnnnnnnn", loc);
 
 
   const [noOfRooms, setNoOfRooms] = useState<number | null>(null);
@@ -168,7 +167,7 @@ const HotelListingGrid = () => {
                 enddate={enddate || ""} adults={0} numChildren={0} infants={0} />
             ))
         ) : (
-          <div>No hotels available.</div>
+          <div className="col-span-12">No hotels available.</div>
         )}
 
         {/* Pass pagination props */}

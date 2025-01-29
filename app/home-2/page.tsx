@@ -60,26 +60,6 @@ const Page = () => {
       </main>
       <Footer />
 
-      {/* WhatsApp Icon */}
-      <a
-        href="https://wa.me/9999999999" // Replace with your WhatsApp number
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-16 right-3 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
-      >
-        <ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6" />
-      </a>
-
-      {/* Scroll to Top Button */}
-      {showScroll && (
-  <button
-    onClick={scrollToTop}
-    className="fixed bottom-16 right-16 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition z-50"
-  >
-    <ArrowUpIcon className="h-6 w-6" />
-  </button>
-)}
-
     </>
   );
 };

@@ -5,6 +5,7 @@ import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Pagination } from "swiper";
+import WhatsAppAndScroll from "@/components/WhatsAppAndScroll";
 
 const Page = () => {
   const router = useRouter();
@@ -16,6 +17,8 @@ const Page = () => {
   const [noOfRooms, setNoOfRooms] = useState<number | null>(null);
   const [startdate, setStartdate] = useState<string | null>(null);
   const [enddate, setEnddate] = useState<string | null>(null);
+
+  
 
   useEffect(() => {
     // Only run on the client-side
@@ -157,8 +160,9 @@ const Page = () => {
               enddate={enddate || ''} adults={0} numChildren={0} infants={0} />
           ))
       ) : (
-        <div>No hotels available.</div>
+        <div className="col-span-12">No hotels available.</div>
       )}
+
 
       {/* Pass pagination props */}
       <CardPagination

@@ -8,11 +8,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       {/* <HeaderTop /> */}
-      <Header2 />
-      <MobileMenu />
+      {/* <Header2 /> */}
+      {/* <MobileMenu /> */}
       {children}
-      <Footer />
-      <WhatsAppAndScroll whatsappNumber="9999999999" />
+      {/* <Footer /> */}
+      {/* <WhatsAppAndScroll whatsappNumber="9999999999" /> */}
     </>
   );
 }

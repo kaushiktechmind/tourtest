@@ -569,26 +569,28 @@ const PackageListingDetails = () => {
                                   </div>
                                 </div>
                                 <div className="flex-grow rounded-2xl bg-white shadow-lg p-3 sm:p-4 lg:p-6">
-                                  <h5 className="font-semibold text-xl">{title}</h5>
-                                  <p className="mb-0 clr-neutral-500">{description}</p>
                                   <div className="border border-dashed my-6"></div>
-                                  <div className="flex flex-col lg:flex-row md:items-center gap-5">
-                                    <Link href="tour-listing-details" className="link block shrink-0 w-full lg:w-auto">
+                                  <div className="flex flex-col lg:flex-row items-center lg:items-start gap-5">
+                                    <Link href="tour-listing-details" className="block shrink-0 w-full lg:w-auto">
                                       <Image
                                         width={241}
-                                        height={153}
+                                        height={200}
                                         src={image}
                                         alt="image"
-                                        className="rounded-2xl object-fit-cover"
+                                        className="rounded-2xl w-[241px] h-[200px] object-cover"
                                       />
                                     </Link>
                                     <div className="flex-grow">
-                                      <Link href="tour-listing-details" className="link block text-lg text-[var(--neutral-700)] hover:text-primary mb-2">
+                                      <Link
+                                        href="tour-listing-details"
+                                        className="block text-lg text-[var(--neutral-700)] hover:text-primary mb-2"
+                                      >
                                         {title}
                                       </Link>
-                                      <p className="mb-0 clr-neutral-500 text-sm">{description}</p>
+                                      <p className="mb-0 text-sm text-neutral-500">{description}</p>
                                     </div>
                                   </div>
+
                                 </div>
                               </div>
                             </li>

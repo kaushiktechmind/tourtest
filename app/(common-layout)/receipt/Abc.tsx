@@ -58,8 +58,11 @@ const adults = Number(totalCounts?.adults || 0); // Default to 0 if undefined
 const children = Number(totalCounts?.children || 0);
 const infants = Number(totalCounts?.infants || 0);
 const totalRooms = Number(totalCounts?.totalRooms || 0);
-const startdate = localStorage.getItem("startDate");
-const enddate = localStorage.getItem("endDate");
+
+const formatDate = (dateString: string) => dateString === "0" ? "" : new Date(dateString).toLocaleDateString("en-GB").replace(/\//g, "-");
+
+const startdate = formatDate(localStorage.getItem("startDate") ?? "0");
+const enddate = formatDate(localStorage.getItem("endDate") ?? "0");
 
 
 
@@ -146,7 +149,9 @@ const Reciept = () => {
   const mobile_number = localStorage.getItem("mobile_number");
   const noOfNights = Number(localStorage.getItem("noOfNights"));
 
-  const storedTotalPrice = localStorage.getItem("storedTotalPrice");
+  const storedTotalPrice = Math.round(
+    parseFloat(localStorage.getItem("storedTotalPrice") || "0")
+  );
   const grandTotal = noOfNights * Number(storedTotalPrice);
 
 
@@ -243,11 +248,7 @@ const Reciept = () => {
                               <i className="las text-lg la-bed"></i>
                               <span className="block text-sm">{roomData.no_of_beds} Bed</span>
                             </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bath"></i>
-                              <span className="block text-sm">{roomData.bathrooms || 1} Bath</span>
-                            </li>
-                            <li className="flex gap-2 items-center">
+                              <li className="flex gap-2 items-center">
                               <i className="las text-lg la-arrows-alt"></i>
                               <span className="block text-sm">{roomData.room_size}</span>
                             </li>

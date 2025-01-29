@@ -5,24 +5,67 @@ import {
   PhoneArrowUpRightIcon,
 } from "@heroicons/react/24/outline";
 import { useForm, SubmitHandler } from "react-hook-form";
+
 type FormValues = {
   name: string;
   email: string;
+  phone: string;
   service: string;
   message: string;
 };
+
+const serviceTypeMapping = {
+  1: "Hotel",
+  2: "Homestay",
+  3: "Package",
+  4: "Activity",
+  5: "Cab",
+  6: "Ferry",
+};
+
 const Page = () => {
   const { register, handleSubmit, reset } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
-    console.log(data), reset();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    try {
+      const serviceText = serviceTypeMapping[data.service as unknown as keyof typeof serviceTypeMapping];
+
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/save_enquiry",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: data.name,
+            phone: data.phone,
+            email: data.email,
+            message: data.message,
+            service_type: serviceText,  // Send the service name instead of number
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to submit the form");
+      }
+
+      const result = await response.json();
+      console.log("Form submitted successfully:", result);
+      reset(); // Reset the form after successful submission
+    } catch (error) {
+      console.error("Error submitting form:", error);
+    }
   };
+
   return (
     <>
       <div className="py-[60px] lg:py-[120px] px-3 relative bg-white after:absolute after:bottom-0 after:right-0 after:w-full after:isolate after:h-[34%] after:bg-[var(--bg-2)]">
         <div className="text-center">
           <h2 className="h2 mt-4 mb-6"> Need Any Help? </h2>
           <p className="mb-0">
-            Queries, complaints and feedback. We will be happy to serve you
+            Queries, complaints, and feedback. We will be happy to serve you
           </p>
         </div>
 
@@ -52,10 +95,7 @@ const Page = () => {
                   <EnvelopeOpenIcon className="h-6 w-6" />
                 </div>
                 <div className="flex-grow">
-                  <h4 className="mb-2 text-2xl font-semibold">
-                    {" "}
-                    Online Support{" "}
-                  </h4>
+                  <h4 className="mb-2 text-2xl font-semibold"> Online Support </h4>
                   <ul className="list">
                     <li>
                       <span className="clr-neutral-500">info@example.com</span>
@@ -73,10 +113,7 @@ const Page = () => {
                   <MapPinIcon className="w-6 h-6" />
                 </div>
                 <div className="flex-grow">
-                  <h4 className="mb-2 text-2xl font-semibold">
-                    {" "}
-                    Our Location{" "}
-                  </h4>
+                  <h4 className="mb-2 text-2xl font-semibold"> Our Location </h4>
                   <p className="mb-0">
                     3891 Ranchview Dr. Richardson, California 62639
                   </p>
@@ -86,6 +123,7 @@ const Page = () => {
           </div>
         </div>
       </div>
+
       <div className="pb-[60px] lg:pb-[120px] pt-4 bg-[var(--bg-2)] px-3">
         <div className="container">
           <div className="grid grid-cols-12 gap-4 justify-center justify-content-xl-between">
@@ -131,6 +169,20 @@ const Page = () => {
                       />
                     </div>
                     <div className="col-span-12">
+                      <label
+                        htmlFor="phone"
+                        className="text-xl font-medium block mb-3">
+                        Phone
+                      </label>
+                      <input
+                        type="tel"
+                        className="w-full bg-[var(--bg-1)] focus:outline-none border rounded-full py-3 px-5"
+                        placeholder="Enter Phone Number"
+                        id="phone"
+                        {...register("phone", { required: true })}
+                      />
+                    </div>
+                    <div className="col-span-12">
                       <label className="text-xl font-medium block mb-3">
                         Select Service Type
                       </label>
@@ -139,35 +191,36 @@ const Page = () => {
                           className="w-full bg-transparent py-3 focus:outline-none"
                           aria-label="Default select example"
                           {...register("service", { required: true })}>
-                          <option>Apartments</option>
                           <option value="1">Hotel</option>
                           <option value="2">Homestay</option>
                           <option value="3">Package</option>
-                          <option value="3">Activity</option>
-                          <option value="3">Cab</option>
-                          <option value="3">Ferry</option>
+                          <option value="4">Activity</option>
+                          <option value="5">Cab</option>
+                          <option value="6">Ferry</option>
                         </select>
                       </div>
                     </div>
                     <div className="col-span-12">
-                      <label className="text-xl font-medium block mb-3">
+                      <label
+                        htmlFor="message"
+                        className="text-xl font-medium block mb-3">
                         Message
                       </label>
                       <textarea
-                        id="review-review"
                         rows={5}
-                        className="w-full bg-[var(--bg-1)] focus:outline-none border rounded-3xl py-3 px-5"
-                        placeholder="Write you message"
-                        {...register("message", { required: true })}></textarea>
-                    </div>
-                    <div className="col-span-12">
-                      <button
-                        type="submit"
-                        className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white :bg-primary-400 hover:text-white font-semibold">
-                        <span className="inline-block"> Send Message </span>
-                      </button>
+                        className="w-full bg-[var(--bg-1)] focus:outline-none border rounded-xl py-3 px-5"
+                        placeholder="Enter Message"
+                        id="message"
+                        {...register("message", { required: true })}
+                      />
                     </div>
                   </div>
+
+                  <button
+                    type="submit"
+                    className="inline-block mt-5 text-center w-full py-4 bg-primary text-white rounded-full transition-all duration-300 transform hover:bg-primary/90 hover:scale-105">
+                    Submit Enquiry
+                  </button>
                 </form>
               </div>
             </div>

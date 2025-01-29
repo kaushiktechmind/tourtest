@@ -50,6 +50,7 @@ interface Room {
   // img: string;
   title: string;
   price: number;
+  sale_price: number;
   child_price: number;
   extra_bed_price: number;
   featured_images: string[];
@@ -63,15 +64,21 @@ interface Room {
   amenity_logo4: string;
 }
 
-
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
-const HotelListingDetails = () => {
+export default function Page({
+  params,
+}: {
+  params: { hotelDetailsId: string };
+}) {
+  const { hotelDetailsId } = params; // Destructure directly
   const [roomData, setRoomData] = useState<Room[]>([]);
-  const [msg, setMsg] = useState('');
+  const [msg, setMsg] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
+
+  
 
   // const [locationName, setLocationName] = useState("");
 
@@ -81,21 +88,10 @@ const HotelListingDetails = () => {
     setSelectedIndex(index);
   };
 
-
-
-
-
-
   const storedAdultPrice = localStorage.getItem("storedAdultPrice");
   const storedChildPrice = localStorage.getItem("storedChildPrice");
   const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");
   const location = localStorage.getItem("storedLocation");
-
-
-
-
-
-
 
   const [totalPrices, setTotalPrices] = useState({
     adultTotal: storedAdultPrice,
@@ -107,14 +103,10 @@ const HotelListingDetails = () => {
     setTotalPrices(prices);
   };
 
-
-
   const handleBookNowClick = (roomId: string) => {
     setSelectedRoomId([roomId]);
     localStorage.setItem("roomId", roomId);
   };
-
-
 
   const [totalSelected, setTotalSelected] = useState(0);
   const [totalCost, setTotalCost] = useState(0);
@@ -122,8 +114,8 @@ const HotelListingDetails = () => {
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const id = searchParams.get("id");
-  const type = "Hotel";
+  // const hotelDetailsId = searchParams.get("hotelDetailsId");
+  const type = "HomeStay";
 
   const [formData, setFormData] = useState({
     name: "",
@@ -139,32 +131,38 @@ const HotelListingDetails = () => {
 
   const startdate = localStorage.getItem("startDate");
   const enddate = localStorage.getItem("endDate");
-  const totalRooms = JSON.parse(localStorage.getItem('totalCounts') || '{}').totalRooms;
-
+  const totalRooms = JSON.parse(
+    localStorage.getItem("totalCounts") || "{}"
+  ).totalRooms;
 
   const date1 = new Date(String(startdate));
   const date2 = new Date(String(enddate));
   const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
   let noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   localStorage.setItem("noOfNights", String(noOfNights));
-  noOfNights = isNaN(Number(localStorage.getItem('noOfNights'))) ? 0 : Number(localStorage.getItem('noOfNights'));
+  noOfNights = isNaN(Number(localStorage.getItem("noOfNights")))
+    ? 0
+    : Number(localStorage.getItem("noOfNights"));
 
-
-  const subTotalPrice = (Number(storedAdultPrice) + Number(Number(storedChildPrice) * noOfNights) + Number(Number(storedExtraBedPrice) * noOfNights)) / noOfNights;
+  const subTotalPrice =
+    (Number(storedAdultPrice) +
+      Number(Number(storedChildPrice) * noOfNights) +
+      Number(Number(storedExtraBedPrice) * noOfNights)) /
+    noOfNights;
   localStorage.setItem("storedTotalPrice", subTotalPrice.toString());
-  const storedTotalPrice = Math.round(parseFloat(localStorage.getItem("storedTotalPrice") || "0"));
+  const storedTotalPrice = Math.round(
+    parseFloat(localStorage.getItem("storedTotalPrice") || "0")
+  );
 
-  const grandTotal = isNaN(noOfNights * Number(storedTotalPrice)) ? 0 : noOfNights * Number(storedTotalPrice);
-
-
+  const grandTotal = isNaN(noOfNights * Number(storedTotalPrice))
+    ? 0
+    : noOfNights * Number(storedTotalPrice);
 
   const [isOpen, setOpen] = useState(false);
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([
     null,
     null,
   ]);
-
-
 
   const [selectedRoomId, setSelectedRoomId] = useState<string[]>([]);
 
@@ -175,7 +173,6 @@ const HotelListingDetails = () => {
     const date2 = new Date(String(storedEndDate));
     const diffTime: number = Math.abs(date1.getTime() - date2.getTime());
     const noOfNights: number = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
 
     if (storedStartDate && storedEndDate) {
       setDateRange([new Date(storedStartDate), new Date(storedEndDate)]);
@@ -192,16 +189,17 @@ const HotelListingDetails = () => {
     totalRooms: 0,
   });
 
-
   const handleSearch = () => {
     localStorage.removeItem("fromHome");
     localStorage.setItem("restrictValue", "100");
-    const type = null;
+    // const type = null;
     localStorage.removeItem("roomId");
     localStorage.removeItem("storedAdultPrice");
     localStorage.removeItem("storedChildPrice");
     localStorage.removeItem("storedInfantPrice");
-    const totalRooms = JSON.parse(localStorage.getItem('totalCounts') || '{}').totalRooms;
+    const totalRooms = JSON.parse(
+      localStorage.getItem("totalCounts") || "{}"
+    ).totalRooms;
 
     if (!startDate || !endDate || !totalRooms) {
       alert("Please fill all fields before searching.");
@@ -221,11 +219,10 @@ const HotelListingDetails = () => {
     localStorage.setItem("startDate", formattedStartDate);
     localStorage.setItem("endDate", formattedEndDate);
 
-    const searchUrl = `/hotel?id=${id}&type=${type}`;
+    const searchUrl = `/hotel/${hotelDetailsId}`;
 
     window.location.href = searchUrl;
     localStorage.removeItem("noOfNights");
-
   };
 
   const [totalPrice, setTotalPrice] = useState(0);
@@ -392,10 +389,10 @@ const HotelListingDetails = () => {
 
   useEffect(() => {
     const fetchHotelData = async () => {
-      if (id) {
+      if (hotelDetailsId) {
         try {
           const response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/admin/hotel/${id}`
+            `https://yrpitsolutions.com/tourism_api/api/admin/hotels/${hotelDetailsId}`
           );
           const result = await response.json();
 
@@ -450,7 +447,6 @@ const HotelListingDetails = () => {
               amenity_name28: result.data.amenity_name28,
               amenity_name29: result.data.amenity_name29,
               amenity_name30: result.data.amenity_name30,
-
 
               amenity_logo1: result.data.amenity_logo1,
               amenity_logo2: result.data.amenity_logo2,
@@ -561,7 +557,6 @@ const HotelListingDetails = () => {
               policy_title5: result.data.policy_title5,
               policy_description5: result.data.policy_description5,
             });
-
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -570,31 +565,28 @@ const HotelListingDetails = () => {
     };
 
     fetchHotelData();
-  }, [id]);
+  }, [hotelDetailsId]);
 
   const toggleDescription = () => {
     setShowFullDescription(!showFullDescription);
   };
-
 
   useEffect(() => {
     const fromHome = localStorage.getItem("fromHome");
     const fetchRooms = async () => {
       try {
         let response;
-        if (type == "Hotel" || type == "HomeStay" || fromHome == "200") {
+        if (fromHome == "200") {
           console.log("Fetching data with hotel id");
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/hotels/${id}/rooms`
+            `https://yrpitsolutions.com/tourism_api/api/hotels/${hotelDetailsId}/rooms`
           );
-        }
-        else {
+        } else {
           console.log("Fetching data with loc and date", location);
           response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${id}/${location}/${startdate}/${enddate}/${totalRooms}`
+            `https://yrpitsolutions.com/tourism_api/api/rooms/filter/${hotelDetailsId}/${location}/${startdate}/${enddate}/${totalRooms}`
           );
         }
-
 
         const result = await response.json();
         console.log("API result:", result); // Log the API result
@@ -602,34 +594,41 @@ const HotelListingDetails = () => {
         // Adjust the success message condition here
         if (
           result.message === "Data retrieved successfully" ||
-          result.message === "Rooms retrieved successfully" || result.success
+          result.message === "Rooms retrieved successfully" ||
+          result.success
         ) {
           let formattedRooms: Room[] = [];
 
-
-          if (type != "Hotel" && result.rooms_by_room_id) {
+          if (result.rooms_by_room_id) {
             let totalRoomPricesByRoomId: Record<string, number> = {};
             // Flatten the rooms_by_room_id object into unique room objects
             for (const roomId in result.rooms_by_room_id) {
               const roomList = result.rooms_by_room_id[roomId];
               if (roomList.length > 0) {
-                const totalPrice = roomList.reduce((sum: number, room: { room_price: any; }) => sum + parseFloat(room.room_price || 0), 0);
+                const totalPrice = roomList.reduce(
+                  (sum: number, room: { room_price: any }) =>
+                    sum + parseFloat(room.room_price || 0),
+                  0
+                );
                 totalRoomPricesByRoomId[roomId] = totalPrice;
 
                 const room = roomList[0]; // Take the first object for each room_id
                 formattedRooms.push({
                   id: room.room_id,
-                  featured_images: room.featured_images || ["/img/default-room.jpg"],
+                  featured_images: room.featured_images || [
+                    "/img/default-room.jpg",
+                  ],
                   title: room.room_name,
-                  amenity_name1: room.amenities[0]?.amenity_name || '',
-                  amenity_logo1: room.amenities[0]?.amenity_logo || '',
-                  amenity_name2: room.amenities[1]?.amenity_name || '',
-                  amenity_logo2: room.amenities[1]?.amenity_logo || '',
-                  amenity_name3: room.amenities[2]?.amenity_name || '',
-                  amenity_logo3: room.amenities[2]?.amenity_logo || '',
-                  amenity_name4: room.amenities[3]?.amenity_name || '',
-                  amenity_logo4: room.amenities[3]?.amenity_logo || '',
-                  price: totalPrice,
+                  amenity_name1: room.amenities[0]?.amenity_name || "",
+                  amenity_logo1: room.amenities[0]?.amenity_logo || "",
+                  amenity_name2: room.amenities[1]?.amenity_name || "",
+                  amenity_logo2: room.amenities[1]?.amenity_logo || "",
+                  amenity_name3: room.amenities[2]?.amenity_name || "",
+                  amenity_logo3: room.amenities[2]?.amenity_logo || "",
+                  amenity_name4: room.amenities[3]?.amenity_name || "",
+                  amenity_logo4: room.amenities[3]?.amenity_logo || "",
+                  price: parseFloat(room.room_price),
+                  sale_price: parseFloat(room.sale_price),
                   child_price: parseFloat(room.child_price),
                   extra_bed_price: parseFloat(room.extra_bed_price),
                 });
@@ -641,15 +640,16 @@ const HotelListingDetails = () => {
               id: room.id,
               featured_images: room.featured_images || "/img/default-room.jpg",
               title: room.room_name,
-              amenity_name1: room.amenities[0]?.amenity_name || '',
-              amenity_logo1: room.amenities[0]?.amenity_logo || '',
-              amenity_name2: room.amenities[1]?.amenity_name || '',
-              amenity_logo2: room.amenities[1]?.amenity_logo || '',
-              amenity_name3: room.amenities[2]?.amenity_name || '',
-              amenity_logo3: room.amenities[2]?.amenity_logo || '',
-              amenity_name4: room.amenities[3]?.amenity_name || '',
-              amenity_logo4: room.amenities[3]?.amenity_logo || '',
+              amenity_name1: room.amenities[0]?.amenity_name || "",
+              amenity_logo1: room.amenities[0]?.amenity_logo || "",
+              amenity_name2: room.amenities[1]?.amenity_name || "",
+              amenity_logo2: room.amenities[1]?.amenity_logo || "",
+              amenity_name3: room.amenities[2]?.amenity_name || "",
+              amenity_logo3: room.amenities[2]?.amenity_logo || "",
+              amenity_name4: room.amenities[3]?.amenity_name || "",
+              amenity_logo4: room.amenities[3]?.amenity_logo || "",
               price: parseFloat(room.room_price),
+              sale_price: parseFloat(room.sale_price),
               child_price: parseFloat(room.child_price),
               extra_bed_price: parseFloat(room.extra_bed_price),
             }));
@@ -666,7 +666,7 @@ const HotelListingDetails = () => {
     };
 
     fetchRooms();
-  }, [startdate, enddate, id, location, totalRooms, type]);
+  }, [startdate, enddate, hotelDetailsId, location, totalRooms, type]);
 
   const handleRestrict = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -691,9 +691,11 @@ const HotelListingDetails = () => {
     }
 
     localStorage.setItem("grandTotal", grandTotal.toString());
-    router.push(`/payment-method?hotelId=${id}`);
+    router.push(`/payment-method?hotelId=${hotelDetailsId}`);
   };
 
+
+  
 
   const amenities = [];
   for (let i = 1; i <= 30; i++) {
@@ -705,29 +707,33 @@ const HotelListingDetails = () => {
     }
   }
 
-
-
   if (totalPrices.adultTotal !== null && totalPrices.adultTotal !== undefined) {
-    localStorage.setItem('storedAdultPrice', totalPrices.adultTotal.toString());
+    localStorage.setItem("storedAdultPrice", totalPrices.adultTotal.toString());
   } else {
-    console.error('Adult price is null or undefined');
+    console.error("Adult price is null or undefined");
   }
 
   if (totalPrices.childTotal !== null && totalPrices.childTotal !== undefined) {
-    localStorage.setItem('storedChildPrice', totalPrices.childTotal.toString());
+    localStorage.setItem("storedChildPrice", totalPrices.childTotal.toString());
   } else {
-    console.error('Child price is null or undefined');
+    console.error("Child price is null or undefined");
   }
 
-  if (totalPrices.extraBedTotal !== null && totalPrices.extraBedTotal !== undefined) {
-    localStorage.setItem('storedExtraBedPrice', totalPrices.extraBedTotal.toString());
+  if (
+    totalPrices.extraBedTotal !== null &&
+    totalPrices.extraBedTotal !== undefined
+  ) {
+    localStorage.setItem(
+      "storedExtraBedPrice",
+      totalPrices.extraBedTotal.toString()
+    );
   } else {
-    console.error('Extra bed price is null or undefined');
+    console.error("Extra bed price is null or undefined");
   }
 
-
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
@@ -735,14 +741,23 @@ const HotelListingDetails = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/save_enquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/save_enquiry",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(formData),
+        }
+      );
       if (response.ok) {
         alert("Enquiry submitted successfully!");
-        setFormData({ name: "", phone: "", email: "", message: "", service_type: "Hotel" });
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          message: "",
+          service_type: "Hotel",
+        });
       } else {
         alert("Failed to submit enquiry. Please try again.");
       }
@@ -751,18 +766,13 @@ const HotelListingDetails = () => {
     }
   };
 
-
-
-
-
-
   return (
     <main>
       <div className="bg-[var(--bg-2)] ">
         <div className="container-fluid p-0">
           <div>
             <div className="col-span-12">
-            {hotelDetails?.banner_images?.length > 0 && (
+              {hotelDetails?.banner_images?.length > 0 && (
                 <Swiper
                   loop={true}
                   slidesPerView="auto"
@@ -789,33 +799,43 @@ const HotelListingDetails = () => {
                 >
                   <div className="swiper-wrapper property-gallery-slider">
                     {/* Dynamically render SwiperSlide from banner_images */}
-                    {hotelDetails.banner_images.map((image: (string | UrlObject) | StaticImport, index: Key | null | undefined) => {
-                      // Check if the image is a valid string (for string URLs or StaticImport)
-                      const imageUrl = typeof image === 'string' ? image : (image as UrlObject)?.href;
+                    {hotelDetails.banner_images.map(
+                      (
+                        image: (string | UrlObject) | StaticImport,
+                        index: Key | null | undefined
+                      ) => {
+                        // Check if the image is a valid string (for string URLs or StaticImport)
+                        const imageUrl =
+                          typeof image === "string"
+                            ? image
+                            : (image as UrlObject)?.href;
 
-                      // If the image is invalid (undefined or null), skip rendering the image
-                      if (!imageUrl) {
-                        return null;
+                        // If the image is invalid (undefined or null), skip rendering the image
+                        if (!imageUrl) {
+                          return null;
+                        }
+
+                        return (
+                          <SwiperSlide key={index} className="swiper-slide">
+                            <Link href="#" className="link property-gallery">
+                              <div
+                                className="relative w-full"
+                                style={{ height: "500px", marginTop: "100px" }}
+                              >
+                                {/* Fixed height for all images */}
+                                <Image
+                                  layout="fill" // Ensures the image fills the parent container
+                                  objectFit="cover" // Maintains aspect ratio while covering the container
+                                  src={imageUrl} // Ensures the src is a valid string
+                                  alt={`cab-gallery`}
+                                  className=""
+                                />
+                              </div>
+                            </Link>
+                          </SwiperSlide>
+                        );
                       }
-
-                      return (
-                        <SwiperSlide key={index} className="swiper-slide">
-                          <Link href="#" className="link property-gallery">
-                            <div className="relative w-full" style={{ height: '500px', marginTop: '100px' }}>
-                              {/* Fixed height for all images */}
-                              <Image
-                                layout="fill"  // Ensures the image fills the parent container
-                                objectFit="cover" // Maintains aspect ratio while covering the container
-                                src={imageUrl}    // Ensures the src is a valid string
-                                alt={`cab-gallery`}
-                                className=""
-                              />
-                            </div>
-                          </Link>
-                        </SwiperSlide>
-                      );
-                    })}
-
+                    )}
                   </div>
                   <button className="btn-prev absolute top-[45%] left-4 z-[1] bg-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-primary hover:text-white duration-300">
                     <ChevronLeftIcon className="w-5 h-5" />
@@ -829,7 +849,6 @@ const HotelListingDetails = () => {
           </div>
         </div>
       </div>
-
 
       <div className="bg-[var(--bg-2)] py-[30px] lg:py-[60px] px-3">
         <div className="container">
@@ -870,7 +889,7 @@ const HotelListingDetails = () => {
                     <li>
                       <div className="flex items-center gap-2">
                         <MapPinIcon className="w-5 h-5 text-[var(--secondary-500)]" />
-                        <p className="mb-0"> {location}</p>
+                        <p className="mb-0"> {hotelDetails.location_name}</p>
                       </div>
                     </li>
                     <li className="text-primary text-lg">•</li>
@@ -884,32 +903,43 @@ const HotelListingDetails = () => {
                     </li>
                     <li className="text-primary text-lg">•</li>
                     <div className="flex items-center gap-1">
-                      {Array.from({ length: Number(hotelDetails.ratings) }, (_, index) => (
-                        <StarIcon
-                          key={index}
-                          className="w-5 h-5 text-[var(--tertiary)]"
-                        />
-                      ))}
+                      {Array.from(
+                        { length: Number(hotelDetails.ratings) },
+                        (_, index) => (
+                          <StarIcon
+                            key={index}
+                            className="w-5 h-5 text-[var(--tertiary)]"
+                          />
+                        )
+                      )}
                     </div>
-
 
                     <li className="text-primary text-lg">•</li>
                     <li>
                       <p className="mb-0">
                         <span className="clr-neutral-500">Published : </span>
-                        {new Date(hotelDetails.created_at).toLocaleDateString("en-US", {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
+                        {new Date(hotelDetails.created_at).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          }
+                        )}
                       </p>
                     </li>
-
                   </ul>
                   <div className="border border-dashed my-8"></div>
                   <ul className="flex items-center flex-wrap gap-8">
                     {amenities.map((amenity, index) => (
-                      <li key={index} style={{ display: 'flex', alignItems: 'center', marginBottom: '10px' }}>
+                      <li
+                        key={index}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          marginBottom: "10px",
+                        }}
+                      >
                         {/* Tooltip trigger container */}
                         <div
                           data-tooltip-id={amenity.name}
@@ -920,7 +950,11 @@ const HotelListingDetails = () => {
                             width={30} // Set the width to 30 pixels
                             height={30} // Specify height to maintain proportions
                             alt={amenity.name}
-                            style={{ width: '30px', height: '30px', marginRight: '10px' }}
+                            style={{
+                              width: "30px",
+                              height: "30px",
+                              marginRight: "10px",
+                            }}
                           />
                         </div>
 
@@ -934,9 +968,6 @@ const HotelListingDetails = () => {
                       </li>
                     ))}
                   </ul>
-
-
-
                 </div>
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">Description</h4>
@@ -976,7 +1007,6 @@ const HotelListingDetails = () => {
                     </button>
                   </div>
 
-
                   <button
                     onClick={handleSearch} // Call the search function on click
                     className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
@@ -984,7 +1014,6 @@ const HotelListingDetails = () => {
                     <span className="ml-2">Search</span>
                   </button>
                 </div>
-
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <h4 className="mb-5 text-2xl font-semibold">
@@ -1105,8 +1134,6 @@ const HotelListingDetails = () => {
                         </li>
                       )}
                   </ul>
-
-                 
                 </div>
 
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
@@ -1563,7 +1590,6 @@ const HotelListingDetails = () => {
                     </li>
                   </ul>
                 </div>
-
               </div>
             </div>
 
@@ -1575,7 +1601,9 @@ const HotelListingDetails = () => {
                     <div className="flex gap-3 items-center">
                       <i className="las la-tag text-2xl"></i>
                       <p className="mb-0"> From </p>
-                      <h6 className="line-through text-gray-500">₹{hotelDetails.starting_price}</h6>
+                      <h6 className="line-through text-gray-500">
+                        ₹{hotelDetails.starting_price}
+                      </h6>
                       <h3 className="h3 mb-0">
                         {" "}
                         ₹{hotelDetails.highest_price}{" "}
@@ -1583,23 +1611,37 @@ const HotelListingDetails = () => {
                     </div>
                   </div>
 
-
-                  <Tab.Group selectedIndex={selectedIndex} onChange={handleTabChange}>
+                  <Tab.Group
+                    selectedIndex={selectedIndex}
+                    onChange={handleTabChange}
+                  >
                     <Tab.List className="flex gap-3 about-tab mb-7">
-                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                      <Tab
+                        className={({ selected }) =>
+                          classNames(
+                            "focus:outline-none",
+                            selected ? "text-primary font-medium" : ""
+                          )
+                        }
+                      >
                         Booking Form
                       </Tab>
                       <span>|</span>
-                      <Tab className={({ selected }) => classNames("focus:outline-none", selected ? "text-primary font-medium" : "")}>
+                      <Tab
+                        className={({ selected }) =>
+                          classNames(
+                            "focus:outline-none",
+                            selected ? "text-primary font-medium" : ""
+                          )
+                        }
+                      >
                         Enquiry Form
                       </Tab>
                     </Tab.List>
                     <Tab.Panels className="tab-content mb-6 lg:mb-8">
                       <Tab.Panel>
                         <div className="flex items-center justify-between mb-4 mt-6 pl-8">
-                          <p className="mb-0 clr-neutral-500">
-                            Room Price:{" "}
-                          </p>
+                          <p className="mb-0 clr-neutral-500">Room Price: </p>
                           <p className="mb-0 font-medium">
                             {" "}
                             ₹{storedAdultPrice || 0}{" "}
@@ -1613,12 +1655,14 @@ const HotelListingDetails = () => {
                                 Extra Mattress for Adult / Child
                               </span>
                             </div>
-                            <p className="mb-0 clr-neutral-500">Extra Bed Price:</p>
+                            <p className="mb-0 clr-neutral-500">
+                              Extra Bed Price:
+                            </p>
                           </div>
-                          <p className="mb-0 font-medium">₹{Number(storedExtraBedPrice) * noOfNights || 0}</p>
+                          <p className="mb-0 font-medium">
+                            ₹{Number(storedExtraBedPrice) * noOfNights || 0}
+                          </p>
                         </div>
-
-
 
                         <div className="flex items-center justify-between mb-4">
                           <div className="flex items-center gap-2">
@@ -1630,7 +1674,9 @@ const HotelListingDetails = () => {
                             </div>
                             <p className="mb-0 clr-neutral-500">Child Price:</p>
                           </div>
-                          <p className="mb-0 font-medium">₹{Number(storedChildPrice) * noOfNights || 0}</p>
+                          <p className="mb-0 font-medium">
+                            ₹{Number(storedChildPrice) * noOfNights || 0}
+                          </p>
                         </div>
 
                         <div className="flex items-center justify-between mb-4">
@@ -1643,12 +1689,12 @@ const HotelListingDetails = () => {
                             </div>
                             <p className="mb-0 clr-neutral-500">Sub Total:</p>
                           </div>
-                          <p className="mb-0 font-medium">₹{storedTotalPrice || 0}</p>
+                          <p className="mb-0 font-medium">
+                            ₹{storedTotalPrice || 0}
+                          </p>
                         </div>
                         <div className="flex items-center justify-between mb-4 mt-6 pl-8">
-                          <p className="mb-0 clr-neutral-500">
-                            No Of Nights:{" "}
-                          </p>
+                          <p className="mb-0 clr-neutral-500">No Of Nights: </p>
                           <p className="mb-0 font-medium">
                             {" "}
                             {noOfNights || 0}{" "}
@@ -1662,17 +1708,21 @@ const HotelListingDetails = () => {
                                 Inclusive of GST
                               </span>
                             </div>
-                            <p className="mb-0 clr-neutral-500 bold font-extrabold">Grand Total</p>
+                            <p className="mb-0 clr-neutral-500 bold font-extrabold">
+                              Grand Total
+                            </p>
                           </div>
                           <p className="mb-0 font-medium">₹{grandTotal}</p>
                         </div>
-
 
                         <div className="hr-dashed my-4"></div>
                         <div className="flex items-center justify-between"></div>
                       </Tab.Panel>
                       <Tab.Panel>
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+                        <form
+                          onSubmit={handleSubmit}
+                          className="flex flex-col gap-5"
+                        >
                           <input
                             type="text"
                             name="name"
@@ -1708,7 +1758,10 @@ const HotelListingDetails = () => {
                             rows={6}
                             className="w-full rounded-3xl bg-[var(--bg-1)] border focus:outline-none py-2 px-3"
                           ></textarea>
-                          <button type="submit" className="py-2 px-4 bg-blue-500 text-white rounded-full">
+                          <button
+                            type="submit"
+                            className="py-2 px-4 bg-blue-500 text-white rounded-full"
+                          >
                             Submit
                           </button>
                         </form>
@@ -1721,7 +1774,7 @@ const HotelListingDetails = () => {
                   {/* Conditionally hide the "Proceed Booking" button based on the selected tab */}
                   {selectedIndex === 0 && (
                     <Link
-                      href={`/payment-method?hotelId=${id}`}
+                      href={`/payment-method?hotelId=${hotelDetailsId}`}
                       onClick={handleRestrict}
                       className="link inline-flex items-center gap-2 py-3 px-6 rounded-full bg-primary text-white hover:bg-primary-400 hover:text-white font-medium w-full justify-center mb-6"
                     >
@@ -1774,13 +1827,10 @@ const HotelListingDetails = () => {
       </div>
     </main>
   );
-};
+}
 
-const Page = () => (
-  <Suspense fallback={<div>Loading...</div>}>
-    <HotelListingDetails />
-  </Suspense>
-);
-
-
-export default Page;
+// const Page = () => (
+//   <Suspense fallback={<div>Loading...</div>}>
+//     <HotelListingDetails />
+//   </Suspense>
+// );

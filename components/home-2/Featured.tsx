@@ -29,7 +29,7 @@ interface Package {
 const Featured = () => {
   const [packages, setPackages] = useState<Package[]>([]);
 
-  
+
   // Fetch the API data on component mount
   useEffect(() => {
     const fetchPackages = async () => {
@@ -51,7 +51,7 @@ const Featured = () => {
         <div className="flex flex-wrap items-center gap-4 justify-between mb-10 lg:mb-12">
           <div>
             <SubHeadingBtn text="Featured Package" classes="bg-white" />
-            <h2 className="h2 mt-3 ">Our Best Packages</h2>
+            <h2 className="h2 mt-3">Our Best Packages</h2>
           </div>
           <Link className="btn-outline font-semibold" href="/package-listing">
             See All Package
@@ -60,47 +60,49 @@ const Featured = () => {
       </div>
       <div className="container">
         <div className="grid grid-cols-12 gap-4 lg:gap-6">
-          {packages.map(({ id, location_name, package_title, package_content, youtube_video_link, duration, tour_min_people, tour_max_people, pickup_point, banner_image, tour_price, sale_price }) => (
+          {packages.map(({
+            id, location_name, package_title, package_content, youtube_video_link, duration,
+            tour_min_people, tour_max_people, pickup_point, banner_image, tour_price, sale_price
+          }) => (
             <div key={id} className="col-span-12 md:col-span-6 xl:col-span-4 group">
-              <div className="bg-white rounded-2xl hover:shadow-lg duration-300 p-3">
-                <div className="relative">
-                  <div className="rounded-2xl">
-                    {banner_image && banner_image.length > 1 ? (
-                      <Swiper
-                        loop={true}
-                        pagination={{ el: ".property-card-pagination" }}
-                        navigation={{
-                          nextEl: ".property-card-next",
-                          prevEl: ".property-card-prev",
-                        }}
-                        modules={[Navigation, Pagination]}
-                        className="swiper property-card-slider"
-                      >
-                        {banner_image.map((item: string | StaticImport, index: Key | null | undefined) => (
-                          <SwiperSlide key={index}>
-                            <Image
-                              width={400}
-                              height={306}
-                              src={item}
-                              alt={`package-image-${id}`}
-                              className="w-full rounded-2xl"
-                            />
-                          </SwiperSlide>
-                        ))}
-                        <div className="swiper-pagination property-card-pagination"></div>
-                        <div className="swiper-button-prev !opacity-0 group-hover:!opacity-100 duration-300 property-card-prev"></div>
-                        <div className="swiper-button-next !opacity-0 group-hover:!opacity-100 duration-300 property-card-next"></div>
-                      </Swiper>
-                    ) : (
-                      <Image
-                        width={400}
-                        height={306}
-                        src={banner_image ? banner_image[0] : "/img/featured-package-1.jpg"}
-                        alt="image"
-                        className="w-full rounded-2xl"
-                      />
-                    )}
-                  </div>
+              <div className="bg-white rounded-2xl hover:shadow-lg duration-300 p-3" style={{ width: "100%", maxWidth: "400px", height: "650px" }}>
+                <div className="relative w-full h-55 overflow-hidden rounded-2xl">
+                  {/* Image Container: Fixed size and aspect ratio */}
+                  {banner_image && banner_image.length > 1 ? (
+                    <Swiper
+                      loop={true}
+                      pagination={{ el: ".property-card-pagination" }}
+                      navigation={{
+                        nextEl: ".property-card-next",
+                        prevEl: ".property-card-prev",
+                      }}
+                      modules={[Navigation, Pagination]}
+                      className="swiper property-card-slider"
+                    >
+                      {banner_image.map((item: string | StaticImport, index: Key | null | undefined) => (
+                        <SwiperSlide key={index}>
+                          <Image
+                            width={400}
+                            height={200}
+                            src={item}
+                            alt={`package-image-${id}`}
+                            className="w-full object-cover rounded-2xl  h-[300px]"
+                          />
+                        </SwiperSlide>
+                      ))}
+                      <div className="swiper-pagination property-card-pagination"></div>
+                      <div className="swiper-button-prev !opacity-0 group-hover:!opacity-100 duration-300 property-card-prev"></div>
+                      <div className="swiper-button-next !opacity-0 group-hover:!opacity-100 duration-300 property-card-next"></div>
+                    </Swiper>
+                  ) : (
+                    <Image
+                      width={400}
+                      height={200}
+                      src={banner_image ? banner_image[0] : "/img/featured-package-1.jpg"}
+                      alt="image"
+                      className="object-cover rounded-2xl  h-[300px]"
+                    />
+                  )}
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between mb-2">
@@ -109,7 +111,7 @@ const Featured = () => {
                     </Link>
                     <div className="flex gap-1 items-center shrink-0">
                       <i className="las la-star text-[var(--tertiary)]"></i>
-                      <span className="block"> 5 </span> {/* Assuming rating */}
+                      <span className="block"> 5 </span>
                     </div>
                   </div>
                   <ul className="grid grid-cols-2 gap-3 mt-4">
@@ -122,20 +124,18 @@ const Featured = () => {
                     <li className="col-span-2 sm:col-span-1">
                       <div className="flex items-center gap-2">
                         <i className="las la-user-friends text-xl text-[#22804A]"></i>
-                        <span className="block"> Capacity {tour_min_people} - {tour_max_people} </span>
+                        <span className="block"> Capacity : {tour_min_people} - {tour_max_people} </span>
                       </div>
                     </li>
-                    <li className="col-span-2 sm:col-span-1">
+                    <li className="col-span-2 sm:col-span-2">
                       <div className="flex items-center gap-2">
                         <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>
-                        <span className="block"> Pickup Point: {pickup_point} </span>
+                        <span className="block"> {pickup_point} </span>
                       </div>
                     </li>
                   </ul>
                 </div>
-
                 <div className="border-b border-dash-long my-2 mx-4"></div>
-
                 <div className="p-4">
                   <div className="flex flex-wrap justify-between items-center">
                     <span className="block text-xl font-medium text-primary">
@@ -152,7 +152,10 @@ const Featured = () => {
           ))}
         </div>
       </div>
+
+
     </div>
+
   );
 };
 

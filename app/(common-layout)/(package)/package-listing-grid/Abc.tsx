@@ -28,7 +28,7 @@ const Page = () => {
 
   const loc = localStorage.getItem("storedLocation");
 
-useEffect(() => {
+  useEffect(() => {
     const fetchPackages = async () => {
       try {
         const response = await fetch(
@@ -95,7 +95,7 @@ useEffect(() => {
                     height={224}
                     src={banner_image[0]}
                     alt="Package Image"
-                    className="rounded-2xl h-[300px] object-cover"
+                    className="rounded-2xl h-[300px] object-cover w-full"
                   />
                 </div>
               </div>

@@ -188,13 +188,13 @@ const EditManageRoom = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     // e.preventDefault();
-
+  
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-
+  
     // Ensure amenities are sorted before appending
     const sortedAmenities = [...selectedAmenities].sort((a, b) => a - b); // Sort numerically in ascending order
-
+  
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
@@ -209,10 +209,13 @@ const EditManageRoom = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-
+  
+    // Append _method PUT
+    formDataToSend.append("_method", "PUT");
+  
     try {
       const response = await fetch(
-        "https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms",
+        `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
         {
           method: "POST",
           headers: {
@@ -221,19 +224,22 @@ const EditManageRoom = () => {
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add room: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
       alert("Room added successfully");
-      window.location.reload();
+     router.push(`./manage-room?hotelId=${hotelId}&roomId=${roomId}`);
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
   };
+  
+
+
   <div className="mt-[20px]">
     <button
       type="submit"

@@ -100,9 +100,16 @@ export const sidenavData = [
     icon: <i className="las la-ticket-alt text-2xl"></i>,  // Icon for Coupon remains the same
     url: "/coupon",
   },
-
   {
     id: 13,
+    name: "Promotion",
+    icon: <i className="las la-bullhorn text-2xl"></i>,   // Icon for Coupon remains the same
+    url: "/promotion",
+  },
+  
+
+  {
+    id: 14,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",

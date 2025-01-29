@@ -32,6 +32,11 @@ const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // O
 
 const totalCounts = JSON.parse(localStorage.getItem("totalCounts") ?? "0");
 
+const formatDate = (dateString: string) => dateString === "0" ? "" : new Date(dateString).toLocaleDateString("en-GB").replace(/\//g, "-");
+
+const endDate = formatDate(localStorage.getItem("endDate") ?? "0");
+const startDate = formatDate(localStorage.getItem("startDate") ?? "0");
+
 
 // Access the properties from the parsed object
 const adults = Number(totalCounts?.adults || 0); // Default to 0 if undefined
@@ -125,7 +130,9 @@ const PaymentMethod = () => {
 
   const noOfNights = Number(localStorage.getItem("noOfNights"));
 
-  const storedTotalPrice = localStorage.getItem("storedTotalPrice");
+  const storedTotalPrice = Math.round(
+    parseFloat(localStorage.getItem("storedTotalPrice") || "0")
+  );
   const grandTotal = noOfNights * Number(storedTotalPrice);
 
 
@@ -144,7 +151,7 @@ const PaymentMethod = () => {
                 <div className="border border-dashed my-6"></div>
 
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
@@ -154,7 +161,27 @@ const PaymentMethod = () => {
                       <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-4">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Checkin Date</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{startDate}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-4">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Checkout Date</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{endDate}</p>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">Adults</span>
@@ -162,7 +189,7 @@ const PaymentMethod = () => {
                       <p className="mb-0 text-lg font-medium">{adults}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">Children</span>
@@ -170,7 +197,7 @@ const PaymentMethod = () => {
                       <p className="mb-0 text-lg font-medium">{children}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-3">
+                  <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">Infants</span>
@@ -250,11 +277,7 @@ const PaymentMethod = () => {
                                 <i className="las text-lg la-bed"></i>
                                 <span className="block text-sm">{roomData.no_of_beds} Bed</span>
                               </li>
-                              <li className="flex gap-2 items-center">
-                                <i className="las text-lg la-bath"></i>
-                                <span className="block text-sm">{roomData.bathrooms || 1} Bath</span>
-                              </li>
-                              <li className="flex gap-2 items-center">
+                                <li className="flex gap-2 items-center">
                                 <i className="las text-lg la-arrows-alt"></i>
                                 <span className="block text-sm">{roomData.room_size}</span>
                               </li>

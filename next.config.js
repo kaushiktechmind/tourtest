@@ -3,7 +3,7 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
-  output: "export",
+  // output: "export",
   experimental: {
     missingSuspenseWithCSRBailout: false,
   },
