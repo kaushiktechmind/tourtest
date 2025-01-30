@@ -553,11 +553,15 @@ const PackagePayment = () => {
                 currency="INR"
                 name={name}
                 email={email}
+                todayDate={formattedDate}
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
                 packageId={Number(packageId)}
                 passport={passport}
+                itinerary={itineraryData} 
+                inclusions={inclusions}
+                exclusions={exclusions}
                 country={selectedCountry} adults={0} infants={0}              >
               </RazorpayPkgBtn>
             </div>

@@ -972,7 +972,13 @@ const PackageListingDetails = () => {
                                 placeholderText="Select Date"
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
-                                onChange={(date) => setSelectedDate(date)}
+                                onChange={(date) => {
+                                  if (date) {
+                                    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                                    setSelectedDate(utcDate);
+                                  }
+                                }}
+                                
                                 minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                                 ref={datePickerRef} // Attach the ref to DatePicker

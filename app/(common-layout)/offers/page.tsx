@@ -4,9 +4,10 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CardPagination from "@/components/CardPagination";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
+import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; 
+import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa"; 
 
-interface PaymentData {
+interface PaymentData { 
   booking_id: number;
   id: number;
   invoice_id: string;
