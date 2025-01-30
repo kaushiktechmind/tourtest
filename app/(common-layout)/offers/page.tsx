@@ -27,7 +27,6 @@ interface Payment {
   ferry_name: any;
 }
 
-
 const Page = () => {
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -98,7 +97,6 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
-
   const getDetailsAndIcon = (payment: PaymentData | Payment) => {
     const details =
       (payment as Payment).hotel_name ||
@@ -109,29 +107,31 @@ const Page = () => {
       "N/A";
 
     let icon = null;
+    let label = "";
 
     if ((payment as Payment).hotel_name) {
       icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
+      label = "Hotel";
     } else if ((payment as Payment).package_name) {
       icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />;
+      label = "Package";
     } else if ((payment as Payment).activity_name) {
       icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
+      label = "Activity";
     } else if ((payment as Payment).cab_name) {
       icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
+      label = "Cab";
     } else if ((payment as Payment).ferry_name) {
       icon = <FontAwesomeIcon icon={faShip} className="w-5 h-5" />;
+      label = "Ferry";
     }
 
-    return { icon, details };
+    return { icon, details, label };
   };
-
-
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6  mt-[70px]">
-        {/* <h1 className="text-2xl font-bold mb-6">Payment History</h1> */}
-
+      <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6 mt-[70px]">
         {/* Search Field UI */}
         <div className="flex flex-wrap gap-3 justify-between mb-7">
           <form className="flex flex-wrap items-center gap-3">
@@ -165,62 +165,58 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedData.map((payment) => (
-                  <tr key={payment.id} className="hover:bg-gray-50">
-                    <td className="border p-2">
-                      {new Date(payment.created_at).toLocaleString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
-                    <td className="border p-2"> {(() => {
-                      const { icon } = getDetailsAndIcon(payment); // Destructure the returned object
-                      return (
-                        <>
-                          {icon}
-                        </>
-                      );
-                    })()}</td>
-                    <td className="border p-2">{payment.booking_id}</td>
-                    <td className="border p-2">{payment.customer_name}</td>
-                    <td className="border p-2"> {(() => {
-                      const { details } = getDetailsAndIcon(payment); // Destructure the returned object
-                      return (
-                        <>
-                          {details}
-                        </>
-                      );
-                    })()}</td>
-                    <td className="border p-2">{payment.invoice_id}</td>
-                    <td className="border p-2">₹{payment.amount}/-</td>
-                    <td className="border p-2">
-                      <a
-                        href={payment.invoice_pdf || undefined} // Use href for URLs
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline flex items-center space-x-2"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          viewBox="0 0 24 24"
-                          className="w-5 h-5 text-black-500"
+                {paginatedData.map((payment) => {
+                  const { icon, details, label } = getDetailsAndIcon(payment);
+                  return (
+                    <tr key={payment.id} className="hover:bg-gray-50">
+                      <td className="border p-2">
+                        {new Date(payment.created_at).toLocaleString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="border p-2 relative">
+                        <div className="group flex items-center">
+                          <div className="w-5 h-5 mr-2">{icon}</div>
+                          <div className="hidden group-hover:block absolute left-10 top-0 bg-gray-700 text-white p-2 rounded-lg">
+                            {label}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="border p-2">{payment.booking_id}</td>
+                      <td className="border p-2">{payment.customer_name}</td>
+                      <td className="border p-2">{details}</td>
+                      <td className="border p-2">{payment.invoice_id}</td>
+                      <td className="border p-2">₹{payment.amount}/-</td>
+                      <td className="border p-2">
+                        <a
+                          href={payment.invoice_pdf || undefined}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline flex items-center space-x-2"
                         >
-                          <path d="M19 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V6l-5-4zM13 9h-2v6h2v-2h2v-2h-2V9zm-7 8H5v-2h1v2zm0-4H5v-2h1v2zm0-4H5V7h1v2zm12 9H8V4h5v5h5v10z" />
-                        </svg>
-                        <span className="sr-only">View Invoice</span>
-                      </a>
-                    </td>
-
-                  </tr>
-                ))}
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            viewBox="0 0 24 24"
+                            className="w-5 h-5 text-black-500"
+                          >
+                            <path d="M19 2H8a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V6l-5-4zM13 9h-2v6h2v-2h2v-2h-2V9zm-7 8H5v-2h1v2zm0-4H5v-2h1v2zm0-4H5V7h1v2zm12 9H8V4h5v5h5v10z" />
+                          </svg>
+                          <span className="sr-only">View Invoice</span>
+                        </a>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         ) : (
           <p>No payment data available.</p>
         )}
+
         <div className="mt-6">
           <CardPagination
             currentPage={currentPage}
