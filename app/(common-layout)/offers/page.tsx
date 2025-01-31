@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; 
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa"; 
 
-interface PaymentData { 
+interface PaymentData {
   booking_id: number;
   id: number;
   invoice_id: string;

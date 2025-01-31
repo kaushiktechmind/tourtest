@@ -405,10 +405,7 @@ const FerryDetailsPage = () => {
           // Trigger ticket download after booking confirmation
           // Pass the correct booking_id to the handleDownloadTicket function
           handleDownloadTicket(booking_id, paymentData);// Call handleDownloadTicket with booking_id
-          // localStorage.removeItem("selectedFerry");
-          // localStorage.removeItem("selectedFerry2");
-          // localStorage.removeItem("selectedFerry3");
-          // localStorage.removeItem("travelData");
+        
           router.replace("/ferry-payment");
         } else {
           console.error("Error confirming booking:", confirmResponse.statusText);

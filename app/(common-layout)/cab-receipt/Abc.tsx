@@ -15,11 +15,12 @@ interface PaymentData{
   country: string;
   passport_no: string;
   address: string;
+  starting_date: string;
 
 }
 
-const date = new Date();
-const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
+const today = new Date();
+const todayDate = today.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
 const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "[]");
 const cabData = storedCabDetails[0];
@@ -153,14 +154,19 @@ const CabReciept = () => {
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
                 </div>
-                <div className="col-span-12 md:col-span-2 mt-[20px]">
+                <div className="col-span-12 md:col-span-4 mt-[20px] flex gap-4">
                   <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                     <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="clr-neutral-400 inline-block text-sm">
-                        Booking date
-                      </span>
+                      <span className="clr-neutral-400 inline-block text-sm">Booking date</span>
                     </div>
-                    <p className="mb-0 text-lg font-medium">{formattedDate}</p>
+                    <p className="mb-0 text-lg font-medium">{todayDate}</p>
+                  </div>
+
+                  <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="clr-neutral-400 inline-block text-sm">Reservation date</span>
+                    </div>
+                    <p className="mb-0 text-lg font-medium">{paymentData[0]?.starting_date}</p>
                   </div>
                 </div>
 

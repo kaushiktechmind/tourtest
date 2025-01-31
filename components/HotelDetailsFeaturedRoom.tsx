@@ -33,6 +33,8 @@ const HotelDetailsFeaturedRoom = ({
     amenity_logo4,
   } = item;
 
+  localStorage.setItem("roomPrice", price);
+
   const [baseRoomPrice, setBaseRoomPrice] = useState<string | null>(null);
   // if (type == 'null') {
   //   const [price, setPrice] = useState<number | null>(null);
@@ -273,9 +275,7 @@ const HotelDetailsFeaturedRoom = ({
                   ₹{sale_price}
                 </span>
               </span> */}
-              <span className="block font-medium">
-                ₹{baseRoomPrice}
-              </span>
+              <span className="block font-medium">₹{baseRoomPrice}</span>
 
               <button
                 onClick={handleBookNow}

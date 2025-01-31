@@ -86,6 +86,7 @@ const CabListingDetails = () => {
 
   const [cabSubForms, setCabSubForms] = useState<CabSubForm[]>([]);
   const [selectedPrice, setSelectedPrice] = useState(0);
+  const [cargo, setCargo] = useState(0);
   const [dropdownOptions, setDropdownOptions] = useState<number[]>([]);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -137,7 +138,8 @@ const CabListingDetails = () => {
   }, []);
 
 
-  const handleBook = (price: number, minPax: number, maxPax: number) => {
+  const handleBook = (price: number, minPax: number, maxPax: number, cargo_count: number) => {
+    setCargo(cargo_count);
     setSelectedPrice(price);
     setDropdownOptions(Array.from({ length: maxPax - minPax + 1 }, (_, i) => i + minPax));
   };
@@ -277,6 +279,7 @@ const CabListingDetails = () => {
       selectedDate: selectedDate.toISOString().split("T")[0], // Format the date as YYYY-MM-DD
       totalPrice: selectedPrice || 0,
       selectedPax,
+      cargo: cargo,
     };
     localStorage.setItem("storedCabDetails", JSON.stringify(storedCabDetails));
 
@@ -450,7 +453,8 @@ const CabListingDetails = () => {
                                       handleBook(
                                         Number(cab.price),
                                         Number(cab.min_pax),
-                                        Number(cab.max_pax)
+                                        Number(cab.max_pax),
+                                        Number(cab.cargo_count),
                                       )
                                     }
                                     className="btn-primary"
@@ -843,7 +847,12 @@ const CabListingDetails = () => {
                                 placeholderText="Select Date"
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
-                                onChange={(date) => setSelectedDate(date)}
+                                onChange={(date) => {
+                                  if (date) {
+                                    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                                    setSelectedDate(utcDate);
+                                  }
+                                }}
                                 minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                               />

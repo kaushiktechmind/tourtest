@@ -78,12 +78,13 @@ const Page = () => {
               <div className="relative">
                 <div className="rounded-2xl">
                 <Image
-                    width={386}
-                    height={224}
-                    src={banner_image_multiple[0]}
-                    alt="Package Image"
-                    className="rounded-2xl h-[224px] xl:w-[386px] w-full"
-                  />
+  width={0}  // Use 0 for width to allow the image to scale fluidly
+  height={0} // Use 0 for height to allow the image to scale fluidly
+  src={banner_image_multiple[0]}
+  alt="Package Image"
+  className="rounded-2xl w-full h-[260px] object-cover" // Fixed height, fluid width, and cover aspect ratio
+/>
+
                 </div>
               </div>
               <div className="p-4 xl:p-5">
@@ -100,14 +101,6 @@ const Page = () => {
                       <span className="inline-block">{location}</span>
                     </div>
                   </div>
-                {/* <ul className="grid grid-cols-2 gap-3">
-                  <li className="col-span-1">
-                    <div className="flex items-center gap-2">
-                      <i className="las la-clock text-xl text-[#22804A]"></i>
-                      <span className="block">{start_time} </span>
-                    </div>
-                  </li>
-                </ul> */}
               </div>
 
               <div className="border-b border-dash-long my-3 mx-4"></div>

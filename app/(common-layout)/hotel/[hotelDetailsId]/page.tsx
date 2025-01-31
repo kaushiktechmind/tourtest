@@ -78,8 +78,6 @@ export default function Page({
   const [msg, setMsg] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  
-
   // const [locationName, setLocationName] = useState("");
 
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -693,9 +691,6 @@ export default function Page({
     localStorage.setItem("grandTotal", grandTotal.toString());
     router.push(`/payment-method?hotelId=${hotelDetailsId}`);
   };
-
-
-  
 
   const amenities = [];
   for (let i = 1; i <= 30; i++) {

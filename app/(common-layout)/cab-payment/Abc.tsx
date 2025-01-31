@@ -8,11 +8,17 @@ import { useEffect, useState } from "react";
 import RazorpayCabBtn from "@/components/RazorpayCabBtn";
 RazorpayCabBtn;
 
-const date = new Date();
-const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
+const today = new Date();
+const todayDate = today.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
-const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "[]");
-const cabData = storedCabDetails[0];
+const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "{}");
+const storedDate = storedCabDetails?.selectedDate || "";
+
+
+const formattedDate = storedDate?.split('-').reverse().join('-');
+
+
+
 
 
 
@@ -23,6 +29,10 @@ const generateBookingID = () => {
 };
 
 const CabPayment = () => {
+
+  const [formattedDate, setFormattedDate] = useState<string>("");
+
+
   const router = useRouter();
   const searchParams = useSearchParams();
   const cabId = searchParams.get("cabId");
@@ -30,6 +40,12 @@ const CabPayment = () => {
   const [cabItem, setCabItem] = useState<any>(null);
 
   const [bookingID, setBookingID] = useState('');
+
+  useEffect(() => {
+    const storedCabDetails = JSON.parse(localStorage.getItem("storedCabDetails") || "{}");
+    const date = storedCabDetails?.selectedDate || "";
+    setFormattedDate(date ? date.split("-").reverse().join("-") : "");
+  }, []);
 
 
 
@@ -110,12 +126,17 @@ const CabPayment = () => {
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
                 </div>
-                <div className="col-span-12 md:col-span-2 mt-[20px]">
+                <div className="col-span-12 md:col-span-4 mt-[20px] flex gap-4">
                   <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                     <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="clr-neutral-400 inline-block text-sm">
-                        Booking date
-                      </span>
+                      <span className="clr-neutral-400 inline-block text-sm">Booking date</span>
+                    </div>
+                    <p className="mb-0 text-lg font-medium">{todayDate}</p>
+                  </div>
+
+                  <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="clr-neutral-400 inline-block text-sm">Reservation date</span>
                     </div>
                     <p className="mb-0 text-lg font-medium">{formattedDate}</p>
                   </div>
@@ -300,6 +321,8 @@ const CabPayment = () => {
                 cabId={Number(cabId)}
                 passport={passport}
                 country={selectedCountry}
+                formattedDate={formattedDate}
+                todayDate={todayDate}
               >
               </RazorpayCabBtn>
             </div>

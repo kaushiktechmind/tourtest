@@ -134,6 +134,7 @@ const Reciept = () => {
           `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`
         );
         const data = await response.json();
+        console.log("ccccccccccccccccccccccccc", data);
         setRoomsData([data.room]); // Store the single room data in an array
       } catch (error) {
         console.error("Error fetching room data:", error);

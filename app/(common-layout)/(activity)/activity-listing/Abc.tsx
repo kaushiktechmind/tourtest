@@ -105,7 +105,7 @@ const Page = () => {
                 <div className="property-card__body">
                   <div className="flex justify-between mb-2">
                     <Link
-                      href={`/activity-details?activityId=${id}`}
+                      href={`/activity-listing-details?activityId=${id}`}
                       className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
                     >
                       {activity_title}
@@ -130,7 +130,7 @@ const Page = () => {
                       </span>
                     </span>
                     <Link
-                      href={`/activity-details?activityId=${id}`}
+                      href={`/activity-listing-details?activityId=${id}`}
                       className="btn-outline py-2 text-primary font-semibold"
                     >
                       Book Now

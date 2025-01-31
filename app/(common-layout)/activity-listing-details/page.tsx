@@ -120,26 +120,13 @@ const ActivityListingDetails = () => {
           setFaqs(parsedFaqs);
         }
 
-
         if (data?.activity_attribute) {
-          let parsedAmenities = [];
-
-          // If it's a stringified array, parse it
-          try {
-            parsedAmenities = JSON.parse(data.activity_attribute[0]);
-            console.log("Parsed Amenities (Array):", parsedAmenities);
-          } catch (e) {
-            // If parsing fails, it's a simple string, so treat it as a single element array
-            parsedAmenities = [data.activity_attribute[0]];
-            console.log("Parsed Amenities (Single String):", parsedAmenities);
-          }
-
-          setAmenitiesArray(parsedAmenities);
+          // Directly set activity_attribute as an array
+          setAmenitiesArray(data.activity_attribute);
+          console.log("Amenities Array:", data.activity_attribute);
         } else {
           console.log("No amenities data available");
         }
-
-
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
@@ -464,7 +451,7 @@ const ActivityListingDetails = () => {
                     <h4 className="mb-5 text-2xl font-semibold">Activity Type</h4>
                     <div className="grid grid-cols-12 gap-4">
                       {amenitiesArray.length > 0 ? (
-                        amenitiesArray.slice(0, 4).map((amenity, index) => (
+                        amenitiesArray.slice(0, 5).map((amenity, index) => (  // Show first 5 items
                           <div className="col-span-12 md:col-span-4 lg:col-span-3" key={index}>
                             <ul className="flex flex-col gap-4">
                               <li>
@@ -482,8 +469,8 @@ const ActivityListingDetails = () => {
                         <p>Not Available</p>
                       )}
                     </div>
-                  </div>
 
+                  </div>
 
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
@@ -797,11 +784,18 @@ const ActivityListingDetails = () => {
                                 placeholderText="Select Date"
                                 selected={selectedDate}
                                 dateFormat="dd-MM-yyyy"
-                                onChange={(date) => setSelectedDate(date)}
-                                ref={datePickerRef} 
+                                onChange={(date) => {
+                                  if (date) {
+                                    const utcDate = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+                                    setSelectedDate(utcDate);
+                                  }
+                                }}
+                                
+                                ref={datePickerRef}
+                                minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                               />
-                             <span
+                              <span
                                 className="bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-3 text-gray-500 pe-4 ps-0 cursor-pointer"
                                 onClick={() => {
                                   if (datePickerRef.current) {
@@ -932,7 +926,7 @@ const ActivityListingDetails = () => {
         </div>
       </div>
     </main>
-  
+
   );
 };
 

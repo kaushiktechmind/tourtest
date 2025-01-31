@@ -604,7 +604,7 @@ const EditCab = () => {
                         <span className="inline-block py-3 px-6 rounded-full bg-[#354764] text-white mb-10">
                           Select Files
                         </span>
-                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 6 Files</span>
+                        <span className="h5 clr-neutral-500 text-center mt-4 mb-3">Select Minimum 3 Files</span>
                       </span>
                       <input
                         type="file"

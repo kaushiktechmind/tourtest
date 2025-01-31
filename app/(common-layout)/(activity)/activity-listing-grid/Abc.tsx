@@ -24,52 +24,52 @@ interface Activity {
 }
 
 const Page = () => {
-    const [activities, setActivities] = useState<Activity[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(6);
-  
-    const loc = localStorage.getItem("storedLocation");
-  
-    useEffect(() => {
-      const fetchActivities = async () => {
-        try {
-          const response = await fetch(
-            "https://yrpitsolutions.com/tourism_api/api/admin/get_all_activity",
-            {
-              method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
-            }
-          );
-  
-          if (!response.ok) {
-            throw new Error("Failed to fetch activities");
+  const [activities, setActivities] = useState<Activity[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
+
+  const loc = localStorage.getItem("storedLocation");
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/admin/get_all_activity",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
           }
-  
-          const data: Activity[] = await response.json();
-  
-          // Apply location filter if location exists
-          const filteredActivities = loc
-            ? data.filter((activity) => activity.location_name === loc)
-            : data;
-  
-          setActivities(filteredActivities);
-        } catch (error) {
-          console.error("Error fetching activities:", error);
-        } finally {
-          setLoading(false);
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch activities");
         }
-      };
-  
-      fetchActivities();
-    }, [loc]);
-  
-    if (loading) {
-      return <div>Loading...</div>;
-    }
-  
+
+        const data: Activity[] = await response.json();
+
+        // Apply location filter if location exists
+        const filteredActivities = loc
+          ? data.filter((activity) => activity.location_name === loc)
+          : data;
+
+        setActivities(filteredActivities);
+      } catch (error) {
+        console.error("Error fetching activities:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, [loc]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
 
   // Logic for slicing the activities array for pagination
   const indexOfLastActivity = currentPage * itemsPerPage;
@@ -86,7 +86,7 @@ const Page = () => {
 
   return (
     <>
-       {currentActivities.map(
+      {currentActivities.map(
         ({
           id,
           banner_image_multiple,
@@ -105,8 +105,9 @@ const Page = () => {
                     height={224}
                     src={banner_image_multiple[0]}
                     alt="Package Image"
-                    className="rounded-2xl h-[224px] xl:w-[386px] w-full"
+                    className="rounded-2xl h-[280px] w-full object-cover"
                   />
+
                 </div>
               </div>
               <div className="p-4 xl:p-5">
@@ -128,14 +129,14 @@ const Page = () => {
                     <div className="flex items-center gap-2">
                       <i className="las la-clock text-xl text-[#22804A]"></i>
                       <span className="block font-medium line-through">
-                      ₹{price}
-                      <span className="inline-block font-medium text-xl text-primary pl-2">
-                        ₹{sale_price}
+                        ₹{price}
+                        <span className="inline-block font-medium text-xl text-primary pl-2">
+                          ₹{sale_price}
+                        </span>
                       </span>
-                    </span>
                     </div>
                   </li>
-                  
+
                 </ul>
               </div>
 

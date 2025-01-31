@@ -537,7 +537,7 @@ const AddNewCab = () => {
                           Select Files
                         </span>
                         <span className="h5 clr-neutral-500 text-center mt-4 mb-3">
-                          Select Minimum 6 Files
+                          Select Minimum 3 Files
                         </span>
                       </span>
                       <input

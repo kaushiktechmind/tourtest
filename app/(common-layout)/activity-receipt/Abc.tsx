@@ -16,13 +16,18 @@ interface PaymentData{
   country: string;
   passport_no: string;
   address: string;
+  starting_date: string;
 }
 
-const date = new Date();
-const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
+const today = new Date();
+const todayDate = today.toLocaleDateString("en-GB").replace(/\//g, "-"); // Output: "DD-MM-YYYY"
 
 const storedActivityData = JSON.parse(localStorage.getItem("storedactivityData") || "[]");
 const activityData = storedActivityData[0];
+
+const storedDate = storedActivityData?.date;
+const formattedDate = storedDate?.split('-').reverse().join('-');
+
 
 
 
@@ -153,14 +158,19 @@ const ActivityReciept = () => {
                   <h3 className="mb-0 h3">Your Booking Info</h3>
                   <p className="mb-0 h3 text-right">{paymentData[0]?.booking_id || ""}</p>
                 </div>
-                <div className="col-span-12 md:col-span-2 mt-[20px]">
+                <div className="col-span-12 md:col-span-4 mt-[20px] flex gap-4">
                   <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
                     <div className="flex items-center justify-between gap-3 mb-1">
-                      <span className="clr-neutral-400 inline-block text-sm">
-                        Booking date
-                      </span>
+                      <span className="clr-neutral-400 inline-block text-sm">Booking date</span>
                     </div>
-                    <p className="mb-0 text-lg font-medium">{formattedDate}</p>
+                    <p className="mb-0 text-lg font-medium">{todayDate}</p>
+                  </div>
+
+                  <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">
+                    <div className="flex items-center justify-between gap-3 mb-1">
+                      <span className="clr-neutral-400 inline-block text-sm">Reservation date</span>
+                    </div>
+                    <p className="mb-0 text-lg font-medium">{paymentData[0]?.starting_date}</p>
                   </div>
                 </div>
 
@@ -212,29 +222,19 @@ const ActivityReciept = () => {
                           <div className="border border-dashed my-6"></div>
                           <ul className="flex flex-wrap gap-6">
                             <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-home"></i>
+                            <i className="las text-lg la-bus text-[#22804A]"></i>   
                               <span className="block text-sm">
                                 {activityItem?.start_time || "Pickup Point"}
                               </span>
                             </li>
                             <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bed"></i>
+                            <i className="las text-lg la-clock text-[#22804A]"></i> 
                               <span className="block text-sm">
                                 {activityItem?.duration || "Duration"}
                               </span>
                             </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-bath"></i>
-                              <span className="block text-sm">
-                                {activityItem?.bath || "Bath"}
-                              </span>
-                            </li>
-                            <li className="flex gap-2 items-center">
-                              <i className="las text-lg la-arrows-alt"></i>
-                              <span className="block text-sm">
-                                {activityItem?.size || "Size"}
-                              </span>
-                            </li>
+                           
+                            
                           </ul>
                         </div>
                       </div>

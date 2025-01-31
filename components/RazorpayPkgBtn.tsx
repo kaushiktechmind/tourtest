@@ -18,6 +18,9 @@ interface RazorpayPkgBtnProps {
   infants: number;
   packageId: number;
   todayDate: string;
+  itinerary: any; 
+  inclusions: any; 
+  exclusions: any; 
 
 }
 const packageId = localStorage.getItem("packageId");
@@ -78,8 +81,6 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, todayDate, 
   }, [packageId]);
 
 
-  console.log("itiiiiiiiiiiiiiii", inclusion1)
-  console.log("zzzzzzzzzzzzzzzzz", inclusion2)
 
 
 
@@ -122,7 +123,6 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, todayDate, 
   const date5 = new Date(flagDate.setDate(flagDate.getDate() + 1)).toLocaleDateString('en-GB');
 
 
-  console.log("wwwwwwwwwwwwwwwwwwwwwwwwwwwwww",formattedDate,  date1, date2, date3, date4, date5)
 
 
 
@@ -292,6 +292,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, todayDate, 
 
 			<div class="booking-info" style="width: 50%;">
 				<h4 style="font-weight: 800; font-size: 20px ">Booking Details</h4>
+        <p>Package Name: ${packageName}</p>
 				  <p>Booking ID: ${bookingID}</p>
           <p>Booking Date: ${todayDate}</p>
 				<p>Reservation Date: ${formattedDate}</p>
@@ -528,7 +529,7 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, todayDate, 
               formData.append('address', address || '');
               formData.append('passport_no', passport || '');
               formData.append('country', country || '');
-              formData.append('starting_date', "02-10-2025"); // Replace with correct value
+              formData.append('starting_date', formattedDate); // Replace with correct value
               formData.append('service_type', "Package"); // Adjust if needed
               formData.append('booking_id', bookingID);
 

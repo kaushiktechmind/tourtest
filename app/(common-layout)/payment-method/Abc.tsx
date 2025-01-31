@@ -32,11 +32,13 @@ const formattedDate = date.toLocaleDateString("en-GB").replace(/\//g, "-"); // O
 
 const totalCounts = JSON.parse(localStorage.getItem("totalCounts") ?? "0");
 
-const formatDate = (dateString: string) => dateString === "0" ? "" : new Date(dateString).toLocaleDateString("en-GB").replace(/\//g, "-");
+const formatDate = (dateString: string) =>
+  dateString === "0"
+    ? ""
+    : new Date(dateString).toLocaleDateString("en-GB").replace(/\//g, "-");
 
 const endDate = formatDate(localStorage.getItem("endDate") ?? "0");
 const startDate = formatDate(localStorage.getItem("startDate") ?? "0");
-
 
 // Access the properties from the parsed object
 const adults = Number(totalCounts?.adults || 0); // Default to 0 if undefined
@@ -47,7 +49,7 @@ const totalRooms = Number(totalCounts?.totalRooms || 0);
 const generateBookingID = () => {
   // Generate a random number with a fixed length
   const randomNumber = Math.floor(Math.random() * 100000); // Generates a random number between 0 and 99999
-  return `BKNG-${randomNumber.toString().padStart(5, '0')}`; // Format it to have leading zeros if necessary
+  return `BKNG-${randomNumber.toString().padStart(5, "0")}`; // Format it to have leading zeros if necessary
 };
 
 const PaymentMethod = () => {
@@ -59,7 +61,7 @@ const PaymentMethod = () => {
   const roomId = localStorage.getItem("roomId");
   const hotelId = searchParams.get("hotelId");
 
-  const [bookingID, setBookingID] = useState('');
+  const [bookingID, setBookingID] = useState("");
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
@@ -73,27 +75,30 @@ const PaymentMethod = () => {
   const [passportNumber, setPassportNumber] = useState("");
   const [name, setName] = useState(localStorage.getItem("name") || "");
   const [email, setEmail] = useState(localStorage.getItem("email") || "");
-  const [mobile_number, setMobileNumber] = useState(localStorage.getItem("mobile_number") || "");
+  const [mobile_number, setMobileNumber] = useState(
+    localStorage.getItem("mobile_number") || ""
+  );
 
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value);
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value);
-  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) => setMobileNumber(e.target.value);
-  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) => setPassportNumber(e.target.value);
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setName(e.target.value);
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setEmail(e.target.value);
+  const handleMobileChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setMobileNumber(e.target.value);
+  const handlePassportChange = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setPassportNumber(e.target.value);
   const handleAddressChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setAddress(e.target.value);
   };
 
-
   const [rooms, setRooms] = useState<any[]>([]);
 
   useEffect(() => {
-    const addedRooms = localStorage.getItem('addedRooms');
+    const addedRooms = localStorage.getItem("addedRooms");
     if (addedRooms) {
       setRooms(JSON.parse(addedRooms));
     }
   }, []);
-
-
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(e.target.value);
@@ -127,15 +132,12 @@ const PaymentMethod = () => {
     fetchRoomData();
   }, [roomId]);
 
-
   const noOfNights = Number(localStorage.getItem("noOfNights"));
 
   const storedTotalPrice = Math.round(
     parseFloat(localStorage.getItem("storedTotalPrice") || "0")
   );
   const grandTotal = noOfNights * Number(storedTotalPrice);
-
-
 
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
@@ -158,13 +160,17 @@ const PaymentMethod = () => {
                           Booking date
                         </span>
                       </div>
-                      <p className="mb-0 text-lg font-medium">{formattedDate}</p>
+                      <p className="mb-0 text-lg font-medium">
+                        {formattedDate}
+                      </p>
                     </div>
                   </div>
                   <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Checkin Date</span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Checkin Date
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{startDate}</p>
                     </div>
@@ -172,19 +178,22 @@ const PaymentMethod = () => {
                   <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Checkout Date</span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Checkout Date
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{endDate}</p>
                     </div>
                   </div>
                 </div>
 
-
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
                   <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Adults</span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Adults
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{adults}</p>
                     </div>
@@ -192,7 +201,9 @@ const PaymentMethod = () => {
                   <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Children</span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Children
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{children}</p>
                     </div>
@@ -200,7 +211,9 @@ const PaymentMethod = () => {
                   <div className="col-span-12 md:col-span-4">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Infants</span>
+                        <span className="clr-neutral-400 inline-block text-sm">
+                          Infants
+                        </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{infants}</p>
                     </div>
@@ -231,17 +244,29 @@ const PaymentMethod = () => {
                                 <tr>
                                   <th className="px-4 py-2 border-b">Room</th>
                                   <th className="px-4 py-2 border-b">Adults</th>
-                                  <th className="px-4 py-2 border-b">Children</th>
-                                  <th className="px-4 py-2 border-b">Infants</th>
+                                  <th className="px-4 py-2 border-b">
+                                    Children
+                                  </th>
+                                  <th className="px-4 py-2 border-b">
+                                    Infants
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
                                 {rooms.map((room, index) => (
                                   <tr key={index} className="text-center">
-                                    <td className="px-4 py-2 border-b">{`${index + 1}`}</td>
-                                    <td className="px-4 py-2 border-b">{room.adults}</td>
-                                    <td className="px-4 py-2 border-b">{room.children}</td>
-                                    <td className="px-4 py-2 border-b">{room.infants}</td>
+                                    <td className="px-4 py-2 border-b">{`${
+                                      index + 1
+                                    }`}</td>
+                                    <td className="px-4 py-2 border-b">
+                                      {room.adults}
+                                    </td>
+                                    <td className="px-4 py-2 border-b">
+                                      {room.children}
+                                    </td>
+                                    <td className="px-4 py-2 border-b">
+                                      {room.infants}
+                                    </td>
                                   </tr>
                                 ))}
                               </tbody>
@@ -259,7 +284,9 @@ const PaymentMethod = () => {
                             <div className="flex justify-between gap-3">
                               <div className="flex items-center gap-1">
                                 <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>
-                                <span className="inline-block">{roomData.location_name}</span>
+                                <span className="inline-block">
+                                  {roomData.location_name}
+                                </span>
                               </div>
                               <div className="flex items-center gap-1">
                                 <span className="inline-block clr-neutral-500">
@@ -271,15 +298,21 @@ const PaymentMethod = () => {
                             <ul className="flex flex-wrap gap-6">
                               <li className="flex gap-2 items-center">
                                 <i className="las text-lg la-home"></i>
-                                <span className="block text-sm">{totalRooms} Rooms</span>
+                                <span className="block text-sm">
+                                  {totalRooms} Rooms
+                                </span>
                               </li>
                               <li className="flex gap-2 items-center">
                                 <i className="las text-lg la-bed"></i>
-                                <span className="block text-sm">{roomData.no_of_beds} Bed</span>
+                                <span className="block text-sm">
+                                  {roomData.no_of_beds} Bed
+                                </span>
                               </li>
-                                <li className="flex gap-2 items-center">
+                              <li className="flex gap-2 items-center">
                                 <i className="las text-lg la-arrows-alt"></i>
-                                <span className="block text-sm">{roomData.room_size}</span>
+                                <span className="block text-sm">
+                                  {roomData.room_size}
+                                </span>
                               </li>
                             </ul>
                           </div>
@@ -289,7 +322,6 @@ const PaymentMethod = () => {
                   ))}
                 </div>
               </div>
-
 
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
                 <h4 className="mb-3 text-2xl font-semibold">Billing address</h4>
@@ -368,7 +400,9 @@ const PaymentMethod = () => {
               <ul className="flex flex-col gap-4">
                 <li className="grid grid-cols-2 items-center">
                   <p className="mb-0 pl-8">Room Price</p>
-                  <p className="mb-0 font-medium text-right">₹{totalAdultPrice}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{totalAdultPrice}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -382,9 +416,11 @@ const PaymentMethod = () => {
                   </div>
                   {/* <p className="mb-0 font-medium text-right">₹{totalChildPrice*noOfNights}</p> */}
                   <p className="mb-0 font-medium text-right">
-                    ₹{totalChildPrice !== null ? Number(totalChildPrice) * noOfNights : 0}
+                    ₹
+                    {totalChildPrice !== null
+                      ? Number(totalChildPrice) * noOfNights
+                      : 0}
                   </p>
-
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -396,7 +432,9 @@ const PaymentMethod = () => {
                     </div>
                     <p className="mb-0">Extra Bed Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{Number(totalExtraBedPrice) * noOfNights}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{Number(totalExtraBedPrice) * noOfNights}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -408,7 +446,9 @@ const PaymentMethod = () => {
                     </div>
                     <p className="mb-0">Sub Total</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{storedTotalPrice}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{storedTotalPrice}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <p className="mb-0 pl-8">Number of Nights</p>
@@ -432,13 +472,15 @@ const PaymentMethod = () => {
                 address={address}
                 bookingID={bookingID}
                 passport={passport}
-                country={selectedCountry} adults={0} infants={0}              >
+                country={selectedCountry}
+                adults={0}
+                infants={0}
+                todayDate={formattedDate}
+              >
                 {Number(children)}
               </RazorpayButton>
             </div>
           </div>
-
-
         </div>
       </div>
     </div>
@@ -450,6 +492,5 @@ const Page = () => (
     <PaymentMethod />
   </Suspense>
 );
-
 
 export default Page;
