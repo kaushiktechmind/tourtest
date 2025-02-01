@@ -52,7 +52,7 @@ const Page = () => {
       }
 
       const result = await response.json();
-      console.log("Form submitted successfully:", result);
+      alert("Query Submitted Succesfully");
       reset(); // Reset the form after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);

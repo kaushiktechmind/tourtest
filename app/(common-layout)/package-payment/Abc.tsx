@@ -286,12 +286,10 @@ const PackagePayment = () => {
                     <div className="relative w-full md:w-2/3">
                       <div className="p-4">
                         <div className="property-card__body">
-                          <Link
-                            href={`/package-details/${packageItem?.id}`}
-                            className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5"
-                          >
+                          <div
+                            className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
                             {packageItem?.package_title || "Package Title"}
-                          </Link>
+                          </div>
                           <div className="flex justify-between gap-3">
                             <div className="flex items-center gap-1">
                               <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>
@@ -332,7 +330,7 @@ const PackagePayment = () => {
                     {itineraryData.map(({ day, title, description, image }, index) => (
                       <li
                         key={index}
-                        className="flex items-start gap-6 hover:bg-neutral-50 p-4 rounded-lg transition-all ease-in-out"
+                        className="flex flex-col sm:flex-row items-start gap-6 hover:bg-neutral-50 p-4 rounded-lg transition-all ease-in-out"
                       >
                         {/* Day */}
                         <div className="flex items-center justify-center w-16 h-16 bg-primary text-white rounded-full shrink-0">
@@ -343,15 +341,15 @@ const PackagePayment = () => {
                         {/* Content */}
                         <div className="flex-grow">
                           <h5 className="text-xl font-semibold text-neutral-800 mb-3">{title}</h5>
-                          <div className="flex items-start gap-4">
+                          <div className="flex flex-col sm:flex-row items-start gap-4">
                             {/* Image */}
-                            <div className="w-32 h-28 shrink-0">
+                            <div className="w-32 h-25 sm:w-40 sm:h-40 shrink-0">
                               <Image
                                 width={128}
                                 height={128}
                                 src={image}
                                 alt="Image"
-                                className="rounded-lg object-cover w-full h-full"
+                                className="rounded-lg object-cover w-full h-[100px]"
                               />
                             </div>
                             {/* Description */}
@@ -365,6 +363,7 @@ const PackagePayment = () => {
                   </ul>
                 )}
               </div>
+
 
 
 
@@ -559,7 +558,7 @@ const PackagePayment = () => {
                 bookingID={bookingID}
                 packageId={Number(packageId)}
                 passport={passport}
-                itinerary={itineraryData} 
+                itinerary={itineraryData}
                 inclusions={inclusions}
                 exclusions={exclusions}
                 country={selectedCountry} adults={0} infants={0}              >

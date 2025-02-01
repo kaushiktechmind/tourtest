@@ -205,12 +205,10 @@ const ActivityReciept = () => {
                     <div className="relative w-full md:w-2/3">
                       <div className="p-4">
                         <div className="property-card__body">
-                          <Link
-                            href={`/activity-details/${activityItem?.id}`}
-                            className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5"
-                          >
+                        <div
+                              className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
                             {activityItem?.activity_title || "Activity Title"}
-                          </Link>
+                          </div>
                           <div className="flex justify-between gap-3">
                             <div className="flex items-center gap-1">
                               <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>

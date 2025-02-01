@@ -169,7 +169,7 @@ const PaymentMethod = () => {
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
-                          Checkin Date
+                          Check In Date
                         </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{startDate}</p>
@@ -179,7 +179,7 @@ const PaymentMethod = () => {
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">
-                          Checkout Date
+                          Check Out Date
                         </span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{endDate}</p>
@@ -275,12 +275,10 @@ const PaymentMethod = () => {
                         </div>
                         <div className="p-4">
                           <div className="property-card__body">
-                            <Link
-                              href="hotel"
-                              className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5"
-                            >
+                            <div
+                              className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
                               {roomData.room_name}
-                            </Link>
+                            </div>
                             <div className="flex justify-between gap-3">
                               <div className="flex items-center gap-1">
                                 <i className="las la-map-marker-alt text-xl text-[#22804A]"></i>

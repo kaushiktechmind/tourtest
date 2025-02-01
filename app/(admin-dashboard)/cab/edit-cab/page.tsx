@@ -249,6 +249,7 @@ const EditCab = () => {
       try {
         const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`);
         const data = await response.json();
+        console.log("'''''''''''''''''", data)
 
 
         // Extract attribute names dynamically
@@ -302,7 +303,7 @@ const EditCab = () => {
           price: data.price || "",
           sale_price: data.sale_price || "",
           duration: data.duration || "",
-          min_passenger: data.min_passenger || "",
+          min_passenger: data.min_passenger,
           max_passenger: data.max_passenger || "",
           location_name: data.location || "",
 
@@ -313,9 +314,14 @@ const EditCab = () => {
         console.error("Error fetching cab data:", error);
       }
     };
+    
 
     fetchCabData();
   }, [cabId, inclusions, exclusions]);  // Add inclusions and exclusions as dependencies
+
+  // console.log("aaaaaaaaaaaaaaa", formData.min_passenger)
+
+
 
 
 
@@ -450,8 +456,7 @@ const EditCab = () => {
       console.error("Error saving cab:", error);
     }
   };
-
-
+  
 
   return (
 
@@ -552,7 +557,7 @@ const EditCab = () => {
             initialOpen={true}>
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <p className="mb-4 text-xl font-medium">Min Passenger :</p>
-              <input
+                <input
                 type="number"
                 name="min_passenger"
                 value={formData.min_passenger}

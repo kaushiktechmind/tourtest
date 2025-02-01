@@ -28,13 +28,13 @@ const WhatsAppAndScroll = ({ whatsappNumber }: { whatsappNumber: string }) => {
   };
 
   return (
-    <>
+    <div className="fixed bottom-16 right-3 flex flex-col space-y-3 z-50">
       {/* WhatsApp Icon */}
       <a
         href={`https://wa.me/${whatsappNumber}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-16 right-3 bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
+        className="bg-green-500 text-white p-3 rounded-full shadow-lg hover:bg-green-600 transition"
       >
         <FaWhatsapp className="h-6 w-6" /> {/* WhatsApp icon */}
       </a>
@@ -43,12 +43,12 @@ const WhatsAppAndScroll = ({ whatsappNumber }: { whatsappNumber: string }) => {
       {showScroll && (
         <button
           onClick={scrollToTop}
-          className="fixed bottom-16 right-16 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition z-50"
+          className="bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition"
         >
           <ArrowUpIcon className="h-6 w-6" />
         </button>
       )}
-    </>
+    </div>
   );
 };
 

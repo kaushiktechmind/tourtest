@@ -8,9 +8,7 @@ import {
 
 import dynamic from "next/dynamic";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
-import CustomRangeSlider from "@/components/RangeSlider";
 import Accordion from "@/components/Accordion";
-import SelectUI from "@/components/SelectUI";
 import CheckboxCustom from "@/components/Checkbox";
 import Link from "next/link";
 

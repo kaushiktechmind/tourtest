@@ -17,6 +17,7 @@ import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { SearchIcon } from "@/public/data/icons";
+import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa";
 
 interface Payment {
   id: number;
@@ -77,20 +78,20 @@ const Page = () => {
     let text = "";
 
     if (payment.hotel_name) {
-      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
+      icon = <FaHotel className="text-[#243757] text-2xl mx-auto" />;
       text = "Hotel"; // Add related text for hotel
     } else if (payment.package_name) {
-      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />;
+      icon = <FaMountain className="text-[#243757] text-2xl mx-auto" />;
       text = "Package"; // Add related text for package
     } else if (payment.activity_name) {
-      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
+      icon = <FaSuitcase className="text-[#243757] text-2xl mx-auto" />;
       text = "Activity"; // Add related text for activity
     } else if (payment.cab_name) {
-      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
+      icon = <FaCar className="text-[#243757] text-2xl mx-auto" />;
       text = "Cab"; // Add related text for cab
     } else if (payment.ferry_name) {
-      icon = <FontAwesomeIcon icon={faShip} className="w-5 h-5" />;
-      text = "Ferry"; // Add related text for cab
+      icon = <FaHome className="text-[#243757] text-2xl mx-auto" />;
+      text = "Ferry"; // Add related text for ferry
     }
 
     return { icon, details, text }; // Return icon, details, and text

@@ -59,12 +59,13 @@ export default function AdminProfileDropdown() {
       <Menu as="div" className="relative inline-block top-1 md:top-[2px]">
         <Menu.Button className="flex justify-center items-center rounded-full focus:outline-none">
           <Image
-            className="rounded-full"
+            className="w-[45px] h-[45px] object-cover rounded-full"
             src={profilePhoto}
             width={45}
             height={45}
             alt="profile"
           />
+
         </Menu.Button>
 
         <Transition

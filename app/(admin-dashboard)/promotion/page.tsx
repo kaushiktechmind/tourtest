@@ -194,15 +194,16 @@ const EditHotelAttribute = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">ID</th>
-                  <th className="py-3 lg:py-4 px-2">promotion URL</th>
+                  <th className="py-3 lg:py-4 px-2">Promotion URL</th>
                   <th className="py-3 lg:py-4 px-2">Icon</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-b border-dashed">
                   <td className="py-3 lg:py-4 px-2">{promotionData.id || "1"}</td>
-                  <td className="py-3 lg:py-4 px-2">{promotionData.url || ""}</td>
+                  <td className="py-3 lg:py-4 px-2">
+                    <div className="max-w-[150px] break-words whitespace-normal">{promotionData.url || ""}</div>
+                  </td>
                   <td className="py-3 lg:py-4 px-2">
                     <Image
                       src={promotionData.photo || "/path-to-static-logo1.jpg"}
@@ -212,16 +213,13 @@ const EditHotelAttribute = () => {
                       className="rounded-full"
                     />
                   </td>
-                  <td className="py-3 lg:py-4 px-2 flex items-center space-x-2">
-                    <Link href={`/hotel/edit-hotel-attributes?promotionId=1`}>
-                      <PencilSquareIcon className="w-5 h-5 text-primary" />
-                    </Link>
-                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
+
+
       </section>
 
       {/* Footer */}

@@ -372,8 +372,8 @@ const Reciept = () => {
             <table className="min-w-full border-collapse table-auto">
               <thead>
                 <tr>
-                  <th className="px-4 py-2 border-b">Checkin Date</th>
-                  <th className="px-4 py-2 border-b">Checkout Date</th>
+                  <th className="px-4 py-2 border-b">Check In Date</th>
+                  <th className="px-4 py-2 border-b">Check Out Date</th>
                 </tr>
               </thead>
               <tbody>

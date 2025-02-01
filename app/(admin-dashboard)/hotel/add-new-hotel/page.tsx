@@ -125,6 +125,7 @@ const AddNewHotel = () => {
   const [maxInfants, setMaxInfants] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
@@ -399,6 +400,7 @@ const AddNewHotel = () => {
       formDataToSend.append(`faq_title${index + 1}`, faq.faq_title);
       formDataToSend.append(`faq_description${index + 1}`, faq.faq_description);
     });
+    setLoading(true); 
 
     try {
       // Create a temporary DOM element to convert HTML to plain text
@@ -432,6 +434,9 @@ const AddNewHotel = () => {
       } else {
         console.error("Unexpected error", error);
       }
+    }
+    finally {
+      setLoading(false);  // Reset loading to false once the upload completes or fails
     }
   };
 
@@ -1167,13 +1172,16 @@ const AddNewHotel = () => {
           </div>
         </div>
       </div>
-
-      <Link href="#" className="btn-primary font-semibold ml-6 mb-6">
+{/* 
+      <Link href="#"  disabled={loading} className="btn-primary font-semibold ml-6 mb-6">
         <span className="inline-block" onClick={handleSubmit}>
           {" "}
-          Save & Preview{" "}
+          {loading ? "Uploading..." : "Save & Preview"}
         </span>
-      </Link>
+      </Link> */}
+    <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
+  {loading ? "Uploading..." : "Save & Preview"}
+</button>
 
       {/* Footer */}
       <Footer />

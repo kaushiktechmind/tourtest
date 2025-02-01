@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; 
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa"; 
 
+
 interface PaymentData {
   booking_id: number;
   id: number;
@@ -98,38 +99,42 @@ const Page = () => {
     fetchPaymentData();
   }, []);
 
-  const getDetailsAndIcon = (payment: PaymentData | Payment) => {
-    const details =
-      (payment as Payment).hotel_name ||
-      (payment as Payment).package_name ||
-      (payment as Payment).activity_name ||
-      (payment as Payment).cab_name ||
-      (payment as Payment).ferry_name ||
-      "N/A";
-
-    let icon = null;
-    let label = "";
-
-    if ((payment as Payment).hotel_name) {
-      icon = <FontAwesomeIcon icon={faHotel} className="w-5 h-5" />;
-      label = "Hotel";
-    } else if ((payment as Payment).package_name) {
-      icon = <FontAwesomeIcon icon={faMountainSun} className="w-5 h-5" />;
-      label = "Package";
-    } else if ((payment as Payment).activity_name) {
-      icon = <FontAwesomeIcon icon={faCalendarDays} className="w-5 h-5" />;
-      label = "Activity";
-    } else if ((payment as Payment).cab_name) {
-      icon = <FontAwesomeIcon icon={faCar} className="w-5 h-5" />;
-      label = "Cab";
-    } else if ((payment as Payment).ferry_name) {
-      icon = <FontAwesomeIcon icon={faShip} className="w-5 h-5" />;
-      label = "Ferry";
-    }
-
-    return { icon, details, label };
+  const getDetailsAndIcon = (payment: PaymentData & Payment) => {
+    if (payment.hotel_name) 
+      return { 
+        icon: <FaHotel style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
+        label: "Hotel", 
+        details: payment.hotel_name 
+      };
+    
+    if (payment.package_name) 
+      return { 
+        icon: <FaSuitcase style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
+        label: "Package", 
+        details: payment.package_name 
+      };
+    
+    if (payment.activity_name) 
+      return { 
+        icon: <FaMountain style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
+        label: "Activity", 
+        details: payment.activity_name 
+      };
+    
+    if (payment.cab_name) 
+      return { 
+        icon: <FaCar style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
+        label: "Cab", 
+        details: payment.cab_name 
+      };
+    
+    return { 
+      icon: <FaHome style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
+      label: "Ferry", 
+      details: payment.ferry_name || "N/A" 
+    };
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6 mt-[70px]">
