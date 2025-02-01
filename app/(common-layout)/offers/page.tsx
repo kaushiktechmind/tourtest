@@ -98,42 +98,46 @@ const Page = () => {
 
     fetchPaymentData();
   }, []);
+  
 
-  const getDetailsAndIcon = (payment: PaymentData & Payment) => {
-    if (payment.hotel_name) 
+  const getDetailsAndIcon = (payment: PaymentData) => {
+    const paymentWithDetails = payment as PaymentData & Payment; // Type assertion
+  
+    if (paymentWithDetails.hotel_name) 
       return { 
         icon: <FaHotel style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
         label: "Hotel", 
-        details: payment.hotel_name 
+        details: paymentWithDetails.hotel_name 
       };
-    
-    if (payment.package_name) 
+  
+    if (paymentWithDetails.package_name) 
       return { 
         icon: <FaSuitcase style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
         label: "Package", 
-        details: payment.package_name 
+        details: paymentWithDetails.package_name 
       };
-    
-    if (payment.activity_name) 
+  
+    if (paymentWithDetails.activity_name) 
       return { 
         icon: <FaMountain style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
         label: "Activity", 
-        details: payment.activity_name 
+        details: paymentWithDetails.activity_name 
       };
-    
-    if (payment.cab_name) 
+  
+    if (paymentWithDetails.cab_name) 
       return { 
         icon: <FaCar style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
         label: "Cab", 
-        details: payment.cab_name 
+        details: paymentWithDetails.cab_name 
       };
-    
+  
     return { 
       icon: <FaHome style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
       label: "Ferry", 
-      details: payment.ferry_name || "N/A" 
+      details: paymentWithDetails.ferry_name || "N/A" 
     };
   };
+  
   
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">

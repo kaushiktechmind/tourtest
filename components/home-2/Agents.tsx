@@ -18,7 +18,7 @@ import { teams } from "@/public/data/team";
 
 const Agents = () => {
   return (
-    <section className="relative pt-[60px] lg:pt-[120px] bg-[var(--bg-1)] after:bg-white after:absolute after:w-full after:h-[120px] after:bottom-0 after:left-0">
+    <section className="relative pt-[60px] mb-6 lg:pt-[120px] bg-[var(--bg-1)] after:bg-white after:absolute after:w-full after:h-[120px] after:bottom-0 after:left-0">
       <Image
         src={teamel1}
         alt="image"
@@ -153,7 +153,7 @@ const Agents = () => {
         </div>
       </div>
 
-      <div className="z-10 relative mt-[55px] lg:mt-[110px] after:bg-[url('/img/cta-bg.png')] after:absolute after:left-0 3xl:after:left-[12%] 4xl:after:left-[16%] after:w-[98%] after:mx-auto lg:after:w-[84%] after:h-full after:right-0 after:bottom-0 after:bg-[#c2c3f7]">
+      {/* <div className="z-10 relative mt-[55px] lg:mt-[110px] after:bg-[url('/img/cta-bg.png')] after:absolute after:left-0 3xl:after:left-[12%] 4xl:after:left-[16%] after:w-[98%] after:mx-auto lg:after:w-[84%] after:h-full after:right-0 after:bottom-0 after:bg-[#c2c3f7]">
         <div className="container py-[60px] z-20 relative after:absolute lg:after:bg-[url('/img/cta-img.png')] after:bg-right-bottom after:bg-no-repeat after:w-full after:h-full after:bottom-0">
           <div className="xl:pl-[90px] px-3">
             <SubHeadingBtn text="Call To Action" classes="bg-white" />
@@ -168,7 +168,7 @@ const Agents = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </section>
   );
 };

@@ -13,20 +13,20 @@ export default function ProfileDropdown() {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const userId = localStorage.getItem("id");
-      const token = localStorage.getItem("access_token");
-  
+      const userId = localStorage.getItem("id"); // Retrieve user ID from localStorage
+      const token = localStorage.getItem("access_token"); // Retrieve access token
+
       if (userId && token) {
         try {
           const response = await fetch(
             `https://yrpitsolutions.com/tourism_api/api/get_user_by_id/${userId}`,
             {
               headers: {
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${token}`, // Pass token for authorization
               },
             }
           );
-  
+
           if (response.ok) {
             const data = await response.json();
             setUserData({
@@ -43,23 +43,9 @@ export default function ProfileDropdown() {
         }
       }
     };
-  
-    // Initial fetch
+
     fetchUserData();
-  
-    // Listen for login events
-    const handleUserLogin = () => {
-      fetchUserData(); // Refetch data when the login event is triggered
-    };
-  
-    window.addEventListener("userLogin", handleUserLogin);
-  
-    // Cleanup listener
-    return () => {
-      window.removeEventListener("userLogin", handleUserLogin);
-    };
   }, []);
-  
 
   // Function to handle user logout
   const handleLogout = async () => {

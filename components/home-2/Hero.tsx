@@ -11,10 +11,9 @@ const Hero = () => {
   const [locationName, setLocationName] = useState(""); // State to hold the location name
   const [selectedCategory, setSelectedCategory] = useState("Hotel"); // State for the selected category
   const [banners, setBanners] = useState<any[]>([]); // State to hold the banners
+  const [isMobile, setIsMobile] = useState(false); // State for mobile view check
 
   const swiperRef = useRef<any>(null); // Create a reference to the Swiper instance
-
-
 
   const [showPromoBanner, setShowPromoBanner] = useState(false);
   const [promoImage, setPromoImage] = useState<string | null>(null);
@@ -33,7 +32,7 @@ const Hero = () => {
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_promotion_by_id/1");
         const data = await response.json();
         if (data) {
-          setPromoImage(data.photo); 
+          setPromoImage(data.photo);
           setPromoUrl(data.url); // Assuming the photo URL is in `data.data.photo`
         }
       } catch (error) {
@@ -44,11 +43,28 @@ const Hero = () => {
     fetchPromoImage();
   }, []);
 
+  useEffect(() => {
+    // Check if the window width is below the mobile breakpoint
+    const checkIfMobile = () => {
+      if (window.innerWidth <= 768) {
+        setIsMobile(true); // Set to true for mobile
+      } else {
+        setIsMobile(false); // Set to false for desktop
+      }
+    };
+
+    checkIfMobile();
+    window.addEventListener("resize", checkIfMobile); // Listen for window resize to update state
+
+    return () => {
+      window.removeEventListener("resize", checkIfMobile); // Cleanup listener
+    };
+  }, []);
+
   const handleCloseBanner = () => {
     setShowPromoBanner(false);
     localStorage.setItem("hasSeenPromoBanner", "true");
   };
-
 
   // Fetch banners data from the API
   useEffect(() => {
@@ -110,25 +126,25 @@ const Hero = () => {
   return (
     <section className="relative min-h-screen flex items-center py-20 z-[10]">
 
-{showPromoBanner && promoImage && promoUrl && (
+      {showPromoBanner && promoImage && promoUrl && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div className="relative max-w-[90%] md:max-w-[500px]">
-        <a href={promoUrl} target="_blank" rel="noopener noreferrer">
-          <img
-            src={promoImage}
-            alt="Promotional Banner"
-            className="w-full h-auto rounded-lg shadow-lg"
-          />
-          <button
-            onClick={handleCloseBanner}
-            className="absolute top-2 right-2 text-white p-2 rounded-full shadow"
-          >
-            ✕
-          </button>
-          </a>
+          <div className="relative max-w-[90%] md:max-w-[500px]">
+            <a href={promoUrl} target="_blank" rel="noopener noreferrer">
+              <img
+                src={promoImage}
+                alt="Promotional Banner"
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
+            </a>
+            <button
+              onClick={handleCloseBanner}
+              className="absolute top-2 right-2 text-white p-2 rounded-full shadow"
+            >
+              ✕
+            </button>
+
+          </div>
         </div>
-      </div>
-      
       )}
 
       {/* Swiper Carousel as Background */}
@@ -147,7 +163,7 @@ const Hero = () => {
           banners.map((banner) => (
             <SwiperSlide key={banner.id}>
               <img
-                src={banner.desktop_banner}
+                src={isMobile ? banner.mobile_banner : banner.desktop_banner} // Conditional banner rendering
                 alt={`Banner ${banner.id}`}
                 className="object-cover w-full h-[620px]"
               />
@@ -190,18 +206,20 @@ const Hero = () => {
         </div>
 
         {/* Search Input and Button */}
-        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center items-center w-[40%] mx-auto">
+        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center w-[90%] items-center sm:w-[40%] md:w-[50%] lg:w-[40%] mx-auto">
           <LocationEntry
             placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
+          // Ensure the input takes full width
           />
           <button
             onClick={handleSearch} // Call the search function on click
-            className="py-3 px-6 w-full md:w-auto flex justify-center items-center bg-primary text-white rounded-full"
+            className="py-3 px-6 w-full sm:w-auto flex justify-center items-center bg-primary text-white rounded-full"
           >
             <span className="ml-2">Search</span>
           </button>
         </div>
+
       </div>
 
       <WhatsAppAndScroll whatsappNumber={""} />
