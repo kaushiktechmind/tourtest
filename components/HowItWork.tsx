@@ -1,4 +1,4 @@
-import SubHeadingBtn from "../SubHeadingBtn";
+import SubHeadingBtn from "./SubHeadingBtn";
 import process1 from "@/public/img/work-process-icon-1.png";
 import process2 from "@/public/img/work-process-icon-2.png";
 import process3 from "@/public/img/work-process-icon-3.png";

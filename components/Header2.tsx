@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation"; // Import usePathname for route detection
-import LangDropdown from "../LangDropdown";
-import ProfileDropdown from "../ProfileDropdown";
+import LangDropdown from "./LangDropdown";
+import ProfileDropdown from "./ProfileDropdown";
 import Image from "next/image";
 import logo from "@/public/img/logo.png";
-import Navbar from "../Navbar";
+import Navbar from "./Navbar";
 import Link from "next/link";
 
 const Header2 = () => {

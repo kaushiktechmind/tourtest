@@ -6,7 +6,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import Link from "next/link";
-import SubHeadingBtn from "../SubHeadingBtn";
+import SubHeadingBtn from "./SubHeadingBtn";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
 

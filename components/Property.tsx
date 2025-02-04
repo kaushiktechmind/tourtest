@@ -1,7 +1,7 @@
 "use client";
 import categoryEl from "@/public/img/category-section-el.png";
 import Image from "next/image";
-import SubHeadingBtn from "../SubHeadingBtn";
+import SubHeadingBtn from "./SubHeadingBtn";
 import { useEffect, useState } from "react";
 import { Tab } from "@headlessui/react";
 import FeaturedCardHome2 from "./FeaturedCardHome2";

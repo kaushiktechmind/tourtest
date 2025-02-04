@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import LocationEntry from "../home-3/LocationEntry";
-import WhatsAppAndScroll from "../WhatsAppAndScroll";
+import LocationEntry from "./home-3/LocationEntry";
+import WhatsAppAndScroll from "./WhatsAppAndScroll";
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.min.css"; // Ensure Swiper styles are imported

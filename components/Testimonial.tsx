@@ -1,5 +1,5 @@
 "use client";
-import SubHeadingBtn from "../SubHeadingBtn";
+import SubHeadingBtn from "./SubHeadingBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";

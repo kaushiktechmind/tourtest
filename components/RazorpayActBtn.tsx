@@ -14,6 +14,7 @@ interface RazorpayActBtnProps {
     country: string;
     currency: string;
     activityId: number;
+    activityName: string;
     todayDate: string;
     formattedDate: string;
 }

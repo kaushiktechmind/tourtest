@@ -299,14 +299,13 @@ const ActivityPayment = () => {
                 name={name}
                 email={email}
                 todayDate={todayDate}
-                formattedDate = {formattedDate}
+                formattedDate={formattedDate}
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
-                activityName={Number(activityName)}
+                activityName={activityName || ''}
                 passport={passport}
-                country={selectedCountry}
-              >
+                country={selectedCountry} activityId={0}              >
               </RazorpayActBtn>
             </div>
           </div>

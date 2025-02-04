@@ -2,7 +2,7 @@ import appStore from "@/public/img/appstore-btn.png";
 import googlePlay from "@/public/img/playstore-btn.png";
 import Image from "next/image";
 import Link from "next/link";
-import SubHeadingBtn from "../SubHeadingBtn";
+import SubHeadingBtn from "./SubHeadingBtn";
 
 const MobileApp = () => {
   return (
