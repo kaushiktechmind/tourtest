@@ -157,7 +157,7 @@ const Page = () => {
               loc={loc || ''}
               type={type || ''}
               startdate={startdate || ''}
-              enddate={enddate || ''} adults={0} numChildren={0} infants={0} />
+              enddate={enddate || ''} adults={0} numChildren={0} infants={0} seo_title={""} />
           ))
       ) : (
         <div className="col-span-12">No hotels available.</div>

@@ -123,6 +123,7 @@ const EditHotel = () => {
   const [maxInfants, setMaxInfants] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
+   const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
@@ -555,6 +556,8 @@ const EditHotel = () => {
 
     // Add `_method` field to simulate PUT request via POST
     formDataToSend.append("_method", "PUT");
+    
+    setLoading(true);
 
     try {
       const response = await axios.post(
@@ -567,22 +570,27 @@ const EditHotel = () => {
           },
         }
       );
-      alert("Hotel Details Updated");
-      router.push("/hotel/all-hotels");
+  
+      setLoading(false);
+      setTimeout(() => {
+        alert("Hotel Details Updated!");
+        router.push("/hotel/all-hotels");
+      }, 100); 
+
+
     } catch (error) {
+      setLoading(false);
       if (axios.isAxiosError(error)) {
+        setTimeout(() => {
         alert(
-          `Failed to update hotel: ${error.response?.data?.message || error.message}`
+          `Failed to add hotel: ${error.response?.data?.message || error.message}`
         );
-        console.error("Axios error message:", error.message);
-      } else if (error instanceof Error) {
-        console.error("Error message:", error.message);
-      } else {
-        console.error("Unexpected error", error);
+      }, 100); 
+       
       }
     }
-  };
 
+  };
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files; // Get the FileList object
     if (files && files.length > 0) {
@@ -1312,12 +1320,16 @@ const EditHotel = () => {
         </div>
       </div>
 
-      <Link href="#" className="btn-primary font-semibold ml-6 mb-6">
-        <span className="inline-block" onClick={handleSubmit}>
-          {" "}
-          Update Hotel{" "}
-        </span>
-      </Link>
+      <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2">Updating...</span>
+          </div>
+        ) : (
+          "Update Hotel"
+        )}
+      </button>
 
       {/* Footer */}
       <Footer />

@@ -3,6 +3,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import LocationEntry from "../home-3/LocationEntry";
 import WhatsAppAndScroll from "../WhatsAppAndScroll";
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { FaPersonSwimming } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.min.css"; // Ensure Swiper styles are imported
 import { Autoplay, Navigation } from "swiper"; // Import necessary Swiper modules
@@ -99,13 +100,13 @@ const Hero = () => {
         searchUrl = `/homestays`;
         break;
       case "Package":
-        searchUrl = `/package-listing`;
+        searchUrl = `/packages`;
         break;
       case "Cab":
-        searchUrl = `/cab-listing`;
+        searchUrl = `/cabs`;
         break;
       case "Activity":
-        searchUrl = `/activity-listing`;
+        searchUrl = `/activities`;
         break;
       default:
         searchUrl = `/hotels`;
@@ -120,7 +121,7 @@ const Hero = () => {
     { name: "Homestay", icon: FaHome },
     { name: "Package", icon: FaSuitcase },
     { name: "Cab", icon: FaCar },
-    { name: "Activity", icon: FaMountain },
+    { name: "Activity", icon: FaPersonSwimming },
   ];
 
   return (

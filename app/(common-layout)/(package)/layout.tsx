@@ -117,9 +117,9 @@ export default function RootLayout({
                         <ul className="flex flex-wrap justify-end justify-content-lg-start justify-content-xl-center gap-4">
                           <li>
                             <Link
-                              href="/package-listing-grid"
+                              href="/packagegrid"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/package-listing-grid" && "text-primary"
+                                path === "/packagegrid" && "text-primary"
                               }`}>
                               <Squares2X2Icon className="w-5 h-5" />
                               <span className="inline-block font-medium">
@@ -129,9 +129,9 @@ export default function RootLayout({
                           </li>
                           <li>
                             <Link
-                              href="/package-listing"
+                              href="/packages"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/package-listing" && "text-primary"
+                                path === "/packages" && "text-primary"
                               }`}>
                               <ListBulletIcon className="w-5 h-5" />
                               <span className="inline-block font-medium">

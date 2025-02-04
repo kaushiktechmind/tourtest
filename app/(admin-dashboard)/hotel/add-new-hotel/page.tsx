@@ -125,7 +125,7 @@ const AddNewHotel = () => {
   const [maxInfants, setMaxInfants] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<Amenity[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
@@ -338,8 +338,6 @@ const AddNewHotel = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     const token = localStorage.getItem("access_token");
-    console.log("Form submitted");
-    console.log("Token:", token);
 
     const formDataToSend = new FormData();
 
@@ -400,7 +398,7 @@ const AddNewHotel = () => {
       formDataToSend.append(`faq_title${index + 1}`, faq.faq_title);
       formDataToSend.append(`faq_description${index + 1}`, faq.faq_description);
     });
-    setLoading(true); 
+    setLoading(true);
 
     try {
       // Create a temporary DOM element to convert HTML to plain text
@@ -420,24 +418,26 @@ const AddNewHotel = () => {
           },
         }
       );
-      alert("Hotel added successfully!");
-      router.push("/hotel/all-hotels");
+
+      setLoading(false);
+      setTimeout(() => {
+        alert("Hotel added successfully!");
+        router.push("/hotel/all-hotels");
+      }, 100); 
+
+
     } catch (error) {
+      setLoading(false);
       if (axios.isAxiosError(error)) {
+        setTimeout(() => {
         alert(
           `Failed to add hotel: ${error.response?.data?.message || error.message}`
         );
-        console.error("Axios error message:", error.message);
-        console.error("Axios error response:", error.response);
-      } else if (error instanceof Error) {
-        console.error("Error message:", error.message);
-      } else {
-        console.error("Unexpected error", error);
+      }, 100); 
+       
       }
     }
-    finally {
-      setLoading(false);  // Reset loading to false once the upload completes or fails
-    }
+
   };
 
 
@@ -1172,16 +1172,23 @@ const AddNewHotel = () => {
           </div>
         </div>
       </div>
-{/* 
+      {/* 
       <Link href="#"  disabled={loading} className="btn-primary font-semibold ml-6 mb-6">
         <span className="inline-block" onClick={handleSubmit}>
           {" "}
           {loading ? "Uploading..." : "Save & Preview"}
         </span>
       </Link> */}
-    <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
-  {loading ? "Uploading..." : "Save & Preview"}
-</button>
+      <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2">Uploading...</span>
+          </div>
+        ) : (
+          "Save & Preview"
+        )}
+      </button>
 
       {/* Footer */}
       <Footer />

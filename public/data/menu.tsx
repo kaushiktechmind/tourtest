@@ -18,17 +18,17 @@ export const menus = [
   {
     // title: "Home",
         title: "Packages",
-        url: "/package-listing",
+        url: "/packages",
   },
   {
     // title: "Home",
         title: "Cabs",
-        url: "/cab-listing",
+        url: "/cabs",
   },
   {
     // title: "Home",
         title: "Activities",
-        url: "/activity-listing",
+        url: "/activities",
   },
   {
     // title: "Home",

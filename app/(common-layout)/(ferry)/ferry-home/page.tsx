@@ -158,7 +158,7 @@ const FerryHome = () => {
           localStorage.setItem("Mak_Authorization", token);
           localStorage.setItem("nautika_token", "U2FsdGVkX18wFH8L127Sgd0wBwCSQMhE3y2kxDFXgc5zItPTXXqvjfTLuSAeD1ySsGVF5lj9i5LUoR/JhwJvSQ==");
           // alert("Login successful!");
-          router.push(`/ferry-list?tripType=${tripType}`);
+          router.push(`/ferry-list/${tripType}`);
         } else {
           alert("Failed to retrieve token.");
         }
@@ -374,10 +374,7 @@ const FerryHome = () => {
       <div className="container relative py-[60px] lg:py-[120px]">
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-12 lg:col-span-8 xl:col-span-8 xxl:col-span-12">
-            <SubHeadingBtn
-              text="4.8 rated service"
-              classes="bg-[var(--primary-light)]"
-            />
+          
             <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
               Your One-Stop Shop for All Hi-Speed
             </h1>

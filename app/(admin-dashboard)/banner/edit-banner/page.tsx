@@ -57,16 +57,16 @@ const AddNewBanner = () => {
     const formData = new FormData();
     if (desktopBanner) formData.append("desktop_banner", desktopBanner);
     if (mobileBanner) formData.append("mobile_banner", mobileBanner);
-
+  
     // Append _method to indicate PUT request
     formData.append("_method", "PUT");
-
+  
     const token = localStorage.getItem("access_token");
     if (!token) {
       alert("Authentication token not found. Please log in again.");
       return;
     }
-
+  
     setLoading(true);
     try {
       await axios.post(
@@ -79,15 +79,24 @@ const AddNewBanner = () => {
           },
         }
       );
-      alert("Banner updated successfully!");
-      router.push("/banner/all-banner");
+      setLoading(false); // Stop loading immediately
+  
+      // Use setTimeout to allow the loader to stop before showing the alert
+      setTimeout(() => {
+        alert("Banner updated successfully!");
+        router.push("/banner/all-banner");
+      }, 100); // Delay the alert slightly (100ms)
+  
     } catch (error) {
-      console.error("Error uploading banner:", error);
-      alert("Failed to upload banner. Please try again.");
-    } finally {
       setLoading(false);
+      console.error("Error uploading banner:", error);
+      setTimeout(() => {
+        alert("Failed to Upload Banner, try again");
+      }, 100);
     }
+
   };
+
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -154,7 +163,14 @@ const AddNewBanner = () => {
         ))}
       </div>
       <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
-        {loading ? "Updating..." : "Save & Preview"}
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2">Updating...</span>
+          </div>
+        ) : (
+          "Update"
+        )}
       </button>
       <Footer />
     </div>

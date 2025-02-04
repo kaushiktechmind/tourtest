@@ -1,23 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; // Import Font Awesome icons
-import {
-  EllipsisVerticalIcon,
-  PencilSquareIcon,
-  PlusCircleIcon,
-  TrashIcon,
-  HomeIcon,
-  CubeIcon,
-  ClipboardIcon,
-  TruckIcon 
-  // CarIcon,
-} from "@heroicons/react/24/outline";
-import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import Pagination from "@/components/vendor-dashboard/Pagination";
 import { SearchIcon } from "@/public/data/icons";
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa";
+import { FaPersonSwimming } from "react-icons/fa6";
 
 interface Payment {
   id: number;
@@ -81,10 +68,10 @@ const Page = () => {
       icon = <FaHotel className="text-[#243757] text-2xl mx-auto" />;
       text = "Hotel"; // Add related text for hotel
     } else if (payment.package_name) {
-      icon = <FaMountain className="text-[#243757] text-2xl mx-auto" />;
+      icon = <FaSuitcase className="text-[#243757] text-2xl mx-auto" />;
       text = "Package"; // Add related text for package
     } else if (payment.activity_name) {
-      icon = <FaSuitcase className="text-[#243757] text-2xl mx-auto" />;
+      icon = <FaPersonSwimming className="text-[#243757] text-2xl mx-auto" />;
       text = "Activity"; // Add related text for activity
     } else if (payment.cab_name) {
       icon = <FaCar className="text-[#243757] text-2xl mx-auto" />;

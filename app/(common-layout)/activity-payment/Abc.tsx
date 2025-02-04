@@ -26,7 +26,7 @@ const generateBookingID = () => {
 const ActivityPayment = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const activityId = searchParams.get("activityId");
+  const activityName = searchParams.get("activityName");
 
   const [activityItem, setActivityItem] = useState<any>(null);
 
@@ -85,7 +85,7 @@ const ActivityPayment = () => {
     const fetchActivityItem = async () => {
       try {
         const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_id/${activityId}`
+          `https://yrpitsolutions.com/tourism_api/api/admin//get_activity_by_seo_title/${activityName}`
         );
 
         if (response.ok) {
@@ -100,7 +100,7 @@ const ActivityPayment = () => {
     };
 
     fetchActivityItem();
-  }, [activityId]);
+  }, [activityName]);
 
 
   return (
@@ -303,7 +303,7 @@ const ActivityPayment = () => {
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
-                activityId={Number(activityId)}
+                activityName={Number(activityName)}
                 passport={passport}
                 country={selectedCountry}
               >

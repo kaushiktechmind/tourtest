@@ -60,6 +60,7 @@ const AddActivity = () => {
     tour_max_people: "",
     full_address: "",
     i_frame_link: "",
+    seo_title: "",
     ticket: "",
     banner_image_multiple: "",
     location_name: "",
@@ -284,6 +285,7 @@ const AddActivity = () => {
       formDataToSend.append("start_time", formData.start_time);
       formDataToSend.append("full_address", formData.full_address);
       formDataToSend.append("i_frame_link", formData.i_frame_link);
+      formDataToSend.append("seo_title", formData.seo_title);
 
 
 
@@ -531,6 +533,17 @@ const AddActivity = () => {
                 type="text"
                 name="i_frame_link"
                 value={formData.i_frame_link}
+                onChange={handleChange}
+                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                placeholder="0"
+              />
+
+              <p className="mt-6 mb-4 text-xl font-medium">SEO Title :</p>
+
+              <input
+                type="text"
+                name="seo_title"
+                value={formData.seo_title}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"

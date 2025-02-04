@@ -32,9 +32,10 @@ const infantPrice = Number(packageData?.infantPrice || 0);
 // const   totalPrice = Number(packageData?.totalPrice);
 const extraPrice = Number(packageData?.extraPrice);
 const serviceFee = Number(packageData?.serviceFee);
-const reservationDate = packageData?.date; // "2025-02-19"
-const [year, month, day] = reservationDate.split('-');
-const formattedDate2 = `${day}-${month}-${year}`;
+
+// const reservationDate = packageData?.date; 
+// const [year, month, day] = reservationDate.split('-');
+// const formattedDate2 = `${day}-${month}-${year}`;
 
 
 
@@ -53,6 +54,7 @@ const PackagePayment = () => {
   const [bookingID, setBookingID] = useState('');
 
   const [totalPrice, setTotalPrice] = useState(0);
+  const [formattedDate2, setFormattedDate2] = useState("");  
 
 
   useEffect(() => {
@@ -61,6 +63,12 @@ const PackagePayment = () => {
 
     if (packageData) {
       setTotalPrice(Number(packageData?.totalPrice) || 0);
+    }
+    const reservationDate = packageData?.date;
+    if (reservationDate) {
+      const [year, month, day] = reservationDate.split('-');
+      const formatted = `${day}-${month}-${year}`;
+      setFormattedDate2(formatted);  // Update the formatted date in state
     }
   }, []); // This ensures it only runs on the first render
 

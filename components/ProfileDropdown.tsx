@@ -26,12 +26,14 @@ export default function ProfileDropdown() {
               },
             }
           );
-
           if (response.ok) {
             const data = await response.json();
             setUserData({
               name: data.name || "Guest User",
-              profilePhoto: data.profile_photo || "/img/user-1.jpg",
+              // Append a timestamp to the profile photo URL to avoid caching
+              profilePhoto: data.profile_photo
+                ? `${data.profile_photo}?${new Date().getTime()}`
+                : "/img/user-1.jpg",
               email: data.email || "",
               mobileNumber: data.mobile_number || "",
             });

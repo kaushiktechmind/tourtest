@@ -106,7 +106,6 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             order_id: data.id,
             handler: async function (response: any) {
                 try {
-                    localStorage.setItem("address", address);
                     router.replace(`/cab-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&cabId=${cabId}`);
                     // const companyLogoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...";
 
@@ -189,7 +188,7 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <div>
                     <h3 style="font-size: 22px">Andman Mangroves Holidays</h3>
-                    <p>Address : 31 Brandy Way, Sutton, SM2 6SE</p>
+                    <p>Address : Shop 05, First Floor, Panchayat Market, Sippighat, next to Gram Panchayat Bhavan, Sri Vijaya Puram, Andaman and Nicobar Islands 744105</p>
                     <p>GSTIN : GSAB12 </p>
                 </div>
     

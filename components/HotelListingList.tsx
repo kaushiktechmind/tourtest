@@ -19,6 +19,7 @@ const HotelListingList = ({
   startdate: string;
   enddate: string;
   noOfRooms: number;
+  seo_title: string;
 }) => {
   const {
     id,
@@ -93,12 +94,12 @@ const HotelListingList = ({
             <div className="flex justify-between mb-2">
               <Link
                 // href={`/hotel?hotelDetailsId=${id || hotel_id}`}
-                // href={`/hotel/${seo_title}`}
-                href={`/hotel/${id || hotel_id}`}
+                href={`/hotel/${seo_title}`}
                 className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
                 onClick={() => {
                   if (location_name) {
                     localStorage.setItem("storedLocation", location_name);
+                    localStorage.setItem("hotelId", id || hotel_id);
                     localStorage.setItem("fromHome", "200");
                   }
                 }}
@@ -159,12 +160,12 @@ const HotelListingList = ({
               </span>
               <Link
                 // href={`/hotel?hotelDetailsId=${id || hotel_id}`}
-                // href={`/hotel/${seo_title}`}
-                href={`/hotel/${id || hotel_id}`}
+                href={`/hotel/${seo_title}`}
                 className="btn-outline font-semibold"
                 onClick={() => {
                   if (location_name) {
                     localStorage.setItem("storedLocation", location_name);
+                    localStorage.setItem("hotelId", id || hotel_id);
                     localStorage.setItem("fromHome", "200");
                   }
                 }}

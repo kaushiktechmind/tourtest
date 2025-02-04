@@ -120,9 +120,9 @@ export default function RootLayout({
                         <ul className="flex flex-wrap justify-end justify-content-lg-start justify-content-xl-center gap-4">
                           <li>
                             <Link
-                              href="/cab-listing-grid"
+                              href="/cabgrid"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/cab-listing-grid" && "text-primary"
+                                path === "/cabgrid" && "text-primary"
                               }`}>
                               <Squares2X2Icon className="w-5 h-5" />
                               <span className="inline-block font-medium">
@@ -132,9 +132,9 @@ export default function RootLayout({
                           </li>
                           <li>
                             <Link
-                              href="/cab-listing"
+                              href="/cabs"
                               className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                                path === "/cab-listing" && "text-primary"
+                                path === "/cabs" && "text-primary"
                               }`}>
                               <ListBulletIcon className="w-5 h-5" />
                               <span className="inline-block font-medium">

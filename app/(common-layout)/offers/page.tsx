@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import CardPagination from "@/components/CardPagination";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons"; 
-import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain } from "react-icons/fa"; 
+import { faMountainSun, faCalendarDays, faHotel, faCar, faShip } from "@fortawesome/free-solid-svg-icons";
+import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain, FaShip } from "react-icons/fa";
+import { FaPersonSwimming } from "react-icons/fa6";
 
 
 interface PaymentData {
@@ -98,47 +99,53 @@ const Page = () => {
 
     fetchPaymentData();
   }, []);
-  
+
 
   const getDetailsAndIcon = (payment: PaymentData) => {
     const paymentWithDetails = payment as PaymentData & Payment; // Type assertion
-  
-    if (paymentWithDetails.hotel_name) 
-      return { 
-        icon: <FaHotel style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
-        label: "Hotel", 
-        details: paymentWithDetails.hotel_name 
+
+    if (paymentWithDetails.hotel_name)
+      return {
+        icon: <FaHotel style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+        label: "Hotel",
+        details: paymentWithDetails.hotel_name
       };
-  
-    if (paymentWithDetails.package_name) 
-      return { 
-        icon: <FaSuitcase style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
-        label: "Package", 
-        details: paymentWithDetails.package_name 
+
+    if (paymentWithDetails.package_name)
+      return {
+        icon: <FaSuitcase style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+        label: "Package",
+        details: paymentWithDetails.package_name
       };
-  
-    if (paymentWithDetails.activity_name) 
-      return { 
-        icon: <FaMountain style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
-        label: "Activity", 
-        details: paymentWithDetails.activity_name 
+
+    if (paymentWithDetails.activity_name)
+      return {
+        icon: <FaPersonSwimming style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+        label: "Activity",
+        details: paymentWithDetails.activity_name
       };
-  
-    if (paymentWithDetails.cab_name) 
-      return { 
-        icon: <FaCar style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
-        label: "Cab", 
-        details: paymentWithDetails.cab_name 
+
+    if (paymentWithDetails.cab_name)
+      return {
+        icon: <FaCar style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+        label: "Cab",
+        details: paymentWithDetails.cab_name
       };
-  
-    return { 
-      icon: <FaHome style={{ color: '#243757' }} className="text-2xl mx-auto" />, 
-      label: "Ferry", 
-      details: paymentWithDetails.ferry_name || "N/A" 
+    if (paymentWithDetails.ferry_name)
+      return {
+        icon: <FaShip style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+        label: "Ferry",
+        details: paymentWithDetails.ferry_name
+      };
+
+    return {
+      icon: <FaHome style={{ color: '#243757' }} className="text-2xl mx-auto" />,
+      label: "Homestay",
+      details: paymentWithDetails.ferry_name || "N/A"
     };
   };
-  
-  
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-lg p-6 mt-[70px]">
@@ -183,9 +190,10 @@ const Page = () => {
                         {new Date(payment.created_at).toLocaleString("en-US", {
                           year: "numeric",
                           month: "short",
-                          day: "numeric",
+                          day: "2-digit",
                         })}
                       </td>
+
                       <td className="border p-2 relative">
                         <div className="group flex items-center">
                           <div className="w-5 h-5 mr-2">{icon}</div>

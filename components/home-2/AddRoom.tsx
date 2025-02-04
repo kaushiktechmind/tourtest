@@ -101,7 +101,7 @@ const AddRoom = () => {
   return (
     <div className="relative">
       <div
-        className="border rounded-full p-3 cursor-pointer hover:bg-white"
+        className="border rounded-full p-3 cursor-pointer bg-white"
         onClick={handleOpenDropdown}
       >
         {rooms.length > 0

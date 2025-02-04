@@ -11,6 +11,8 @@ const Page = () => {
   const [error, setError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false); // State for popup visibility
   const [userName, setUserName] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+
   const router = useRouter(); 
   
 
@@ -49,6 +51,8 @@ const Page = () => {
       }
 
       const data = await response.json();
+       setUserId(data.user.id);
+
 
       // Save the token (You can also store admin info as needed)
       localStorage.setItem("access_token", data.access_token);

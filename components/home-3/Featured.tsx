@@ -25,7 +25,7 @@ const Featured = () => {
         </div>
       </div>
       <div className="mt-10 flex justify-center">
-        <Link href="cab-listing" className="btn-outline  text-primary">
+        <Link href="cabs" className="btn-outline  text-primary">
           See All Cars
         </Link>
       </div>

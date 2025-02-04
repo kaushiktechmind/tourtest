@@ -40,6 +40,7 @@ const HotelListingCard = ({
     amenity_logo4,
     amenity_name5,
     amenity_logo5,
+    seo_title
   } = item;
 
   const amenities = [
@@ -80,11 +81,12 @@ const HotelListingCard = ({
     <div className="mt-4 p-4">
       <div className="flex justify-between mb-2">
         <Link
-          href={`/hotel/${id || hotel_id}`}
+          href={`/hotel/${seo_title}`}
           className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
           onClick={() => {
             if (location_name) {
               localStorage.setItem("storedLocation", location_name);
+              localStorage.setItem("hotelId", id || hotel_id);
               localStorage.setItem("fromHome", "200");
             }
           }}
@@ -145,11 +147,12 @@ const HotelListingCard = ({
           </span>
         </span>
         <Link
-          href={`/hotel/${id || hotel_id}`}
+           href={`/hotel/${seo_title}`}
           className="btn-outline font-semibold"
           onClick={() => {
             if (location_name) {
               localStorage.setItem("storedLocation", location_name);
+              localStorage.setItem("hotelId", id || hotel_id);
               localStorage.setItem("fromHome", "200");
             }
           }}

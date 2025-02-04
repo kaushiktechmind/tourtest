@@ -54,6 +54,7 @@ const Page = () => {
           id: hotel.id,
           hotel_id: hotel.id,
           hotel_name: hotel.hotel_name,
+          seo_title: hotel.seo_title,
           location_name: hotel.location_name,
           ratings: hotel.ratings || "",
           banner_images: hotel.banner_images || "",
@@ -150,7 +151,7 @@ const Page = () => {
               loc={loc || ''}
               type={type || ''}
               startdate={startdate || ''}
-              enddate={enddate || ''} adults={0} numChildren={0} infants={0} />
+              enddate={enddate || ''} adults={0} numChildren={0} infants={0} seo_title={""} />
           ))
       ) : (
         <div className="col-span-12">No homestay available.</div>

@@ -49,34 +49,33 @@ const Footer = () => {
               </Link>
 
               <div className="col-span-12 md:col-span-6 xl:col-span-3">
-              <ul className="flex flex-col gap-4">
-                <li>
-                  <div className="flex items-center gap-4">
-                    <i className="las la-phone-volume bg-primary text-white text-xl p-2 rounded-full"></i>
-                    <Link href="tel:3165550116" className="mb-0 clr-neutral-30">
-                      (316) 555-0116
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center gap-4">
-                    <i className="las la-envelope-open bg-[var(--secondary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
-                    <Link href="mailto:example@mail.com" className="mb-0 clr-neutral-30">
-                      example@mail.com
-                    </Link>
-                  </div>
-                </li>
-                <li>
-                  <div className="flex items-center gap-4">
-                    <i className="las la-map-marker-alt bg-[var(--tertiary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
-                    <p className="mb-0 clr-neutral-30">31 Brandy Way, Sutton, SM2 6SE</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-              <p className="clr-neutral-30 mb-6 mt-6">
-                Welcome to our booking website, where you can easily book all of your travel needs in one place. We
-                offer a comprehensive selection of flights, hotels, and rental cars to help you plan the perfect trip.
+                <ul className="flex flex-col gap-4">
+                  <li>
+                    <div className="flex items-center gap-4">
+                      <i className="las la-phone-volume bg-primary text-white text-xl p-2 rounded-full"></i>
+                      <Link href="tel:3165550116" className="mb-0 clr-neutral-30">
+                      +91-9531898558
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center gap-4">
+                      <i className="las la-envelope-open bg-[var(--secondary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
+                      <Link href="mailto:example@mail.com" className="mb-0 clr-neutral-30">
+                      raja@andamanmangroves.com
+                      </Link>
+                    </div>
+                  </li>
+                  <li>
+                    <div className="flex items-center gap-4">
+                      <i className="las la-map-marker-alt bg-[var(--tertiary)] text-[var(--neutral-700)] text-xl p-2 rounded-full"></i>
+                      <p className="mb-0 clr-neutral-30">Shop 05, First Floor, Panchayat Market, Sippighat, next to Gram Panchayat Bhavan, Sri Vijaya Puram, Andaman and Nicobar Islands 744105</p>
+                    </div>
+                  </li>
+                </ul>
+              </div>
+              <p className="clr-neutral-30 mb-6 mt-6 text-justify leading-relaxed">
+                Explore the Andaman Islands with Andaman Mangroves Holidays, established in 2012. Enjoy personalized tour packages, stunning landscapes, and well-maintained vehicles suited to your needs. Experience vibrant beaches, lush jungles, and rich culture in the Andaman’s emerald paradise.
               </p>
               <ul className="flex gap-3 flex-wrap">
                 <li>

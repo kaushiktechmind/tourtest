@@ -44,8 +44,8 @@ const RazorpayFerryBtn: React.FC<RazorpayFerryBtnProps> = ({ grandTotal, currenc
         key: 'rzp_test_nhTux7zMPEixo1',
         amount: data.amount,
         currency: data.currency,
-        name: 'Package Booking',
-        description: 'Booking Description',
+        name: 'Ferry Booking',
+        description: 'Secure Booking for Ferry',
         order_id: data.id,
         handler: async function (response: any) {
           try {

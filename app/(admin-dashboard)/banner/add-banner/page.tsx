@@ -37,17 +37,17 @@ const AddNewBanner = () => {
       alert("Please upload at least one banner (desktop or mobile).");
       return;
     }
-  
+
     const formData = new FormData();
     if (desktopBanner) formData.append("desktop_banner", desktopBanner);
     if (mobileBanner) formData.append("mobile_banner", mobileBanner);
-  
+
     const token = localStorage.getItem("access_token");
     if (!token) {
       alert("Authentication token not found. Please log in again.");
       return;
     }
-  
+
     setLoading(true);
     try {
       await axios.post(
@@ -60,16 +60,22 @@ const AddNewBanner = () => {
           },
         }
       );
-      alert("Banner uploaded successfully!");
+      setLoading(false);
+      setTimeout(() => {
+        alert("Banner Added Successfully!");
+        router.push("/banner/all-banner");
+      }, 100);
       router.push("/banner/all-banner");
     } catch (error) {
-      console.error("Error uploading banner:", error);
-      alert("Failed to upload banner. Please try again.");
-    } finally {
       setLoading(false);
+      console.error("Error uploading banner:", error);
+      setTimeout(() => {
+        alert("Failed to Upload Banner, try again");
+      }, 100);
     }
+
   };
-  
+
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -127,14 +133,14 @@ const AddNewBanner = () => {
         ))}
       </div>
       <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
-      {loading ? (
-  <div className="flex justify-center items-center">
-    <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-    <span className="ml-2">Uploading...</span>
-  </div>
-) : (
-  "Save & Preview"
-)}
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2">Uploading...</span>
+          </div>
+        ) : (
+          "Save & Preview"
+        )}
       </button>
       <Footer />
     </div>

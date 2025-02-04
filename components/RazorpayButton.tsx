@@ -268,7 +268,6 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
       order_id: data.id,
       handler: async function (response: any) {
         try {
-          localStorage.setItem("address", address);
           router.replace(
             `/receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100
             }&hotelId=${hotelId}&roomId=${roomId}`

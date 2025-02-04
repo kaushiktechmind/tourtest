@@ -89,7 +89,7 @@ const PackageReciept = () => {
                     <div className="px-6 w-full">
                       <div className="flex items-center justify-between gap-3">
                         <span className="clr-neutral-400 inline-block text-sm">
-                          Address : 31 Brandy Way, Sutton, SM2 6SE
+                        Shop 05, First Floor, Panchayat Market, Sippighat, next to Gram Panchayat Bhavan, Sri Vijaya Puram, Andaman and Nicobar Islands 744105
                         </span>
                       </div>
                       {/* <p className="mb-0 text-lg font-medium">31 Brandy Way, Sutton, SM2 6SE</p> */}
