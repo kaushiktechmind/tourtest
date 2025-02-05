@@ -10,7 +10,7 @@ import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
 const FeaturedCardHome2 = ({ item }: any) => {
-  const { id, address, area, bath, bed, img, highest_price, starting_price, rooms, title, type } = item;
+  const { id, address, seo_title, area, bed, img, highest_price, starting_price, rooms, title, type } = item;
 
   const capitalizeFirstLetter = (str: string) => {
     if (!str) return str; // Handle empty or undefined strings
@@ -77,7 +77,7 @@ const FeaturedCardHome2 = ({ item }: any) => {
             </div>
             {/* Title */}
             <Link
-              href="property-details-1"
+              href={`/hotel/${seo_title}`}
               className="text-xl font-medium text-neutral-700 pl-4">
               {title.substr(0, 20)}
             </Link>
@@ -111,7 +111,8 @@ const FeaturedCardHome2 = ({ item }: any) => {
                 ₹{starting_price}
                 <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{highest_price}</span>
               </span>
-              <Link href={`/hotel?hotelDetailsId=${id}&type=${capitalizedType}`} className="btn-outline ">
+              <Link href={`/hotel/${seo_title}`} className="btn-outline ">
+              {/* <Link href={`/hotel?hotelDetailsId=${id}&type=${capitalizedType}`} className="btn-outline "> */}
                 Book Now
               </Link>
             </div>

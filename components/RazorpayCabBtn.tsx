@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { minify } from 'next/dist/build/swc';
 import html2pdf from "html2pdf.js";
+import Swal from 'sweetalert2';
 
 interface RazorpayCabBtnProps {
     name: string;
@@ -17,13 +18,19 @@ interface RazorpayCabBtnProps {
     cabId: number;
     formattedDate: string;
     todayDate: string;
+    inclusions: any;
+    exclusions: any;
 }
 const cabId = localStorage.getItem("cabId");
 
-const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDate, todayDate, name, email, mobile_number, passport, country, bookingID, currency, cabId, address }) => {
+const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, inclusions, exclusions, formattedDate, todayDate, name, email, mobile_number, passport, country, bookingID, currency, cabId, address }) => {
     const router = useRouter();
     // const [cabDetails, setCabDetails] = useState<{ serviceCab: string; cab_name: string } | null>(null);
     const [cabName, setCabName] = useState<string | null>(null);
+    const [cabDesc, setCabDesc] = useState<string | null>(null);
+
+    const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -31,13 +38,14 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`);
             const data = await response.json();
             setCabName(data.cab_name);
+            setCabDesc(data.description);
 
         };
 
         fetchCabName();
     }, [cabId]);
 
-    
+
 
 
 
@@ -59,6 +67,26 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
     const selectedPax = storedCabDetails.selectedPax || "";
     const arrival_place = storedCabDetails.hotelName || "";
     const cargo = storedCabDetails.cargo || "";
+
+
+    console.log("heyyyy testig", inclusions, exclusions);
+
+
+    const inclusion1 = inclusions?.[0] || '';
+    const inclusion2 = inclusions?.[1] || '';
+    const inclusion3 = inclusions?.[2] || '';
+    const inclusion4 = inclusions?.[3] || '';
+    const inclusion5 = inclusions?.[4] || '';
+
+
+    const exclusion1 = exclusions?.[0] || '';
+    const exclusion2 = exclusions?.[1] || '';
+    const exclusion3 = exclusions?.[2] || '';
+    const exclusion4 = exclusions?.[3] || '';
+    const exclusion5 = exclusions?.[4] || '';
+
+
+
 
 
 
@@ -86,6 +114,8 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             return;
         }
 
+        setLoading(true);
+
         const response = await fetch('/api/create-order', {
             method: 'POST',
             headers: {
@@ -106,7 +136,6 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             order_id: data.id,
             handler: async function (response: any) {
                 try {
-                    router.replace(`/cab-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&cabId=${cabId}`);
                     // const companyLogoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...";
 
                     // Generate PDF Invoice HTML content with inline CSS
@@ -277,6 +306,53 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
             <br>
             <br>
             <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+
+             <h4 style="font-size: 20px;" class="main-header">Description</h4>
+            <br>
+            <p>${cabDesc}</p>
+
+
+
+            <br>
+     <br>
+
+		<div class="inclusions">
+			<h1 class="main-header" style="font-size: 20px">Inclusions</h1>
+			<ul>
+				${inclusion1 ? ` <li>${inclusion1}</li>  ` : ''}
+					${inclusion2 ? ` <li>${inclusion2}</li>  ` : ''}
+					${inclusion3 ? ` <li>${inclusion3}</li>  ` : ''}
+       	${inclusion4 ? ` <li>${inclusion4}</li>  ` : ''}
+        	${inclusion5 ? ` <li>${inclusion5}</li>  ` : ''}
+			</ul>
+		</div>
+  
+
+     <br>
+     <br> 
+    
+
+		<div class="exclusions">
+			<h1 class="main-header" style="font-size: 20px">Exclusions</h1>
+				<ul>
+				${exclusion1 ? ` <li>${exclusion1}</li>  ` : ''}
+					${exclusion2 ? ` <li>${exclusion2}</li>  ` : ''}
+					${exclusion3 ? ` <li>${exclusion3}</li>  ` : ''}
+       	${exclusion4 ? ` <li>${exclusion4}</li>  ` : ''}
+        	${exclusion5 ? ` <li>${exclusion5}</li>  ` : ''}
+			</ul>
+		</div>
+    <br>
+     <br>
     
     
             <div class="invoice-footer" style="text-align: center;">
@@ -334,6 +410,41 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
                             });
 
                             console.log('Payment data stored and invoice generated successfully');
+
+
+
+
+                            const fetchAndStoreInvoiceUrl = async () => {
+                                if (!customerId) return; // Exit if no customer ID
+
+                                try {
+                                    const { data } = await axios.get(`https://yrpitsolutions.com/tourism_api/api/user/get_payment_by_customer_id/${customerId}`);
+                                    console.log("Full Response Data: ", data); // Log the full response
+                                    const invoiceUrl = data.data[0]?.invoice_pdf;
+                                    console.log("Invoice PDF URL: ", invoiceUrl); // Log the invoice URL
+
+                                    if (invoiceUrl) {
+                                        setInvoiceUrl(invoiceUrl); // Set the state only if a valid URL is found
+                                        openSweetAlert(invoiceUrl, response.razorpay_payment_id, bookingID);
+                                    } else {
+                                        console.error("Invoice URL not found in the response.");
+                                    }
+                                } catch (error) {
+                                    console.error('Error fetching invoice URL:', error);
+                                }
+                            };
+
+
+                            // Wait for the invoice URL to be fetched before showing SweetAlert
+                            await fetchAndStoreInvoiceUrl();
+                            router.replace(`/cab-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&cabId=${cabId}`);
+
+
+
+                            setLoading(false);
+
+
+
                         });
                 } catch (error) {
                     console.error('Error during post-payment processing:', error);
@@ -352,6 +463,28 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
         const razorpay = new (window as any).Razorpay(options);
         razorpay.open();
     };
+
+
+    const openSweetAlert = (invoiceUrl: string, paymentId: string, bookingId: string) => {
+        Swal.fire({
+            title: 'Cab Booked Successfully!',
+            icon: 'success',
+            showCancelButton: true,
+            confirmButtonText: 'Download Invoice',
+            cancelButtonText: 'Close',
+            html: `
+                      <p>The invoice is sent to your email, please check:</p>
+                      <p><strong>Transaction ID:</strong> ${paymentId}</p>
+                      <p><strong>Booking ID:</strong> ${bookingId}</p>
+                  `,
+            allowOutsideClick: false, // Prevent closing the modal by clicking outside
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.open(invoiceUrl || '', "_blank"); // Open the invoice URL in a new tab
+            }
+        });
+    };
+
 
 
 
@@ -450,12 +583,17 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, formattedDa
     // };
 
     return (
-        <button
-            className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-            onClick={handlePayment}
-        >
-            Pay Now
-        </button>
+        <div>
+            {loading && (
+                <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+                    <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                </div>
+            )}
+
+            <button onClick={handlePayment} className="bg-blue-500 text-white px-4 py-2 rounded">
+                Pay Now
+            </button>
+        </div>
     );
 };
 

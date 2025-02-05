@@ -29,6 +29,7 @@ const ActivityPayment = () => {
   const activityName = searchParams.get("activityName");
 
   const [activityItem, setActivityItem] = useState<any>(null);
+  const [activityId, setActivityId] = useState<any>(null);
 
   const [bookingID, setBookingID] = useState('');
 
@@ -85,12 +86,13 @@ const ActivityPayment = () => {
     const fetchActivityItem = async () => {
       try {
         const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/admin//get_activity_by_seo_title/${activityName}`
+          `https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_seo_title/${activityName}`
         );
 
         if (response.ok) {
           const data = await response.json();
           setActivityItem(data);
+          setActivityId(data.id);
         } else {
           alert("Failed to fetch activity details.");
         }
@@ -299,13 +301,14 @@ const ActivityPayment = () => {
                 name={name}
                 email={email}
                 todayDate={todayDate}
-                formattedDate={formattedDate}
+                formattedDate = {formattedDate}
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}
-                activityName={activityName || ''}
+                activityId={Number(activityId)}
                 passport={passport}
-                country={selectedCountry} activityId={0}              >
+                country={selectedCountry}
+              >
               </RazorpayActBtn>
             </div>
           </div>

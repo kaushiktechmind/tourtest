@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import html2pdf from "html2pdf.js";
+import Swal from 'sweetalert2';
 
 interface RazorpayButtonProps {
   grandTotal: number;
@@ -43,6 +44,9 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
     hotel_name: string;
   } | null>(null);
   const [roomName, setRoomName] = useState<string | null>(null);
+
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const fetchRoomName = async () => {
@@ -248,6 +252,8 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
       return;
     }
 
+    setLoading(true);
+
     const response = await fetch("/api/create-order", {
       method: "POST",
       headers: {
@@ -268,10 +274,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
       order_id: data.id,
       handler: async function (response: any) {
         try {
-          router.replace(
-            `/receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100
-            }&hotelId=${hotelId}&roomId=${roomId}`
-          );
+        
           // const companyLogoBase64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...";
 
           // Generate PDF Invoice HTML content with inline CSS
@@ -586,6 +589,43 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
           });
 
           console.log('Rooms minus API called successfully');
+
+
+
+          const fetchAndStoreInvoiceUrl = async () => {
+            if (!customerId) return; // Exit if no customer ID
+
+            try {
+                const { data } = await axios.get(`https://yrpitsolutions.com/tourism_api/api/user/get_payment_by_customer_id/${customerId}`);
+                console.log("Full Response Data: ", data); // Log the full response
+                const invoiceUrl = data.data[0]?.invoice_pdf;
+                console.log("Invoice PDF URL: ", invoiceUrl); // Log the invoice URL
+
+                if (invoiceUrl) {
+                    setInvoiceUrl(invoiceUrl); // Set the state only if a valid URL is found
+                    openSweetAlert(invoiceUrl, response.razorpay_payment_id, bookingID);
+                } else {
+                    console.error("Invoice URL not found in the response.");
+                }
+            } catch (error) {
+                console.error('Error fetching invoice URL:', error);
+            }
+        };
+
+
+        // Wait for the invoice URL to be fetched before showing SweetAlert
+        await fetchAndStoreInvoiceUrl();
+        router.replace(
+          `/receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100
+          }&hotelId=${hotelId}&roomId=${roomId}`
+        );
+
+        setLoading(false);
+
+
+
+
+
         } catch (error) {
           console.error("Error during post-payment processing:", error);
         }
@@ -607,14 +647,40 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
     razorpay.open();
   };
 
-  return (
-    <button
-      className="px-4 py-2 text-white bg-blue-500 rounded hover:bg-blue-600"
-      onClick={handlePayment}
-    >
-      Pay Now
-    </button>
-  );
+  
+      const openSweetAlert = (invoiceUrl: string, paymentId: string, bookingId: string) => {
+          Swal.fire({
+              title: 'Hotel Booked Successfully!',
+              icon: 'success',
+              showCancelButton: true,
+              confirmButtonText: 'Download Invoice',
+              cancelButtonText: 'Close',
+              html: `
+                  <p>The invoice is sent to your email, please check:</p>
+                  <p><strong>Transaction ID:</strong> ${paymentId}</p>
+                  <p><strong>Booking ID:</strong> ${bookingId}</p>
+              `,
+              allowOutsideClick: false, // Prevent closing the modal by clicking outside
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  window.open(invoiceUrl || '', "_blank"); // Open the invoice URL in a new tab
+              }
+          });
+      };
+  
+      return (
+          <div>
+              {loading && (
+                  <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
+                      <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+              )}
+  
+              <button onClick={handlePayment} className="bg-blue-500 text-white px-4 py-2 rounded">
+                  Pay Now
+              </button>
+          </div>
+      );
 };
 
 export default RazorpayButton;

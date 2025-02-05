@@ -35,9 +35,10 @@ const Property = () => {
       setCategories((prevCategories) => ({
         ...prevCategories,
         [location]: apiData.length > 0
-          ? apiData.map((item: { id: any; hotel_name: any; location_name: any; no_of_bedrooms: any; hotel_or_home_stay: any; no_of_beds: any; no_of_bathrooms: any; room_size: any; starting_price: any; highest_price: any; banner_images: any; }) => ({
+          ? apiData.map((item: { id: any; hotel_name: any; seo_title: any; location_name: any; no_of_bedrooms: any; hotel_or_home_stay: any; no_of_beds: any; no_of_bathrooms: any; room_size: any; starting_price: any; highest_price: any; banner_images: any; }) => ({
               id: item.id,
               title: item.hotel_name,
+              seo_title: item.seo_title,
               address: item.location_name,
               rooms: item.no_of_bedrooms,
               type: item.hotel_or_home_stay,

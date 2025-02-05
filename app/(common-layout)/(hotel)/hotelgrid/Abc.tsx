@@ -54,6 +54,7 @@ const HotelListingGrid = () => {
         normalizedData = response.data.data.map((hotel: any) => ({
           id: hotel.id,
           hotel_id: hotel.id,
+          seo_title: hotel.seo_title,
           hotel_name: hotel.hotel_name,
           location_name: hotel.location_name,
           ratings: hotel.ratings || "",

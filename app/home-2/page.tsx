@@ -50,13 +50,9 @@ const Page = () => {
       <MobileMenu />
       <main>
         <Hero />
-        <Category />
         <Property />
         <Featured />
-        <HowItWork />
-        <Counter />
         <Testimonial />
-        <Agents />
       </main>
       <Footer />
 

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children, Suspense } from "react";
+import { Children, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayCabBtn from "@/components/RazorpayCabBtn";
@@ -46,6 +46,10 @@ const CabPayment = () => {
     const date = storedCabDetails?.selectedDate || "";
     setFormattedDate(date ? date.split("-").reverse().join("-") : "");
   }, []);
+
+  const inclusions = cabItem?.inclusion || [];
+  const exclusions = cabItem?.exclusion || [];
+
 
 
 
@@ -216,6 +220,49 @@ const CabPayment = () => {
                 </div>
               </div>
 
+              <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                <h4 className="mb-0 text-2xl font-semibold">Inclusions & Exclusions</h4>
+                <div className="border border-dashed my-5"></div>
+
+                {/* Inclusions */}
+                <h6 className="mb-4 font-semibold">Inclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {inclusions.length > 0 ? (
+                    inclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
+
+                {/* Exclusions */}
+                <h6 className="mb-4 font-semibold">Exclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {exclusions.length > 0 ? (
+                    exclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
+                            <i className="las la-times text-xl text-[#9C742B]"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
+              </div>
+
 
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6">
                 <h4 className="mb-3 text-2xl font-semibold">Billing address <span className="astrick">*</span></h4>
@@ -322,6 +369,8 @@ const CabPayment = () => {
                 country={selectedCountry}
                 formattedDate={formattedDate}
                 todayDate={todayDate}
+                inclusions = {inclusions}
+                exclusions = {exclusions}
               >
               </RazorpayCabBtn>
             </div>

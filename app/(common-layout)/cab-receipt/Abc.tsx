@@ -2,13 +2,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Children, Suspense } from "react";
+import { Children, JSXElementConstructor, Key, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, Suspense } from "react";
 
 import { useEffect, useState } from "react";
 import RazorpayActBtn from "@/components/RazorpayCabBtn";
 RazorpayActBtn;
 
-interface PaymentData{
+interface PaymentData {
   customer_name: string;
   customer_email: string;
   customer_mobile_number: string;
@@ -38,9 +38,13 @@ const CabReciept = () => {
   const cabId = searchParams.get("cabId");
 
   const [cabItem, setCabItem] = useState<any>(null);
-  
+
   const [paymentData, setPaymentData] = useState<PaymentData[]>([]);
   const [bookingID, setBookingID] = useState('');
+
+  const inclusions = cabItem?.inclusion || [];
+  const exclusions = cabItem?.exclusion || [];
+
 
   useEffect(() => {
     // Generate a unique booking ID when the component mounts
@@ -173,24 +177,24 @@ const CabReciept = () => {
                 <div className="border border-dashed my-6"></div>
 
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
-                
-                    <div className="col-span-12 md:col-span-6 flex">
-                      <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
-                        <div className="flex items-center justify-between gap-3 mb-1">
-                          <span className="clr-neutral-400 inline-block text-sm">Hotel Name</span>
-                        </div>
-                        <p className="mb-0 text-lg font-medium">{hotelName}</p>
+
+                  <div className="col-span-12 md:col-span-6 flex">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Hotel Name</span>
                       </div>
+                      <p className="mb-0 text-lg font-medium">{hotelName}</p>
                     </div>
-                    <div className="col-span-12 md:col-span-6 flex">
-                      <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
-                        <div className="flex items-center justify-between gap-3 mb-1">
-                          <span className="clr-neutral-400 inline-block text-sm">Total Pax</span>
-                        </div>
-                        <p className="mb-0 text-lg font-medium">{selectedPax}</p>
+                  </div>
+                  <div className="col-span-12 md:col-span-6 flex">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Total Pax</span>
                       </div>
+                      <p className="mb-0 text-lg font-medium">{selectedPax}</p>
                     </div>
-                  
+                  </div>
+
                 </div>
 
 
@@ -209,7 +213,7 @@ const CabReciept = () => {
                     <div className="relative w-full md:w-2/3">
                       <div className="p-4">
                         <div className="property-card__body">
-                        <div
+                          <div
                             className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5"
                           >
                             {cabItem?.cab_name || "Cab Title"}
@@ -223,12 +227,56 @@ const CabReciept = () => {
                             </div>
                           </div>
                           <div className="border border-dashed my-6"></div>
-                         
+
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+              </div>
+
+
+              <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+                <h4 className="mb-0 text-2xl font-semibold">Inclusions & Exclusions</h4>
+                <div className="border border-dashed my-5"></div>
+
+                {/* Inclusions */}
+                <h6 className="mb-4 font-semibold">Inclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {inclusions.length > 0 ? (
+                    inclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
+                            <i className="las la-check text-lg text-primary"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
+
+                {/* Exclusions */}
+                <h6 className="mb-4 font-semibold">Exclusions</h6>
+                <ul className="flex flex-col gap-4 mb-10">
+                  {exclusions.length > 0 ? (
+                    exclusions.map((item: string | number | boolean | ReactElement<any, string | JSXElementConstructor<any>> | ReactFragment | ReactPortal | PromiseLikeOfReactNode | null | undefined, index: Key | null | undefined) => (
+                      <li key={index}>
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[#FFF9ED]">
+                            <i className="las la-times text-xl text-[#9C742B]"></i>
+                          </div>
+                          <span className="inline-block">{item}</span>
+                        </div>
+                      </li>
+                    ))
+                  ) : (
+                    <li>Not Available</li>
+                  )}
+                </ul>
               </div>
 
 

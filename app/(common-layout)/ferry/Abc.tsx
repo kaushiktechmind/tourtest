@@ -1115,6 +1115,7 @@ const FerryDetailsPage = () => {
             <RazorpayFerryBtn
               grandTotal={Number(totalPrice) * 100} // convert to paise
               currency="INR"
+              cbookingId = {cbookingID}
               onPaymentSuccess={handlePaymentSuccess} // Pass the success handler here
             >
             </RazorpayFerryBtn>

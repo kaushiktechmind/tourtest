@@ -106,7 +106,7 @@ const Featured = () => {
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between mb-2">
-                    <Link href="/tour-listing-details" className="link block flex-grow text-xl font-medium">
+                    <Link href={`/package/${id}`} className="link block flex-grow text-xl font-medium">
                       {package_title}
                     </Link>
                     <div className="flex gap-1 items-center shrink-0">
