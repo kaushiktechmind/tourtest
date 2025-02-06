@@ -117,131 +117,6 @@ const RazorpayActBtn: React.FC<RazorpayActBtnProps> = ({ grandTotal, todayDate, 
 
 
 
-    // const handlePayment = async () => {
-    //     const accessToken = localStorage.getItem('access_token');
-    //     const customerId = localStorage.getItem('id');
-
-    //     if (!accessToken) {
-    //         router.replace('/sign-in');
-    //         return;
-    //     }
-
-    //     const response = await fetch('/api/create-order', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             Authorization: `Bearer ${accessToken}`,
-    //         },
-    //         body: JSON.stringify({ amount: grandTotal, currency }),
-    //     });
-
-    //     const data = await response.json();
-
-    //     const options = {
-    //         key: 'rzp_test_nhTux7zMPEixo1',
-    //         amount: data.amount,
-    //         currency: data.currency,
-    //         name: 'Activity Booking',
-    //         description: 'Booking Description',
-    //         order_id: data.id,
-    //         handler: async function (response: any) {
-    //             try {
-    //                 localStorage.setItem("address", address);
-
-    //                 router.push(`/activity-receipt?payment_id=${response.razorpay_payment_id}&amount=${data.amount / 100}&activityId=${activityId}`);
-
-
-    //                 const paymentData = {
-    //                     invoice_id: response.razorpay_payment_id,
-
-    //                     service_type: "activity",
-    //                     booking_id: bookingID,
-    //                     customer_id: customerId,
-    //                     customer_name: name || 'Guest',
-    //                     customer_email: email || '',
-    //                     customer_mobile_number: mobile_number || '',
-
-    //                     payment_method: 'Razorpay',
-    //                     amount: data.amount / 100,
-    //                     invoice_pdf: '',
-    //                     starting_date: date,
-    //                     activity_name: activityName,
-
-
-    //                     ticket_name1: ticket_name1,
-    //                     ticket_name2: ticket_name2,
-    //                     ticket_name3: ticket_name3,
-    //                     ticket_name4: ticket_name4,
-    //                     ticket_name5: ticket_name5,
-
-    //                     ticket_total_price1: ticket_total_price1,
-    //                     ticket_total_price2: ticket_total_price2,
-    //                     ticket_total_price3: ticket_total_price3,
-    //                     ticket_total_price4: ticket_total_price4,
-    //                     ticket_total_price5: ticket_total_price5,
-
-    //                     no_of_person1: no_of_person1,
-    //                     no_of_person2: no_of_person2,
-    //                     no_of_person3: no_of_person3,
-    //                     no_of_person4: no_of_person4,
-    //                     no_of_person5: no_of_person5,
-
-    //                     address: address,
-    //                     passport_no: passport,
-    //                     country: country,
-    //                     razorpay_payment_id: response.razorpay_payment_id,
-    //                 };
-
-
-    //                 await axios.post(
-    //                     'https://yrpitsolutions.com/tourism_api/api/user/store_payment',
-    //                     paymentData,
-    //                     {
-    //                         headers: {
-    //                             Authorization: `Bearer ${accessToken}`,
-    //                         },
-    //                     }
-    //                 );
-
-    //                 console.log('Payment data stored successfully');
-
-    //                 const ticketUpdateData = {
-    //                     no_of_available_tickets1: ticketCount1,
-    //                     no_of_available_tickets2: ticketCount2,
-    //                     no_of_available_tickets3: ticketCount3,
-    //                     no_of_available_tickets4: ticketCount4,
-    //                     no_of_available_tickets5: ticketCount5,
-
-    //                 };
-
-    //                 await axios.put(
-    //                     `https://yrpitsolutions.com/tourism_api/api/activity_ticket_count_minus/${activityId}`,
-    //                     ticketUpdateData
-    //                 );
-
-    //                 console.log('Ticket counts updated successfully');
-
-
-    //             } catch (error) {
-    //                 console.error('Error during post-payment processing:', error);
-    //             }
-    //         },
-
-    //         prefill: {
-    //             name: name || 'Customer Name',
-    //             email: email || 'customer@example.com',
-    //             contact: mobile_number || '9999999999',
-    //         },
-    //         theme: {
-    //             color: '#F37254',
-    //         },
-    //     };
-
-    //     const razorpay = new (window as any).Razorpay(options);
-    //     razorpay.open();
-    // };
-
-
 
 
     const handlePayment = async () => {
@@ -285,7 +160,7 @@ const RazorpayActBtn: React.FC<RazorpayActBtnProps> = ({ grandTotal, todayDate, 
 
 
                     const invoiceHTML = `
-      <!DOCTYPE html>
+                     <!DOCTYPE html>
 <html lang="en">
    <head>
       <meta charset="UTF-8" />
@@ -484,6 +359,7 @@ const RazorpayActBtn: React.FC<RazorpayActBtnProps> = ({ grandTotal, todayDate, 
       </div>
    </body>
 </html>
+     
                                   `;
                     // Use html2pdf.js to convert the HTML to a PDF
                     const pdf = html2pdf()
@@ -617,6 +493,12 @@ const RazorpayActBtn: React.FC<RazorpayActBtnProps> = ({ grandTotal, todayDate, 
                 } catch (error) {
                     console.error("Error during post-payment processing:", error);
                     setLoading(false);
+                }
+            },
+
+            modal: {
+                ondismiss: function () {
+                    setLoading(false); // Set loading to false if the payment is dismissed
                 }
             },
 

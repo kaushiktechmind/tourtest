@@ -12,6 +12,8 @@ import { useState, useEffect, Suspense } from "react";
 // import RazorpayFerryBtn from "@/components/RazorpayFerryBtn";
 import RazorpayFerryBtn from "@/components/RazorpayFerryBtn";
 import { useRouter, useSearchParams } from "next/navigation";
+import Swal from 'sweetalert2';
+import axios from "axios";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -108,7 +110,7 @@ const FerryDetailsPage = () => {
     const formattedHours = hours % 12 || 12; // Convert 0 or 12-hour to 12-hour clock
     return `${formattedHours}:${minutes.toString().padStart(2, "0")} ${period}`;
   };
-  
+
   const calculateTimeDifference = (departureTime: string, arrivalTime: string) => {
     const formatTime = (time: string) => {
       if (!time || typeof time !== "string") {
@@ -120,23 +122,23 @@ const FerryDetailsPage = () => {
       date.setHours(hours, minutes, seconds || 0, 0);
       return date;
     };
-  
+
     const departureDate = formatTime(departureTime);
     const arrivalDate = formatTime(arrivalTime);
-  
+
     if (departureDate.getTime() === 0 || arrivalDate.getTime() === 0) {
       return "Invalid time difference"; // Return fallback value if invalid
     }
-  
+
     const timeDifference = arrivalDate.getTime() - departureDate.getTime();
-  
+
     // Convert time difference from milliseconds to hours and minutes
     const hours = Math.floor(timeDifference / (1000 * 60 * 60));
     const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
-  
+
     return `${hours}h ${minutes}m`;
   };
-  
+
 
   const [bookingId, setBookingId] = useState(null);
 
@@ -193,6 +195,9 @@ const FerryDetailsPage = () => {
     return_fare: "",
   });
 
+  const [invoiceUrl, setInvoiceUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
 
 
 
@@ -231,7 +236,7 @@ const FerryDetailsPage = () => {
   const handleContactChange = (field: string, value: string) => {
     setContactDetails((prevDetails) => ({ ...prevDetails, [field]: value }));
   };
-  
+
 
   const generateBookingID = () => {
     // Generate a random number with a fixed length
@@ -279,27 +284,27 @@ const FerryDetailsPage = () => {
           const pdfBlob = new Blob([byteArray], { type: "application/pdf" });
 
           // Step 3: Create FormData and append the Blob as a file
-            const formData = new FormData();
-            formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
-            formData.append("service_type", "Ferry");
-            formData.append("ferry_name", "Makruzz")
-            formData.append("invoice_id", paymentData?.razorpay_payment_id);
-            formData.append("booking_id", cbookingID);
-            formData.append("customer_id", storedCustomerId || "");
-            formData.append("customer_name", contactDetails.c_name || "");
-            formData.append("customer_email", contactDetails.c_email || "");
-            formData.append("customer_mobile_number", contactDetails.c_mobile || "");
-            formData.append("amount", String(totalPrice));
-            formData.append("starting_date", travelDate1);
-            formData.append("adults", adults);
-            formData.append("payment_method", "Razorpay");
-            formData.append("arrival_place", to3 || to2 || to1);
+          const formData = new FormData();
+          formData.append("invoice_pdf", pdfBlob, "ticket.pdf");
+          formData.append("service_type", "Ferry");
+          formData.append("ferry_name", "Makruzz")
+          formData.append("invoice_id", paymentData?.razorpay_payment_id);
+          formData.append("booking_id", cbookingID);
+          formData.append("customer_id", storedCustomerId || "");
+          formData.append("customer_name", contactDetails.c_name || "");
+          formData.append("customer_email", contactDetails.c_email || "");
+          formData.append("customer_mobile_number", contactDetails.c_mobile || "");
+          formData.append("amount", String(totalPrice));
+          formData.append("starting_date", travelDate1);
+          formData.append("adults", adults);
+          formData.append("payment_method", "Razorpay");
+          formData.append("arrival_place", to3 || to2 || to1);
 
-            // Step 4: Send the FormData to the store_payment API
-            const storeResponse = await fetch(
-              "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
-              {
-                method: "POST",
+          // Step 4: Send the FormData to the store_payment API
+          const storeResponse = await fetch(
+            "https://yrpitsolutions.com/tourism_api/api/user/store_payment",
+            {
+              method: "POST",
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("access_token")}`,
               },
@@ -311,6 +316,31 @@ const FerryDetailsPage = () => {
             const storeResult = await storeResponse.json();
             console.log("Data saved to store_payment API:", storeResult);
             alert("PDF and data saved successfully!");
+
+            
+    const fetchAndStoreInvoiceUrl = async () => {
+      if (!customerId) return; // Exit if no customer ID
+
+      try {
+        const { data } = await axios.get(`https://yrpitsolutions.com/tourism_api/api/user/get_payment_by_customer_id/${customerId}`);
+        console.log("Full Response Data: ", data); // Log the full response
+        const invoiceUrl = data.data[0]?.invoice_pdf;
+        console.log("Invoice PDF URL: ", invoiceUrl); // Log the invoice URL
+
+        if (invoiceUrl) {
+          setInvoiceUrl(invoiceUrl); // Set the state only if a valid URL is found
+          openSweetAlert(invoiceUrl, paymentData?.razorpay_payment_id, cbookingID);
+        } else {
+          console.error("Invoice URL not found in the response.");
+        }
+      } catch (error) {
+        console.error('Error fetching invoice URL:', error);
+      }
+    };
+
+
+    // Wait for the invoice URL to be fetched before showing SweetAlert
+    await fetchAndStoreInvoiceUrl();
           } else {
             console.error("Error saving data to store_payment:", storeResponse.statusText);
             alert("Error saving data.");
@@ -405,7 +435,7 @@ const FerryDetailsPage = () => {
           // Trigger ticket download after booking confirmation
           // Pass the correct booking_id to the handleDownloadTicket function
           handleDownloadTicket(booking_id, paymentData);// Call handleDownloadTicket with booking_id
-        
+
           router.replace("/ferry-payment");
         } else {
           console.error("Error confirming booking:", confirmResponse.statusText);
@@ -418,14 +448,39 @@ const FerryDetailsPage = () => {
     }
   };
 
+  const customerId = localStorage.getItem("id");
 
 
 
 
 
-  const handlePaymentSuccess = (paymentData: any) => {
+  const handlePaymentSuccess = async (paymentData: any) => {
     console.log('Payment Success Data:', paymentData);
     handleSubmit(paymentData);
+
+  };
+
+
+
+
+  const openSweetAlert = (invoiceUrl: string, paymentId: string, bookingId: string) => {
+    Swal.fire({
+      title: 'Cab Booked Successfully!',
+      icon: 'success',
+      showCancelButton: true,
+      confirmButtonText: 'Download Invoice',
+      cancelButtonText: 'Close',
+      html: `
+                            <p>The invoice is sent to your email, please check:</p>
+                            <p><strong>Transaction ID:</strong> ${paymentId}</p>
+                            <p><strong>Booking ID:</strong> ${bookingId}</p>
+                        `,
+      allowOutsideClick: false, // Prevent closing the modal by clicking outside
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.open(invoiceUrl || '', "_blank"); // Open the invoice URL in a new tab
+      }
+    });
   };
 
 
@@ -469,6 +524,7 @@ const FerryDetailsPage = () => {
                                 placeholder="Full Name"
                                 className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                                 onChange={(e) => handlePassengerChange(index, "name", e.target.value)}
+                                required
                               />
 
                               {/* Age Field */}
@@ -479,13 +535,7 @@ const FerryDetailsPage = () => {
                                 onChange={(e) => handlePassengerChange(index, "age", e.target.value)}
                               />
 
-                              {/* Sex Field */}
-                              {/* <input
-                                type="text"
-                                placeholder="Sex"
-                                className="border border-neutral-300 rounded-lg p-2 w-24 focus:outline-none"
-                                onChange={(e) => handlePassengerChange(index, "sex", e.target.value)}
-                              /> */}
+
                               <select
                                 className="border border-neutral-300 rounded-lg p-2 w-24 focus:outline-none"
                                 onChange={(e) => handlePassengerChange(index, "sex", e.target.value)} // Handle the change event
@@ -559,6 +609,7 @@ const FerryDetailsPage = () => {
                                   placeholder="Full Name"
                                   className="border border-neutral-300 rounded-lg p-2 flex-grow focus:outline-none"
                                   onChange={(e) => handlePassengerChange(index, "name", e.target.value)}
+                                  required
                                 />
 
                                 <input
@@ -1110,12 +1161,14 @@ const FerryDetailsPage = () => {
               </p>
               <p className="mb-0 font-medium"> ₹{totalPrice} </p>
             </div>
-            
+
 
             <RazorpayFerryBtn
+              passengerData={passengerData}
+              contactDetails={contactDetails}
               grandTotal={Number(totalPrice) * 100} // convert to paise
               currency="INR"
-              cbookingId = {cbookingID}
+              cbookingId={cbookingID}
               onPaymentSuccess={handlePaymentSuccess} // Pass the success handler here
             >
             </RazorpayFerryBtn>

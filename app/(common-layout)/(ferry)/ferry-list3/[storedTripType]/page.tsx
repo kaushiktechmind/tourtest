@@ -67,6 +67,8 @@ export default function Page({
   const infants = travelData?.infants;
   const no_of_passengers = travelData?.no_of_passengers;
   const travel_date3 = travelData?.travel_date3;
+  const travel_date2 = travelData?.travel_date2;
+  const travel_date1 = travelData?.travel_date1;
 
 
   // Fetching IDs for `from` and `to` based on the mapping
@@ -190,22 +192,41 @@ export default function Page({
     }
   };
 
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}-${month}-${year}`;
+  };
+
+
+
 
 
 
 
   return (
 
-    <div className="py-[30px] lg:py-[60px]">
+    <div className="py-[30px] lg:py-[60px] ">
 
       <div className="container">
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-6">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-[40px]">
           <div className="flex items-center space-x-6 flex-wrap">
+
+
+
+
+
+            <p className="text-green-600">{travel_date2 ? formatDate(travel_date1) : 'N/A'}</p>
+
             {/* Always show the first pair */}
             <div className="flex items-center space-x-2">
               <p className="text-gray-600">{from1} -&gt; </p>
               <p className="text-gray-600">{to1}</p>
             </div>
+
+
+
+
+            <p className="text-green-600">{travel_date2 ? formatDate(travel_date2) : 'N/A'}</p>
 
             {/* Show the second pair only if from2 is available */}
             {from2 && (
@@ -215,11 +236,17 @@ export default function Page({
               </div>
             )}
 
+
+
+            <p className="text-green-600">{travel_date2 ? formatDate(travel_date2) : 'N/A'}</p>
+
             {/* Show the third pair only if from2 is available */}
             {from2 && (
-              <div className="flex items-center space-x-2">
-                <p className="text-green-600">{from3} -&gt; </p>
-                <p className="text-green-600">{to3}</p>
+              <div className="flex items-center justify-center p-3 border-2 border-green-600 rounded-full">
+                <div className="flex items-center space-x-2">
+                  <p className="text-green-600">{from3} -&gt; </p>
+                  <p className="text-green-600">{to3}</p>
+                </div>
               </div>
             )}
           </div>
@@ -290,7 +317,7 @@ export default function Page({
                       name="property-type"
                       id="sell-category"
                     />
-                    
+
                   </div>
                 </li>
               </ul>
@@ -342,9 +369,9 @@ export default function Page({
                 </li>
               </ul>
               <div className="border-t border-dashed my-6"></div>
-            
+
               <div className="border-t border-dashed my-6"></div>
-             
+
               <div className="border-t border-dashed my-6"></div>
               <Link
                 href="#"
@@ -461,7 +488,7 @@ export default function Page({
                 </div>
               )}
 
-             
+
             </div>
           </div>
         </div>

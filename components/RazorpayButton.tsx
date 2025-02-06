@@ -631,6 +631,12 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
         }
       },
 
+      modal: {
+        ondismiss: function () {
+            setLoading(false); // Set loading to false if the payment is dismissed
+        }
+    },
+
 
 
       prefill: {

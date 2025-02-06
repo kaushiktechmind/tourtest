@@ -363,18 +363,26 @@ export default function Page({
 
   };
 
+  const formatDate = (dateString: string) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}-${month}-${year}`;
+  };
+
 
 
   return (
     <div className="py-[30px] lg:py-[60px]">
 
       <div className="container">
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-6">
-          <div className="flex items-center space-x-6 flex-wrap">
-            {/* Always show the first pair */}
-            <div className="flex items-center space-x-2">
-              <p className="text-green-600">{storedFrom1} -&gt; </p>
-              <p className="text-green-600">{storedTo1}</p>
+      <div className="bg-gray-100 p-4 rounded-lg shadow-md mb-6 mt-[40px]">
+      <div className="flex items-center space-x-6 flex-wrap">
+          <p className="text-green-600">Date: {storedTravelData?.travel_date1 ? formatDate(storedTravelData.travel_date1) : 'N/A'}</p>
+            {/* Wrap the first pair inside a green-bordered circle */}
+            <div className="flex items-center justify-center p-3 border-2 border-green-600 rounded-full">
+              <div className="flex items-center space-x-2">
+                <p className="text-green-600">{storedFrom1} -&gt; </p>
+                <p className="text-green-600">{storedTo1}</p>
+              </div>
             </div>
 
             {/* Show the second pair only if from2 is available */}
@@ -385,7 +393,7 @@ export default function Page({
               </div>
             )}
 
-            {/* Show the third pair only if from2 is available */}
+            {/* Show the third pair only if from3 is available */}
             {storedFrom3 && (
               <div className="flex items-center space-x-2">
                 <p className="text-gray-600">{storedFrom3} -&gt; </p>
@@ -394,7 +402,6 @@ export default function Page({
             )}
           </div>
         </div>
-
 
 
         <div className="bg-white rounded-xl p-3 md:p-5">

@@ -578,6 +578,13 @@ const RazorpayPkgBtn: React.FC<RazorpayPkgBtnProps> = ({ grandTotal, todayDate, 
           console.error('Error during post-payment processing:', error);
         }
       },
+      
+      modal: {
+        ondismiss: function () {
+            setLoading(false); // Set loading to false if the payment is dismissed
+        }
+    },
+
       prefill: {
         name: name || 'Customer Name',
         email: email || 'customer@example.com',

@@ -316,6 +316,7 @@ const FerryHome = () => {
                       setTrips(updatedTrips);
                     }}
                     placeholderText="Depart Date"
+                    minDate={new Date()}
                     className="w-full bg-[var(--bg-1)] p-2 rounded-full focus:outline-none"
                   />
                   <CalendarDaysIcon className="w-5 h-5 text-gray-600 shrink-0" />

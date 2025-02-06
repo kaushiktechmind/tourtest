@@ -3,15 +3,35 @@ import SubHeadingBtn from "../SubHeadingBtn";
 import Image from "next/image";
 import Link from "next/link";
 import { Swiper, SwiperSlide } from "swiper/react";
-// Import Swiper styles
 import "swiper/css";
 import "swiper/css/navigation";
 import testimonialImg from "@/public/img/testimonial-img.jpg";
 
-// import required modules
+// Import required modules
 import { Navigation } from "swiper";
 import { agents } from "@/public/data/agent";
 import { MapPinIcon } from "@heroicons/react/24/outline";
+
+// Function to render dynamic stars based on rating
+const renderStars = (rating: number) => {
+  const fullStars = Math.floor(rating);
+  const halfStar = rating % 1 !== 0;
+  const stars = [];
+
+  for (let i = 0; i < fullStars; i++) {
+    stars.push(<i key={`full-${i}`} className="las la-star"></i>);
+  }
+
+  if (halfStar) {
+    stars.push(<i key="half" className="las la-star-half-alt"></i>);
+  }
+
+  while (stars.length < 5) {
+    stars.push(<i key={`empty-${stars.length}`} className="las la-star text-gray-300"></i>);
+  }
+
+  return stars;
+};
 
 const Authors = () => {
   return (
@@ -34,6 +54,7 @@ const Authors = () => {
             </div>
           </div>
         </div>
+
         <Swiper
           loop={true}
           slidesPerView="auto"
@@ -49,40 +70,40 @@ const Authors = () => {
             },
           }}
           modules={[Navigation]}
-          className="auth-slider">
+          className="auth-slider"
+        >
           {agents.map((item) => (
             <SwiperSlide key={item.id}>
               <div className="p-2 sm:p-5 rounded-2xl border bg-white">
                 <div className="bg-[var(--bg-1)] rounded-2xl p-3 sm:p-5 lg:p-8">
+                  {/* Dynamic Star Ratings */}
                   <div className="flex items-center gap-1 flex-wrap mb-3 text-2xl text-[var(--tertiary)]">
-                    <i className="las la-star"></i>
-                    <i className="las la-star"></i>
-                    <i className="las la-star"></i>
-                    <i className="las la-star"></i>
-                    <i className="las la-star-half-alt"></i>
+                    {renderStars(item.rating)}
                   </div>
-                  <p className="text-lg md:text-xl mb-0">
-                    I had an excellent experience working with [real estate
-                    agent/agency name] to buy/sell my property. From start to
-                    finish, their professionalism and expertise
-                  </p>
+
+                  <p className="text-lg md:text-xl mb-0">{item.review}</p>
+
                   <div className="border-b border-dashed my-4 lg:my-8"></div>
+
                   <div className="inline-flex items-center gap-5">
-                    <div className="w-15 h-15 rounded-full overflow-hidden shrink-0">
+                    {/* <div className="w-15 h-15 rounded-full overflow-hidden shrink-0">
                       <Image
-                        src={testimonialImg}
-                        alt="img"
-                        className=" w-full h-full objec-fit-cover"
+                        src={item.img}  // Dynamically load agent image
+                        alt={item.name}
+                        width={20}
+                        height={20}
+                        className="w-full h-full object-cover"
                       />
-                    </div>
+                    </div> */}
+
                     <div className="flex-grow">
                       <span className="block text-xl font-semibold mb-1 text-start">
-                        Jenny Wilson
+                        {item.name}
                       </span>
-                      <div className="flex items-center gap-1">
+                      {/* <div className="flex items-center gap-1">
                         <MapPinIcon className="text-[#9C742B] w-5 h-5" />
-                        <span className="inline-block"> Canada </span>
-                      </div>
+                        <span className="inline-block">{item.address}</span>
+                      </div> */}
                     </div>
                   </div>
                 </div>
