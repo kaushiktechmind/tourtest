@@ -4,6 +4,7 @@ import {
   MapPinIcon,
   PhoneArrowUpRightIcon,
 } from "@heroicons/react/24/outline";
+import { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 type FormValues = {
@@ -24,10 +25,13 @@ const serviceTypeMapping = {
 };
 
 const Page = () => {
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset } = useForm<FormValues>();
 
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
+
     try {
+      setLoading(true);
       const serviceText = serviceTypeMapping[data.service as unknown as keyof typeof serviceTypeMapping];
 
       const response = await fetch(
@@ -56,7 +60,9 @@ const Page = () => {
       reset(); // Reset the form after successful submission
     } catch (error) {
       console.error("Error submitting form:", error);
+      setLoading(false);
     }
+    setLoading(false);
   };
 
   return (
@@ -216,11 +222,32 @@ const Page = () => {
                     </div>
                   </div>
 
-                  <button
+                  {/* <button
                     type="submit"
-                    className="inline-block mt-5 text-center w-full py-4 bg-primary text-white rounded-full transition-all duration-300 transform hover:bg-primary/90 hover:scale-105">
-                    Submit Enquiry
+                    className="inline-block mt-5 text-center w-full py-4 bg-primary text-white rounded-full transition-all duration-300 transform hover:bg-primary/90 hover:scale-105"
+                    disabled={loading} // Disable the button while loading
+                  >
+                    {loading ? (
+                      <span className="loader">Submitting...</span> // Replace with your loader component or spinner
+                    ) : (
+                      "Submit Enquiry"
+                    )}
+                  </button> */}
+
+                  <button type="submit" className="btn-primary font-semibold mb-6 mt-3" disabled={loading}>
+                    {loading ? (
+                      <div className="flex justify-center items-center">
+                        <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span className="">Submitting...</span>
+                      </div>
+                    ) : (
+                      "Submit Query"
+                    )}
                   </button>
+
+
+
+
                 </form>
               </div>
             </div>
@@ -232,3 +259,4 @@ const Page = () => {
 };
 
 export default Page;
+

@@ -65,7 +65,7 @@ const Featured = () => {
             tour_min_people, tour_max_people, pickup_point, banner_image, tour_price, sale_price
           }) => (
             <div key={id} className="col-span-12 md:col-span-6 xl:col-span-4 group">
-              <div className="bg-white rounded-2xl hover:shadow-lg duration-300 p-3" style={{ width: "100%", maxWidth: "400px", height: "650px" }}>
+              <div className="bg-white rounded-2xl hover:shadow-lg duration-300 p-3" style={{ width: "100%", maxWidth: "400px", height: "570px" }}>
                 <div className="relative w-full h-55 overflow-hidden rounded-2xl">
                   {/* Image Container: Fixed size and aspect ratio */}
                   {banner_image && banner_image.length > 1 ? (
@@ -106,13 +106,12 @@ const Featured = () => {
                 </div>
                 <div className="p-4">
                   <div className="flex justify-between mb-2">
-                    <Link href={`/package/${id}`} className="link block flex-grow text-xl font-medium">
+                    <Link
+                      href={`/package/${id}`}
+                      className="link block flex-grow text-xl font-medium h-[3rem] leading-snug line-clamp-2 overflow-hidden"
+                    >
                       {package_title}
                     </Link>
-                    <div className="flex gap-1 items-center shrink-0">
-                      <i className="las la-star text-[var(--tertiary)]"></i>
-                      <span className="block"> 5 </span>
-                    </div>
                   </div>
                   <ul className="grid grid-cols-2 gap-3 mt-4">
                     <li className="col-span-2 sm:col-span-1">
@@ -135,11 +134,12 @@ const Featured = () => {
                     </li>
                   </ul>
                 </div>
+
                 <div className="border-b border-dash-long my-2 mx-4"></div>
                 <div className="p-4">
                   <div className="flex flex-wrap justify-between items-center">
                     <span className="block text-xl font-medium text-primary">
-                      ${sale_price ? sale_price : tour_price}
+                      ₹{sale_price ? sale_price : tour_price}
                       <span className="inline-block font-normal text-base"> /Pax</span>
                     </span>
                     <Link href={`/package/${id}`} className="btn-outline font-semibold">

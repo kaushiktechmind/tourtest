@@ -143,8 +143,8 @@ const HotelDetailsFeaturedRoom = ({
 
       <div className="p-2 rounded-2xl flex flex-col md:flex-row bg-[var(--bg-2)]">
         <div
-          className="relative overflow-hidden"
-          style={{ height: "300px", width: "348px" }}
+           className="relative overflow-hidden w-full h-full md:w-[300px]" 
+       
         >
           <div
             className="flex transition-transform duration-500 ease-in-out"

@@ -1,10 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CardPagination from "@/components/CardPagination";
-import { ClockIcon, MapPinIcon } from "@heroicons/react/24/outline";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 import Image from "next/image";
 import Link from "next/link";
+import CardPagination from "@/components/CardPagination";
+import { MapPinIcon } from "@heroicons/react/24/outline";
 
 interface Activity {
   id: number;
@@ -23,7 +28,6 @@ const Page = () => {
   const [itemsPerPage] = useState(6);  // Set items per page
 
   const loc = localStorage.getItem("storedLocation");
-
   useEffect(() => {
     const fetchActivities = async () => {
       try {
@@ -65,78 +69,64 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
-  // Logic for slicing the activities array for pagination
-  const indexOfLastActivity = currentPage * itemsPerPage;
-  const indexOfFirstActivity = indexOfLastActivity - itemsPerPage;
-  const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
-
-  // Calculate total number of pages
-  const totalPages = Math.ceil(activities.length / itemsPerPage);
-
-  // Handle page change
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
   return (
     <>
-      {currentActivities.map(
-        ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price }) => (
-          <div key={id} className="col-span-12 ">
-            <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white ">
+      {activities.map(
+        ({ id, banner_image_multiple, location, cab_name, price, sale_price }) => (
+          <div key={id} className="col-span-12 md:col-span-6 group">
+            <div className="bg-white rounded-2xl p-3">
               <div className="relative">
                 <div className="rounded-2xl">
                   <Image
-                    width={386}
-                    height={224}
+                    width={0}  // Use 0 for width to allow the image to scale fluidly
+                    height={0} // Use 0 for height to allow the image to scale fluidly
                     src={banner_image_multiple[0]}
-                    alt="Activity Image"
-                    className="rounded-2xl h-[300px] object-cover"
+                    alt="Package Image"
+                    className="rounded-2xl w-full h-[330px] object-cover" // Fixed height, fluid width, and cover aspect ratio
                   />
+
                 </div>
               </div>
-              <div className="flex-grow h-full p-3 sm:p-4">
-                <div className="property-card__body ">
-                  <div className="flex justify-between mb-2">
-                    <Link
-                      href={`/cab/${id}`}
-                      className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium">
-                      {cab_name}
-                    </Link>
-                  </div>
-                  <div className="flex justify-between mb-6">
-                    <div className="flex items-center gap-1">
-                      <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
-                      <span className="inline-block">{location}</span>
-                    </div>
+              <div className="p-4 xl:p-5">
+                <div className="flex justify-between mb-4">
+                  <Link
+                    href={`/cab/${id}`}
+                    className="link block text-xl font-medium h-[3.1rem] line-clamp-2 overflow-hidden break-words"
+                  >
+                    {cab_name}
+                  </Link>
+
+                </div>
+                <div className="flex justify-between">
+                  <div className="flex items-center gap-1">
+                    <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
+                    <span className="inline-block">{location}</span>
                   </div>
                 </div>
-                <div className="my-4">
-                  <div className="border border-dashed"></div>
-                </div>
-                <div className="py-3">
-                  <div className="flex flex-wrap justify-between items-center">
-                    <span className="block  font-medium line-through">
-                      ₹ {price}
-                      <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
-                    </span>
-                    <Link
-                      href={`/cab/${id}`}
-                      className="btn-outline py-2 text-primary font-semibold">
-                      Book Now
-                    </Link>
-                  </div>
+              </div>
+
+              <div className="border-b border-dash-long my-3 mx-4"></div>
+
+              <div className="p-4">
+                <div className="flex flex-wrap justify-between items-center">
+                  <span className="block  font-medium line-through">
+                    ₹ {price}
+                    <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
+                  </span>
+                  <Link
+                    href={`/cab/${id}`}
+                    className="btn-outline font-semibold">
+                    Book Now
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         )
       )}
-      <CardPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      <CardPagination currentPage={0} totalPages={0} onPageChange={function (page: number): void {
+        throw new Error("Function not implemented.");
+      }} />
     </>
   );
 };

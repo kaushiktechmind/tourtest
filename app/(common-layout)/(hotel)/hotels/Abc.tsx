@@ -4,10 +4,9 @@ import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Pagination } from "swiper";
-import WhatsAppAndScroll from "@/components/WhatsAppAndScroll";
+import HotelListingCard from "@/components/HotelListingCard";
 
-const Page = () => {
+const HotelListingGrid = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const type = "Hotel";
@@ -18,14 +17,13 @@ const Page = () => {
   const [startdate, setStartdate] = useState<string | null>(null);
   const [enddate, setEnddate] = useState<string | null>(null);
 
-  
-
   useEffect(() => {
     // Only run on the client-side
     setNoOfRooms(Number(localStorage.getItem('noOfRooms')));
     setStartdate(localStorage.getItem('startDate'));
     setEnddate(localStorage.getItem('endDate'));
   }, []);
+
 
 
   // alert(noOfRooms)
@@ -56,8 +54,8 @@ const Page = () => {
         normalizedData = response.data.data.map((hotel: any) => ({
           id: hotel.id,
           hotel_id: hotel.id,
-          hotel_name: hotel.hotel_name,
           seo_title: hotel.seo_title,
+          hotel_name: hotel.hotel_name,
           location_name: hotel.location_name,
           ratings: hotel.ratings || "",
           banner_images: hotel.banner_images || "",
@@ -118,14 +116,14 @@ const Page = () => {
     }
   }, [type, loc]);
 
+  
 
-
-
+ 
 
   // Fetch hotels when component mounts
   useEffect(() => {
     fetchHotels();
-  }, [fetchHotels]);
+  }, []);
 
   // Calculate the paginated hotels
   const paginatedHotels = hotels.slice(
@@ -140,40 +138,55 @@ const Page = () => {
     setCurrentPage(page);
   };
 
+  // const noOfHotels = Number(localStorage.getItem("noOfHotels"));
+  // let noOfCurHotels;
+
+  // if (noOfHotels >= itemsPerPage) {
+  //   noOfCurHotels = itemsPerPage;
+  // }
+  // else
+  //   noOfCurHotels = noOfHotels;
+  // localStorage.setItem("noOfCurHotels", String(noOfCurHotels));
+
 
   return (
-    <Suspense fallback={<div>Loading hotels...</div>}>
-      {loading ? (
-        <div>Loading...</div>
-      ) : hotels.length > 0 ? (
-        // Deduplicate hotels before pagination
-        [...new Map(hotels.map((item) => [item.hotel_id, item])).values()]
-          .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-          .map((uniqueItem) => (
-            <HotelListingList
-              key={uniqueItem.hotel_id}
-              item={uniqueItem}
-              noOfRooms={Number(noOfRooms)}
-              loc={loc || ''}
-              type={type || ''}
-              startdate={startdate || ''}
-              enddate={enddate || ''} adults={0} numChildren={0} infants={0} seo_title={""} />
-          ))
-      ) : (
-        <div className="col-span-12">No hotels available.</div>
-      )}
+    <>
+        {loading ? (
+          <div>Loading...</div>
+        ) : hotels.length > 0 ? (
+          // Deduplicate hotels before pagination
+          [...new Map(hotels.map((item) => [item.hotel_id, item])).values()]
+            .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+            .map((uniqueItem) => (
+              <HotelListingCard
+                key={uniqueItem.hotel_id}
+                item={uniqueItem}
+                noOfRooms={Number(noOfRooms)}
+                loc={loc || ""}
+                type={type || ""}
+                startdate={startdate || ""}
+                enddate={enddate || ""} adults={0} numChildren={0} infants={0} />
+            ))
+        ) : (
+          <div className="col-span-12">No hotels available.</div>
+        )}
 
-
-      {/* Pass pagination props */}
-      <CardPagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
-    </Suspense>
+        {/* Pass pagination props */}
+        <CardPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+        </>
   );
-
 };
 
 
-export default Page;
+
+const Page = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <HotelListingGrid />
+  </Suspense>
+);
+
+export default Page;  

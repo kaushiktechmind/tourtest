@@ -57,33 +57,6 @@ const FerryHome = () => {
     setTrips((prevTrips) => prevTrips.filter((trip) => trip.id !== id));
   };
 
-  // const updateLocalStorage = () => {
-  //   if (trips.length > 0) {
-  //     const travelData = {};
-
-  //     trips.forEach((trip, index) => {
-  //       const tripIndex = index + 1; // Start index from 1 (e.g., from1, to1, etc.)
-
-  //       const formatDate = (date: { getTime: () => number; getTimezoneOffset: () => number; }) => {
-  //         if (!date) return "";
-  //         const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-  //         return offsetDate.toISOString().split("T")[0]; // Extract only the date part
-  //       };
-
-  //       // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
-  //       travelData[`from${tripIndex}`] = trip.from || "";
-  //       travelData[`to${tripIndex}`] = trip.to || "";
-  //       travelData[`travel_date${tripIndex}`] = formatDate(trip.date); // format date
-
-  //     });
-  //     travelData["adults"] = adult;
-  //     travelData["infants"] = infants;
-  //     travelData["no_of_passengers"] = adult + infants;
-
-  //     // Store the entire travelData object in localStorage
-  //     localStorage.setItem("travelData", JSON.stringify(travelData));
-  //   }
-  // };
 
   const updateLocalStorage = () => {
     if (trips.length > 0) {
@@ -97,11 +70,11 @@ const FerryHome = () => {
           const offsetDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
           return offsetDate.toISOString().split("T")[0]; // Extract only the date part
         };
-        
+
         // Store trip details dynamically as from1, to1, travel_date1, from2, to2, travel_date2, etc.
         travelData[`from${tripIndex}`] = trip.from || "";
         travelData[`to${tripIndex}`] = trip.to || "";
-        travelData[`travel_date${tripIndex}`] = formatDate(trip.date); 
+        travelData[`travel_date${tripIndex}`] = formatDate(trip.date);
       });
 
       travelData["adults"] = adult;
@@ -375,11 +348,11 @@ const FerryHome = () => {
       <div className="container relative py-[60px] lg:py-[120px]">
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-12 lg:col-span-8 xl:col-span-8 xxl:col-span-12">
-          
+
             <h1 className="h1 mt-4 mb-6 font-semibold leading-tight">
               Your One-Stop Shop for All Hi-Speed
             </h1>
-           
+
           </div>
         </div>
       </div>

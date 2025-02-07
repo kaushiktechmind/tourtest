@@ -6,7 +6,7 @@ import Featured from "@/components/home-2/Featured";
 import Hero from "@/components/home-5/Hero";
 import TopCategory from "@/components/home-5/TopCategory";
 import TravelMemory from "@/components/home-5/TravelMemory";
-import WhyChoose from "@/components/home-5/WhyChoose";
+import WhyChoose from "@/components/home-2/WhyChoose";
 
 const page = () => {
   return (

@@ -63,106 +63,119 @@ const HotelListingCard = ({
 
   return (
     <div className="col-span-12 md:col-span-6">
-  <div className="relative rounded-2xl p-3 bg-white">
-    <div className="property-card__head">
-      <div className="property-card__img relative w-full h-[300px] overflow-hidden rounded-2xl">
-        <Image
-          fill
-          src={
-            banner_images && banner_images.length > 0
-              ? banner_images[0]
-              : "fallback-image-url"
-          }
-          alt={hotel_name}
-          className="rounded-2xl object-cover"
-        />
-      </div>
-    </div>
-    <div className="mt-4 p-4">
-      <div className="flex justify-between mb-2">
-        <Link
-          href={`/hotel/${seo_title}`}
-          className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
-          onClick={() => {
-            if (location_name) {
-              localStorage.setItem("storedLocation", location_name);
-              localStorage.setItem("hotelId", id || hotel_id);
-              localStorage.setItem("fromHome", "200");
-            }
-          }}
-        >
-          {hotel_name}
-        </Link>
-        <div className="flex items-center shrink-0">
-          <div className="flex">
-            {Array.from({ length: Math.round(ratings) }, (_, index) => (
-              <StarIcon
-                key={index}
-                className="w-5 h-5 text-[var(--tertiary)]"
-              />
+      <div className="relative rounded-2xl p-3 bg-white">
+        <div className="property-card__head">
+          <div className="property-card__img relative w-full h-[300px] overflow-hidden rounded-2xl">
+            <Image
+              fill
+              src={
+                banner_images && banner_images.length > 0
+                  ? banner_images[0]
+                  : "fallback-image-url"
+              }
+              alt={hotel_name}
+              className="rounded-2xl h-[330px] object-cover"
+            />
+          </div>
+        </div>
+
+        <div className="mt-4 p-4">
+          <div className="flex justify-between items-start mb-2">
+            <Link
+              href={`/hotel/${seo_title}`}
+              className="link text-[var(--neutral-700)] hover:text-primary text-xl font-medium leading-snug h-[3rem] line-clamp-2 overflow-hidden flex-1"
+              onClick={() => {
+                if (location_name) {
+                  localStorage.setItem("storedLocation", location_name);
+                  localStorage.setItem("hotelId", id || hotel_id);
+                  localStorage.setItem("fromHome", "200");
+                }
+              }}
+            >
+              {hotel_name}
+            </Link>
+
+            <div className="flex items-start ml-4 mt-1">
+              {Array.from({ length: Math.round(ratings) }, (_, index) => (
+                <StarIcon
+                  key={index}
+                  className="w-5 h-5 text-[var(--tertiary)]"
+                />
+              ))}
+            </div>
+          </div>
+
+
+          <div className="flex justify-between mb-6">
+            <div className="flex items-center gap-1">
+              <i className="las la-map-marker-alt text-xl text-[var(--tertiary)]"></i>
+              <span className="inline-block">{location_name}</span>
+            </div>
+          </div>
+
+          {/* Fixed Space for Amenities */}
+          <ul className="flex items-center flex-wrap gap-4 h-[50px] overflow-hidden">
+            {validAmenities.slice(0, 5).map((amenity, index) => (
+              <li key={index}>
+                <div
+                  data-tooltip-id={amenity.name}
+                  className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
+                >
+                  <Image
+                    width={28}
+                    height={28}
+                    src={amenity.logo}
+                    alt={amenity.name}
+                    className="w-7 h-7 object-fit-contain"
+                  />
+                </div>
+                <Tooltip
+                  id={amenity.name}
+                  style={tooltipStyle}
+                  offset={7}
+                  content={amenity.name}
+                />
+              </li>
             ))}
+            {validAmenities.length > 5 && (
+              <li className="text-sm text-gray-500 mt-2">
+                +{validAmenities.length - 5} more
+              </li>
+            )}
+          </ul>
+        </div>
+
+        <div className="border-b border-dash-long mx-3">
+          <div className="hr-dashed"></div>
+        </div>
+
+        <div className="p-4">
+          <div className="flex flex-wrap justify-between items-center">
+            <span className="block font-medium line-through">
+              ₹{starting_price}
+              <span className="inline-block font-medium text-xl text-primary pl-2">
+                ₹{highest_price}
+              </span>
+            </span>
+            <Link
+              href={`/hotel/${seo_title}`}
+              className="btn-outline font-semibold"
+              onClick={() => {
+                if (location_name) {
+                  localStorage.setItem("storedLocation", location_name);
+                  localStorage.setItem("hotelId", id || hotel_id);
+                  localStorage.setItem("fromHome", "200");
+                }
+              }}
+            >
+              Book Now
+            </Link>
           </div>
         </div>
       </div>
-      <div className="flex justify-between mb-6">
-        <div className="flex items-center gap-1">
-          <i className="las la-map-marker-alt text-xl text-[var(--tertiary)]"></i>
-          <span className="inline-block">{location_name}</span>
-        </div>
-      </div>
-      <ul className="flex items-center flex-wrap gap-7">
-        {validAmenities.map((amenity, index) => (
-          <li key={index}>
-            <div
-              data-tooltip-id={amenity.name}
-              className="grid place-content-center w-10 h-10 rounded-full bg-[var(--bg-2)] text-primary"
-            >
-              <Image
-                width={28}
-                height={28}
-                src={amenity.logo}
-                alt={amenity.name}
-                className="w-7 h-7 object-fit-contain"
-              />
-            </div>
-            <Tooltip
-              id={amenity.name}
-              style={tooltipStyle}
-              offset={7}
-              content={amenity.name}
-            />
-          </li>
-        ))}
-      </ul>
     </div>
-    <div className="border-b border-dash-long mx-3">
-      <div className="hr-dashed"></div>
-    </div>
-    <div className="p-4">
-      <div className="flex flex-wrap justify-between items-center">
-        <span className="block font-medium line-through">
-          ₹{starting_price}
-          <span className="inline-block font-medium text-xl text-primary pl-2">
-            ₹{highest_price}
-          </span>
-        </span>
-        <Link
-           href={`/hotel/${seo_title}`}
-          className="btn-outline font-semibold"
-          onClick={() => {
-            if (location_name) {
-              localStorage.setItem("storedLocation", location_name);
-              localStorage.setItem("hotelId", id || hotel_id);
-              localStorage.setItem("fromHome", "200");
-            }
-          }}
-        >
-          Book Now
-        </Link>
-      </div>
-    </div>
-  </div>
-</div>
+
+
 
   );
 };

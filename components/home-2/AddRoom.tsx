@@ -100,97 +100,104 @@ const AddRoom = () => {
 
   return (
     <div className="relative">
-      <div
-        className="border rounded-full p-3 cursor-pointer bg-white"
-        onClick={handleOpenDropdown}
-      >
-        {rooms.length > 0
-          ? `${rooms.length} room${rooms.length > 1 ? "s" : ""} - ${localTotal.adults
-          } adult${localTotal.adults !== 1 ? "s" : ""} - ${localTotal.children
-          } child${localTotal.children !== 1 ? "ren" : ""} - ${localTotal.infants
-          } infant${localTotal.infants !== 1 ? "s" : ""}`
-          : "0 rooms - 0 adults - 0 children - 0 infants"}
-      </div>
+    <div
+      className="border rounded-full p-3 cursor-pointer bg-white"
+      onClick={handleOpenDropdown}
+    >
+     {rooms.length > 0
+  ? `${rooms.length} room - ${localTotal.adults} adult - ${localTotal.children} child - ${localTotal.infants} infant`
+  : "0 room - 0 adult - 0 child - 0 infant"}
 
-      {isOpen && (
-        <div className="absolute top-full left-0 z-50">
-          <div className="relative bg-white border rounded-lg mt-2 p-4 shadow-lg w-96 z-50">
-            {rooms.map((room: { adults: string | number | readonly string[] | undefined; children: string | number | readonly string[] | undefined; infants: string | number | readonly string[] | undefined; }, index: number | null | undefined) => (
-              <div key={index} className="mb-4">
-                <div className="flex gap-4 items-center mb-3">
-                  <div className="flex-1">
-                    <label>Adults Age</label>
-                    <p>Age(12+)</p>
-                    <select
-                      value={room.adults}
-                      onChange={(e) =>
-                        index !== null && index !== undefined && handleChange(index, "adults", parseInt(e.target.value))
-                      }
-                      className="w-full border rounded p-1"
-                    >
-                      <option value={1}>1</option>
-                      <option value={2}>2</option>
-                      <option value={3}>3</option>
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label>Children</label>
-                    <p>Age(6-11)</p>
-                    <select
-                      value={room.children}
-                      onChange={(e) =>
-                        index !== null && index !== undefined && handleChange(index, "children", parseInt(e.target.value))
-                      }
-                      className="w-full border rounded p-1"
-                    >
-                      <option value={0}>0</option>
-                      <option value={1}>1</option>
-                    </select>
-                  </div>
-                  <div className="flex-1">
-                    <label>Infants</label>
-                    <p>Age(0-5)</p>
-                    <select
-                      value={room.infants}
-                      onChange={(e) =>
-                        index !== null && index !== undefined && handleChange(index, "infants", parseInt(e.target.value))
-                      }
-                      className="w-full border rounded p-1"
-                    >
-                      <option value={0}>0</option>
-                      <option value={1}>1</option>
-                    </select>
-                  </div>
-                  {rooms.length > 1 && (
-                    <button
-                      onClick={() => index !== null && index !== undefined && handleRemoveRoom(index)}
-                      className="text-red-500 ml-4"
-                    >
-                      <TrashIcon className="w-5 h-5" />
-                    </button>
-                  )}
+    </div>
+  
+    {isOpen && (
+      <div className="absolute top-full left-0 z-50">
+        <div className="relative bg-white border rounded-lg mt-2 p-4 shadow-lg w-80 z-50">
+        {rooms.map((room: { adults: string | number | readonly string[] | undefined; children: string | number | readonly string[] | undefined; infants: string | number | readonly string[] | undefined; }, index: number | null | undefined) => (
+            <div key={index} className="mb-4">
+              {/* Responsive Flex Layout */}
+              <div className="flex flex-col md:flex-row gap-4 items-center mb-3">
+                <div className="flex-1 w-full">
+                  <label>Adults Age</label>
+                  <p>Age(18+)</p>
+                  <select
+                    value={room.adults}
+                    onChange={(e) =>
+                      index !== null &&
+                      index !== undefined &&
+                      handleChange(index, "adults", parseInt(e.target.value))
+                    }
+                    className="w-full border rounded p-1"
+                  >
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                  </select>
                 </div>
+                <div className="flex-1 w-full">
+                  <label>Children</label>
+                  <p>Age(6-11)</p>
+                  <select
+                    value={room.children}
+                    onChange={(e) =>
+                      index !== null &&
+                      index !== undefined &&
+                      handleChange(index, "children", parseInt(e.target.value))
+                    }
+                    className="w-full border rounded p-1"
+                  >
+                    <option value={0}>0</option>
+                    <option value={1}>1</option>
+                  </select>
+                </div>
+                <div className="flex-1 w-full">
+                  <label>Infants</label>
+                  <p>Age(0-5)</p>
+                  <select
+                    value={room.infants}
+                    onChange={(e) =>
+                      index !== null &&
+                      index !== undefined &&
+                      handleChange(index, "infants", parseInt(e.target.value))
+                    }
+                    className="w-full border rounded p-1"
+                  >
+                    <option value={0}>0</option>
+                    <option value={1}>1</option>
+                  </select>
+                </div>
+  
+                {rooms.length > 1 && (
+                  <button
+                    onClick={() => index !== null && index !== undefined && handleRemoveRoom(index)}
+                    className="text-red-500 ml-4"
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </button>
+                )}
               </div>
-            ))}
-
-            <div className="mt-4 flex justify-between items-center">
-              <button
-                onClick={handleAddRoom}
-                className="bg-primary text-white p-2 rounded"
-              >
-                Add Room
-              </button>
-              <button
-                onClick={handleDone}
-                className="bg-primary text-white p-2 rounded"
-              >
-                Done
-              </button>
             </div>
+          ))}
+  
+          <div className="mt-4 flex justify-between items-center">
+            <button
+              onClick={handleAddRoom}
+              className="bg-primary text-white p-2 rounded"
+            >
+              Add Room
+            </button>
+            <button
+              onClick={handleDone}
+              className="bg-primary text-white p-2 rounded"
+            >
+              Done
+            </button>
           </div>
         </div>
-      )}
-    </div>
+      </div>
+    )}
+  </div>
+  
   );
 };
 

@@ -77,7 +77,7 @@ const Property = () => {
       />
       <div className="container">
         <div className="max-w-[570px] mx-auto flex flex-col items-center text-center">
-          <SubHeadingBtn text="Properties" classes="bg-white" />
+          <SubHeadingBtn text="Hotels" classes="bg-white" />
           <h2 className="h2 mt-3 ">Featured Listed Hotels</h2>
           <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
             Book hotels at affordable prices with comfort and convenience,

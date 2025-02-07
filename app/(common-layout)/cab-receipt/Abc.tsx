@@ -16,6 +16,7 @@ interface PaymentData {
   passport_no: string;
   address: string;
   starting_date: string;
+  booking_id: string;
 
 }
 
@@ -157,6 +158,7 @@ const CabReciept = () => {
               <div className="bg-white rounded-2xl p-3 sm:p-4 lg:p-6 mb-6 w-full">
                 <div className="flex justify-between items-center">
                   <h3 className="mb-0 h3">Your Booking Info</h3>
+                  <p className="mb-0 h3 text-right">{paymentData[0]?.booking_id || ""}</p>
                 </div>
                 <div className="col-span-12 md:col-span-4 mt-[20px] flex gap-4">
                   <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-4 px-xxl-8 w-full">

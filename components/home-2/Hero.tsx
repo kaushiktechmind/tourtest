@@ -1,24 +1,28 @@
 import { useState, useEffect, useRef } from "react";
 import "react-datepicker/dist/react-datepicker.css";
-import LocationEntry from "../home-3/LocationEntry";
+// import LocationEntry from "../home-3/LocationEntry";
 import WhatsAppAndScroll from "../WhatsAppAndScroll";
 import { FaHotel, FaHome, FaCar, FaSuitcase, FaMountain, FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { FaPersonSwimming } from "react-icons/fa6";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper-bundle.min.css"; // Ensure Swiper styles are imported
 import { Autoplay, Navigation } from "swiper"; // Import necessary Swiper modules
+import { useRouter } from 'next/navigation'
 
 const Hero = () => {
-  const [locationName, setLocationName] = useState(""); // State to hold the location name
+  // const [locationName, setLocationName] = useState(""); // State to hold the location name
   const [selectedCategory, setSelectedCategory] = useState("Hotel"); // State for the selected category
   const [banners, setBanners] = useState<any[]>([]); // State to hold the banners
   const [isMobile, setIsMobile] = useState(false); // State for mobile view check
+  const router = useRouter()
 
   const swiperRef = useRef<any>(null); // Create a reference to the Swiper instance
 
   const [showPromoBanner, setShowPromoBanner] = useState(false);
   const [promoImage, setPromoImage] = useState<string | null>(null);
   const [promoUrl, setPromoUrl] = useState<string | null>(null);
+
+  const [currentBannerIndex, setCurrentBannerIndex] = useState(0);
 
   useEffect(() => {
     // Check if the promo banner has been seen before
@@ -83,38 +87,66 @@ const Hero = () => {
     fetchBanners();
   }, []);
 
-  const handleSearch = () => {
-    localStorage.setItem("fromHome", "200");
-    localStorage.setItem("storedLocation", locationName);
-    if (!locationName) {
-      alert("Please Select Location.");
-      return;
-    }
+  // const handleSearch = () => {
+  //   localStorage.setItem("fromHome", "200");
+  //   localStorage.setItem("storedLocation", locationName);
+  //   if (!locationName) {
+  //     alert("Please Select Location.");
+  //     return;
+  //   }
 
-    let searchUrl = "";
-    switch (selectedCategory) {
+  //   let searchUrl = "";
+  //   switch (selectedCategory) {
+  //     case "Hotel":
+  //       searchUrl = `/hotels`;
+  //       break;
+  //     case "Homestay":
+  //       searchUrl = `/homestays`;
+  //       break;
+  //     case "Package":
+  //       searchUrl = `/packages`;
+  //       break;
+  //     case "Cab":
+  //       searchUrl = `/cabs`;
+  //       break;
+  //     case "Activity":
+  //       searchUrl = `/activities`;
+  //       break;
+  //     default:
+  //       searchUrl = `/hotels`;
+  //       break;
+  //   }
+
+  //   window.location.href = searchUrl;
+  // };
+
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+
+    let pageUrl = "";
+    switch (category) {
       case "Hotel":
-        searchUrl = `/hotels`;
+        pageUrl = "/hotels";
         break;
       case "Homestay":
-        searchUrl = `/homestays`;
+        pageUrl = "/homestays";
         break;
       case "Package":
-        searchUrl = `/packages`;
+        pageUrl = "/packages";
         break;
       case "Cab":
-        searchUrl = `/cabs`;
+        pageUrl = "/cabs";
         break;
       case "Activity":
-        searchUrl = `/activities`;
+        pageUrl = "/activities";
         break;
       default:
-        searchUrl = `/hotels`;
-        break;
+        pageUrl = "/hotels";
     }
 
-    window.location.href = searchUrl;
+    router.push(pageUrl); // Use router.push to navigate to the selected page
   };
+
 
   const categories = [
     { name: "Hotel", icon: FaHotel },
@@ -125,11 +157,12 @@ const Hero = () => {
   ];
 
   return (
-    <section className="relative min-h-screen flex items-center py-20 z-[10]">
+    <section className="relative min-h-screen flex items-center z-[10]">
+
 
       {showPromoBanner && promoImage && promoUrl && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="relative max-w-[90%] md:max-w-[500px]">
+          <div className="relative max-w-[90%] md:max-w-[700px] sm:max-w-[400px]">
             <a href={promoUrl} target="_blank" rel="noopener noreferrer">
               <img
                 src={promoImage}
@@ -157,8 +190,9 @@ const Hero = () => {
           disableOnInteraction: false, // Make autoplay continue after interaction
         }}
         modules={[Autoplay]} // Only include Autoplay module
-        className="absolute top-0 left-0 w-full h-full z-[-1]" // Ensure Swiper is behind the content
+        className="absolute top-0 left-0 w-full h-full z-[-1] mt-[-20px]" // Ensure Swiper is behind the content
         onSwiper={(swiper) => (swiperRef.current = swiper)} // Set the swiper instance on mount
+        onSlideChange={(swiper) => setCurrentBannerIndex(swiper.realIndex)} 
       >
         {banners.length > 0 &&
           banners.map((banner) => (
@@ -166,7 +200,7 @@ const Hero = () => {
               <img
                 src={isMobile ? banner.mobile_banner : banner.desktop_banner} // Conditional banner rendering
                 alt={`Banner ${banner.id}`}
-                className="object-cover w-full h-[620px]"
+                className="object-cover w-full h-[780px]"
               />
             </SwiperSlide>
           ))}
@@ -174,9 +208,9 @@ const Hero = () => {
       </Swiper>
 
       {/* Content Layer - Centered */}
-      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center z-10 text-center">
+      <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center z-10 text-center mt-6">
         <h1 className="text-white font-semibold mb-10 text-3xl md:text-5xl">
-          Welcome to Andman Mangroves
+        {banners.length > 0 ? banners[currentBannerIndex]?.title : "Welcome"}
         </h1>
 
         {/* Category Buttons */}
@@ -185,13 +219,13 @@ const Hero = () => {
             const Icon = category.icon;
             return (
               <button
-                key={category.name}
-                onClick={() => setSelectedCategory(category.name)}
-                className={`flex flex-col items-center gap-2 text-white font-bold transition-all duration-300 ease-in-out ${selectedCategory === category.name
-                  ? "hover:text-white "
-                  : "hover:text-white/80"
-                  }`}
-              >
+              key={category.name}
+              onClick={() => handleCategoryClick(category.name)} // Use handleCategoryClick
+              className={`flex flex-col items-center gap-2 text-white font-bold transition-all duration-300 ease-in-out ${selectedCategory === category.name
+                ? "hover:text-white"
+                : "hover:text-white/80"
+                }`}
+            >
                 <div
                   className={`p-3 rounded-full transition-all ${selectedCategory === category.name
                     ? "bg-white text-primary shadow-lg"
@@ -207,7 +241,7 @@ const Hero = () => {
         </div>
 
         {/* Search Input and Button */}
-        <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center w-[90%] items-center sm:w-[40%] md:w-[50%] lg:w-[40%] mx-auto">
+        {/* <div className="flex flex-wrap gap-5 mt-6 bg-white p-5 rounded-xl shadow-lg justify-center w-[90%] items-center sm:w-[40%] md:w-[50%] lg:w-[40%] mx-auto">
           <LocationEntry
             placeholder="Location"
             onChange={(value) => setLocationName(value)} // Set location name on change
@@ -219,7 +253,7 @@ const Hero = () => {
           >
             <span className="ml-2">Search</span>
           </button>
-        </div>
+        </div> */}
 
       </div>
 
@@ -227,13 +261,13 @@ const Hero = () => {
 
       {/* Custom Navigation Arrows */}
       <div
-        className="absolute left-5 top-1/2 transform -translate-y-1/2 z-50 bg-white text-primary rounded-full p-3 shadow-md cursor-pointer flex items-center justify-center w-10 h-10"
+        className="absolute left-5 top-1/2 transform -translate-y-1/2 z-50 bg-[#ffffff54] text-primary rounded-full p-3 shadow-md cursor-pointer flex items-center justify-center w-10 h-10"
         onClick={() => swiperRef.current?.slidePrev()} // Trigger slidePrev when the button is clicked
       >
         <FaChevronLeft size={16} />
       </div>
       <div
-        className="absolute right-5 top-1/2 transform -translate-y-1/2 z-50 bg-white text-primary rounded-full p-3 shadow-md cursor-pointer flex items-center justify-center w-10 h-10"
+        className="absolute right-5 top-1/2 transform -translate-y-1/2 z-50 bg-[#ffffff54] text-primary rounded-full p-3 shadow-md cursor-pointer flex items-center justify-center w-10 h-10"
         onClick={() => swiperRef.current?.slideNext()} // Trigger slideNext when the button is clicked
       >
         <FaChevronRight size={16} />

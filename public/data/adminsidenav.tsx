@@ -46,42 +46,47 @@ export const sidenavData = [
       { url: "/cab/cab-exclude", title: "Cab Excludes" },
     ],
   },
-
   {
     id: 5,
+    name: "Ferry Banner",
+    icon: <i className="las la-ship text-2xl"></i>,
+    url: "/ferry-banner",
+  },
+  {
+    id: 6,
     name: "Booking",
     icon: <i className="las la-calendar-times text-2xl"></i>,
     url: "/booking",
   },
   {
-    id: 6,
+    id: 7,
     name: "Enquiry",
     icon: <i className="las la-envelope text-2xl"></i>,
     url: "/enquiry",
   },
   {
   
-  id: 7,
+  id: 8,
   name: "Location",
   icon: <i className="las la-map-marker-alt text-2xl"></i>,
   url: "/location/all-location",
   },
 
   {
-    id: 8,
+    id: 9,
     name: "Guests",
     icon: <i className="las la-user-circle text-2xl"></i>,
     url: "/guest",
   },
  
   {
-    id: 9,
+    id: 10,
     name: "Pages",
     icon: <i className="las la-file-alt text-2xl"></i>,  // Updated icon for Pages
     url: "/pages/all-pages",
   },
   {
-    id: 10,
+    id: 11,
     name: "Blogs",
     icon: <i className="las la-blog text-2xl"></i>,  // Updated icon for Blogs
     submenus: [
@@ -90,26 +95,26 @@ export const sidenavData = [
     ],
   },
   {
-    id: 11,
+    id: 12,
     name: "Reviews",
     icon: <i className="las la-comment-dots text-2xl"></i>,  // Updated icon for Reviews
     url: "/reviews",
   },
   {
-    id: 12,
+    id: 13,
     name: "Coupon",
     icon: <i className="las la-ticket-alt text-2xl"></i>,  // Icon for Coupon remains the same
     url: "/coupon",
   },
   {
-    id: 13,
+    id: 14,
     name: "Promotion",
     icon: <i className="las la-bullhorn text-2xl"></i>,   // Icon for Coupon remains the same
     url: "/promotion",
   },
 
   {
-    id: 14,
+    id: 15,
     name: "Banner",
     icon: <i className="las la-image text-2xl"></i>,
     url: "/banner/all-banner",
@@ -117,7 +122,7 @@ export const sidenavData = [
   
 
   {
-    id: 15,
+    id: 16,
     name: "Admin Settings",
     icon: <i className="las la-user-cog text-2xl"></i>,
     url: "/admin-settings",

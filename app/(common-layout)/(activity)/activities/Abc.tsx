@@ -1,10 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import CardPagination from "@/components/CardPagination";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
+import CardPagination from "@/components/CardPagination";
+import "font-awesome/css/font-awesome.min.css";
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 interface Activity {
   id: number;
@@ -15,8 +19,8 @@ interface Activity {
   start_time: string;
   duration: string;
   price: string;
-  seo_title: string;
   sale_price: string;
+  seo_title: string;
   banner_image_multiple: string[];
 }
 
@@ -67,12 +71,16 @@ const Page = () => {
     return <div>Loading...</div>;
   }
 
-  // Pagination logic
+
+  // Logic for slicing the activities array for pagination
   const indexOfLastActivity = currentPage * itemsPerPage;
   const indexOfFirstActivity = indexOfLastActivity - itemsPerPage;
   const currentActivities = activities.slice(indexOfFirstActivity, indexOfLastActivity);
+
+  // Calculate total number of pages
   const totalPages = Math.ceil(activities.length / itemsPerPage);
 
+  // Handle page change
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -86,64 +94,70 @@ const Page = () => {
           location_name,
           activity_title,
           start_time,
-          seo_title,
           price,
           sale_price,
+          seo_title,
         }) => (
-          <div key={id} className="col-span-12">
-            <div className="p-2 md:p-3 rounded-2xl flex flex-col items-center md:flex-row bg-white">
+          <div key={id} className="col-span-12 md:col-span-6 group">
+            <div className="bg-white rounded-2xl p-3">
               <div className="relative">
                 <div className="rounded-2xl">
                   <Image
                     width={386}
                     height={224}
-                    src={banner_image_multiple[0] || "/placeholder.png"}
-                    alt={`${activity_title} Image`}
-                    className="rounded-2xl h-[300px] object-cover"
+                    src={banner_image_multiple[0]}
+                    alt="Package Image"
+                    className="rounded-2xl h-[330px] w-full object-cover"
                   />
+
                 </div>
               </div>
-              <div className="flex-grow h-full p-3 sm:p-4">
-                <div className="property-card__body">
-                  <div className="flex justify-between mb-2">
-                    <Link
-                      href={`/activity/${seo_title}`}
-                      className="link block flex-grow text-[var(--neutral-700)] hover:text-primary text-xl font-medium"
-                    >
-                      {activity_title}
-                    </Link>
-                  </div>
-                  <div className="flex justify-between mb-6">
-                    <div className="flex items-center gap-1">
-                      <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
-                      <span className="inline-block">{location_name}</span>
-                    </div>
+              <div className="p-4 xl:p-5">
+                <div className="flex justify-between mb-4">
+                  <Link
+                    href={`/activity/${seo_title}`}
+                      className="link block flex-grow text-xl font-medium h-[3.1rem] line-clamp-2 overflow-hidden">
+                    {activity_title}
+                  </Link>
+                </div>
+                <div className="flex justify-between mb-6">
+                  <div className="flex items-center gap-1">
+                    <MapPinIcon className="w-5 h-5 text-[#9C742B]" />
+                    <span className="inline-block">{location_name}</span>
                   </div>
                 </div>
-                <div className="my-4">
-                  <div className="border border-dashed"></div>
-                </div>
-                <div className="py-3">
-                  <div className="flex flex-wrap justify-between items-center">
-                    <span className="block font-medium line-through">
-                      ₹{price}
-                      <span className="inline-block font-medium text-xl text-primary pl-2">
-                        ₹{sale_price}
+                <ul className="grid grid-cols-2 gap-3">
+                  <li className="col-span-1">
+                    <div className="flex items-center gap-2">
+                      <i className="las la-clock text-xl text-[#22804A]"></i>
+                      <span className="block font-medium line-through">
+                        ₹{price}
+                        <span className="inline-block font-medium text-xl text-primary pl-2">
+                          ₹{sale_price}
+                        </span>
                       </span>
-                    </span>
-                    <Link
-                      href={`/activity/${seo_title}`}
-                      className="btn-outline py-2 text-primary font-semibold"
-                    >
-                      Book Now
-                    </Link>
-                  </div>
+                    </div>
+                  </li>
+
+                </ul>
+              </div>
+
+              <div className="border-b border-dash-long my-3 mx-4"></div>
+
+              <div className="p-4">
+                <div className="flex flex-wrap justify-between items-center">
+                  <Link
+                    href={`/activity/${seo_title}`}
+                    className="btn-outline font-semibold">
+                    Book Now
+                  </Link>
                 </div>
               </div>
             </div>
           </div>
         )
       )}
+
       <CardPagination
         currentPage={currentPage}
         totalPages={totalPages}
