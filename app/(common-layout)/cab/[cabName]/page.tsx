@@ -69,11 +69,12 @@ interface CabSubForm {
 export default function Page({
   params,
 }: {
-  params: { cabId: string };
+  params: { cabName: string };
 }) {
-  const { cabId } = params;
+  const { cabName } = params;
 
   const [cabDetails, setCabDetails] = useState<CabDetails | null>(null);
+  const [cabId, setCabId] = useState<CabDetails | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -150,21 +151,60 @@ export default function Page({
 
 
   useEffect(() => {
-    // Fetch the API data
+    const fetchCabDetails = async () => {
+      try {
+        const response = await fetch(
+          `https://yrpitsolutions.com/tourism_api/api/cab-main-form/seo_title/${cabName}`
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch cab details");
+        }
+        const data = await response.json();
+        setCabId(data.id);
+
+
+
+
+        // Parse the FAQs if they are stringified
+        if (data.faqs && typeof data.faqs === "string") {
+          const parsedFAQs = JSON.parse(data.faqs);
+          setCabDetails({ ...data, faqs: parsedFAQs });
+        } else {
+          setCabDetails(data);
+
+        }
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCabDetails();
+  }, [cabName]);
+
+
+
+  useEffect(() => {
+    if (!cabId) return;  // Prevent the API call if cabId is null or undefined
+  
     const fetchCabSubForms = async () => {
       try {
         const response = await fetch(
           `https://yrpitsolutions.com/tourism_api/api/filter/cabsubforms/by-cab-main-form-id/${cabId}`
         );
+        if (!response.ok) {
+          throw new Error("Failed to fetch cab sub-forms");
+        }
         const data = await response.json();
         setCabSubForms(data); // Assuming the response is directly an array
       } catch (error) {
         console.error("Error fetching cab sub-forms:", error);
       }
     };
-
+  
     fetchCabSubForms();
-  }, []);
+  }, [cabId]); 
 
 
   const handleBook = (price: number, minPax: number, maxPax: number, cargo_count: number) => {
@@ -175,33 +215,6 @@ export default function Page({
 
 
 
-  useEffect(() => {
-    const fetchCabDetails = async () => {
-      try {
-        const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/cab-main-forms/${cabId}`
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch cab details");
-        }
-        const data = await response.json();
-
-        // Parse the FAQs if they are stringified
-        if (data.faqs && typeof data.faqs === "string") {
-          const parsedFAQs = JSON.parse(data.faqs);
-          setCabDetails({ ...data, faqs: parsedFAQs });
-        } else {
-          setCabDetails(data);
-        }
-      } catch (err) {
-        setError((err as Error).message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCabDetails();
-  }, [cabId]);
 
 
 
@@ -563,7 +576,7 @@ export default function Page({
                 </div>
 
               </div>
-              
+
             </div>
 
             <div className="col-span-12 xl:col-span-4">
@@ -613,7 +626,7 @@ export default function Page({
                                 ))}
                               </select>
                               <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
-                              <i className="las text-2xl la-map-marker-alt"></i>
+                                <i className="las text-2xl la-map-marker-alt"></i>
 
                               </span>
                             </div>
@@ -725,44 +738,6 @@ export default function Page({
                     </Link>
                   )}
 
-                  <ul className="flex justify-center gap-3 flex-wrap">
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/paypal.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/payoneer.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/visa.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/master-card.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                  </ul>
                 </div>
               </div>
             </div>

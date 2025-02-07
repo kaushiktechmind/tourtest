@@ -73,9 +73,9 @@ interface ItineraryItem {
 export default function Page({
   params,
 }: {
-  params: { packageId: string };
+  params: { packageName: string };
 }) {
-  const { packageId } = params;
+  const { packageName } = params;
   const [selectedAdults, setSelectedAdults] = useState(0);
   const [selectedChildren1, setSelectedChildren1] = useState(0);
   const [selectedChildren2, setSelectedChildren2] = useState(0);
@@ -114,6 +114,9 @@ export default function Page({
 
 
   const [packageData, setPackageData] = useState<PackageData | null>(null);
+  
+  const [packageId, setPackageId] = useState<PackageData | null>(null);
+
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const isDateSelected = selectedDate !== null;
   const router = useRouter();
@@ -137,10 +140,10 @@ export default function Page({
 
   useEffect(() => {
     const fetchPackageData = async () => {
-      if (!packageId) return; // Add a check to make sure packageId is not null
+      if (!packageName) return; // Add a check to make sure packageId is not null
       try {
         const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/admin/get_package_by_id/${packageId}`
+          `https://yrpitsolutions.com/tourism_api/api/package/seo_title/${packageName}`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch package data");
@@ -150,6 +153,7 @@ export default function Page({
         // Parse the itinerary string to an array of objects
         const itinerary = JSON.parse(data.itinerary || "[]");
         setPackageData(data);
+        setPackageId(data.id);
         setItineraryData(itinerary); // Set the parsed itinerary data
 
         const min1 = Number(data.person_min1 || 0);
@@ -175,7 +179,7 @@ export default function Page({
     };
 
     fetchPackageData();
-  }, [packageId]);
+  }, [packageName]);
 
 
   // Conditional rendering to ensure packageData is not null before accessing its properties

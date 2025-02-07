@@ -14,6 +14,7 @@ interface Activity {
   start_time: string;
   price: string;
   sale_price: number;
+  seo_title: string;
 }
 
 const Page = () => {
@@ -81,7 +82,7 @@ const Page = () => {
   return (
     <>
       {currentActivities.map(
-        ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price }) => (
+        ({ id, banner_image_multiple, location, cab_name, start_time, price, sale_price, seo_title }) => (
           <div key={id} className="col-span-12">
             <div className="p-2 md:p-3 rounded-2xl flex flex-col md:flex-row bg-white">
 
@@ -101,7 +102,7 @@ const Page = () => {
                 <div className="property-card__body">
                   <div className="flex justify-between mb-2">
                     <Link
-                      href={`/cab/${id}`}
+                      href={`/cab/${seo_title}`}
                       className="link block text-xl font-medium h-[3.1rem] line-clamp-2 overflow-hidden break-words"
                     >
                       {cab_name}
@@ -128,7 +129,7 @@ const Page = () => {
                       </span>
                     </span>
                     <Link
-                      href={`/cab/${id}`}
+                      href={`/cab/${seo_title}`}
                       className="btn-outline py-2 text-primary font-semibold"
                     >
                       Book Now

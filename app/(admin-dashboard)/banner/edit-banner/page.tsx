@@ -22,6 +22,7 @@ const AddNewBanner = () => {
   const [desktopBannerPreview, setDesktopBannerPreview] = useState<string | null>(null);
   const [mobileBannerPreview, setMobileBannerPreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState<string>("");
 
   // Fetch data for prefill when bannerId is available
   useEffect(() => {
@@ -33,6 +34,7 @@ const AddNewBanner = () => {
           // Prefill with existing banner data
           setDesktopBannerPreview(data.data.desktop_banner);
           setMobileBannerPreview(data.data.mobile_banner);
+          setTitle(data.data.title)
         })
         .catch((error) => {
           console.error("Error fetching banner data:", error);
@@ -55,18 +57,19 @@ const AddNewBanner = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
+    formData.append("title", title);
     if (desktopBanner) formData.append("desktop_banner", desktopBanner);
     if (mobileBanner) formData.append("mobile_banner", mobileBanner);
-  
+
     // Append _method to indicate PUT request
     formData.append("_method", "PUT");
-  
+
     const token = localStorage.getItem("access_token");
     if (!token) {
       alert("Authentication token not found. Please log in again.");
       return;
     }
-  
+
     setLoading(true);
     try {
       await axios.post(
@@ -80,13 +83,13 @@ const AddNewBanner = () => {
         }
       );
       setLoading(false); // Stop loading immediately
-  
+
       // Use setTimeout to allow the loader to stop before showing the alert
       setTimeout(() => {
         alert("Banner updated successfully!");
         router.push("/banner/all-banner");
       }, 100); // Delay the alert slightly (100ms)
-  
+
     } catch (error) {
       setLoading(false);
       console.error("Error uploading banner:", error);
@@ -147,21 +150,33 @@ const AddNewBanner = () => {
                       <span className="text-gray-500">No Desktop Banner selected</span>
                     </div>
                   ))}
-                  {index === 1 && (mobileBannerPreview ? (
-                    <div className="mt-4">
-                      <img src={mobileBannerPreview} alt="Mobile Banner Preview" className="w-full h-auto rounded-lg" />
+                  {index === 1 && mobileBannerPreview && (
+                    <div className="mt-4 flex justify-center items-center">
+                      <img src={mobileBannerPreview} alt="Mobile Banner Preview" className="h-[360px] rounded-lg" />
                     </div>
-                  ) : (
-                    <div className="mt-4">
-                      <span className="text-gray-500">No Mobile Banner selected</span>
-                    </div>
-                  ))}
+                  )}
                 </div>
               </Accordion>
             </div>
           </div>
         ))}
       </div>
+
+      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl rounded-t-2xl ml-6 mr-6 mb-6">
+        <p className="mb-4 text-xl font-medium pt-6">
+          Headlines: <span className="astrick">*</span>
+        </p>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={title}  // Bind the state to the input
+          onChange={(e) => setTitle(e.target.value)}  // Update the title state
+          className="w-full border p-2 focus:outline-none rounded-md text-base"
+          placeholder="Headline text..."
+        />
+      </div>
+
       <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
         {loading ? (
           <div className="flex justify-center items-center">

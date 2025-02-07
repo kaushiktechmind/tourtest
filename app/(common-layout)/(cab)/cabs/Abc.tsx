@@ -15,6 +15,7 @@ interface Activity {
   id: number;
   banner_image_multiple: string[];
   location: string;
+  seo_title: string;
   cab_name: string;
   start_time: string;
   price: string;
@@ -72,7 +73,7 @@ const Page = () => {
   return (
     <>
       {activities.map(
-        ({ id, banner_image_multiple, location, cab_name, price, sale_price }) => (
+        ({ id, banner_image_multiple, location, cab_name, price, sale_price, seo_title }) => (
           <div key={id} className="col-span-12 md:col-span-6 group">
             <div className="bg-white rounded-2xl p-3">
               <div className="relative">
@@ -90,7 +91,7 @@ const Page = () => {
               <div className="p-4 xl:p-5">
                 <div className="flex justify-between mb-4">
                   <Link
-                    href={`/cab/${id}`}
+                    href={`/cab/${seo_title}`}
                     className="link block text-xl font-medium h-[3.1rem] line-clamp-2 overflow-hidden break-words"
                   >
                     {cab_name}
@@ -114,7 +115,7 @@ const Page = () => {
                     <span className="inline-block font-medium text-xl text-primary pl-2"> ₹{sale_price}</span>
                   </span>
                   <Link
-                    href={`/cab/${id}`}
+                    href={`/cab/${seo_title}`}
                     className="btn-outline font-semibold">
                     Book Now
                   </Link>

@@ -21,6 +21,7 @@ import Testimonial from "@/components/home-2/Testimonial";
 import Featured from "@/components/home-2/Featured";
 import { useEffect, useState } from "react";
 import WhyChoose from "@/components/home-2/WhyChoose";
+import TravelMemory from "@/components/home-2/TravelMemory";
 
 const Page = () => {
   const [showScroll, setShowScroll] = useState(false);
@@ -52,9 +53,10 @@ const Page = () => {
       <main>
         <Hero />
         <Property />
-        <WhyChoose/>
+        <WhyChoose />
         <Featured />
         <Testimonial />
+        <TravelMemory/>
       </main>
       <Footer />
 

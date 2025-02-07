@@ -1781,44 +1781,7 @@ export default function Page({
                       <span className="inline-block">Proceed Booking</span>
                     </Link>
                   )}
-                  <ul className="flex justify-center gap-3 flex-wrap">
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/paypal.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/payoneer.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/visa.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/master-card.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                  </ul>
+                 
                 </div>
               </div>
             </div>

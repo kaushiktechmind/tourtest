@@ -15,6 +15,7 @@ interface Package {
   id: number;
   banner_image: string[];
   location_name: string;
+  seo_title: string;
   package_title: string;
   duration: string;
   sale_price: number;
@@ -85,7 +86,7 @@ const Page = () => {
   return (
     <>
     {currentPackages.map(
-      ({ id, banner_image, location_name, package_title, duration, sale_price }) => (
+      ({ id, banner_image, location_name, package_title, duration, seo_title, sale_price }) => (
         <div key={id} className="col-span-12 md:col-span-6 group">
           <div className="bg-white rounded-2xl p-3">
             <div className="relative">
@@ -102,7 +103,7 @@ const Page = () => {
             <div className="p-4 xl:p-5">
               <div className="flex justify-between mb-4">
                 <Link
-                  href={`/package/${id}`}
+                  href={`/package/${seo_title}`}
                   className="link block flex-grow text-xl font-medium h-[3.1rem] line-clamp-2 overflow-hidden"
                 >
                   {package_title}
@@ -135,7 +136,7 @@ const Page = () => {
                   </span>
                 </span>
                 <Link
-                  href={`/package/${id}`}
+                  href={`/package/${seo_title}`}
                   className="btn-outline font-semibold"
                 >
                   Book Now

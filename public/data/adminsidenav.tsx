@@ -50,7 +50,7 @@ export const sidenavData = [
     id: 5,
     name: "Ferry Banner",
     icon: <i className="las la-ship text-2xl"></i>,
-    url: "/ferry-banner",
+    url: "/ferry/all-ferry-banner",
   },
   {
     id: 6,

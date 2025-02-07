@@ -124,10 +124,8 @@ export default function Page({
     message: "",
   });
 
-  const adults = Number(localStorage.getItem("adults"));
-  const children = searchParams.get("children");
-  const infants = searchParams.get("infants");
-
+  const [refreshKey, setRefreshKey] = useState(0);
+  
   const startdate = localStorage.getItem("startDate");
   const enddate = localStorage.getItem("endDate");
   const totalRooms = JSON.parse(
@@ -1777,44 +1775,7 @@ export default function Page({
                       <span className="inline-block">Proceed Booking</span>
                     </Link>
                   )}
-                  <ul className="flex justify-center gap-3 flex-wrap">
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/paypal.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/payoneer.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/visa.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                    <li>
-                      <Image
-                        width={83}
-                        height={34}
-                        src="/img/master-card.png"
-                        alt="image"
-                        className=""
-                      />
-                    </li>
-                  </ul>
+                  
                 </div>
               </div>
             </div>

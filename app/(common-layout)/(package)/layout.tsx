@@ -114,7 +114,7 @@ export default function RootLayout({
                         </p> */}
                       </li>
                       <li className="flex-grow">
-                        <ul className="flex flex-wrap justify-end justify-content-lg-start justify-content-xl-center gap-4">
+                        <ul className="flex flex-wrap justify-start justify-content-lg-start justify-content-xl-center gap-4">
                           <li>
                             <Link
                               href="/packages"

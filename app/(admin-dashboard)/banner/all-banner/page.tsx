@@ -96,7 +96,7 @@ const Page = () => {
       String(value).toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
-  
+
 
 
   const paginatedBnrs = filteredBnrs.slice(
@@ -134,6 +134,7 @@ const Page = () => {
                   <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                     <th className="py-3 lg:py-4 px-2 md:px-5">Desktop Banner</th>
                     <th className="py-3 lg:py-4 px-2">Mobile Banner</th>
+                    <th className="py-3 lg:py-4 px-2">Headline</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -162,8 +163,9 @@ const Page = () => {
                           />
                         )}
                       </td>
-
-
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px]">
+                        <p className="truncate">{bnr.title}</p>
+                      </td>
 
 
                       <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">

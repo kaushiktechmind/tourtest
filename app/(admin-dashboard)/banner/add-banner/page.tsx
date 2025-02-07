@@ -18,6 +18,7 @@ const AddNewBanner = () => {
   const [mobileBanner, setMobileBanner] = useState<File | null>(null);
   const [desktopBannerPreview, setDesktopBannerPreview] = useState<string | null>(null);
   const [mobileBannerPreview, setMobileBannerPreview] = useState<string | null>(null);
+  const [title, setTitle] = useState<string>("");
   const [loading, setLoading] = useState(false);
 
   const handleFileChange = (
@@ -28,7 +29,7 @@ const AddNewBanner = () => {
     const file = event.target.files?.[0] || null;
     setBanner(file);
     if (file) {
-      setPreview(URL.createObjectURL(file));  // Create a preview URL for the image
+      setPreview(URL.createObjectURL(file));
     }
   };
 
@@ -38,7 +39,13 @@ const AddNewBanner = () => {
       return;
     }
 
+    if (!title.trim()) {
+      alert("Please enter a title for the banner.");
+      return;
+    }
+
     const formData = new FormData();
+    formData.append("title", title);  // Append the title to the payload
     if (desktopBanner) formData.append("desktop_banner", desktopBanner);
     if (mobileBanner) formData.append("mobile_banner", mobileBanner);
 
@@ -65,7 +72,6 @@ const AddNewBanner = () => {
         alert("Banner Added Successfully!");
         router.push("/banner/all-banner");
       }, 100);
-      router.push("/banner/all-banner");
     } catch (error) {
       setLoading(false);
       console.error("Error uploading banner:", error);
@@ -73,9 +79,7 @@ const AddNewBanner = () => {
         alert("Failed to Upload Banner, try again");
       }, 100);
     }
-
   };
-
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -85,6 +89,7 @@ const AddNewBanner = () => {
           <EyeIcon className="w-5 h-5" /> View All Banners
         </Link>
       </div>
+
       <div className="grid grid-cols-12 gap-4 lg:gap-6 px-3 md:px-6 pb-10 mt-[-20px]">
         {["Desktop", "Mobile"].map((type, index) => (
           <div key={type} className="col-span-12 lg:col-span-6">
@@ -116,22 +121,41 @@ const AddNewBanner = () => {
                       }
                     />
                   </label>
+
                   {index === 0 && desktopBannerPreview && (
                     <div className="mt-4">
                       <img src={desktopBannerPreview} alt="Desktop Banner Preview" className="w-full h-auto rounded-lg" />
                     </div>
                   )}
+
                   {index === 1 && mobileBannerPreview && (
-                    <div className="mt-4">
-                      <img src={mobileBannerPreview} alt="Mobile Banner Preview" className="w-full h-auto rounded-lg" />
+                    <div className="mt-4 flex justify-center items-center">
+                      <img src={mobileBannerPreview} alt="Mobile Banner Preview" className="h-[360px] rounded-lg" />
                     </div>
                   )}
                 </div>
+
               </Accordion>
             </div>
           </div>
         ))}
       </div>
+
+      <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl rounded-t-2xl ml-6 mr-6 mb-6">
+        <p className="mb-4 text-xl font-medium pt-6">
+          Headlines: <span className="astrick">*</span>
+        </p>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          value={title}  // Bind the state to the input
+          onChange={(e) => setTitle(e.target.value)}  // Update the title state
+          className="w-full border p-2 focus:outline-none rounded-md text-base"
+          placeholder="Headline text..."
+        />
+      </div>
+
       <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
         {loading ? (
           <div className="flex justify-center items-center">
@@ -142,6 +166,7 @@ const AddNewBanner = () => {
           "Save & Preview"
         )}
       </button>
+
       <Footer />
     </div>
   );

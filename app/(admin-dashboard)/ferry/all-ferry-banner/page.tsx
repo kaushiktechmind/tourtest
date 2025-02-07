@@ -42,7 +42,7 @@ const Page = () => {
       const token = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          `https://yrpitsolutions.com/tourism_api/api/admin/delete_home_banner_by_id/${bannerIdToDelete}`,
+          `https://yrpitsolutions.com/tourism_api/api/admin/delete_ferry_home_banner_by_id/${bannerIdToDelete}`,
           {
             method: "DELETE",
             headers: {
@@ -71,7 +71,7 @@ const Page = () => {
     const fetchBnrs = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/get_all_home_banner"
+          "https://yrpitsolutions.com/tourism_api/api/get_all_ferry_home_banner"
         );
         const data = await response.json();
         setBnrs(data.data);
@@ -96,7 +96,7 @@ const Page = () => {
       String(value).toLowerCase().includes(searchQuery.toLowerCase())
     )
   );
-  
+
 
 
   const paginatedBnrs = filteredBnrs.slice(
@@ -113,7 +113,7 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">All Banners</h2>
-        <Link href="/banner/add-banner" className="btn-primary">
+        <Link href="/ferry/add-ferry-banner" className="btn-primary">
           <PlusCircleIcon className="w-5 h-5" /> Add New Banner
         </Link>
       </div>
@@ -134,6 +134,7 @@ const Page = () => {
                   <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                     <th className="py-3 lg:py-4 px-2 md:px-5">Desktop Banner</th>
                     <th className="py-3 lg:py-4 px-2">Mobile Banner</th>
+                    <th className="py-3 lg:py-4 px-2">Headline</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -144,31 +145,32 @@ const Page = () => {
                     >
 
                       <td className="py-3 lg:py-4 px-2">
-                        {bnr.desktop_banner && (
+                        {bnr.ferry_desktop_banner && (
                           <img
-                            src={bnr.desktop_banner}
+                            src={bnr.ferry_desktop_banner}
                             alt="Desktop Banner"
                             className="w-48 md:w-72 lg:w-96 h-auto object-cover rounded-lg" // Wider for desktop
                           />
                         )}
                       </td>
                       <td className="py-3 lg:py-4 px-2 md:px-5">
-                        {bnr.mobile_banner && (
+                        {bnr.ferry_mobile_banner && (
 
                           <img
-                            src={bnr.mobile_banner}
+                            src={bnr.ferry_mobile_banner}
                             alt="Mobile Banner"
                             className="w-48 md:w-72 lg:w-[150px] h-[250px] object-cover rounded-lg"  // Smaller for mobile
                           />
                         )}
                       </td>
-
-
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px]">
+                        <p className="truncate">{bnr.title}</p>
+                      </td>
 
 
                       <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
                         <a
-                          href={`/banner/edit-banner?bannerId=${bnr.id}`}
+                          href={`/ferry/edit-ferry-banner?bannerId=${bnr.id}`}
                           className="text-primary"
                         >
                           <PencilSquareIcon className="w-5 h-5" />
