@@ -4,6 +4,7 @@ import {
   CloudArrowUpIcon,
   EyeIcon,
   InformationCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
 import dynamic from "next/dynamic";
@@ -23,9 +24,9 @@ interface Amenity {
 }
 
 interface Policy {
-  id: number; // Use number if your API returns numeric IDs
+  id: number;
   policy_title: string;
-  policy_description: string; // Corrected spelling from 'policy_description' to 'policy_description'
+  policy_description: string;
 }
 
 interface FAQ {
@@ -71,6 +72,8 @@ interface HotelFormData {
   full_address: string;
   i_frame_link: string;
   seo_title: string;
+  seo_description: string,
+  meta_title: string,
 }
 
 const EditHotel = () => {
@@ -85,7 +88,6 @@ const EditHotel = () => {
     status: "",
     location_name: "",
     hotel_name: "",
-    // description: "",
     starting_price: "",
     highest_price: "",
     ratings: "",
@@ -106,6 +108,8 @@ const EditHotel = () => {
     full_address: "",
     i_frame_link: "",
     seo_title: "",
+    seo_description: "",
+    meta_title: "",
   });
 
   const [imageInput, setImageInput] = useState("");
@@ -123,13 +127,13 @@ const EditHotel = () => {
   const [maxInfants, setMaxInfants] = useState("");
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
-   const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
+  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
 
   const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
   const [educationFields, setEducationFields] = useState<Field[]>([
@@ -164,78 +168,7 @@ const EditHotel = () => {
     updatedFields[index] = { ...updatedFields[index], [name]: value };
     setFields(updatedFields);
   };
-  const formatDataForApi = () => {
-    const formattedData: any = {};
 
-    educationFields.forEach((field, index) => {
-      formattedData[`education_name${index + 1}`] = field.name;
-      formattedData[`education_content${index + 1}`] = field.content;
-      formattedData[`education_distance${index + 1}`] = field.distance;
-    });
-
-    healthFields.forEach((field, index) => {
-      formattedData[`health_name${index + 1}`] = field.name;
-      formattedData[`health_content${index + 1}`] = field.content;
-      formattedData[`health_distance${index + 1}`] = field.distance;
-    });
-
-    transportationFields.forEach((field, index) => {
-      formattedData[`transport_name${index + 1}`] = field.name;
-      formattedData[`transport_content${index + 1}`] = field.content;
-      formattedData[`transport_distance${index + 1}`] = field.distance;
-    });
-
-    return formattedData;
-  };
-
-  // Render input rows
-  const renderInputRows = (fields: any[], setFields: { (value: React.SetStateAction<Field[]>): void; (value: React.SetStateAction<Field[]>): void; (value: React.SetStateAction<Field[]>): void; (arg0: any[]): void; }) => {
-    return fields.map((field: { name: string | number | readonly string[] | undefined; content: string | number | readonly string[] | undefined; distance: string | number | readonly string[] | undefined; }, index: React.Key | null | undefined) => (
-      <div key={index} className="flex gap-4 mb-4">
-        <input
-          type="text"
-          className="w-1/3 border p-2 rounded-md"
-          value={field.name}
-          placeholder="Name"
-          onChange={(e) => {
-            const updatedFields = [...fields];
-
-            // Ensure index is a number before using it as an array index
-            if (typeof index === 'number') {
-              updatedFields[index].name = e.target.value;
-              setFields(updatedFields);
-            }
-          }}
-        />
-
-        <input
-          type="text"
-          className="w-1/3 border p-2 rounded-md"
-          value={field.content}
-          placeholder="Content"
-          onChange={(e) => {
-            const updatedFields = [...fields];
-            if (typeof index === 'number') {
-              updatedFields[index].name = e.target.value;
-              setFields(updatedFields);
-            }
-          }}
-        />
-        <input
-          type="text"
-          className="w-1/3 border p-2 rounded-md"
-          value={field.distance}
-          placeholder="Distance"
-          onChange={(e) => {
-            const updatedFields = [...fields];
-            updatedFields[index as number].distance = e.target.value; // Assert index as number
-            setFields(updatedFields);
-          }}
-        />
-
-      </div>
-    ));
-  };
 
 
   const handleCheckboxChange = (label: string) => {
@@ -393,52 +326,6 @@ const EditHotel = () => {
           }
           setSelectedPolicies(policyArray);
 
-          const educationFieldsArray = [];
-          for (let i = 1; i <= 5; i++) {
-            const educationName = hotelData.data[`education_name${i}`];
-            const educationContent = hotelData.data[`education_content${i}`];
-            const educationDistance = hotelData.data[`education_distance${i}`];
-            if (educationName) {
-              educationFieldsArray.push({
-                name: educationName,
-                content: educationContent || "",
-                distance: educationDistance || "",
-              });
-            }
-          }
-
-          const healthFieldsArray = [];
-          for (let i = 1; i <= 5; i++) {
-            const healthName = hotelData.data[`health_name${i}`];
-            const healthContent = hotelData.data[`health_content${i}`];
-            const healthDistance = hotelData.data[`health_distance${i}`];
-            if (healthName) {
-              healthFieldsArray.push({
-                name: healthName,
-                content: healthContent || "",
-                distance: healthDistance || "",
-              });
-            }
-          }
-
-          const transportFieldsArray = [];
-          for (let i = 1; i <= 5; i++) {
-            const transportName = hotelData.data[`transport_name${i}`];
-            const transportContent = hotelData.data[`transport_content${i}`];
-            const transportDistance = hotelData.data[`transport_distance${i}`];
-            if (transportName) {
-              transportFieldsArray.push({
-                name: transportName,
-                content: transportContent || "",
-                distance: transportDistance || "",
-              });
-            }
-          }
-
-          // Set the prefilled education, health, and transport fields
-          setEducationFields(educationFieldsArray);
-          setHealthFields(healthFieldsArray);
-          setTransportationFields(transportFieldsArray);
 
           // Prefill the form fields only if not already set
           setFormData({
@@ -467,7 +354,9 @@ const EditHotel = () => {
             video_link: hotelData.data.video_link,
             full_address: hotelData.data.full_address,
             i_frame_link: hotelData.data.i_frame_link,
-            seo_title: hotelData.data.seo_title
+            seo_title: hotelData.data.seo_title,
+            seo_description: hotelData.data.seo_description,
+            meta_title: hotelData.data.meta_title
           });
 
           setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
@@ -480,6 +369,22 @@ const EditHotel = () => {
 
     fetchHotelData();
   }, [hotelId]);
+
+
+
+  const handleDeletePolicy = (policyId: number) => {
+    // Remove the policy from the selectedPolicies state
+    setSelectedPolicies((prev) =>
+      prev.filter((policy) => policy.id !== policyId)
+    );
+  };
+
+  const handleDeleteFAQ = (faqId: number) => {
+    // Remove the policy from the selectedPolicies state
+    setSelectedFAQs((prev) =>
+      prev.filter((faq) => faq.id !== faqId)
+    );
+  };
 
 
 
@@ -556,7 +461,7 @@ const EditHotel = () => {
 
     // Add `_method` field to simulate PUT request via POST
     formDataToSend.append("_method", "PUT");
-    
+
     setLoading(true);
 
     try {
@@ -570,23 +475,23 @@ const EditHotel = () => {
           },
         }
       );
-  
+
       setLoading(false);
       setTimeout(() => {
         alert("Hotel Details Updated!");
-        router.push("/hotel/all-hotels");
-      }, 100); 
+        // router.push("/hotel/all-hotels");
+      }, 100);
 
 
     } catch (error) {
       setLoading(false);
       if (axios.isAxiosError(error)) {
         setTimeout(() => {
-        alert(
-          `Failed to add hotel: ${error.response?.data?.message || error.message}`
-        );
-      }, 100); 
-       
+          alert(
+            `Failed to add hotel: ${error.response?.data?.message || error.message}`
+          );
+        }, 100);
+
       }
     }
 
@@ -870,10 +775,14 @@ const EditHotel = () => {
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
-                onClick={(e) => e.preventDefault()}       >
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+              >
                 <h3 className="h3">Hotel Policy</h3>
-                <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
+                />
               </div>
             )}
             initialOpen={true}
@@ -890,39 +799,37 @@ const EditHotel = () => {
                   <select
                     id="policyDropdown"
                     className="w-full border p-2 rounded-md"
+                    value=""  // Reset dropdown after selection
                     onChange={(e) => {
-                      const selectedPolicyId = parseInt(e.target.value);
                       const selectedPolicy = policies.find(
-                        (policy) => policy.id === selectedPolicyId
+                        (policy) => policy.id === parseInt(e.target.value)
                       );
-
-                      // Check if the policy is already selected before adding
                       if (
                         selectedPolicy &&
                         !selectedPolicies.some((p) => p.id === selectedPolicy.id)
                       ) {
-                        setSelectedPolicies((prev) => [
-                          ...prev,
-                          selectedPolicy,
-                        ]);
+                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
                       }
                     }}
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select a policy...
                     </option>
                     {policies
                       .filter(
                         (policy) =>
-                          !selectedPolicies.some((selectedPolicy) => selectedPolicy.id === policy.id) &&
-                          !selectedPolicies.some((selectedPolicy) => selectedPolicy.policy_title === policy.policy_title) // Exclude pre-filled policies
-                      ) // Exclude selected and pre-filled policies
+                          !selectedPolicies.some(
+                            (p) => p.id === policy.id || p.policy_title === policy.policy_title
+                          )
+                      )
                       .map((policy) => (
                         <option key={policy.id} value={policy.id}>
                           {policy.policy_title}
                         </option>
                       ))}
                   </select>
+
+
                 </div>
               ) : (
                 <p>No policies available</p>
@@ -951,22 +858,29 @@ const EditHotel = () => {
                         setSelectedPolicies(updatedPolicies);
                       }}
                     />
+                    {/* Delete icon button */}
+                    <button
+                      onClick={() => handleDeletePolicy(policy.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
-
           </Accordion>
-
 
           <Accordion
             buttonContent={(open) => (
               <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between mt-[30px] items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
               >
                 <h3 className="h3">Hotel FAQ</h3>
                 <ChevronDownIcon
-                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
                 />
               </div>
             )}
@@ -981,48 +895,54 @@ const EditHotel = () => {
                   >
                     Select a FAQ
                   </label>
+
+
+
                   <select
                     id="faqDropdown"
                     className="w-full border p-2 rounded-md"
+                    value=""  // Add this line to reset the dropdown after selection
                     onChange={(e) => {
-                      const selectedFaqId = parseInt(e.target.value);
-                      const selectedFaq = faqs.find(
-                        (faq) => faq.id === selectedFaqId
+                      const selectedFAQ = faqs.find(
+                        (faq) => faq.id === parseInt(e.target.value)
                       );
-
-                      // Check if the FAQ is already selected before adding
                       if (
-                        selectedFaq &&
-                        !selectedFAQs.some((f) => f.id === selectedFaq.id)
+                        selectedFAQ &&
+                        !selectedFAQs.some(
+                          (f) => f.id === selectedFAQ.id || f.faq_title === selectedFAQ.faq_title
+                        )
                       ) {
-                        setSelectedFAQs((prev) => [...prev, selectedFaq]);
+                        setSelectedFAQs((prev) => [...prev, selectedFAQ]);
                       }
                     }}
                   >
-                    <option value="" disabled selected>
+                    <option value="" disabled>
                       Select a FAQ...
                     </option>
                     {faqs
                       .filter(
                         (faq) =>
-                          !selectedFAQs.some((selectedFaq) => selectedFaq.id === faq.id) &&
-                          !selectedFAQs.some((selectedFaq) => selectedFaq.faq_title === faq.faq_title) // Exclude pre-filled FAQs
-                      ) // Exclude selected and pre-filled FAQs
+                          !selectedFAQs.some(
+                            (f) => f.id === faq.id || f.faq_title === faq.faq_title
+                          )
+                      )
                       .map((faq) => (
                         <option key={faq.id} value={faq.id}>
                           {faq.faq_title}
                         </option>
                       ))}
                   </select>
+
+
                 </div>
               ) : (
                 <p>No FAQs available</p>
               )}
 
-              {/* Render input fields for each selected FAQ */}
+              {/* Render input fields for each selected FAQ with delete icon */}
               {selectedFAQs.map((faq) => (
                 <div key={faq.id} className="mb-4">
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 items-center">
                     <input
                       type="text"
                       className="w-1/2 border p-2 rounded-md"
@@ -1042,6 +962,16 @@ const EditHotel = () => {
                         setSelectedFAQs(updatedFAQs);
                       }}
                     />
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        setSelectedFAQs((prev) =>
+                          prev.filter((f) => f.id !== faq.id)
+                        );
+                      }}
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               ))}
@@ -1049,66 +979,6 @@ const EditHotel = () => {
           </Accordion>
 
 
-
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
-              >
-                <h3 className="h3">Sorroundings</h3>
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {/* Education Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Education:</p>
-              {renderInputRows(educationFields, setEducationFields)}
-              {educationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(educationFields, setEducationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Health Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
-              {renderInputRows(healthFields, setHealthFields)}
-              {healthFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(healthFields, setHealthFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Transportation Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
-              {renderInputRows(transportationFields, setTransportationFields)}
-              {transportationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(transportationFields, setTransportationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-            </div>
-
-          </Accordion>
 
         </div>
         <div className="col-span-12 lg:col-span-6">
@@ -1193,16 +1063,6 @@ const EditHotel = () => {
                   placeholder="Enter Address"
                 />
 
-                <p className="mt-6 mb-4 text-xl font-medium">SEO Title :<span className="astrick">*</span></p>
-                <input
-                  type="text"
-                  id="seo_title"
-                  name="seo_title"
-                  value={formData.seo_title}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="Enter Address"
-                />
 
                 <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>
 
@@ -1312,6 +1172,57 @@ const EditHotel = () => {
                   onChange={handleChange}
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Website Name"
+                />
+
+              </div>
+            </Accordion>
+          </div>
+
+
+
+          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div className="rounded-2xl flex justify-between">
+                  <h3 className="h3">SEO </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+              <div className="pt-6">
+                <p className="mt-6 mb-4 text-xl font-medium">URL Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_title"
+                  name="seo_title"
+                  value={formData.seo_title}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="URL Title"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">SEO Description :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_description"
+                  name="seo_description"
+                  value={formData.seo_description}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="SEO Description"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">Meta Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="meta_title"
+                  name="meta_title"
+                  value={formData.meta_title}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Meta Title"
                 />
 
               </div>

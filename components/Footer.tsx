@@ -179,13 +179,13 @@ const Footer = () => {
 
             <p className="clr-neutral-30 mb-6 mt-6 text-white text-justify leading-relaxed pb-4">
               <span className="font-bold">Best Tour Packages in Andaman Island</span> <br />
-              We offer a wide range of <a href="/hotels" className="text-blue-500">andaman tour packages</a>, including <a href="/hotels" className="text-blue-500">andaman nicobar tour packages</a> for
-               couples, families, and groups. explore the beauty of <a href="/hotels" className="text-blue-500">andaman and nicobar
-                islands tourism,</a> with customized itineraries for 5 days or 7 days. our <a href="/hotels" className="text-blue-500">andaman
-                 nicobar packages</a> cover <a href="/hotels" className="text-blue-500">top tourist places in port blair</a>, <a href="/hotels" className="text-blue-500">havelock island</a>, and beyond.
-                  we offer affordable <a href="/hotels" className="text-blue-500">andaman trip packages</a>, including port blair packages and
-                   <a href="/hotels" className="text-blue-500">andaman and nicobar islands trip cost</a> for 
-                   couples and families. book your <a href="/hotels" className="text-blue-500">andaman holiday package</a> with us today for the best deals and experiences!
+              We offer a wide range of <a href="/packages" className="text-blue-500">andaman tour packages</a>, including <a href="/packages" className="text-blue-500">andaman nicobar tour packages</a> for
+               couples, families, and groups. explore the beauty of <a href="/packages" className="text-blue-500">andaman and nicobar
+                islands tourism,</a> with customized itineraries for 5 days or 7 days. our <a href="/packages" className="text-blue-500">andaman
+                 nicobar packages</a> cover <a href="/packages" className="text-blue-500">top tourist places in port blair</a>, <a href="/packages" className="text-blue-500">havelock island</a>, and beyond.
+                  we offer affordable <a href="/packages" className="text-blue-500">andaman trip packages</a>, including port blair packages and
+                   <a href="/packages" className="text-blue-500">andaman and nicobar islands trip cost</a> for 
+                   couples and families. book your <a href="/packages" className="text-blue-500">andaman holiday package</a> with us today for the best deals and experiences!
             </p>
 
           </div>

@@ -130,6 +130,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </li>
                       </ul>
                     </li>
+                    <li className="hidden lg:flex items-center">
+                      <p className="mb-0 clr-neutral-500 flex-grow whitespace-nowrap">
+                        Sort By :
+                      </p>
+                      <select className="w-full bg-transparent px-5 py-2 focus:outline-none border-0">
+                        <option value="1">High</option>
+                        <option value="2">Low</option>
+                      </select>
+                    </li>
                   </ul>
                 </div>
               </div>

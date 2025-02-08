@@ -40,8 +40,10 @@ export const sidenavData = [
     submenus: [
       { url: "/cab/all-cab", title: "All Cabs" },
       { url: "/cab/cab-attribute", title: "Cab Attributes" },
-      { url: "/cab/cab-hotel", title: "Hotels" },
+      { url: "/cab/pickup-point", title: "Pickup Point" },
+      { url: "/cab/drop-point", title: "Drop Point" },
       { url: "/cab/cab-faq", title: "Cab FAQs" },
+      { url: "/cab/cab-policy", title: "Cab Policies" },
       { url: "/cab/cab-include", title: "Cab Includes" },
       { url: "/cab/cab-exclude", title: "Cab Excludes" },
     ],

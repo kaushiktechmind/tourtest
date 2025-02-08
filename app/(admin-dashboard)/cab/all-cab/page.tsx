@@ -10,8 +10,6 @@ import {
 import Link from "next/link";
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import Pagination from "@/components/vendor-dashboard/Pagination";
-import { StarIcon } from "@heroicons/react/20/solid";
-import HeadlessList from "@/components/ListBox";
 import { Dialog, Transition } from "@headlessui/react";
 import { SearchIcon } from "@/public/data/icons";
 
@@ -24,7 +22,7 @@ const Page = () => {
   const [cabItems, setCabItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState(""); 
+  const [searchQuery, setSearchQuery] = useState("");
 
   const openModal = (cabItem: { name: string; id: string }) => {
     setCabToDelete(cabItem.name);
@@ -143,7 +141,7 @@ const Page = () => {
                   <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                     <th className="py-3 lg:py-4 px-2">Date</th>
                     <th className="py-3 lg:py-4 px-2">Location</th>
-                    <th className="py-3 lg:py-4 px-2 md:px-5">Cab Name</th>
+                    <th className="py-3 lg:py-4 px-2 md:px-5 max-w-[150px]">Cab Name</th>  {/* Set max width */}
                     <th className="py-3 lg:py-4 px-2">Price</th>
                     <th className="py-3 lg:py-4 px-2">Sale Price</th>
                     <th className="py-3 lg:py-4 px-2">Action</th>
@@ -155,17 +153,10 @@ const Page = () => {
                       key={cabItem.id}
                       className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
                     >
-                      <td className="py-3 lg:py-4 px-2">
-                        {cabItem.created_at.split("T")[0]}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2">
-                        {cabItem.location}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2 md:px-5">
-                        <Link
-                          href={`/cab/edit-cab?cabId=${cabItem.id}`}
-                          className="text-primary"
-                        >
+                      <td className="py-3 lg:py-4 px-2">{cabItem.created_at.split("T")[0]}</td>
+                      <td className="py-3 lg:py-4 px-2">{cabItem.location}</td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5 max-w-[150px] overflow-hidden text-ellipsis">
+                        <Link href={`/cab/edit-cab?cabId=${cabItem.id}`} className="text-primary">
                           {cabItem.cab_name}
                         </Link>
                       </td>
@@ -176,10 +167,7 @@ const Page = () => {
                         {cabItem.sale_price}
                       </td>
                       <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                        <a
-                          href={`/cab/edit-cab?cabId=${cabItem.id}`}
-                          className="text-primary"
-                        >
+                        <a href={`/cab/edit-cab?cabId=${cabItem.id}`} className="text-primary">
                           <PencilSquareIcon className="w-5 h-5" />
                         </a>
                         <button
@@ -195,6 +183,7 @@ const Page = () => {
                   ))}
                 </tbody>
               </table>
+
 
               {/* Pagination */}
               <Pagination

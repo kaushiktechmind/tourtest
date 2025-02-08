@@ -4,6 +4,7 @@ import {
   CloudArrowUpIcon,
   EyeIcon,
   InformationCircleIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 ;
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
@@ -23,9 +24,9 @@ interface Amenity {
 }
 
 interface Policy {
-  id: number; // Use number if your API returns numeric IDs
+  id: number;
   policy_title: string;
-  policy_description: string; // Corrected spelling from 'policy_description' to 'policy_description'
+  policy_description: string;
 }
 
 interface FAQ {
@@ -67,10 +68,10 @@ interface HotelFormData {
   parking: string;
   [key: string]: any;
   banner_images: File[]; // Ensure this is defined as an array of File
-  video_link: string;
   full_address: string;
-  i_frame_link: string;
   seo_title: string;
+  seo_description: string;
+  meta_title: string;
 }
 
 interface Amenity {
@@ -104,10 +105,10 @@ const AddNewHotel = () => {
     zipcode: "",
     parking: "",
     banner_images: [],
-    video_link: "",
     full_address: "",
-    i_frame_link: "",
     seo_title: "",
+    seo_description: "",
+    meta_title: "",
   });
 
   const [imageInput, setImageInput] = useState("");
@@ -128,21 +129,12 @@ const AddNewHotel = () => {
   const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
-  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
+  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
 
   const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  const [educationFields, setEducationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [healthFields, setHealthFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
 
   // Handler to add new input row (max 5)
   const handleAddRow = (
@@ -154,88 +146,7 @@ const AddNewHotel = () => {
     }
   };
 
-  // Handler to update input fields
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    const { name, value } = e.target;
-    const updatedFields = [...fields];
-    updatedFields[index] = { ...updatedFields[index], [name]: value };
-    setFields(updatedFields);
-  };
 
-
-  const formatDataForApi = () => {
-    const formattedData: any = {};
-
-    educationFields.forEach((field, index) => {
-      formattedData[`education_name${index + 1}`] = field.name;
-      formattedData[`education_content${index + 1}`] = field.content;
-      formattedData[`education_distance${index + 1}`] = field.distance;
-    });
-
-    healthFields.forEach((field, index) => {
-      formattedData[`health_name${index + 1}`] = field.name;
-      formattedData[`health_content${index + 1}`] = field.content;
-      formattedData[`health_distance${index + 1}`] = field.distance;
-    });
-
-    transportationFields.forEach((field, index) => {
-      formattedData[`transport_name${index + 1}`] = field.name;
-      formattedData[`transport_content${index + 1}`] = field.content;
-      formattedData[`transport_distance${index + 1}`] = field.distance;
-    });
-
-    return formattedData;
-  };
-
-  // Render input rows
-  const renderInputRows = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    return fields.map((field, index) => (
-      <div key={index} className="flex gap-4 mb-4">
-        <input
-          type="text"
-          name="name"
-          value={field.name}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Name"
-        />
-        <input
-          type="text"
-          name="content"
-          value={field.content}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Content"
-        />
-        <input
-          type="text"
-          name="distance"
-          value={field.distance}
-          onChange={(e) => handleInputChange(e, index, fields, setFields)}
-          className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-          placeholder="Distance"
-        />
-      </div>
-    ));
-  };
-
-  // const handleCheckboxChange = (label: string) => {
-  //   setSelectedAmenities((prevSelected) => {
-  //     if (prevSelected.includes(label)) {
-  //       return prevSelected.filter((item) => item !== label); // Unselect
-  //     } else {
-  //       return [...prevSelected, label]; // Select
-  //     }
-  //   });
-  // };
 
   const handleCheckboxChange = (amenity: Amenity) => {
     setSelectedAmenities((prevSelected) => {
@@ -336,6 +247,14 @@ const AddNewHotel = () => {
     }));
   };
 
+  const handleDeletePolicy = (policyId: number) => {
+    // Remove the policy from the selectedPolicies state
+    setSelectedPolicies((prev) =>
+      prev.filter((policy) => policy.id !== policyId)
+    );
+  };
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     const token = localStorage.getItem("access_token");
 
@@ -363,26 +282,6 @@ const AddNewHotel = () => {
       formDataToSend.append(`amenity_logo${index + 1}`, amenity.amenity_logo);
     });
 
-    // Append Education Fields
-    educationFields.forEach((field, index) => {
-      formDataToSend.append(`education_name${index + 1}`, field.name);
-      formDataToSend.append(`education_content${index + 1}`, field.content);
-      formDataToSend.append(`education_distance${index + 1}`, field.distance);
-    });
-
-    // Append Health Fields
-    healthFields.forEach((field, index) => {
-      formDataToSend.append(`health_name${index + 1}`, field.name);
-      formDataToSend.append(`health_content${index + 1}`, field.content);
-      formDataToSend.append(`health_distance${index + 1}`, field.distance);
-    });
-
-    // Append Transportation Fields
-    transportationFields.forEach((field, index) => {
-      formDataToSend.append(`transport_name${index + 1}`, field.name);
-      formDataToSend.append(`transport_content${index + 1}`, field.content);
-      formDataToSend.append(`transport_distance${index + 1}`, field.distance);
-    });
 
     // Append selected policies
     selectedPolicies.forEach((policy, index) => {
@@ -423,18 +322,18 @@ const AddNewHotel = () => {
       setTimeout(() => {
         alert("Hotel added successfully!");
         router.push("/hotel/all-hotels");
-      }, 100); 
+      }, 100);
 
 
     } catch (error) {
       setLoading(false);
       if (axios.isAxiosError(error)) {
         setTimeout(() => {
-        alert(
-          `Failed to add hotel: ${error.response?.data?.message || error.message}`
-        );
-      }, 100); 
-       
+          alert(
+            `Failed to add hotel: ${error.response?.data?.message || error.message}`
+          );
+        }, 100);
+
       }
     }
 
@@ -566,7 +465,6 @@ const AddNewHotel = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="12000"
                 />
-                {/* <CustomRangeSlider /> */}
 
                 <p className="mt-6 mb-4 text-xl font-medium">People<span className="astrick">*</span></p>
                 <div className="flex space-x-4">
@@ -583,9 +481,7 @@ const AddNewHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="3"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
-                    /> */}
+
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="children" className="text-base">
@@ -600,10 +496,7 @@ const AddNewHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="2"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    /> */}
                   </div>
                   <div className="w-full flex flex-col">
                     <label htmlFor="infants" className="text-base">
@@ -618,10 +511,7 @@ const AddNewHotel = () => {
                       className="w-full border p-2 focus:outline-none rounded-md text-base"
                       placeholder="2"
                     />
-                    {/* <SelectUI
-                      options={[{ name: "1" }, { name: "2" }, { name: "3" }, { name: "4" }, { name: "5" }, { name: "6" }, { name: "7" }, { name: "8" }, { name: "9" }]}
 
-                    /> */}
                   </div>
                 </div>
 
@@ -676,10 +566,7 @@ const AddNewHotel = () => {
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
                 placeholder="5"
               />
-              {/* <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              // onSelect={(option) => setSelectedBedroom(option.name)} // Set selected bedroom count
-              /> */}
+
               <p className="mt-6 mb-4 text-xl font-medium">Bathrooms :<span className="astrick">*</span></p>
               <input
                 type="number"
@@ -690,9 +577,6 @@ const AddNewHotel = () => {
                 className="w-full border p-2 focus:outline-none rounded-md text-base"
                 placeholder="10"
               />
-              {/* <SelectUI
-                options={[{ name: "1" }, { name: "2" }, { name: "3" }]}
-              /> */}
 
               <p className="mt-6 mb-4 text-xl font-medium">Room Size :<span className="astrick">*</span></p>
               <input
@@ -702,7 +586,7 @@ const AddNewHotel = () => {
                 value={formData.room_size}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="06"
+                placeholder="6"
               />
 
               <p className="mt-6 mb-4 text-xl font-medium">Number of Beds :<span className="astrick">*</span></p>
@@ -713,7 +597,7 @@ const AddNewHotel = () => {
                 value={formData.no_of_beds}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="06"
+                placeholder="20"
               />
               <p className="mt-6 mb-4 text-xl font-medium">Parking :<span className="astrick">*</span></p>
               <input
@@ -760,14 +644,9 @@ const AddNewHotel = () => {
                       );
                       if (
                         selectedPolicy &&
-                        !selectedPolicies.some(
-                          (p) => p.id === selectedPolicy.id
-                        )
+                        !selectedPolicies.some((p) => p.id === selectedPolicy.id)
                       ) {
-                        setSelectedPolicies((prev) => [
-                          ...prev,
-                          selectedPolicy,
-                        ]);
+                        setSelectedPolicies((prev) => [...prev, selectedPolicy]);
                       }
                     }}
                   >
@@ -800,20 +679,27 @@ const AddNewHotel = () => {
                       className="w-1/2 border p-2 rounded-md"
                       value={policy.policy_description}
                       onChange={(e) => {
-                        const updatedPolicies = selectedPolicies.map(
-                          (p) =>
-                            p.id === policy.id
-                              ? { ...p, policy_description: e.target.value }
-                              : p // Ensure proper key name here
+                        const updatedPolicies = selectedPolicies.map((p) =>
+                          p.id === policy.id
+                            ? { ...p, policy_description: e.target.value }
+                            : p
                         );
                         setSelectedPolicies(updatedPolicies);
                       }}
                     />
+                    {/* Delete icon button */}
+                    <button
+                      onClick={() => handleDeletePolicy(policy.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </Accordion>
+
 
           <Accordion
             buttonContent={(open) => (
@@ -868,10 +754,9 @@ const AddNewHotel = () => {
                 <p>No FAQs available</p>
               )}
 
-              {/* Render input fields for each selected FAQ */}
               {selectedFAQs.map((faq) => (
                 <div key={faq.id} className="mb-4">
-                  <div className="flex gap-4">
+                  <div className="flex gap-4 items-center">
                     <input
                       type="text"
                       className="w-1/2 border p-2 rounded-md"
@@ -891,70 +776,22 @@ const AddNewHotel = () => {
                         setSelectedFAQs(updatedFAQs);
                       }}
                     />
+                    <button
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        setSelectedFAQs((prev) =>
+                          prev.filter((f) => f.id !== faq.id)
+                        );
+                      }}
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </Accordion>
 
-          <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
-              >
-                <h3 className="h3">Sorroundings</h3>
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              {/* Education Section */}
-              <p className="mb-4 text-xl font-medium">Education:</p>
-              {renderInputRows(educationFields, setEducationFields)}
-              {educationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(educationFields, setEducationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Health Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
-              {renderInputRows(healthFields, setHealthFields)}
-              {healthFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(healthFields, setHealthFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              {/* Transportation Section */}
-              <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
-              {renderInputRows(transportationFields, setTransportationFields)}
-              {transportationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(transportationFields, setTransportationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-            </div>
-          </Accordion>
 
         </div>
         <div className="col-span-12 lg:col-span-6">
@@ -962,7 +799,7 @@ const AddNewHotel = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos <span className="astrick">*</span></h3>
+                  <h3 className="h3">Banner Images <span className="astrick">*</span></h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                       }`}
@@ -1011,29 +848,6 @@ const AddNewHotel = () => {
                 </div>
 
 
-
-
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
-                <input
-                  type="text"
-                  name="video_link"
-                  value={formData.video_link}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="www.yt.com"
-                />
-
-                <p className="mt-6 mb-4 text-xl font-medium">
-                  Map Address (Script) :<span className="astrick">*</span>
-                </p>
-                <input
-                  type="text"
-                  name="i_frame_link"
-                  value={formData.i_frame_link}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="<iframe>...."
-                />
                 <p className="mt-6 mb-4 text-xl font-medium">Full Address :<span className="astrick">*</span></p>
                 <input
                   type="text"
@@ -1044,16 +858,7 @@ const AddNewHotel = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="Enter Address"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">SEO Title :<span className="astrick">*</span></p>
-                <input
-                  type="text"
-                  id="seo_title"
-                  name="seo_title"
-                  value={formData.seo_title}
-                  onChange={handleChange}
-                  className="w-full border p-2 focus:outline-none rounded-md text-base"
-                  placeholder="URL Name"
-                />
+
 
                 <p className="mt-6 mb-4 text-xl font-medium">Location :<span className="astrick">*</span></p>
 
@@ -1170,27 +975,60 @@ const AddNewHotel = () => {
               </div>
             </Accordion>
           </div>
+
+
+          <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div className="rounded-2xl flex justify-between">
+                  <h3 className="h3">SEO </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+              <div className="pt-6">
+                <p className="mt-6 mb-4 text-xl font-medium">URL Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_title"
+                  name="seo_title"
+                  value={formData.seo_title}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="URL Title"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">SEO Description :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="seo_description"
+                  name="seo_description"
+                  value={formData.seo_decription}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="SEO Description"
+                />
+                <p className="mt-6 mb-4 text-xl font-medium">Meta Title :<span className="astrick">*</span></p>
+                <input
+                  type="text"
+                  id="meta_title"
+                  name="meta_title"
+                  value={formData.meta_title}
+                  onChange={handleChange}
+                  className="w-full border p-2 focus:outline-none rounded-md text-base"
+                  placeholder="Meta Title"
+                />
+
+              </div>
+            </Accordion>
+          </div>
+
         </div>
       </div>
-      {/* 
-      <Link href="#"  disabled={loading} className="btn-primary font-semibold ml-6 mb-6">
-        <span className="inline-block" onClick={handleSubmit}>
-          {" "}
-          {loading ? "Uploading..." : "Save & Preview"}
-        </span>
-      </Link> */}
-      <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
-        {loading ? (
-          <div className="flex justify-center items-center">
-            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-            <span className="ml-2">Uploading...</span>
-          </div>
-        ) : (
-          "Save & Preview"
-        )}
-      </button>
 
-      {/* Footer */}
       <Footer />
     </div>
   );

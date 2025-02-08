@@ -41,7 +41,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   const handleSearch = (event: React.MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault(); // Prevent default link behavior
-  
+
     if (selectedLocation) {
       localStorage.setItem("storedLocation", selectedLocation);
       setRefreshKey((prevKey) => prevKey + 1);  // Trigger re-render of children
@@ -49,7 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       alert("Please select a location before searching.");
     }
   };
-  
+
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3 ">
       <div className="container">
@@ -112,9 +112,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         <li className="flex items-center gap-4">
                           <Link
                             href={`/hotels`}
-                            className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                              path === "/hotels" && "text-primary"
-                            }`}
+                            className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotels" && "text-primary"
+                              }`}
                           >
                             <Squares2X2Icon className="w-5 h-5" />
                             <span className="inline-block font-medium">Grid</span>
@@ -122,15 +121,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                           <Link
                             href={`/hotellist`}
-                            className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${
-                              path === "/hotellist" && "text-primary"
-                            }`}
+                            className={`link flex items-center gap-2 clr-neutral-500 hover:text-primary ${path === "/hotellist" && "text-primary"
+                              }`}
                           >
                             <ListBulletIcon className="w-5 h-5" />
                             <span className="inline-block font-medium">List</span>
                           </Link>
                         </li>
+
                       </ul>
+                    </li>
+                    <li className="hidden lg:flex items-center">
+                      <p className="mb-0 clr-neutral-500 flex-grow whitespace-nowrap">
+                        Sort By :
+                      </p>
+                      <select className="w-full bg-transparent px-5 py-2 focus:outline-none border-0">
+                        <option value="1">High</option>
+                        <option value="2">Low</option>
+                      </select>
                     </li>
                   </ul>
                 </div>

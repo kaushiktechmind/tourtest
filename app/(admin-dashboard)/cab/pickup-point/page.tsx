@@ -132,21 +132,21 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Cab Pickups</h2>
+        <h2 className="h2 text-white">Pickup Points</h2>
       </div>
 
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6">
           <div className="p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-            <h3 className="border-b h3 pb-6">Add Pickup</h3>
+            <h3 className="h3 pb-6">Add Pickup</h3>
             <form onSubmit={handleAddPickup}>
-              <label htmlFor="name" className="py-4 inline-block text-base font-medium">
+              {/* <label htmlFor="name" className="py-4 inline-block text-base font-medium">
                 Pickup Name:
-              </label>
+              </label> */}
               <input
                 type="text"
                 id="name"
-                placeholder="Pickup name"
+                placeholder="Location"
                 value={pickupTitle}
                 onChange={(e) => setPickupName(e.target.value)}
                 className="w-full border py-3 px-3 rounded-md focus:outline-none"
@@ -193,7 +193,7 @@ const Page = () => {
                       <tr key={pickup.id} className="border-b hover:bg-[var(--bg-1)]">
                         <td className="py-3 px-2">{pickup.cab_pickup_point_name}</td>
                         <td className="py-3 px-2 flex gap-2">
-                          <Link href={`/cab/edit-cab-hotel?pickupId=${pickup.id}`} className="text-primary">
+                          <Link href={`/cab/edit-pickup-point?pickupId=${pickup.id}`} className="text-primary">
                             <PencilSquareIcon className="w-5 h-5" />
                           </Link>
                           <button

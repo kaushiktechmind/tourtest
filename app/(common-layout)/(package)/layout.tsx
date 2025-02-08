@@ -1,10 +1,7 @@
 "use client";
 
 import CheckboxCustom from "@/components/Checkbox";
-import CustomRangeSlider from "@/components/RangeSlider";
 import { SearchIcon } from "@/public/data/icons";
-import { placeTypes } from "@/public/data/placeTypes";
-import { tourtypes } from "@/public/data/tourtypes";
 import { StarIcon } from "@heroicons/react/20/solid";
 import {
   ArrowPathIcon,

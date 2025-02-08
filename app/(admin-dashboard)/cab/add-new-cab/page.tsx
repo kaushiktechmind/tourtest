@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 
-import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -12,9 +12,15 @@ import CheckboxCustom from "@/components/Checkbox";
 import { useSearchParams, useRouter } from "next/navigation";
 
 interface FAQ {
-  id: number; // Change to the actual type based on your API response
+  id: number;
   cab_faq_title: string;
-  cab_faq_description: string; // Assuming the correct spelling is 'cab_faq_description'
+  cab_faq_description: string;
+}
+
+interface CabPolicy {
+  id: number;
+  cab_policy_title: string;
+  cab_policy_description: string;
 }
 
 interface Amenity {
@@ -27,6 +33,18 @@ interface Location {
   id: string | number;  // Adjust type as needed
   location_name: string;
 }
+
+
+interface PickupPoint {
+  id: string | number;  // Adjust type as needed
+  cab_pickup_point_name: string;
+}
+
+interface DropPoint {
+  id: string | number;  // Adjust type as needed
+  cab_drop_point_name: string;
+}
+
 
 
 const AddNewCab = () => {
@@ -42,7 +60,6 @@ const AddNewCab = () => {
     duration: "",
     min_passenger: "",
     max_passenger: "",
-    pickup_point: "",
     person_type_description1: "",
     person_type_price1: "",
     person_min1: "",
@@ -75,20 +92,33 @@ const AddNewCab = () => {
     person_type_name6: "",
     banner_image_multiple: "",
     location_name: "",
+    cab_pickup_point_name: "",
+    cab_drop_point_name: "",
+    time: ""
+
   });
 
   const [locations, setLocations] = useState<Location[]>([]);
+  const [pickup, setPickup] = useState<PickupPoint[]>([]);
+  const [droppoint, setDroppoint] = useState<DropPoint[]>([]);
+
+
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<File[]>([]);
 
-  const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
-  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+
+  const [cabPolicies, setCabPolicies] = useState<CabPolicy[]>([])
+  const [selectedCabPolicies, setSelectedCabPolicies] = useState<CabPolicy[]>([]);
+
+  const [faqs, setFAQs] = useState<FAQ[]>([]);
+  const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
   const [inclusions, setInclusions] = useState<{ id: number; cab_inclusion_title: string }[]>([]);
   const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; cab_inclusion_title: string }[]>([]);
   const [exclusions, setExclusions] = useState<{ id: number; cab_exclusion_title: string }[]>([]);
   const [selectedExclusions, setSelectedExclusions] = useState<{ id: number; cab_exclusion_title: string }[]>([]);
 
+ 
 
   useEffect(() => {
     // Fetch inclusions from the API
@@ -108,7 +138,7 @@ const AddNewCab = () => {
   useEffect(() => {
 
     const fetchExclusions = async () => {
-      try { 
+      try {
         const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_exclusion");
         const data = await response.json();
         setExclusions(data); // Assuming API response is an array
@@ -118,6 +148,26 @@ const AddNewCab = () => {
     };
 
     fetchExclusions();
+  }, []);
+
+
+
+  useEffect(() => {
+    const fetchCabPolicies = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_all_cab_policy');
+        if (response.ok) {
+          const data = await response.json();
+          setCabPolicies(data); // Adjust this if the response structure is different
+        } else {
+          console.error('Failed to fetch cab policies');
+        }
+      } catch (error) {
+        console.error('Error fetching cab policies:', error);
+      }
+    };
+
+    fetchCabPolicies();
   }, []);
 
 
@@ -155,6 +205,48 @@ const AddNewCab = () => {
     fetchLocations();
   }, []);
 
+
+
+
+
+  useEffect(() => {
+    const fetchPickup = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_pickup_point_name");
+        if (response.ok) {
+          const data = await response.json();
+          setPickup(data); // Assuming the response contains a `locations` array
+        } else {
+          console.error("Failed to fetch locations");
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchPickup();
+  }, []);
+
+
+
+  useEffect(() => {
+    const fetchDroppoint = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_drop_point_name");
+        if (response.ok) {
+          const data = await response.json();
+          setDroppoint(data); // Assuming the response contains a `locations` array
+        } else {
+          console.error("Failed to fetch locations");
+        }
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchDroppoint();
+  }, []);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setBannerImages(Array.from(e.target.files)); // Store multiple files
@@ -171,7 +263,7 @@ const AddNewCab = () => {
       [name]: value,
     });
   };
-  
+
 
 
   const handleCheckboxChange = (label: string) => {
@@ -242,6 +334,28 @@ const AddNewCab = () => {
   };
 
 
+  const handleDeleteFAQ = (id: number) => {
+    setSelectedFAQs((prev) => prev.filter((faq) => faq.id !== id));
+  };
+
+  const handleDeletePolicy = (policyId: number) => {
+    setSelectedCabPolicies((prevPolicies) =>
+      prevPolicies.filter((policy) => policy.id !== policyId)
+    );
+  };
+
+  const handleRemoveInclusion = (index: number) => {
+    setSelectedInclusions((prev) =>
+      prev.filter((_, i) => i !== index)
+    );
+  };
+
+  const handleRemoveExclusion = (index: number) => {
+    setSelectedExclusions((prev) =>
+      prev.filter((_, i) => i !== index)
+    );
+  };
+
 
 
 
@@ -272,16 +386,19 @@ const AddNewCab = () => {
       formDataToSend.append("max_passenger", formData.max_passenger);
 
       formDataToSend.append("location", formData.location_name);
+      formDataToSend.append("time", formData.time);
+      formDataToSend.append("pickup_point", formData.cab_pickup_point_name);
+      formDataToSend.append("drop_point", formData.cab_drop_point_name);
 
 
       selectedInclusions.forEach((inc) => {
         formDataToSend.append("inclusion[]", inc.cab_inclusion_title);
       });
-      
+
       selectedExclusions.forEach((inc) => {
         formDataToSend.append("exclusion[]", inc.cab_exclusion_title);
       });
-      
+
 
 
       // Add selected amenities as dynamic fields
@@ -304,37 +421,12 @@ const AddNewCab = () => {
       }
 
 
+      selectedCabPolicies.forEach((policy, index) => {
+        formDataToSend.append(`policies[${index}][policy_title]`, policy.cab_policy_title);
+        formDataToSend.append(`policies[${index}][policy_description]`, policy.cab_policy_description);
+      });
 
-      // const firstSelectedAmenity = selectedAmenities[0]; // Assuming the first selected amenity
-      // if (firstSelectedAmenity) {
-      //   // Append the name of the first selected attribute
-      //   formDataToSend.append('attribute_name1', firstSelectedAmenity);
 
-      //   // Find the corresponding logo for the selected amenity
-      //   const selectedAmenity = amenities.find(
-      //     (item) => item.cab_attribute_name === firstSelectedAmenity
-      //   );
-
-      //   // If we found the selected amenity, append its logo as well
-      //   if (selectedAmenity) {
-      //     formDataToSend.append('attribute_logo1', selectedAmenity.cab_attribute_logo);
-      //   }
-      // }
-
-      // selectedAmenities.forEach((label, index) => {
-      //   if (index < 15) { // Limit to 15 items
-      //     const selectedAmenity = amenities.find(
-      //       (item) => item.cab_attribute_name === label
-      //     );
-
-      //     if (selectedAmenity) {
-      //       formDataToSend.append(`attribute_name${index + 1}`, selectedAmenity.cab_attribute_name);
-      //       formDataToSend.append(`attribute_logo${index + 1}`, selectedAmenity.cab_attribute_logo);
-      //     }
-      //   }
-      // });
-
-      // // formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
 
       const faqsData = selectedFAQs.map((faq) => ({
         question: faq.cab_faq_title,
@@ -342,7 +434,6 @@ const AddNewCab = () => {
       }));
 
       const faqs = JSON.stringify(faqsData);
-      // console.log("zzzzzzzzzzzzzzzzzzz", faqs);
 
       formDataToSend.append("faqs[]", faqs);
 
@@ -370,7 +461,7 @@ const AddNewCab = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Cab saved successfully!");
-        router.push("/cab/all-cab");
+        // router.push("/cab/all-cab");
       } else {
         alert("Failed to save cab.");
       }
@@ -382,7 +473,7 @@ const AddNewCab = () => {
 
 
   return (
-  
+
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Add New Cab</h2>
@@ -497,16 +588,171 @@ const AddNewCab = () => {
                 value={formData.max_passenger}
                 onChange={handleChange}
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
+                placeholder="4"
               />
-
-
-
 
             </div>
           </Accordion>
 
+
+          <div className="rounded-2xl bg-white border mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                  <h3 className="h3">Policies</h3>
+                  <ChevronDownIcon className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`} />
+                </div>
+              )}
+              initialOpen={true}
+            >
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                {cabPolicies.length > 0 ? (
+                  <div className="mb-4">
+                    <label htmlFor="cabPolicyDropdown" className="text-lg font-bold mb-2 block">Select a Cab Policy</label>
+                    <select
+                      id="cabPolicyDropdown"
+                      className="w-full border p-2 rounded-md"
+                      onChange={(e) => {
+                        const selectedPolicy = cabPolicies.find(policy => policy.id === parseInt(e.target.value));
+                        if (selectedPolicy && !selectedCabPolicies.some(policy => policy.id === selectedPolicy.id)) {
+                          setSelectedCabPolicies(prev => [...prev, selectedPolicy]);
+                        }
+                      }}
+                    >
+                      <option value="" disabled selected>Select a Cab Policy...</option>
+                      {cabPolicies.map((policy) => (
+                        <option key={policy.id} value={policy.id}>
+                          {policy.cab_policy_title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <p>No Cab Policies available</p>
+                )}
+
+                {/* Render input fields for each selected Cab Policy */}
+                {selectedCabPolicies.map((policy) => (
+                  <div key={policy.id} className="mb-4 flex items-center gap-4">
+                    <div className="flex gap-4 w-full">
+                      <input
+                        type="text"
+                        className="w-1/2 border p-2 rounded-md"
+                        value={policy.cab_policy_title}
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        className="w-1/2 border p-2 rounded-md"
+                        value={policy.cab_policy_description}
+                        onChange={(e) => {
+                          const updatedPolicies = selectedCabPolicies.map(p =>
+                            p.id === policy.id ? { ...p, cab_policy_description: e.target.value } : p
+                          );
+                          setSelectedCabPolicies(updatedPolicies);
+                        }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleDeletePolicy(policy.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </Accordion>
+          </div>
+
+
+          <div className="rounded-2xl bg-white border mt-6 ">
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                >
+                  <h3 className="h3">FAQ</h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                {faqs.length > 0 ? (
+                  <div className="mb-4">
+                    <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">
+                      Select a FAQ
+                    </label>
+                    <select
+                      id="faqDropdown"
+                      className="w-full border p-2 rounded-md"
+                      onChange={(e) => {
+                        const selectedFAQ = faqs.find(
+                          (faq) => faq.id === parseInt(e.target.value)
+                        );
+                        if (selectedFAQ && !selectedFAQs.some((f) => f.id === selectedFAQ.id)) {
+                          setSelectedFAQs((prev) => [...prev, selectedFAQ]);
+                        }
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select a FAQ...
+                      </option>
+                      {faqs.map((faq) => (
+                        <option key={faq.id} value={faq.id}>
+                          {faq.cab_faq_title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <p>No FAQs available</p>
+                )}
+
+                {/* Render input fields for each selected FAQ */}
+                {selectedFAQs.map((faq) => (
+                  <div key={faq.id} className="mb-4 flex items-center gap-4">
+                    <div className="flex gap-4 w-full">
+                      <input
+                        type="text"
+                        className="w-1/2 border p-2 rounded-md"
+                        value={faq.cab_faq_title}
+                        readOnly
+                      />
+                      <input
+                        type="text"
+                        className="w-1/2 border p-2 rounded-md"
+                        value={faq.cab_faq_description}
+                        onChange={(e) => {
+                          const updatedFAQs = selectedFAQs.map((f) =>
+                            f.id === faq.id
+                              ? { ...f, cab_faq_description: e.target.value }
+                              : f
+                          );
+                          setSelectedFAQs(updatedFAQs);
+                        }}
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleDeleteFAQ(faq.id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </Accordion>
+          </div>
+
         </div>
+
+
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
             <Accordion
@@ -572,6 +818,89 @@ const AddNewCab = () => {
               </div>
             </Accordion>
           </div>
+
+
+
+          <div className="col-span-12 lg:col-span-6 mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                  <h3 className="h3">Time & Places </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}>
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                <div className="border-t pt-4">
+                  <p className="mt-6 mb-4 text-xl font-medium">Pickup Time   :</p>
+                <input
+                  type="text"
+                  name="time"
+                  value={formData.time}
+                  onChange={handleChange}
+                  className="w-full border p-2 rounded-md text-base"
+                  placeholder="9,000"
+                />
+                  <p className="mt-6 mb-4 text-xl font-medium">Pickup Point   :</p>
+                  <select
+                    name="cab_pickup_point_name"
+                    value={formData.cab_pickup_point_name}
+                    onChange={handleChange}
+                    placeholder="2:30 PM"
+                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  >
+                    <option value="" disabled>
+                      Select a Pickup Point
+                    </option>
+                    {pickup.map((pickuppoint) => (
+                      <option key={pickuppoint.id} value={pickuppoint.cab_pickup_point_name}>
+                        {pickuppoint.cab_pickup_point_name}
+                      </option>
+                    ))}
+                  </select>
+
+
+
+                  <p className="mt-6 mb-4 text-xl font-medium">Drop Point :</p>
+                  <select
+                    name="cab_drop_point_name"
+                    value={formData.cab_drop_point_name}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  >
+                    <option value="" disabled>
+                      Select a Drop Point
+                    </option>
+                    {droppoint.map((drop) => (
+                      <option key={drop.id} value={drop.cab_drop_point_name}>
+                        {drop.cab_drop_point_name}
+                      </option>
+                    ))}
+                  </select>
+
+
+
+
+
+
+
+
+
+
+                </div>
+              </div>
+
+
+            </Accordion>
+
+
+          </div>
+
           <div className="rounded-2xl bg-white border mt-6">
             <Accordion
               buttonContent={(open) => (
@@ -590,7 +919,7 @@ const AddNewCab = () => {
                 <select
                   name="cab_inclusion_title"
                   onChange={handleAddInclusion}
-                  value=""  // Add value attribute to ensure no default selection
+                  value=""  // Ensure no default selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -606,13 +935,21 @@ const AddNewCab = () => {
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={inclusion.cab_inclusion_title}
-                      onChange={(e) => handleEditInclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-3">
+                      <input
+                        type="text"
+                        value={inclusion.cab_inclusion_title}
+                        onChange={(e) => handleEditInclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      <button
+                        onClick={() => handleRemoveInclusion(index)}
+                        className="text-red-500 hover:text-red-700"
+                        aria-label="Remove Inclusion"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -637,7 +974,7 @@ const AddNewCab = () => {
                 <select
                   name="cab_exclusion_title"
                   onChange={handleAddExclusion}
-                  value=""  // Add value attribute to prevent default selection
+                  value=""  // Prevent default selection
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -650,15 +987,24 @@ const AddNewCab = () => {
                   ))}
                 </select>
 
+                {/* Render selected exclusions with trash icon */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={exclusion.cab_exclusion_title}
-                      onChange={(e) => handleEditExclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center space-x-3">
+                      <input
+                        type="text"
+                        value={exclusion.cab_exclusion_title}
+                        onChange={(e) => handleEditExclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      <button
+                        onClick={() => handleRemoveExclusion(index)}
+                        className="text-red-500 hover:text-red-700"
+                        aria-label="Remove Exclusion"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -667,90 +1013,7 @@ const AddNewCab = () => {
           </div>
 
 
-          <div className="rounded-2xl bg-white border mt-6 ">
 
-            <Accordion
-              buttonContent={(open) => (
-                <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
-                >
-                  <h3 className="h3">FAQ</h3>
-                  <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                      }`}
-                  />
-                </div>
-              )}
-              initialOpen={true}
-            >
-              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-                {faqs.length > 0 ? (
-                  <div className="mb-4">
-                    <label
-                      htmlFor="faqDropdown"
-                      className="text-lg font-bold mb-2 block"
-                    >
-                      Select a FAQ
-                    </label>
-                    <select
-                      id="faqDropdown"
-                      className="w-full border p-2 rounded-md"
-                      onChange={(e) => {
-                        const selectedFAQ = faqs.find(
-                          (faq) => faq.id === parseInt(e.target.value)
-                        );
-                        if (
-                          selectedFAQ &&
-                          !selectedFAQs.some((f) => f.id === selectedFAQ.id)
-                        ) {
-                          setSelectedFAQs((prev) => [...prev, selectedFAQ]);
-                        }
-                      }}
-                    >
-                      <option value="" disabled selected>
-                        Select a FAQ...
-                      </option>
-                      {faqs.map((faq) => (
-                        <option key={faq.id} value={faq.id}>
-                          {faq.cab_faq_title}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                ) : (
-                  <p>No FAQs available</p>
-                )}
-
-                {/* Render input fields for each selected FAQ */}
-                {selectedFAQs.map((faq) => (
-                  <div key={faq.id} className="mb-4">
-                    <div className="flex gap-4">
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.cab_faq_title}
-                        readOnly
-                      />
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.cab_faq_description}
-                        onChange={(e) => {
-                          const updatedFAQs = selectedFAQs.map((f) =>
-                            f.id === faq.id
-                              ? { ...f, cab_faq_description: e.target.value }
-                              : f
-                          );
-                          setSelectedFAQs(updatedFAQs);
-                        }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Accordion>
-          </div>
 
 
           <div className="rounded-2xl bg-white border mt-6 ">
