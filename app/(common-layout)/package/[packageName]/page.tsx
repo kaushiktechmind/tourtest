@@ -21,6 +21,16 @@ import { useEffect, useState } from "react";
 import CheckboxCustom from "@/components/Checkbox";
 import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
+
+
+import faq1 from "@/public/img/faq-el-1.png";
+import faq2 from "@/public/img/faq-el-2.png";
+import SubHeadingBtn from "@/components/SubHeadingBtn";
+import AnimateHeight from "react-animate-height";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+
+
+
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -111,10 +121,11 @@ export default function Page({
   const handleRatingLeave = () => setHoverRating(0);
 
 
+  const [opened, setOpened] = useState<number | null>(null);
 
 
   const [packageData, setPackageData] = useState<PackageData | null>(null);
-  
+
   const [packageId, setPackageId] = useState<PackageData | null>(null);
 
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -653,22 +664,52 @@ export default function Page({
                     </ul>
 
                   </div>
-                  <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                    <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
-                    <div className="hr-dashed my-5"></div>
 
-                    {/* FAQ content */}
-                    {faqs.length > 0 ? (
-                      faqs.map((faq: { question: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; answer: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | React.PromiseLikeOfReactNode | null | undefined; }, index: React.Key | null | undefined) => (
-                        <div key={index} className="mb-6">
-                          <h6 className="font-semibold mb-2">{faq.question}</h6>
-                          <p>{faq.answer}</p>
-                        </div>
-                      ))
+
+                  <section className="relative bg-white py-[60px] lg:py-[120px]">
+      <Image src={faq1} className="hidden lg:block absolute top-10 right-10" alt="faq el" />
+      <Image src={faq2} className="hidden lg:block absolute bottom-0 left-0" alt="faq el" />
+      <div className="container">
+        <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+          <SubHeadingBtn text="FAQs" classes="bg-[var(--primary-light)]" />
+          <h2 className="h2 mt-3 leading-snug">If you have any questions, we have the answers</h2>
+          <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+            Real estate can be bought, sold, leased, or rented, and can be a valuable investment opportunity. The value of real estate can be
+          </p>
+        </div>
+        <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+          {faqs.length > 0 ? (
+            faqs.map((faq, index) => (
+              <div
+                key={index}
+                onClick={() => setOpened(prev => (prev === index ? null : index))}
+                className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+              >
+                <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                  {faq.question}
+                  <span
+                    className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === index ? "rotate-180" : ""}`}
+                  >
+                    {opened === index ? (
+                      <MinusIcon className="w-6 h-6" />
                     ) : (
-                      <p>Loading FAQ...</p>
+                      <PlusIcon className="w-6 h-6" />
                     )}
-                  </div>
+                  </span>
+                </button>
+                <AnimateHeight duration={300} height={opened === index ? "auto" : 0}>
+                  <p className="border-t border-dash-long pt-4 mt-4">{faq.answer}</p>
+                </AnimateHeight>
+              </div>
+            ))
+          ) : (
+            <p>No FAQs available</p>
+          )}
+        </div>
+      </div>
+    </section>
+
+
                 </div>
               </div>
 
@@ -986,7 +1027,7 @@ export default function Page({
                                     setSelectedDate(utcDate);
                                   }
                                 }}
-                                
+
                                 minDate={new Date()}
                                 className="bg-[var(--bg-2)] w-[330px] border border-r-0 border-neutral-40 rounded-s-full py-[14px] text-gray-500 ps-4 focus:outline-none"
                                 ref={datePickerRef} // Attach the ref to DatePicker
@@ -1031,7 +1072,6 @@ export default function Page({
                                       ))}
                                     </select>
 
-                                    {/* <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i> */}
                                     <i className="las la-angle-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 pointer-events-none"></i>
                                   </div>
                                 </div>
@@ -1252,12 +1292,3 @@ export default function Page({
     </main>
   );
 };
-
-// const Page = () => (
-//   <Suspense fallback={<div>Loading...</div>}>
-//     <PackageListingDetails />
-//   </Suspense>
-// );
-
-
-// export default Page;

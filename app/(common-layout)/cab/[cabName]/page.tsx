@@ -36,6 +36,13 @@ import { Tab } from "@headlessui/react";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { UrlObject } from "url";
 
+
+import faq1 from "@/public/img/faq-el-1.png";
+import faq2 from "@/public/img/faq-el-2.png";
+import SubHeadingBtn from "@/components/SubHeadingBtn";
+import AnimateHeight from "react-animate-height";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
+
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -94,6 +101,9 @@ export default function Page({
   const [selectedPrice, setSelectedPrice] = useState(0);
   const [cargo, setCargo] = useState(0);
   const [dropdownOptions, setDropdownOptions] = useState<number[]>([]);
+
+
+  const [opened, setOpened] = useState<number | null>(null);
 
   const handlePaxChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPax(event.target.value); // Update the state with the selected pax number
@@ -187,7 +197,7 @@ export default function Page({
 
   useEffect(() => {
     if (!cabId) return;  // Prevent the API call if cabId is null or undefined
-  
+
     const fetchCabSubForms = async () => {
       try {
         const response = await fetch(
@@ -202,9 +212,9 @@ export default function Page({
         console.error("Error fetching cab sub-forms:", error);
       }
     };
-  
+
     fetchCabSubForms();
-  }, [cabId]); 
+  }, [cabId]);
 
 
   const handleBook = (price: number, minPax: number, maxPax: number, cargo_count: number) => {
@@ -560,20 +570,65 @@ export default function Page({
 
 
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                  <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
-                  <div className="hr-dashed my-5"></div>
-                  {faqs.length > 0 ? (
-                    faqs.map((faq: { question: string; answer: string }, index: number) => (
-                      <div className="mb-6" key={index}>
-                        <h6 className="font-semibold mb-2">{faq.question}</h6>
-                        <p>{faq.answer}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p>No FAQs available</p>
-                  )}
-                </div>
+                <section className="relative bg-white py-[60px] lg:py-[120px]">
+                  <Image
+                    src={faq1}
+                    className="hidden lg:block absolute top-10 right-10"
+                    alt="faq element"
+                  />
+                  <Image
+                    src={faq2}
+                    className="hidden lg:block absolute bottom-0 left-0"
+                    alt="faq element"
+                  />
+                  <div className="container">
+                    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                      <SubHeadingBtn text="FAQs" classes="bg-[var(--primary-light)]" />
+                      <h2 className="h2 mt-3 leading-snug">
+                        If you have any questions, we have the answers
+                      </h2>
+                      <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+                        Real estate can be bought, sold, leased, or rented, and can be a
+                        valuable investment opportunity. The value of real estate can be
+                      </p>
+                    </div>
+
+                    {/* Dynamically Rendered FAQs */}
+                    <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+                      {faqs.length > 0 ? (
+                        faqs.map((faq: { question: string; answer: string }, index: number) => (
+                          <div
+                            key={index}
+                            onClick={() => setOpened((prev) => (prev === index ? null : index))}
+                            className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                          >
+                            <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                              {faq.question}
+                              <span
+                                className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === index ? "rotate-180" : ""
+                                  }`}
+                              >
+                                {opened === index ? (
+                                  <MinusIcon className="w-6 h-6" />
+                                ) : (
+                                  <PlusIcon className="w-6 h-6" />
+                                )}
+                              </span>
+                            </button>
+                            <AnimateHeight duration={300} height={opened === index ? "auto" : 0}>
+                              <p className="border-t border-dash-long pt-4 mt-4">
+                                {faq.answer}
+                              </p>
+                            </AnimateHeight>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-center">No FAQs available</p>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
 
               </div>
 

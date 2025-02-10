@@ -243,7 +243,7 @@ const FerryHome = () => {
       </div>
 
       {/* Lower Section with Overlap */}
-      <div className="container relative -mt-[60px] z-10">
+      <div className="container relative -mt-[60px] z-10 mb-[60px]">
         <div className="bg-white rounded-xl shadow-lg p-3 md:p-5">
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 text-lg">
             <div className="flex gap-2">
@@ -397,7 +397,7 @@ const FerryHome = () => {
 
 
 
-      <div className="container relative py-[60px] lg:py-[120px]">
+      {/* <div className="container relative py-[60px] lg:py-[120px]">
         <div className="grid grid-cols-12 gap-5">
           <div className="col-span-12 lg:col-span-8 xl:col-span-8 xxl:col-span-12">
 
@@ -407,7 +407,7 @@ const FerryHome = () => {
 
           </div>
         </div>
-      </div>
+      </div> */}
 
     </section>
   );

@@ -4,7 +4,6 @@ import {
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-
 import Footer from "@/components/vendor-dashboard/Vendor.Footer";
 import { SearchIcon } from "@/public/data/icons";
 import Pagination from "@/components/vendor-dashboard/Pagination";
@@ -16,7 +15,7 @@ import { Dialog, Transition } from "@headlessui/react";
 
 interface Policy {
   id: number;
-  cab_policy_title: string;
+  package_policy_title: string;
   created_at: string;
 }
 
@@ -41,7 +40,7 @@ const Page = () => {
     const fetchPOLICYs = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/get_all_cab_policy"
+          "https://yrpitsolutions.com/tourism_api/api/get_all_package_policy"
         );
         const data: Policy[] = await response.json();
         setPolicys(data);
@@ -56,7 +55,7 @@ const Page = () => {
   // Filter POLICYs based on search query
   useEffect(() => {
     const filtered = policys.filter((policy) =>
-      policy.cab_policy_title.toLowerCase().includes(searchQuery.toLowerCase())
+      policy.package_policy_title.toLowerCase().includes(searchQuery.toLowerCase())
     );
     setFilteredPOLICYs(filtered);
     setCurrentPage(1); // Reset to the first page when search query changes
@@ -74,7 +73,7 @@ const Page = () => {
         tempElement.textContent || tempElement.innerText || "";
 
       const response = await fetch(
-        "https://yrpitsolutions.com/tourism_api/api/admin/save_cab_policy",
+        "https://yrpitsolutions.com/tourism_api/api/admin/save_package_policy",
         {
           method: "POST",
           headers: {
@@ -82,8 +81,8 @@ const Page = () => {
             Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
-            cab_policy_title: policyTitle,
-            cab_policy_decription: plainTextDescription,
+            package_policy_title: policyTitle,
+            package_policy_decription: plainTextDescription,
           }),
         }
       );
@@ -93,7 +92,7 @@ const Page = () => {
       if (result.data) {
         const newPolicy: Policy = {
           id: result.data.id,
-          cab_policy_title: result.data.cab_policy_title,
+          package_policy_title: result.data.package_policy_title,
           created_at: result.data.created_at,
         };
         setPolicys((prevPolicys) => [newPolicy, ...prevPolicys]);
@@ -111,7 +110,7 @@ const Page = () => {
 
     try {
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/delete_cab_policy_by_id/${id}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/delete_package_policy_by_id/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -138,20 +137,20 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Cab Policies</h2>
-        <Link href="/cab/all-cab" className="btn-primary">
-          <EyeIcon className="w-5 h-5" /> View All Cabs
+        <h2 className="h2 text-white">Package Policies</h2>
+        <Link href="/package/all-package" className="btn-primary">
+          <EyeIcon className="w-5 h-5" /> View All Packages
         </Link>
       </div>
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add Policies</h3>
+          <h3 className="border-b h3 pb-6">Add Policy</h3>
           <form onSubmit={handleAddPOLICY}>
             <p className="mt-6 mb-4 text-xl font-medium">Name :</p>
             <input
               type="text"
               className="w-full border p-2 focus:outline-none rounded-md text-base"
-              placeholder=""
+              placeholder="Policy Name"
               value={policyTitle}
               onChange={(e) => setPolicyTitle(e.target.value)}
               required
@@ -188,7 +187,7 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentPOLICYs.map(({ id, cab_policy_title, created_at }) => (
+                {currentPOLICYs.map(({ id, package_policy_title, created_at }) => (
                   <tr
                     key={id}
                     className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
@@ -197,11 +196,11 @@ const Page = () => {
                       {new Date(created_at).toLocaleDateString()}
                     </td>
                     <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
-                      {cab_policy_title}
+                      {package_policy_title}
                     </td>
                     <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
                       <Link
-                        href={`/cab/edit-cab-policy?policyId=${id}`}
+                        href={`/package/edit-package-policy?policyId=${id}`}
                         className="text-primary"
                       >
                         <PencilSquareIcon className="w-5 h-5" />

@@ -41,7 +41,7 @@ const Page = () => {
     const fetchPOLICYs = async () => {
       try {
         const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_all_activity_policy"
+          "https://yrpitsolutions.com/tourism_api/api/get_all_activity_policy"
         );
         const data: Policy[] = await response.json();
         setPolicys(data);
@@ -138,20 +138,20 @@ const Page = () => {
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Activity POLICYs</h2>
-        <Link href="/all-activity" className="btn-primary">
+        <h2 className="h2 text-white">Activity Policies</h2>
+        <Link href="/activity/all-activity" className="btn-primary">
           <EyeIcon className="w-5 h-5" /> View All Activities
         </Link>
       </div>
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add POLICYs</h3>
+          <h3 className="border-b h3 pb-6">Add Policy</h3>
           <form onSubmit={handleAddPOLICY}>
             <p className="mt-6 mb-4 text-xl font-medium">Name :</p>
             <input
               type="text"
               className="w-full border p-2 focus:outline-none rounded-md text-base"
-              placeholder="POLICY"
+              placeholder="Policy Name"
               value={policyTitle}
               onChange={(e) => setPolicyTitle(e.target.value)}
               required

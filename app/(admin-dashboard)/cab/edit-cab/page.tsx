@@ -98,7 +98,11 @@ const EditCab = () => {
     banner_image_multiple: "",
     location_name: "",
     cab_pickup_point_name: "",
-    cab_drop_point_name: ""
+    cab_drop_point_name: "",
+    time: "",
+    seo_title: "",
+    seo_desc: "",
+    meta_title: ""
   });
 
   const [locations, setLocations] = useState<Location[]>([]);
@@ -207,44 +211,44 @@ const EditCab = () => {
   }, []);
 
 
-    useEffect(() => {
-      const fetchPickup = async () => {
-        try {
-          const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_pickup_point_name");
-          if (response.ok) {
-            const data = await response.json();
-            setPickup(data); // Assuming the response contains a `locations` array
-          } else {
-            console.error("Failed to fetch locations");
-          }
-        } catch (error) {
-          console.error("Error fetching locations:", error);
+  useEffect(() => {
+    const fetchPickup = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_pickup_point_name");
+        if (response.ok) {
+          const data = await response.json();
+          setPickup(data); // Assuming the response contains a `locations` array
+        } else {
+          console.error("Failed to fetch locations");
         }
-      };
-  
-      fetchPickup();
-    }, []);
-  
-  
-  
-    useEffect(() => {
-      const fetchDroppoint = async () => {
-        try {
-          const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_drop_point_name");
-          if (response.ok) {
-            const data = await response.json();
-            setDroppoint(data); // Assuming the response contains a `locations` array
-          } else {
-            console.error("Failed to fetch locations");
-          }
-        } catch (error) {
-          console.error("Error fetching locations:", error);
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchPickup();
+  }, []);
+
+
+
+  useEffect(() => {
+    const fetchDroppoint = async () => {
+      try {
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/get_all_cab_drop_point_name");
+        if (response.ok) {
+          const data = await response.json();
+          setDroppoint(data); // Assuming the response contains a `locations` array
+        } else {
+          console.error("Failed to fetch locations");
         }
-      };
-  
-      fetchDroppoint();
-    }, []);
-  
+      } catch (error) {
+        console.error("Error fetching locations:", error);
+      }
+    };
+
+    fetchDroppoint();
+  }, []);
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -407,6 +411,10 @@ const EditCab = () => {
           location_name: data.location || "",
           cab_pickup_point_name: data.pickup_point || "",
           cab_drop_point_name: data.drop_point || "",
+          time: data.time || "",
+          seo_title: data.seo_title || "",
+          seo_desc: data.seo_desc || "",
+          meta_title: data.meta_title || "",
 
 
           // Add other fields as necessary
@@ -474,6 +482,14 @@ const EditCab = () => {
       formDataToSend.append("location", formData.location_name);
       formDataToSend.append("pickup_point", formData.cab_pickup_point_name);
       formDataToSend.append("drop_point", formData.cab_drop_point_name);
+      formDataToSend.append("time", formData.time);
+
+      formDataToSend.append("seo_title", formData.seo_title);
+      formDataToSend.append("seo_desc", formData.seo_desc);
+      formDataToSend.append("meta_title", formData.meta_title);
+
+
+
       formDataToSend.append("_method", "PUT");
 
 
@@ -714,6 +730,87 @@ const EditCab = () => {
             </div>
           </Accordion>
 
+          <div className="col-span-12 lg:col-span-6 mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                  <h3 className="h3">Time & Places </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}>
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                <div className="border-t pt-4">
+                  <p className="mt-6 mb-4 text-xl font-medium">Pickup Time   :</p>
+                  <input
+                    type="text"
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="9,000"
+                  />
+                  <p className="mt-6 mb-4 text-xl font-medium">Pickup Point   :</p>
+                  <select
+                    name="cab_pickup_point_name"
+                    value={formData.cab_pickup_point_name}
+                    onChange={handleChange}
+                    placeholder="2:30 PM"
+                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  >
+                    <option value="" disabled>
+                      Select a Pickup Point
+                    </option>
+                    {pickup.map((pickuppoint) => (
+                      <option key={pickuppoint.id} value={pickuppoint.cab_pickup_point_name}>
+                        {pickuppoint.cab_pickup_point_name}
+                      </option>
+                    ))}
+                  </select>
+
+
+
+                  <p className="mt-6 mb-4 text-xl font-medium">Drop Point :</p>
+                  <select
+                    name="cab_drop_point_name"
+                    value={formData.cab_drop_point_name}
+                    onChange={handleChange}
+                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                  >
+                    <option value="" disabled>
+                      Select a Drop Point
+                    </option>
+                    {droppoint.map((drop) => (
+                      <option key={drop.id} value={drop.cab_drop_point_name}>
+                        {drop.cab_drop_point_name}
+                      </option>
+                    ))}
+                  </select>
+
+
+
+
+
+
+
+
+
+
+                </div>
+              </div>
+
+
+            </Accordion>
+
+
+          </div>
+
+
 
 
 
@@ -921,7 +1018,7 @@ const EditCab = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
+                  <h3 className="h3">Banner Images</h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                       }`}
@@ -1000,14 +1097,16 @@ const EditCab = () => {
             </Accordion>
           </div>
 
-          
-          <div className="col-span-12 lg:col-span-6 mt-6">
+
+
+
+           <div className="col-span-12 lg:col-span-6 mt-6">
                       <Accordion
                         buttonContent={(open) => (
                           <div
                             className={`${open ? "rounded-t-2xl" : "rounded-2xl"
                               } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                            <h3 className="h3">Stations </h3>
+                            <h3 className="h3">SEO </h3>
                             <ChevronDownIcon
                               className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                                 }`}
@@ -1017,41 +1116,37 @@ const EditCab = () => {
                         initialOpen={true}>
                         <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
                           <div className="border-t pt-4">
-                            <p className="mt-6 mb-4 text-xl font-medium">Pickup Point   :</p>
-                            <select
-                              name="cab_pickup_point_name"
-                              value={formData.cab_pickup_point_name}
+                            <p className="mt-6 mb-4 text-xl font-medium">URL Name   :</p>
+                            <input
+                              type="text"
+                              name="seo_title"
+                              value={formData.seo_title}
                               onChange={handleChange}
-                              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                            >
-                              <option value="" disabled>
-                                Select a Pickup Point
-                              </option>
-                              {pickup.map((pickuppoint) => (
-                                <option key={pickuppoint.id} value={pickuppoint.cab_pickup_point_name}>
-                                  {pickuppoint.cab_pickup_point_name}
-                                </option>
-                              ))}
-                            </select>
-          
-          
-          
-                            <p className="mt-6 mb-4 text-xl font-medium">Drop Point :</p>
-                            <select
-                              name="cab_drop_point_name"
-                              value={formData.cab_drop_point_name}
+                              className="w-full border p-2 rounded-md text-base"
+                              placeholder="url name"
+                            />
+                            <p className="mt-6 mb-4 text-xl font-medium">SEO Description  :</p>
+                            <input
+                              type="text"
+                              name="seo_desc"
+                              value={formData.seo_desc}
                               onChange={handleChange}
-                              className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                            >
-                              <option value="" disabled>
-                                Select a Drop Point
-                              </option>
-                              {droppoint.map((drop) => (
-                                <option key={drop.id} value={drop.cab_drop_point_name}>
-                                  {drop.cab_drop_point_name}
-                                </option>
-                              ))}
-                            </select>
+                              className="w-full border p-2 rounded-md text-base"
+                              placeholder="seo description"
+                            />
+          
+                            <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
+                            <input
+                              type="text"
+                              name="meta_title"
+                              value={formData.meta_title}
+                              onChange={handleChange}
+                              className="w-full border p-2 rounded-md text-base"
+                              placeholder="meta title"
+                            />
+          
+          
+          
           
           
                           </div>
@@ -1059,9 +1154,11 @@ const EditCab = () => {
           
           
                       </Accordion>
-                     
+          
           
                     </div>
+
+
 
 
           <div className="rounded-2xl bg-white border mt-6">

@@ -2,18 +2,24 @@
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Tooltip } from "react-tooltip";
-// Import Swiper styles
 import "swiper/css";
 import { Navigation } from "swiper";
 import Link from "next/link";
-import { useState, useEffect, Suspense, Key } from "react";
+import { useState, useEffect, Key } from "react";
 import { Tab } from "@headlessui/react";
 
 import "react-datepicker/dist/react-datepicker.css";
-import LocationEntry from "@/components/home-3/LocationEntry";
 import AddRoom from "@/components/home-2/AddRoom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+
+
+
+import faq1 from "@/public/img/faq-el-1.png";
+import faq2 from "@/public/img/faq-el-2.png";
+import SubHeadingBtn from "@/components/SubHeadingBtn";;
+import AnimateHeight from "react-animate-height";
+import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 
 import { CheckIcon, StarIcon } from "@heroicons/react/20/solid";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -46,7 +52,6 @@ interface RoomPrice {
 
 interface Room {
   id: number;
-  // img: string;
   title: string;
   price: number;
   sale_price: number;
@@ -77,8 +82,6 @@ export default function Page({
   const [msg, setMsg] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
 
-  // const [locationName, setLocationName] = useState("");
-
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleTabChange = (index: number) => {
@@ -89,6 +92,11 @@ export default function Page({
   const storedChildPrice = localStorage.getItem("storedChildPrice");
   const storedExtraBedPrice = localStorage.getItem("storedExtraBedPrice");
   const location = localStorage.getItem("storedLocation");
+
+
+  const [opened, setOpened] = useState<number | null>(null);
+
+
 
   const [totalPrices, setTotalPrices] = useState({
     adultTotal: storedAdultPrice,
@@ -111,7 +119,6 @@ export default function Page({
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  // const hotelName = searchParams.get("hotelName");
 
   const hotelDetailsId = localStorage.getItem("hotelId")
   const type = "Hotel";
@@ -125,7 +132,7 @@ export default function Page({
   });
 
   const [refreshKey, setRefreshKey] = useState(0);
-  
+
   const startdate = localStorage.getItem("startDate");
   const enddate = localStorage.getItem("endDate");
   const totalRooms = JSON.parse(
@@ -189,7 +196,6 @@ export default function Page({
   const handleSearch = () => {
     localStorage.removeItem("fromHome");
     localStorage.setItem("restrictValue", "100");
-    // const type = null;
     localStorage.removeItem("roomId");
     localStorage.removeItem("storedAdultPrice");
     localStorage.removeItem("storedChildPrice");
@@ -383,6 +389,21 @@ export default function Page({
     color: "#fff",
     borderRadius: "10px",
   };
+
+
+  const faqs = Array.from({ length: 30 }, (_, index) => {
+    const title = (hotelDetails as any)[`faq_title${index + 1}`];
+    const description = (hotelDetails as any)[`faq_description${index + 1}`];
+    return title && description ? { id: index + 1, question: title, ans: description } : null;
+  }).filter(Boolean);
+
+
+  const policies = Array.from({ length: 30 }, (_, index) => {
+    const title = (hotelDetails as any)[`policy_title${index + 1}`];
+    const description = (hotelDetails as any)[`policy_description${index + 1}`];
+    return title && description ? { id: index + 1, question: title, ans: description } : null;
+  }).filter(Boolean);
+
 
   useEffect(() => {
     const fetchHotelData = async () => {
@@ -588,7 +609,6 @@ export default function Page({
         const result = await response.json();
         console.log("API result:", result); // Log the API result
 
-        // Adjust the success message condition here
         if (
           result.message === "Data retrieved successfully" ||
           result.message === "Rooms retrieved successfully" ||
@@ -852,32 +872,7 @@ export default function Page({
                 <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
                   <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
                     <h2 className="mt-4 h2 mb-0">{hotelDetails.hotel_name}</h2>
-                    {/* <ul className="flex gap-3 items-center">
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white"
-                        >
-                          <HeartIcon className="h-5 w-5" />
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white"
-                        >
-                          <ArrowsRightLeftIcon className="w-5 h-5" />
-                        </Link>
-                      </li>
-                      <li>
-                        <Link
-                          href="#"
-                          className="link w-8 h-8 grid place-content-center bg-[var(--primary-light)] text-primary rounded-full hover:bg-primary hover:text-white"
-                        >
-                          <ShareIcon className="w-5 h-5" />
-                        </Link>
-                      </li>
-                    </ul> */}
+
                   </div>
                   <ul className="flex flex-wrap items-center justify-between gap-4 gap-md-0">
                     <li>
@@ -1032,560 +1027,105 @@ export default function Page({
                       </p>
                     )}
                   </ul>
-                  {/* {selectedRoomIds.length > 0 && (
-                    <p>Selected Room IDs: {selectedRoomIds.join(", ")}</p>
-                  )} */}
                 </div>
 
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border rounded-2xl mb-5">
-                  <h4 className="mb-5 text-2xl font-semibold">
-                    {" "}
-                    Hotel Policies{" "}
-                  </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    {hotelDetails.policy_title1 &&
-                      hotelDetails.policy_description1 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
+                <section className="relative bg-white py-[60px] lg:py-[120px]">
+                  <Image src={faq1} className="hidden lg:block absolute top-10 right-10" alt="faq el" />
+                  <Image src={faq2} className="hidden lg:block absolute bottom-0 left-0" alt="faq el" />
+                  <div className="container">
+                    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                      <SubHeadingBtn text="Policy" classes="bg-[var(--primary-light)]" />
+                    </div>
+                    {policies.length === 0 ? (
+                      <p className="text-center text-neutral-600 ">No Policy available.</p>
+                    ) : (
+                      <div className="space-y-4"> {/* This will add spacing between each Policy */}
+                        {policies.map((policy) =>
+                          policy && (
+                            <div
+                              key={policy.id}
+                              onClick={() => setOpened((prev) => (prev === policy.id ? null : policy.id))}
+                              className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] mt-6 p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                            >
+                              <button className="text-lg  select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                                {policy.question}
+                                <span
+                                  className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === policy.id ? "rotate-180" : ""
+                                    }`}
+                                >
+                                  {opened === policy.id ? (
+                                    <MinusIcon className="w-6 h-6" />
+                                  ) : (
+                                    <PlusIcon className="w-6 h-6" />
+                                  )}
+                                </span>
+                              </button>
+                              <AnimateHeight duration={300} height={opened === policy.id ? "auto" : 0}>
+                                <p className="border-t border-dash-long pt-4 mt-4">{policy.ans}</p>
+                              </AnimateHeight>
                             </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title1}
-                              </div>
-                              <span>{hotelDetails.policy_description1}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title2 &&
-                      hotelDetails.policy_description2 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title2}
-                              </div>
-                              <span>{hotelDetails.policy_description2}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title3 &&
-                      hotelDetails.policy_description3 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title3}
-                              </div>
-                              <span>{hotelDetails.policy_description3}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title4 &&
-                      hotelDetails.policy_description4 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title4}
-                              </div>
-                              <span>{hotelDetails.policy_description4}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-
-                    {hotelDetails.policy_title5 &&
-                      hotelDetails.policy_description5 && (
-                        <li>
-                          <div className="flex gap-4">
-                            <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                              <i className="las la-check text-lg text-primary"></i>
-                            </div>
-                            <span className="inline-block">
-                              <div className="font-bold">
-                                {hotelDetails.policy_title5}
-                              </div>
-                              <span>{hotelDetails.policy_description5}</span>
-                            </span>
-                          </div>
-                        </li>
-                      )}
-                  </ul>
-                </div>
-
-                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] border  rounded-2xl mb-10">
-                  <h4 className="mb-5 text-2xl font-semibold"> FAQ </h4>
-                  <ul className="flex flex-col gap-4 mb-5">
-                    <li>
-                      <div className="flex gap-4">
-                        <div className="faq-list">
-                          {hotelDetails.faq_title1 &&
-                            hotelDetails.faq_description1 && (
-                              <div className="flex gap-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title1}
-                                  </div>
-                                  <span>{hotelDetails.faq_description1}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title2 &&
-                            hotelDetails.faq_description2 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title2}
-                                  </div>
-                                  <span>{hotelDetails.faq_description2}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title3 &&
-                            hotelDetails.faq_description3 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title3}
-                                  </div>
-                                  <span>{hotelDetails.faq_description3}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title4 &&
-                            hotelDetails.faq_description4 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title4}
-                                  </div>
-                                  <span>{hotelDetails.faq_description4}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title5 &&
-                            hotelDetails.faq_description5 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title5}
-                                  </div>
-                                  <span>{hotelDetails.faq_description5}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title6 &&
-                            hotelDetails.faq_description6 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title6}
-                                  </div>
-                                  <span>{hotelDetails.faq_description6}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title7 &&
-                            hotelDetails.faq_description7 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title7}
-                                  </div>
-                                  <span>{hotelDetails.faq_description7}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title8 &&
-                            hotelDetails.faq_description8 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title8}
-                                  </div>
-                                  <span>{hotelDetails.faq_description8}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title9 &&
-                            hotelDetails.faq_description9 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title9}
-                                  </div>
-                                  <span>{hotelDetails.faq_description9}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title10 &&
-                            hotelDetails.faq_description10 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title10}
-                                  </div>
-                                  <span>{hotelDetails.faq_description10}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title11 &&
-                            hotelDetails.faq_description11 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title12}
-                                  </div>
-                                  <span>{hotelDetails.faq_description12}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title12 &&
-                            hotelDetails.faq_description12 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title12}
-                                  </div>
-                                  <span>{hotelDetails.faq_description12}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title13 &&
-                            hotelDetails.faq_description13 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title13}
-                                  </div>
-                                  <span>{hotelDetails.faq_description13}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title14 &&
-                            hotelDetails.faq_description14 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title14}
-                                  </div>
-                                  <span>{hotelDetails.faq_description14}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title15 &&
-                            hotelDetails.faq_description15 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title15}
-                                  </div>
-                                  <span>{hotelDetails.faq_description15}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title16 &&
-                            hotelDetails.faq_description16 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title16}
-                                  </div>
-                                  <span>{hotelDetails.faq_description16}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title17 &&
-                            hotelDetails.faq_description17 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title17}
-                                  </div>
-                                  <span>{hotelDetails.faq_description17}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title18 &&
-                            hotelDetails.faq_description18 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title18}
-                                  </div>
-                                  <span>{hotelDetails.faq_description18}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title19 &&
-                            hotelDetails.faq_description19 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title19}
-                                  </div>
-                                  <span>{hotelDetails.faq_description19}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title20 &&
-                            hotelDetails.faq_description20 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title20}
-                                  </div>
-                                  <span>{hotelDetails.faq_description20}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title21 &&
-                            hotelDetails.faq_description21 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title21}
-                                  </div>
-                                  <span>{hotelDetails.faq_description21}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title22 &&
-                            hotelDetails.faq_description22 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title22}
-                                  </div>
-                                  <span>{hotelDetails.faq_description22}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title23 &&
-                            hotelDetails.faq_description23 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title23}
-                                  </div>
-                                  <span>{hotelDetails.faq_description23}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title24 &&
-                            hotelDetails.faq_description24 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title24}
-                                  </div>
-                                  <span>{hotelDetails.faq_description24}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title25 &&
-                            hotelDetails.faq_description25 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title25}
-                                  </div>
-                                  <span>{hotelDetails.faq_description25}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title26 &&
-                            hotelDetails.faq_description26 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title26}
-                                  </div>
-                                  <span>{hotelDetails.faq_description26}</span>
-                                </span>
-                              </div>
-                            )}
-
-                          {hotelDetails.faq_title27 &&
-                            hotelDetails.faq_description27 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title27}
-                                  </div>
-                                  <span>{hotelDetails.faq_description27}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title28 &&
-                            hotelDetails.faq_description28 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title28}
-                                  </div>
-                                  <span>{hotelDetails.faq_description28}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title29 &&
-                            hotelDetails.faq_description29 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title29}
-                                  </div>
-                                  <span>{hotelDetails.faq_description29}</span>
-                                </span>
-                              </div>
-                            )}
-                          {hotelDetails.faq_title30 &&
-                            hotelDetails.faq_description30 && (
-                              <div className="flex gap-4 mt-4">
-                                <div className="w-6 h-6 grid place-content-center rounded-full shrink-0 bg-[var(--primary-light)]">
-                                  <i className="las la-check text-lg text-primary"></i>
-                                </div>
-                                <span className="inline-block">
-                                  <div className="font-bold">
-                                    {hotelDetails.faq_title30}
-                                  </div>
-                                  <span>{hotelDetails.faq_description30}</span>
-                                </span>
-                              </div>
-                            )}
-                        </div>
+                          )
+                        )}
                       </div>
-                    </li>
-                  </ul>
-                </div>
+                    )}
+
+
+
+                  </div>
+                </section>
+
+
+
+
+                <section className="relative bg-white py-[60px] lg:py-[120px]">
+                  <Image src={faq1} className="hidden lg:block absolute top-10 right-10" alt="faq el" />
+                  <Image src={faq2} className="hidden lg:block absolute bottom-0 left-0" alt="faq el" />
+                  <div className="container">
+                    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                      <SubHeadingBtn text="FAQs" classes="bg-[var(--primary-light)]" />
+                      {/* <h2 className="h2 mt-3 leading-snug">If you have any questions, we have the answers</h2>
+                      <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+                        Real estate can be bought, sold, leased, or rented, and can be a valuable investment opportunity.
+                      </p> */}
+                    </div>
+                    {faqs.length === 0 ? (
+                      <p className="text-center text-neutral-600">No FAQs available.</p>
+                    ) : (
+                      <div className="space-y-4"> {/* This will add spacing between each FAQ */}
+                        {faqs.map((faq) =>
+                          faq && (
+                            <div
+                              key={faq.id}
+                              onClick={() => setOpened((prev) => (prev === faq.id ? null : faq.id))}
+                              className="bg-[var(--secondary-light)] mt-6 rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                            >
+                              <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                                {faq.question}
+                                <span
+                                  className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === faq.id ? "rotate-180" : ""
+                                    }`}
+                                >
+                                  {opened === faq.id ? (
+                                    <MinusIcon className="w-6 h-6" />
+                                  ) : (
+                                    <PlusIcon className="w-6 h-6" />
+                                  )}
+                                </span>
+                              </button>
+                              <AnimateHeight duration={300} height={opened === faq.id ? "auto" : 0}>
+                                <p className="border-t border-dash-long pt-4 mt-4">{faq.ans}</p>
+                              </AnimateHeight>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </section>
               </div>
             </div>
+
+
 
             <div className="col-span-12 xl:col-span-4">
               <div className="pb-0 mb-6 relative">
@@ -1765,7 +1305,6 @@ export default function Page({
 
                   <p></p>
 
-                  {/* Conditionally hide the "Proceed Booking" button based on the selected tab */}
                   {selectedIndex === 0 && (
                     <Link
                       href={`/payment-method?hotelId=${hotelDetailsId}`}
@@ -1775,7 +1314,7 @@ export default function Page({
                       <span className="inline-block">Proceed Booking</span>
                     </Link>
                   )}
-                  
+
                 </div>
               </div>
             </div>
@@ -1786,8 +1325,3 @@ export default function Page({
   );
 }
 
-// const Page = () => (
-//   <Suspense fallback={<div>Loading...</div>}>
-//     <HotelListingDetails />
-//   </Suspense>
-// );

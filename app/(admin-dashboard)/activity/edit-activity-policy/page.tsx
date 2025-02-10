@@ -7,7 +7,7 @@ const QuillEditor = dynamic(() => import('../../../../components/QuillEditor'), 
 import { useRouter, useSearchParams } from "next/navigation";
 import React, { useState, useEffect, Suspense } from "react";
 
-const EditCabPOLICY = () => {
+const EditActivityPOLICY = () => {
   const [policyTitle, setPolicyTitle] = useState<string>(""); // State for POLICY Title
   const [description, setDescription] = useState<string>(
     "This is a default description"
@@ -23,14 +23,14 @@ const EditCabPOLICY = () => {
       if (policyId) {
         try {
           const response = await fetch(
-            `https://yrpitsolutions.com/tourism_api/api/get_cab_policy_by_id/${policyId}`
+            `https://yrpitsolutions.com/tourism_api/api/get_activity_policy_by_id/${policyId}`
           );
           const data = await response.json();
 
           // Set the values for title and description
-          setPolicyTitle(data.cab_policy_title);
-          setDescription(data.cab_policy_description);
-          console.log("Description from API:", data.cab_policy_description);
+          setPolicyTitle(data.activity_policy_title);
+          setDescription(data.activity_policy_decription);
+          console.log("Description from API:", data.activity_policy_decription);
         } catch (error) {
           console.error("Error fetching POLICY data:", error);
         }
@@ -57,7 +57,7 @@ const EditCabPOLICY = () => {
       const plainTextDescription =
       tempElement.textContent || tempElement.innerText || "";
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/update_cab_policy_by_id/${policyId}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/update_activity_policy_by_id/${policyId}`,
         {
           method: "PUT", // Changed from POST to PUT
           headers: {
@@ -65,8 +65,8 @@ const EditCabPOLICY = () => {
             Authorization: `Bearer ${accessToken}`, // Pass the token in Authorization header
           },
           body: JSON.stringify({
-            cab_policy_title: policyTitle,
-            cab_policy_description: plainTextDescription,
+            activity_policy_title: policyTitle,
+            activity_policy_decription: plainTextDescription,
           }),
         }
       );
@@ -74,9 +74,9 @@ const EditCabPOLICY = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("POLICY Updated Successfully:");
+        alert("POLICY Updated Successfully");
         // Redirect or show success message here
-        router.push("/cab/cab-policy");
+        router.push("/activity/activity-policy");
       } else {
         console.error("Error updating POLICY:", data.message);
       }
@@ -86,11 +86,11 @@ const EditCabPOLICY = () => {
   };
 
   return (
-
+  
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Policy</h2>
-        <Link href="/cab/cab-policy" className="btn-primary">
+        <Link href="/activity/activity-policy" className="btn-primary">
           View All Policies
         </Link>
       </div>
@@ -99,14 +99,14 @@ const EditCabPOLICY = () => {
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
       <div className="col-span-12 flex justify-center">
           <div className="lg:w-6/12 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-            <h3 className="border-b h3 pb-6">Edit Policy Details</h3>
+            <h3 className="border-b h3 pb-6">Edit Polciy Details</h3>
             <form onSubmit={handleUpdatePolicy}>
               {/* POLICY Title */}
               <label
                 htmlFor="policyTitle"
                 className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium"
               >
-                Policiy Title:
+                Policy Title:
               </label>
               <input
                 type="text"
@@ -133,12 +133,13 @@ const EditCabPOLICY = () => {
       {/* Footer */}
       <Footer />
     </div>
+
   );
 };
 
 const Page = () => (
   <Suspense fallback={<div>Loading...</div>}>
-    <EditCabPOLICY />
+    <EditActivityPOLICY />
   </Suspense>
 );
 

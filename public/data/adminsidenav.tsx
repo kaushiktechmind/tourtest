@@ -18,6 +18,7 @@ export const sidenavData = [
       { url: "/package/all-package", title: "All Packages" },
       { url: "/package/package-attribute", title: "Package Attributes" },
       { url: "/package/package-faq", title: "Package FAQs" },
+      { url: "/package/package-policy", title: "Package Policies" },
       { url: "/package/package-include", title: "Package Includes" },
       { url: "/package/package-exclude", title: "Package Excludes" },
     ],
@@ -29,7 +30,9 @@ export const sidenavData = [
     submenus: [
       { url: "/activity/all-activity", title: "All Activities" },
       { url: "/activity/activity-attributes", title: "Activity Attributes" },
+      { url: "/activity/activity-policy", title: "Activity Policy" },
       { url: "/activity/activity-faq", title: "Activity FAQ" },
+      
     ],
   },
 

@@ -50,7 +50,6 @@ const EditPackage = () => {
     tour_price: "",
     sale_price: "",
     status: "1",
-    youtube_video_link: "",
     duration: "",
     tour_min_people: "",
     tour_max_people: "",
@@ -337,7 +336,6 @@ const EditPackage = () => {
           package_content: data.package_content || "",
           tour_price: data.tour_price || "",
           sale_price: data.sale_price || "",
-          youtube_video_link: data.youtube_video_link || "",
           duration: data.duration || "",
           tour_min_people: data.tour_min_people || "",
           tour_max_people: data.tour_max_people || "",
@@ -411,7 +409,6 @@ const EditPackage = () => {
       formDataToSend.append("package_content", plainDescription); // Save as plain text
       formDataToSend.append("tour_price", formData.tour_price);
       formDataToSend.append("sale_price", formData.sale_price);
-      formDataToSend.append("youtube_video_link", formData.youtube_video_link);
       formDataToSend.append("duration", formData.duration);
       formDataToSend.append("tour_min_people", formData.tour_min_people);
       formDataToSend.append("tour_max_people", formData.tour_max_people);
@@ -782,7 +779,7 @@ const EditPackage = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
+                  <h3 className="h3">Banner Images</h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                       }`}
@@ -850,22 +847,9 @@ const EditPackage = () => {
                         </div>
                       ))}
                   </div>
-
                 </div>
 
 
-
-
-
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
-                <input
-                  type="text"
-                  name="youtube_video_link"
-                  value={formData.youtube_video_link}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="0"
-                />
               </div>
             </Accordion>
           </div>

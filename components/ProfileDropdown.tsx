@@ -10,11 +10,12 @@ export default function ProfileDropdown() {
     email: "",
     mobileNumber: "",
   });
-
+  const userId = localStorage.getItem("id"); // Retrieve user ID from localStorage
+  const token = localStorage.getItem("access_token"); // Retrieve access token
   useEffect(() => {
     const fetchUserData = async () => {
       const userId = localStorage.getItem("id"); // Retrieve user ID from localStorage
-      const token = localStorage.getItem("access_token"); // Retrieve access token
+  const token = localStorage.getItem("access_token"); // Retrieve access token
 
       if (userId && token) {
         try {
@@ -47,7 +48,7 @@ export default function ProfileDropdown() {
     };
 
     fetchUserData();
-  }, []);
+  }, [userId,  token]);
 
   // Function to handle user logout
   const handleLogout = async () => {

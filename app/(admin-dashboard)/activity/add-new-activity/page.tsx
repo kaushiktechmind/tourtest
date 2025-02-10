@@ -54,7 +54,6 @@ const AddActivity = () => {
     price: "",
     sale_price: "",
     activity_status: "1",
-    youtube_video_image: "",
     duration: "",
     start_time: "",
     tour_max_people: "",
@@ -280,7 +279,6 @@ const AddActivity = () => {
       formDataToSend.append("activity_content", plainDescription); // Save as plain text
       formDataToSend.append("price", formData.price);
       formDataToSend.append("sale_price", formData.sale_price);
-      formDataToSend.append("youtube_video_image", formData.youtube_video_image);
       formDataToSend.append("duration", formData.duration);
       formDataToSend.append("start_time", formData.start_time);
       formDataToSend.append("full_address", formData.full_address);
@@ -697,7 +695,7 @@ const AddActivity = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
+                  <h3 className="h3">Banner Images</h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                       }`}
@@ -754,15 +752,6 @@ const AddActivity = () => {
                   )}
                 </div>
 
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :</p>
-                <input
-                  type="text"
-                  name="youtube_video_image"
-                  value={formData.youtube_video_image}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="0"
-                />
               </div>
             </Accordion>
           </div>
