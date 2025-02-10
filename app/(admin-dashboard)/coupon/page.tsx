@@ -43,7 +43,7 @@ const Page = () => {
       const token = localStorage.getItem("access_token");
       try {
         const response = await fetch(
-          ` /admin/delete_coupon_by_id/${couponIdToDelete}`,
+          `https://yrpitsolutions.com/tourism_api/api/admin/delete_coupon_by_id/${couponIdToDelete}`,
           {
             method: "DELETE",
             headers: {
@@ -75,8 +75,14 @@ const Page = () => {
           "https://yrpitsolutions.com/tourism_api/api/get_all_coupon"
         );
         const data = await response.json();
-        if (data) {
+        console.log("Fetched Coupons Data:", data);  // Add this line to inspect the response
+
+        if (Array.isArray(data)) {
           setCoups(data);
+        } else if (data.coupons && Array.isArray(data.coupons)) {
+          setCoups(data.coupons);
+        } else {
+          console.error("Unexpected data format:", data);
         }
       } catch (error) {
         console.error("Error fetching coups:", error);
@@ -88,17 +94,20 @@ const Page = () => {
     fetchCoups();
   }, []);
 
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
 
 
-  const filteredCoups = coups.filter((coup) =>
-    Object.values(coup).some((value) =>
-      String(value).toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredCoups = Array.isArray(coups)
+    ? coups.filter((coup) =>
+      Object.values(coup).some((value) =>
+        String(value).toLowerCase().includes(searchQuery.toLowerCase())
+      )
     )
-  );
+    : [];
 
   const paginatedCoups = filteredCoups.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
@@ -140,7 +149,7 @@ const Page = () => {
               <thead>
                 <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
                   <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Coupon Name</th>
+                  <th className="py-3 lg:py-4 px-2">Model Name</th>
                   <th className="py-3 lg:py-4 px-2 md:px-5">Coupon Code</th>
                   <th className="py-3 lg:py-4 px-2">Type</th>
                   <th className="py-3 lg:py-4 px-2">Discount Price</th>
@@ -150,64 +159,63 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {paginatedCoups.map((coup) => (
-                  <tr
-                    key={coup.id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {coup.created_at.split("T")[0]}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      {coup.coupon_name}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 md:px-5">
-                      <Link
-                        href={`/coupon/edit-coupon?couponId=${coup.id}`}
-                        className="text-primary"
-                      >
-                        {coup.coupon_code}
-                      </Link>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                      {coup.type}
-                    </td>
-
-
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
+                {paginatedCoups.length > 0 ? (
+                  paginatedCoups.map((coup) => (
+                    <tr
+                      key={coup.id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {coup.created_at.split("T")[0]}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
+                        {coup.model_name}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 md:px-5">
+                        <Link
+                          href={`/coupon/edit-coupon?couponId=${coup.id}`}
+                          className="text-primary"
+                        >
+                          {coup.coupon_code}
+                        </Link>
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                        {coup.type}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
                         {coup.discount_price}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
                         {coup.start_date}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-4 px-2">
-                      <span className="flex gap-1 items-center">
+                      </td>
+                      <td className="py-3 lg:py-4 px-2">
                         {coup.end_date}
-                      </span>
-                    </td>
-                    <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
-                      <a
-                        href={`/coupon/edit-coupon?couponId=${coup.id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </a>
-                      <button
-                        className="text-[var(--secondary-500)]"
-                        onClick={() =>
-                          openModal({ name: coup.coupon_name, id: coup.id })
-                        }
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
+                      </td>
+                      <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
+                        <a
+                          href={`/coupon/edit-coupon?couponId=${coup.id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </a>
+                        <button
+                          className="text-[var(--secondary-500)]"
+                          onClick={() => openModal({ name: coup.coupon_name, id: coup.id })}
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-5 text-gray-500">
+                      No coupons available.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
             </table>
 
             {/* Pagination */}

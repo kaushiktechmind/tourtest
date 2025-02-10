@@ -8,6 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 
 interface Coupon {
     id: number;
+    model_name: string,
     coupon_name: string;
     coupon_code: string;
     type: string;
@@ -17,7 +18,8 @@ interface Coupon {
     status: string;
 }
 
-interface HotelFormData {
+interface CouponData {
+    model_name: string,
     coupon_name: string;
     coupon_code: string;
     type: string;
@@ -32,7 +34,8 @@ const EditCoupon = () => {
     const searchParams = useSearchParams();
     const couponId = searchParams.get("couponId");
 
-    const [formData, setFormData] = useState<HotelFormData>({
+    const [formData, setFormData] = useState<CouponData>({
+        model_name: "",
         coupon_name: "",
         coupon_code: "",
         type: "",
@@ -65,6 +68,7 @@ const EditCoupon = () => {
 
             // Prefill form fields with fetched data
             setFormData({
+                model_name: data.model_name,
                 coupon_name: data.coupon_name,
                 coupon_code: data.coupon_code,
                 type: data.type,
@@ -81,7 +85,7 @@ const EditCoupon = () => {
 
 
     const handleInputChange = (
-        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
@@ -89,6 +93,7 @@ const EditCoupon = () => {
             [name]: value,
         }));
     };
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault(); // Prevent form submission default behavior
@@ -155,6 +160,21 @@ const EditCoupon = () => {
                             onChange={handleInputChange}
                         />
 
+                        <p className="mt-6 mb-4 text-xl font-medium">Model Name :</p>
+                        <select
+                            name="model_name"
+                            className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                            value={formData.model_name}
+                            onChange={handleInputChange}
+                        >
+                            <option value="">Select Model Name</option>
+                            <option value="Hotel">Hotel/Homestay</option>
+                            <option value="Cab">Cab</option>
+                            <option value="Package">Package</option>
+                            <option value="Activity">Activity</option>
+                            <option value="Ferry">Ferry</option>
+                        </select>
+
                         <p className="mt-6 mb-4 text-xl font-medium">Coupon Code :</p>
                         <input
                             type="text"
@@ -165,16 +185,33 @@ const EditCoupon = () => {
                             onChange={handleInputChange}
                         />
 
-                        <p className="mt-6 mb-4 text-xl font-medium">Type :</p>
-                        <input
-                            type="text"
-                            name="type"
-                            className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                            placeholder=""
-                            value={formData.type}
-                            onChange={handleInputChange}
-                        />
+                        <div className="flex gap-6 mt-6 mb-4">
+                            <div className="flex-1">
+                                <p className="mb-2 text-xl font-medium">Type :</p>
+                                <select
+                                    name="type"
+                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                    value={formData.type}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="%">%</option>
+                                    <option value="value">Value</option>
+                                </select>
+                            </div>
 
+                            <div className="flex-1">
+                                <p className="mb-2 text-xl font-medium">Status :</p>
+                                <select
+                                    name="status"
+                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                                    value={formData.status}
+                                    onChange={handleInputChange}
+                                >
+                                    <option value="1">1</option>
+                                    <option value="0">0</option>
+                                </select>
+                            </div>
+                        </div>
                         <p className="mt-6 mb-4 text-xl font-medium">Discount Price :</p>
                         <input
                             type="number"

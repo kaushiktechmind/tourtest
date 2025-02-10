@@ -17,6 +17,8 @@ interface FAQ {
   cab_faq_description: string; // Assuming the correct spelling is 'cab_faq_description'
 }
 
+
+
 interface CabPolicy {
   id: number;
   cab_policy_title: string;
@@ -376,13 +378,14 @@ const EditCab = () => {
         }
 
 
-        const prefilledInclusions = data.inclusion.map((title: string, index: number) => ({
+        const prefilledInclusions = (data.inclusion || []).map((title: string, index: number) => ({
           id: index + 1,
           cab_inclusion_title: title,
         }));
         setSelectedInclusions(prefilledInclusions);
+        
 
-        const prefilledExclusions = data.exclusion.map((title: string, index: number) => ({
+        const prefilledExclusions = (data.exclusion || []).map((title: string, index: number) => ({
           id: index + 1,
           cab_exclusion_title: title,
         }));
@@ -470,8 +473,7 @@ const EditCab = () => {
 
       const formDataToSend = new FormData();
 
-      const plainDescription = description.replace(/<[^>]*>/g, ""); // This removes HTML tags
-      // Manually append each field from formData and plainDescription
+      const plainDescription = description.replace(/<[^>]*>/g, ""); 
       formDataToSend.append("cab_name", formData.cab_name);
       formDataToSend.append("description", plainDescription);
       formDataToSend.append("price", formData.price);
@@ -495,18 +497,19 @@ const EditCab = () => {
 
       // Append each inclusion separately
       selectedInclusions.forEach((inc) => {
-        formDataToSend.append("inclusion[]", inc.cab_inclusion_title);
+        if (inc.cab_inclusion_title && inc.cab_inclusion_title.trim() !== "") {
+          formDataToSend.append("inclusion[]", inc.cab_inclusion_title);
+        }
       });
-
+      
       // Append each exclusion separately
       selectedExclusions.forEach((inc) => {
-        formDataToSend.append("exclusion[]", inc.cab_exclusion_title);
+        if (inc.cab_exclusion_title && inc.cab_exclusion_title.trim() !== "") {
+          formDataToSend.append("exclusion[]", inc.cab_exclusion_title);
+        }
       });
 
 
-
-
-      // Add selected amenities as dynamic fields
       selectedAmenities.forEach((amenityName, index) => {
         const attributeNumber = index + 1; // Starts from 1
         const amenity = amenities.find((a) => a.cab_attribute_name === amenityName);
@@ -520,44 +523,9 @@ const EditCab = () => {
         }
       });
 
-      // Debug: Log all FormData entries
       for (const [key, value] of formDataToSend.entries()) {
         console.log(`${key}: ${value}`);
       }
-
-
-
-      // const firstSelectedAmenity = selectedAmenities[0]; // Assuming the first selected amenity
-      // if (firstSelectedAmenity) {
-      //   // Append the name of the first selected attribute
-      //   formDataToSend.append('attribute_name1', firstSelectedAmenity);
-
-      //   // Find the corresponding logo for the selected amenity
-      //   const selectedAmenity = amenities.find(
-      //     (item) => item.cab_attribute_name === firstSelectedAmenity
-      //   );
-
-      //   // If we found the selected amenity, append its logo as well
-      //   if (selectedAmenity) {
-      //     formDataToSend.append('attribute_logo1', selectedAmenity.cab_attribute_logo);
-      //   }
-      // }
-
-      // selectedAmenities.forEach((label, index) => {
-      //   if (index < 15) { // Limit to 15 items
-      //     const selectedAmenity = amenities.find(
-      //       (item) => item.cab_attribute_name === label
-      //     );
-
-      //     if (selectedAmenity) {
-      //       formDataToSend.append(`attribute_name${index + 1}`, selectedAmenity.cab_attribute_name);
-      //       formDataToSend.append(`attribute_logo${index + 1}`, selectedAmenity.cab_attribute_logo);
-      //     }
-      //   }
-      // });
-
-      // // formDataToSend.append("amenities", JSON.stringify(selectedAmenities));
-
 
       selectedCabPolicies.forEach((policy, index) => {
         formDataToSend.append(`policies[${index}][policy_title]`, policy.cab_policy_title);
@@ -571,11 +539,9 @@ const EditCab = () => {
       }));
 
       const faqs = JSON.stringify(faqsData);
-      // console.log("zzzzzzzzzzzzzzzzzzz", faqs);
 
       formDataToSend.append("faqs[]", faqs);
 
-      // Conditionally append banner images only if images are selected
       if (Array.isArray(bannerImages) && bannerImages.length > 0) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image_multiple[]", file);
@@ -597,7 +563,7 @@ const EditCab = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Cab saved successfully!");
-        // router.push("/cab/all-cab");
+        router.push("/cab/all-cab");
       } else {
         alert("Failed to save cab.");
       }
@@ -792,28 +758,10 @@ const EditCab = () => {
                     ))}
                   </select>
 
-
-
-
-
-
-
-
-
-
                 </div>
               </div>
-
-
             </Accordion>
-
-
           </div>
-
-
-
-
-
 
           <div className="rounded-2xl bg-white border mt-6">
             <Accordion
@@ -1100,63 +1048,63 @@ const EditCab = () => {
 
 
 
-           <div className="col-span-12 lg:col-span-6 mt-6">
-                      <Accordion
-                        buttonContent={(open) => (
-                          <div
-                            className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                              } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
-                            <h3 className="h3">SEO </h3>
-                            <ChevronDownIcon
-                              className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
-                                }`}
-                            />
-                          </div>
-                        )}
-                        initialOpen={true}>
-                        <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-                          <div className="border-t pt-4">
-                            <p className="mt-6 mb-4 text-xl font-medium">URL Name   :</p>
-                            <input
-                              type="text"
-                              name="seo_title"
-                              value={formData.seo_title}
-                              onChange={handleChange}
-                              className="w-full border p-2 rounded-md text-base"
-                              placeholder="url name"
-                            />
-                            <p className="mt-6 mb-4 text-xl font-medium">SEO Description  :</p>
-                            <input
-                              type="text"
-                              name="seo_desc"
-                              value={formData.seo_desc}
-                              onChange={handleChange}
-                              className="w-full border p-2 rounded-md text-base"
-                              placeholder="seo description"
-                            />
-          
-                            <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
-                            <input
-                              type="text"
-                              name="meta_title"
-                              value={formData.meta_title}
-                              onChange={handleChange}
-                              className="w-full border p-2 rounded-md text-base"
-                              placeholder="meta title"
-                            />
-          
-          
-          
-          
-          
-                          </div>
-                        </div>
-          
-          
-                      </Accordion>
-          
-          
-                    </div>
+          <div className="col-span-12 lg:col-span-6 mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                  <h3 className="h3">SEO </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}>
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                <div className="border-t pt-4">
+                  <p className="mt-6 mb-4 text-xl font-medium">URL Name   :</p>
+                  <input
+                    type="text"
+                    name="seo_title"
+                    value={formData.seo_title}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="url name"
+                  />
+                  <p className="mt-6 mb-4 text-xl font-medium">SEO Description  :</p>
+                  <input
+                    type="text"
+                    name="seo_desc"
+                    value={formData.seo_desc}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="seo description"
+                  />
+
+                  <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
+                  <input
+                    type="text"
+                    name="meta_title"
+                    value={formData.meta_title}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="meta title"
+                  />
+
+
+
+
+
+                </div>
+              </div>
+
+
+            </Accordion>
+
+
+          </div>
 
 
 

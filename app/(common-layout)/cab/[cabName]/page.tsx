@@ -48,6 +48,10 @@ function classNames(...classes: any[]) {
 }
 
 interface CabDetails {
+  time: ReactNode;
+  drop_point: ReactNode;
+  pickup_point: ReactNode;
+  policies: any;
   created_at: string;  // Ensure it's a string
   banner_image_multiple: any;
   location: string;
@@ -61,7 +65,7 @@ interface CabDetails {
   exclusions: string;
   inclusion?: string[];
   exclusion?: string[];
-  faqs?: string[]; // Assuming 'faqs' is an array of strings
+  faqs?: string[];
 }
 
 interface CabSubForm {
@@ -85,6 +89,7 @@ export default function Page({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+
   const router = useRouter();
 
   // const isDateSelected = selectedDate !== null;
@@ -104,6 +109,58 @@ export default function Page({
 
 
   const [opened, setOpened] = useState<number | null>(null);
+
+
+
+
+
+  const [couponCode, setCouponCode] = useState('');
+  const [coupons, setCoupons] = useState([]);
+  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
+
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_all_coupon');
+        const data = await response.json();
+        setCoupons(data);
+      } catch (err) {
+        console.error('Error fetching coupons:', err);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  const applyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+    const validCoupon = coupons.find(
+      (coupon: any) =>
+        coupon.status === '1' &&
+        coupon.model_name === 'Cab' &&
+        coupon.coupon_code.toUpperCase() === couponCode.toUpperCase()
+    );
+
+    if (!validCoupon) {
+      setCouponMessage("Coupon Not Applicable")
+      return;
+    }
+
+
+
+    let discount = 0;
+    if (validCoupon.type === '%') {
+      discount = (parseFloat(validCoupon.discount_price) / 100) * selectedPrice;
+    } else {
+      discount = parseFloat(validCoupon.discount_price);
+    }
+
+    const finalPrice = selectedPrice - discount;
+    setDiscountedPrice(finalPrice > 0 ? finalPrice : 0); // Ensure price doesn't go below 0
+    setCouponMessage("Coupon Applied")
+  };
+
 
   const handlePaxChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedPax(event.target.value); // Update the state with the selected pax number
@@ -172,17 +229,14 @@ export default function Page({
         const data = await response.json();
         setCabId(data.id);
 
+        // Parse FAQs if they are stringified
+        const parsedFAQs = data.faqs && typeof data.faqs === "string" ? JSON.parse(data.faqs) : data.faqs;
 
+        // Parse Policies if they are stringified
+        const parsedPolicies = data.policies && typeof data.policies === "string" ? JSON.parse(data.policies) : data.policies;
 
+        setCabDetails({ ...data, faqs: parsedFAQs, policies: parsedPolicies });
 
-        // Parse the FAQs if they are stringified
-        if (data.faqs && typeof data.faqs === "string") {
-          const parsedFAQs = JSON.parse(data.faqs);
-          setCabDetails({ ...data, faqs: parsedFAQs });
-        } else {
-          setCabDetails(data);
-
-        }
       } catch (err) {
         setError((err as Error).message);
       } finally {
@@ -312,10 +366,10 @@ export default function Page({
     // const selectedPax = (document.querySelector('select') as HTMLSelectElement)?.value || "";
 
     // Validate required fields
-    if (!hotelName) {
-      alert("Select Pickup point");
-      return;
-    }
+    // if (!hotelName) {
+    //   alert("Select Pickup point");
+    //   return;
+    // }
 
     if (!selectedPax) {
       alert("Select Pax");
@@ -324,9 +378,9 @@ export default function Page({
 
     // Store booking details in localStorage
     const storedCabDetails = {
-      hotelName,
+      hotelName: cabDetails?.pickup_point,
       selectedDate: selectedDate.toISOString().split("T")[0], // Format the date as YYYY-MM-DD
-      totalPrice: selectedPrice || 0,
+      totalPrice: discountedPrice !== null ? discountedPrice : selectedPrice,
       selectedPax,
       cargo: cargo,
     };
@@ -571,6 +625,55 @@ export default function Page({
 
 
                 <section className="relative bg-white py-[60px] lg:py-[120px]">
+                  <div className="container">
+                    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                      <SubHeadingBtn text="Policies" classes="bg-[var(--primary-light)]" />
+                      <h2 className="h2 mt-3 leading-snug">
+                        Our Policies for a Better Experience
+                      </h2>
+                      <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+                        Review our policies to ensure a smooth and enjoyable journey.
+                      </p>
+                    </div>
+
+                    <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+                      {cabDetails?.policies?.map((policy: { policy_title: string, policy_description: string }, index: number) => (
+                        <div
+                          key={index}
+                          onClick={() => setOpened((prev) => (prev === index ? null : index))}
+                          className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                        >
+                          <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                            {policy.policy_title}
+                            <span
+                              className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === index ? "rotate-180" : ""
+                                }`}
+                            >
+                              {opened === index ? (
+                                <MinusIcon className="w-6 h-6" />
+                              ) : (
+                                <PlusIcon className="w-6 h-6" />
+                              )}
+                            </span>
+                          </button>
+                          <AnimateHeight duration={300} height={opened === index ? "auto" : 0}>
+                            <p className="border-t border-dash-long pt-4 mt-4">
+                              {policy.policy_description}
+                            </p>
+                          </AnimateHeight>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </section>
+
+
+
+
+
+
+
+                <section className="relative bg-white py-[60px] lg:py-[120px]">
                   <Image
                     src={faq1}
                     className="hidden lg:block absolute top-10 right-10"
@@ -666,26 +769,39 @@ export default function Page({
                         <div className="grid grid-cols-1 gap-3">
                           <div className="col-span-1">
                             <div className="w-full flex">
-                              <select
-                                className="flex-grow focus:outline-none bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500 appearance-none"
-                                value={hotelName}
-                                onChange={(e) => sethotelName(e.target.value)}
-                              >
-                                <option value="" disabled>
-                                  Select Pickup Point
-                                </option>
-                                {pickupPoints.map((point, index) => (
-                                  <option key={index} value={point}>
-                                    {point}
-                                  </option>
-                                ))}
-                              </select>
+                              <div className="flex-grow bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500">
+                                {cabDetails?.pickup_point}
+                              </div>
                               <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
                                 <i className="las text-2xl la-map-marker-alt"></i>
-
                               </span>
                             </div>
                           </div>
+
+
+
+                          <div className="col-span-1">
+                            <div className="w-full flex">
+                              <div className="flex-grow bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500">
+                                {cabDetails?.drop_point}
+                              </div>
+                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
+                                <i className="las text-2xl la-map-marker-alt"></i>
+                              </span>
+                            </div>
+                          </div>
+
+                          <div className="col-span-1">
+                            <div className="w-full flex">
+                              <div className="flex-grow bg-[var(--bg-2)] border border-r-0 border-neutral-40 rounded-s-full rounded-end-0 py-3 px-5 text-gray-500">
+                                {cabDetails?.time}
+                              </div>
+                              <span className="input-group-text bg-[var(--bg-2)] border border-l-0 border-neutral-40 rounded-e-full py-[14px] text-gray-500 pe-4 ps-0">
+                                <i className="las text-2xl la-map-marker-alt"></i>
+                              </span>
+                            </div>
+                          </div>
+
 
                           <div className="col-span-1">
                             <div className="w-full flex">
@@ -733,10 +849,34 @@ export default function Page({
                         </div>
 
                         <div className="hr-dashed my-4"></div>
-                        <div className="flex items-center justify-between mb-[10px]">
-                          <p className="mb-0 clr-neutral-500"> Total Price </p>
-                          <p className="mb-0 font-medium"> ₹{selectedPrice || 0} </p>
+                        <div className="p-4 bg-white rounded-xl shadow-md">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="clr-neutral-500">Total Price</p>
+                            <p className="font-medium">₹{discountedPrice !== null ? discountedPrice : selectedPrice}</p>
+                          </div>
+
+                          {/* Display the coupon message with red color */}
+                          {couponMessage && (
+                            <p className="text-red-500 mt-2">{couponMessage}</p>
+                          )}
+
+                          <div className="flex items-center gap-2 mt-4">
+                            <input
+                              type="text"
+                              placeholder="Enter Coupon Code"
+                              value={couponCode}
+                              onChange={(e) => setCouponCode(e.target.value)}
+                              className="border border-gray-300 rounded-lg p-2 w-full"
+                            />
+                            <button
+                              onClick={applyCoupon}
+                              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                            >
+                              Apply
+                            </button>
+                          </div>
                         </div>
+
                       </Tab.Panel>
                       <Tab.Panel>
                         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
