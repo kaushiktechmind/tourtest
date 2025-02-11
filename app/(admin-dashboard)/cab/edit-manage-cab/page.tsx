@@ -130,6 +130,7 @@ const EditManageCab = () => {
       router.push(`/cab/manage-cab?cabId=${cabId}`); 
     } catch (error) {
       console.error("Error occurred during cab data update:", error);
+      alert(`Failed to Save`);
     }
   };
 

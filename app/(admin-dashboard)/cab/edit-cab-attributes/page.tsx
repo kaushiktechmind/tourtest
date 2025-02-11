@@ -111,7 +111,7 @@ const EditCabAttriubute = () => {
       }
 
       const result = await response.json();
-      alert("Amenity updated successfully!");
+      alert("Attribute Updated Successfully!");
       router.push("/cab/cab-attribute");
     } catch (error) {
       console.error("Error submitting form:", error);

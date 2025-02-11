@@ -13,72 +13,71 @@ import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
 
-const EditCabDropPoint = () => {
-  const [droppointTitle, setdroppointTitle] = useState("");
+const EditCabPickupPoint = () => {
+  const [pickuppointTitle, setpickuppointTitle] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [submitError, setSubmitError] = useState(null);
 
   const router = useRouter();
   const searchParams = useSearchParams();
-  const droppointId = searchParams.get("droppointId");
+  const pickupId = searchParams.get("pickupId");
 
-  // Fetch droppoint by ID on component mount or when droppointId changes
+  // Fetch pickuppoint by ID on component mount or when pickupId changes
   useEffect(() => {
-    if (droppointId) {
-      fetchDropPointById(droppointId);
+    if (pickupId) {
+      fetchPickupPointById(pickupId);
     }
-  }, [droppointId]);
+  }, [pickupId]);
 
-  const fetchDropPointById = async (id: string | null) => {
+  const fetchPickupPointById = async (id: string | null) => {
     setLoading(true);
     setError(null);
 
-    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/get_cab_drop_point_name_by_id/${id}`);
-    if (!response.ok) throw new Error("Failed to fetch droppoint");
+    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/get_cab_pickup_point_name_by_id/${pickupId}`);
+    if (!response.ok) throw new Error("Failed to fetch pickuppoint");
 
     const data = await response.json();
-    setdroppointTitle(data.cab_drop_point_name); // Set droppoint name for editing
-    // router.push('/droppoint/all-droppoint');
+    setpickuppointTitle(data.cab_pickup_point_name); // Set pickuppoint name for editing
+    // router.push('/pickuppoint/all-pickuppoint');
 
     setLoading(false);
   };
 
-
-  const handleUpdateDropPoint = async (e: { preventDefault: () => void }) => {
+  const handleUpdatePickupPoint = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmitError(null);
   
     const token = localStorage.getItem("access_token");
   
     if (!token) {
-      alert("Failed to update drop point.");
+      alert("Failed to update pickup point.");
       return;
     }
   
     try {
       const response = await fetch(
-        `https://yrpitsolutions.com/tourism_api/api/admin/update_cab_drop_point_name_by_id/${droppointId}`,
+        `https://yrpitsolutions.com/tourism_api/api/admin/update_cab_pickup_point_name_by_id/${pickupId}`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ cab_drop_point_name: droppointTitle }),
+          body: JSON.stringify({ cab_pickup_point_name: pickuppointTitle }),
         }
       );
   
       if (response.ok) {
-        setdroppointTitle("");
-        alert("Drop Point updated successfully!");
-        router.push("/cab/drop-point");
-        await fetchDropPointById(droppointId); // Refresh drop point data
+        setpickuppointTitle("");
+        alert("Pickup point updated successfully!");
+        router.push("/cab/pickup-point");
+        await fetchPickupPointById(pickupId); // Refresh pickup point data
       } else {
-        alert("Failed to update drop point.");
+        alert("Failed to update pickup point.");
       }
     } catch (error) {
-      alert("Failed to update drop point.");
+      alert("Failed to update pickup point.");
     }
   };
   
@@ -88,33 +87,33 @@ const EditCabDropPoint = () => {
     
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
-        <h2 className="h2 text-white">Edit Cab DropPoint</h2>
-        <Link href="/cab/drop-point" className="btn-primary">
-          <PencilSquareIcon className="w-5 h-5" /> All Drop Point
+        <h2 className="h2 text-white">Edit Pickup Point</h2>
+        <Link href="/cab/pickup-point" className="btn-primary">
+          <PencilSquareIcon className="w-5 h-5" /> All Pickup Point
         </Link>
       </div>
 
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
       <div className="col-span-12 flex justify-center">
           <div className="p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-            <h3 className="border-b h3 pb-6">Edit Drop Point</h3>
-            <form onSubmit={handleUpdateDropPoint}>
+            <h3 className="border-b h3 pb-6">Edit Pickup Point</h3>
+            <form onSubmit={handleUpdatePickupPoint}>
               <label
                 htmlFor="name"
                 className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium">
-                Drop Point:
+                Pickup Point:
               </label>
               <input
                 type="text"
                 id="name"
                 placeholder=""
-                value={droppointTitle}
-                onChange={(e) => setdroppointTitle(e.target.value)}
+                value={pickuppointTitle}
+                onChange={(e) => setpickuppointTitle(e.target.value)}
                 className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border focus:border-primary outline-1"
               />
               {submitError && <p className="text-red-500 mt-2">{submitError}</p>}
               <button type="submit" className="btn-primary mt-5 lg:mt-7">
-                Update Drop Point
+                Update Pickup Point
               </button>
             </form>
           </div>
@@ -128,7 +127,7 @@ const EditCabDropPoint = () => {
 
 const Page = () => (
   <Suspense fallback={<div>Loading...</div>}>
-    <EditCabDropPoint />
+    <EditCabPickupPoint />
   </Suspense>
 );
 

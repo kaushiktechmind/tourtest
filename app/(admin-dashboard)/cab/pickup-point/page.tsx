@@ -69,31 +69,42 @@ const Page = () => {
     setCurrentPage(page);
   };
 
-  const handleAddPickup = async (e: { preventDefault: () => void; }) => {
+  const handleAddPickup = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmitError(null);
-
+  
     const token = localStorage.getItem("access_token");
-
-    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_pickup_point_name", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_pickup_point_name: pickupTitle }),
-    });
-
-    if (!response.ok) {
-      // You can throw the error here if you don't want to handle it with a try-catch
-      throw new Error("Failed to save pickup");
+  
+    if (!token) {
+      alert("Failed to add pickup.");
+      return;
     }
-
-    setPickupName("");
-    await fetchPickups();
-    alert("Pickup Added Successfully");
+  
+    try {
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/admin/save_cab_pickup_point_name",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cab_pickup_point_name: pickupTitle }),
+        }
+      );
+  
+      if (response.ok) {
+        setPickupName("");
+        await fetchPickups();
+        alert("Pickup added successfully!");
+      } else {
+        alert("Failed to add pickup.");
+      }
+    } catch (error) {
+      alert("Failed to add pickup.");
+    }
   };
-
+  
 
   const handleDeletePickup = async () => {
     if (!itemToDelete) return;
@@ -188,6 +199,10 @@ const Page = () => {
                     <tr>
                       <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
+                  ) : currentItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="text-center py-3 text-gray-500">No Drop Point Available</td>
+                    </tr>
                   ) : (
                     currentItems.map((pickup) => (
                       <tr key={pickup.id} className="border-b hover:bg-[var(--bg-1)]">
@@ -211,6 +226,7 @@ const Page = () => {
                   )}
                 </tbody>
               </table>
+
               <Pagination
                 totalItems={filteredPickups.length}
                 itemsPerPage={itemsPerPage}

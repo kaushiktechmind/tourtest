@@ -40,9 +40,16 @@ const Page = () => {
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/admin/get_policy"
         );
-        const data: Policy[] = await response.json();
-        setPolicy(data);
-        setFilteredPolicies(data); // Initialize filtered policies with all policies
+        const data = await response.json();
+        console.log("Fetched data:", data);  // Add this to check the API response
+        if (Array.isArray(data)) {
+          setPolicy(data);
+          setFilteredPolicies(data);
+        } else {
+          console.error("Unexpected data format:", data);
+          setPolicy([]);
+          setFilteredPolicies([]);
+        }
       } catch (error) {
         console.error("Error fetching Policy:", error);
       }
@@ -51,7 +58,7 @@ const Page = () => {
     fetchPolicy();
   }, []);
 
-  // Handle search query change
+
   useEffect(() => {
     if (searchQuery) {
       const filtered = policy.filter((p) =>
@@ -59,17 +66,18 @@ const Page = () => {
       );
       setFilteredPolicies(filtered);
     } else {
-      setFilteredPolicies(policy); // Reset to all policies when search query is empty
+      setFilteredPolicies(policy);
     }
-    setCurrentPage(1); // Reset to the first page
+    setCurrentPage(1);
   }, [searchQuery, policy]);
+
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPolicies = filteredPolicies.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
+  const currentPolicies = Array.isArray(filteredPolicies)
+    ? filteredPolicies.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
+
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
@@ -78,6 +86,12 @@ const Page = () => {
   const handleAddPolicy = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const accessToken = localStorage.getItem("access_token");
+
+    if (!accessToken) {
+      alert("Failed to add policy.");
+      return;
+    }
+
     try {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
@@ -99,24 +113,28 @@ const Page = () => {
         }
       );
 
-      const result = await response.json();
-
-      if (result.data) {
-        const newPolicy: Policy = {
-          id: result.data.id,
-          policy_title: result.data.policy_title,
-          created_at: result.data.created_at,
-        };
-        setPolicy((prevPolicy) => [newPolicy, ...prevPolicy]);
-        setFilteredPolicies((prevPolicies) => [newPolicy, ...prevPolicies]);
-        setPolicyTitle("");
-        setDescription("");
+      if (response.ok) {
+        const result = await response.json();
+        if (result.data) {
+          const newPolicy: Policy = {
+            id: result.data.id,
+            policy_title: result.data.policy_title,
+            created_at: result.data.created_at,
+          };
+          setPolicy((prevPolicy) => [newPolicy, ...prevPolicy]);
+          setFilteredPolicies((prevPolicies) => [newPolicy, ...prevPolicies]);
+          setPolicyTitle("");
+          setDescription("");
+        }
+        alert("Policy added successfully.");
+      } else {
+        alert("Failed to add policy.");
       }
-      alert("Policy Added Successfully");
     } catch (error) {
-      console.error("Error adding Policy:", error);
+      alert("Failed to add policy.");
     }
   };
+
 
   const openModal = (id: number) => {
     setPolicyToDelete(id);
@@ -133,7 +151,7 @@ const Page = () => {
     if (policyToDelete === null) return;
     console.log("Deleting policy with id:", policyToDelete);  // Ensure it's correct here
     const accessToken = localStorage.getItem("access_token");
-  
+
     try {
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/delete_policy_by_id/${policyToDelete}`,
@@ -144,7 +162,7 @@ const Page = () => {
           },
         }
       );
-  
+
       if (response.ok) {
         alert("Policy deleted successfully.");
         setPolicy((prevPolicy) =>
@@ -162,7 +180,7 @@ const Page = () => {
       closeModal();
     }
   };
-  
+
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -219,32 +237,40 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentPolicies.map(({ id, policy_title, created_at }) => (
-                  <tr
-                    key={id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {new Date(created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
-                      {policy_title}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                      <Link
-                        href={`/hotel/edit-hotel-policy?policyId=${id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </Link>
-                      <button onClick={() => openModal(id)} className="text-[var(--secondary-500)]">
-
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
+                {currentPolicies.length > 0 ? (
+                  currentPolicies.map(({ id, policy_title, created_at }) => (
+                    <tr
+                      key={id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {new Date(created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
+                        {policy_title}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
+                        <Link
+                          href={`/hotel/edit-hotel-policy?policyId=${id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </Link>
+                        <button onClick={() => openModal(id)} className="text-[var(--secondary-500)]">
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-3 lg:py-4 px-2 text-center text-gray-500">
+                      No policy available.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
             </table>
           </div>
           <Transition appear show={isOpen} as={Fragment}>

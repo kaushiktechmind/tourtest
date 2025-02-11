@@ -217,7 +217,7 @@ const ManageRoom = () => {
 
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
+    e.preventDefault();
 
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();

@@ -141,7 +141,7 @@ const EditManageRoom = () => {
               max_childs: roomData.max_childs,
               max_infants: roomData.max_infants,
               amenities: roomAmenityIds, // Store only IDs in form data
-              featured_images: roomData.featured_images || [], 
+              featured_images: roomData.featured_images || [],
               status: "1",
             }));
 
@@ -187,14 +187,14 @@ const EditManageRoom = () => {
   }, [selectedAmenities]);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    // e.preventDefault();
-  
+    e.preventDefault();
+
     const token = localStorage.getItem("access_token");
     const formDataToSend = new FormData();
-  
+
     // Ensure amenities are sorted before appending
     const sortedAmenities = [...selectedAmenities].sort((a, b) => a - b); // Sort numerically in ascending order
-  
+
     for (const key in formData) {
       if (key === "featured_images") {
         formData.featured_images.forEach((file) => {
@@ -209,10 +209,10 @@ const EditManageRoom = () => {
         formDataToSend.append(key, formData[key as keyof HotelFormData] as string);
       }
     }
-  
+
     // Append _method PUT
     formDataToSend.append("_method", "PUT");
-  
+
     try {
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/hotel_rooms/${roomId}`,
@@ -224,20 +224,20 @@ const EditManageRoom = () => {
           body: formDataToSend,
         }
       );
-  
+
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add room: ${errorMessage}`);
       }
-  
+
       const data = await response.json();
       alert("Room added successfully");
-     router.push(`./manage-room?hotelId=${hotelId}&roomId=${roomId}`);
+      router.push(`./manage-room?hotelId=${hotelId}&roomId=${roomId}`);
     } catch (error) {
       console.error("Error occurred during room addition:", error);
     }
   };
-  
+
 
 
   <div className="mt-[20px]">
@@ -340,7 +340,7 @@ const EditManageRoom = () => {
               onChange={handleInputChange}
             />
 
-         <label
+            <label
               htmlFor="icon-upload"
               className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium"
             >

@@ -43,9 +43,17 @@ const Page = () => {
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/admin/get_cab_faq"
         );
-        const data: Faq[] = await response.json();
-        setFaqs(data);
-        setFilteredFAQs(data); // Initialize filtered FAQs
+        const result = await response.json();
+
+        // Check if the data is wrapped in a 'data' key
+        const data = Array.isArray(result) ? result : result.data;
+
+        if (Array.isArray(data)) {
+          setFaqs(data);
+          setFilteredFAQs(data);
+        } else {
+          console.error("Unexpected API response format:", result);
+        }
       } catch (error) {
         console.error("Error fetching FAQs:", error);
       }
@@ -61,18 +69,17 @@ const Page = () => {
     setFilteredFAQs(filtered);
     setCurrentPage(1); // Reset to the first page when search query changes
   }, [searchQuery, faqs]);
-
   const handleAddFAQ = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     const accessToken = localStorage.getItem("access_token");
-
+  
     try {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
         tempElement.textContent || tempElement.innerText || "";
-
+  
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/save_cab_faq",
         {
@@ -87,10 +94,10 @@ const Page = () => {
           }),
         }
       );
-
+  
       const result = await response.json();
-
-      if (result.data) {
+  
+      if (response.ok && result.data) {
         const newFaq: Faq = {
           id: result.data.id,
           cab_faq_title: result.data.cab_faq_title,
@@ -99,13 +106,15 @@ const Page = () => {
         setFaqs((prevFaqs) => [newFaq, ...prevFaqs]);
         setFaqTitle("");
         setDescription("");
-        alert("FAQ added Successfully");
+        alert("FAQ added successfully!");
+      } else {
+        alert("Failed to add FAQ.");
       }
     } catch (error) {
-      console.error("Error adding FAQ:", error);
+      alert("Failed to add FAQ.");
     }
   };
-
+  
   const handleDeleteFAQ = async (id: number) => {
     const accessToken = localStorage.getItem("access_token");
 
@@ -145,13 +154,13 @@ const Page = () => {
       </div>
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add FAQs</h3>
+          <h3 className="border-b h3 pb-6">Add FAQ</h3>
           <form onSubmit={handleAddFAQ}>
-            <p className="mt-6 mb-4 text-xl font-medium">Name :</p>
+            <p className="mt-6 mb-4 text-xl font-medium">Question :</p>
             <input
               type="text"
               className="w-full border p-2 focus:outline-none rounded-md text-base"
-              placeholder="FAQ"
+              placeholder=""
               value={faqTitle}
               onChange={(e) => setFaqTitle(e.target.value)}
               required
@@ -188,37 +197,46 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentFAQs.map(({ id, cab_faq_title, created_at }) => (
-                  <tr
-                    key={id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {new Date(created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
-                      {cab_faq_title}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                      <Link
-                        href={`/cab/edit-cab-faq?faqId=${id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setFaqToDelete(id);
-                          setIsDialogOpen(true);  // Open the confirmation dialog
-                        }}
-                        className="text-[var(--secondary-500)]"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
+                {currentFAQs.length > 0 ? (
+                  currentFAQs.map(({ id, cab_faq_title, created_at }) => (
+                    <tr
+                      key={id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {new Date(created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
+                        {cab_faq_title}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
+                        <Link
+                          href={`/cab/edit-cab-faq?faqId=${id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setFaqToDelete(id);
+                            setIsDialogOpen(true);  // Open the confirmation dialog
+                          }}
+                          className="text-[var(--secondary-500)]"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-6 text-center text-gray-500">
+                      No FAQs available
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
             </table>
             <Pagination
               totalItems={filteredFAQs.length}

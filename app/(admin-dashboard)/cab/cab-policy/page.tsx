@@ -31,7 +31,10 @@ const Page = () => {
   const itemsPerPage = 6;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentPOLICYs = filteredPOLICYs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentPOLICYs = Array.isArray(filteredPOLICYs)
+    ? filteredPOLICYs.slice(indexOfFirstItem, indexOfLastItem)
+    : [];
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [policyToDelete, setPolicyToDelete] = useState<number | null>(null);
 
@@ -43,9 +46,19 @@ const Page = () => {
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/get_all_cab_policy"
         );
-        const data: Policy[] = await response.json();
-        setPolicys(data);
-        setFilteredPOLICYs(data); // Initialize filtered POLICYs
+        const data = await response.json();
+        console.log("API Response:", data);  // Add this to see the structure
+
+        // If data is nested inside an object (e.g., { data: [...] })
+        if (Array.isArray(data)) {
+          setPolicys(data);
+          setFilteredPOLICYs(data);
+        } else if (Array.isArray(data.data)) {  // Check if policies are inside 'data' key
+          setPolicys(data.data);
+          setFilteredPOLICYs(data.data);
+        } else {
+          console.error("Unexpected API response format:", data);
+        }
       } catch (error) {
         console.error("Error fetching POLICYs:", error);
       }
@@ -83,12 +96,17 @@ const Page = () => {
           },
           body: JSON.stringify({
             cab_policy_title: policyTitle,
-            cab_policy_decription: plainTextDescription,
+            cab_policy_description: plainTextDescription,
           }),
         }
       );
 
       const result = await response.json();
+
+      if (!response.ok) {
+        alert(`Error: ${result.message || "Failed to add policy"}`);
+        return;
+      }
 
       if (result.data) {
         const newPolicy: Policy = {
@@ -99,12 +117,14 @@ const Page = () => {
         setPolicys((prevPolicys) => [newPolicy, ...prevPolicys]);
         setPolicyTitle("");
         setDescription("");
-        alert("POLICY added Successfully");
+        alert("Policy Added Successfully");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error adding POLICY:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
     }
   };
+
 
   const handleDeletePOLICY = async (id: number) => {
     const accessToken = localStorage.getItem("access_token");
@@ -122,7 +142,7 @@ const Page = () => {
 
       if (response.ok) {
         setPolicys((prevPolicys) => prevPolicys.filter((policy) => policy.id !== id));
-        alert("POLICY deleted successfully.");
+        alert("Policy Deleted Successfully.");
       } else {
         console.error("Failed to delete POLICY:", await response.json());
       }
@@ -145,7 +165,7 @@ const Page = () => {
       </div>
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add Policies</h3>
+          <h3 className="border-b h3 pb-6">Add Policy</h3>
           <form onSubmit={handleAddPOLICY}>
             <p className="mt-6 mb-4 text-xl font-medium">Name :</p>
             <input
@@ -179,47 +199,52 @@ const Page = () => {
             </div>
           </div>
           <div className="overflow-x-auto">
-            <table className="w-full whitespace-nowrap">
-              <thead>
-                <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
-                  <th className="py-3 lg:py-4 px-2">Date</th>
-                  <th className="py-3 lg:py-4 px-2">Name</th>
-                  <th className="py-3 lg:py-4 px-2">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentPOLICYs.map(({ id, cab_policy_title, created_at }) => (
-                  <tr
-                    key={id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {new Date(created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
-                      {cab_policy_title}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                      <Link
-                        href={`/cab/edit-cab-policy?policyId=${id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setPolicyToDelete(id);
-                          setIsDialogOpen(true);  // Open the confirmation dialog
-                        }}
-                        className="text-[var(--secondary-500)]"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </td>
+            {currentPOLICYs.length > 0 ? (
+              <table className="w-full whitespace-nowrap">
+                <thead>
+                  <tr className="text-left bg-[var(--bg-1)] border-b border-dashed">
+                    <th className="py-3 lg:py-4 px-2">Date</th>
+                    <th className="py-3 lg:py-4 px-2">Name</th>
+                    <th className="py-3 lg:py-4 px-2">Action</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {currentPOLICYs.map(({ id, cab_policy_title, created_at }) => (
+                    <tr
+                      key={id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {new Date(created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
+                        {cab_policy_title}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
+                        <Link
+                          href={`/cab/edit-cab-policy?policyId=${id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setPolicyToDelete(id);
+                            setIsDialogOpen(true);  // Open the confirmation dialog
+                          }}
+                          className="text-[var(--secondary-500)]"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-center py-4 text-gray-500">No Policy Available</div>
+            )}
+
             <Pagination
               totalItems={filteredPOLICYs.length}
               itemsPerPage={itemsPerPage}

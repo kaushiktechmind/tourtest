@@ -325,7 +325,8 @@ const AddNewHotel = () => {
       }, 100);
 
 
-    } catch (error) {
+    }
+    catch (error) {
       setLoading(false);
       if (axios.isAxiosError(error)) {
         setTimeout(() => {
@@ -900,7 +901,8 @@ const AddNewHotel = () => {
                 {amenities.length === 0 ? (
                   <p>No amenities available</p>
                 ) : (
-                  <ul className="columns-1 sm:columns-2 md:columns-3 lg:columns-4">
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+
                     {amenities.map((item) => (
                       <li key={item.id} className="py-2 flex items-center">
                         <CheckboxCustom
@@ -1028,6 +1030,17 @@ const AddNewHotel = () => {
 
         </div>
       </div>
+
+      <button onClick={handleSubmit} className="btn-primary font-semibold ml-6 mb-6" disabled={loading}>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="w-6 h-6 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+            <span className="ml-2">Adding...</span>
+          </div>
+        ) : (
+          "Add Hotel"
+        )}
+      </button>
 
       <Footer />
     </div>

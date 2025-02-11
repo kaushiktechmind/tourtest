@@ -51,15 +51,13 @@ const Page = () => {
   };
 
 
-  // Fetch data from API
   useEffect(() => {
     const fetchAttributes = async () => {
       try {
-        const response = await fetch(
-          "https://yrpitsolutions.com/tourism_api/api/admin/get_cab_attribute"
-        );
+        const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_attribute");
         const data = await response.json();
-        setAttributes(data.data);
+        console.log(data);  // Add this to verify the structure
+        setAttributes(data.data || []);  // Ensure default empty array if data is undefined
         setLoading(false);
       } catch (error) {
         console.error("Error fetching attributes:", error);
@@ -85,7 +83,9 @@ const Page = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredAttributes.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = loading ? [] : filteredAttributes.slice(indexOfFirstItem, indexOfLastItem);
+
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -236,7 +236,7 @@ const Page = () => {
                   className="rounded-lg border"
                 />
               </div>
-            )}  
+            )}
             <div className="pt-6">
               <div className="flex items-center justify-center border-dashed rounded-2xl w-full">
                 <label
@@ -265,7 +265,7 @@ const Page = () => {
               </div>
             </div>
 
-          
+
             <div className="mt-[20px]">
               <button type="submit" className="btn-primary font-semibold">
                 <span className="inline-block"> Add New </span>
@@ -306,6 +306,12 @@ const Page = () => {
                       Loading...
                     </td>
                   </tr>
+                ) : currentItems.length === 0 ? (  // Check if there are no attributes
+                  <tr>
+                    <td colSpan={4} className="text-center py-4">
+                      No attributes available.
+                    </td>
+                  </tr>
                 ) : (
                   currentItems.map((attribute, index) => (
                     <tr key={attribute.id} className="border-b border-dashed">
@@ -326,11 +332,10 @@ const Page = () => {
                         </Link>
                         <button
                           className="text-[var(--secondary-500)]"
-                          onClick={() => openDialog(attribute.id)} // Open dialog with attribute id
+                          onClick={() => openDialog(attribute.id)}
                         >
                           <TrashIcon className="w-5 h-5" />
                         </button>
-
                       </td>
                     </tr>
                   ))
@@ -338,6 +343,7 @@ const Page = () => {
               </tbody>
             </table>
           </div>
+
           <Pagination
             totalItems={filteredAttributes.length}
             itemsPerPage={itemsPerPage}

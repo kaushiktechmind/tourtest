@@ -13,8 +13,6 @@ interface Coupon {
     coupon_code: string;
     type: string;
     discount_price: string;
-    start_date: string;
-    end_date: string;
     status: string;
 }
 
@@ -24,8 +22,6 @@ interface CouponData {
     coupon_code: string;
     type: string;
     discount_price: string;
-    start_date: string;
-    end_date: string;
     status: string;
 }
 
@@ -40,8 +36,6 @@ const EditCoupon = () => {
         coupon_code: "",
         type: "",
         discount_price: "",
-        start_date: "",
-        end_date: "",
         status: "1",
     });
 
@@ -73,8 +67,6 @@ const EditCoupon = () => {
                 coupon_code: data.coupon_code,
                 type: data.type,
                 discount_price: data.discount_price,
-                start_date: data.start_date,
-                end_date: data.end_date,
                 status: data.status,
             });
         } catch (error) {
@@ -207,8 +199,8 @@ const EditCoupon = () => {
                                     value={formData.status}
                                     onChange={handleInputChange}
                                 >
-                                    <option value="1">1</option>
-                                    <option value="0">0</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
                                 </select>
                             </div>
                         </div>
@@ -222,47 +214,7 @@ const EditCoupon = () => {
                             onChange={handleInputChange}
                         />
 
-                        <div className="flex gap-6 mt-6 mb-4">
-                            <div className="flex-1">
-                                <p className="mb-2 text-xl font-medium">Start Date :</p>
-                                <DatePicker
-                                    selected={
-                                        formData.start_date
-                                            ? new Date(formData.start_date)
-                                            : null
-                                    }
-                                    onChange={(date: Date) =>
-                                        setFormData((prevData) => ({
-                                            ...prevData,
-                                            start_date: date.toISOString().split("T")[0], // Format date as YYYY-MM-DD
-                                        }))
-                                    }
-                                    dateFormat="yyyy-MM-dd"
-                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                    placeholderText="Select Start Date"
-                                />
-                            </div>
-
-                            <div className="flex-1">
-                                <p className="mb-2 text-xl font-medium">End Date :</p>
-                                <DatePicker
-                                    selected={
-                                        formData.end_date
-                                            ? new Date(formData.end_date)
-                                            : null
-                                    }
-                                    onChange={(date: Date) =>
-                                        setFormData((prevData) => ({
-                                            ...prevData,
-                                            end_date: date.toISOString().split("T")[0], // Format date as YYYY-MM-DD
-                                        }))
-                                    }
-                                    dateFormat="yyyy-MM-dd"
-                                    className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                                    placeholderText="Select End Date"
-                                />
-                            </div>
-                        </div>
+                       
 
                         <div className="mt-[20px]">
                             <button

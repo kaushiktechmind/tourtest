@@ -114,8 +114,17 @@ export default function Page({
   };
 
   const [totalSelected, setTotalSelected] = useState(0);
-  const [totalCost, setTotalCost] = useState(0);
-  const [totalChildPrice, setTotalChildPrice] = useState(0);
+
+  const [couponCode, setCouponCode] = useState('');
+  const [coupons, setCoupons] = useState([]);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+
+
+
+  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
+
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -389,6 +398,61 @@ export default function Page({
     color: "#fff",
     borderRadius: "10px",
   };
+
+
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_all_coupon');
+        const data = await response.json();
+        setCoupons(data);
+      } catch (err) {
+        console.error('Error fetching coupons:', err);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  const applyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if grandTotal is greater than 0
+    if (grandTotal <= 0) {
+      setCouponMessage("Cannot Apply Coupon.");
+      setDiscountedPrice(0);
+      setDiscountAmount(0);
+      return;
+    }
+
+    const validCoupon = coupons.find(
+      (coupon: any) =>
+        coupon.status === '1' &&
+        coupon.model_name === 'Hotel' &&
+        coupon.coupon_code === couponCode
+      
+    );
+
+    if (!validCoupon) {
+      setCouponMessage("Coupon Not Applicable");
+      setDiscountedPrice(null);
+      setDiscountAmount(0);
+      return;
+    }
+
+    let discount = 0;
+    if (validCoupon.type === '%') {
+      discount = (parseFloat(validCoupon.discount_price) / 100) * grandTotal;
+    } else {
+      discount = parseFloat(validCoupon.discount_price);
+    }
+
+    const finalPrice = grandTotal - discount;
+    setDiscountAmount(discount);
+    setDiscountedPrice(finalPrice > 0 ? finalPrice : 0); // Ensure price doesn't go below 0
+    setCouponMessage("Coupon Applied");
+  };
+
 
 
   const faqs = Array.from({ length: 30 }, (_, index) => {
@@ -1247,6 +1311,58 @@ export default function Page({
                             </p>
                           </div>
                           <p className="mb-0 font-medium">₹{grandTotal}</p>
+                        </div>
+
+
+
+                        <div className="p-4 bg-white rounded-xl shadow-md">
+                          {/* Original Price (Always Visible) */}
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="clr-neutral-500">Total Price</p>
+                            <p className={`font-medium ${(discountedPrice !== null && discountAmount > 0) ? 'line-through text-gray-500' : ''}`}>
+                              ₹{grandTotal}
+                            </p>
+
+                          </div>
+
+                          {/* Discount and Discounted Price (Visible Only When Coupon is Applied) */}
+                          {discountedPrice !== null && discountAmount > 0 && (
+                            <>
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="clr-neutral-500">Discount</p>
+                                <p className="font-medium text-green-500">- ₹{discountAmount}</p>
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="clr-neutral-500 font-semibold">Discounted Price</p>
+                                <p className="font-bold text-blue-500">₹{discountedPrice}</p>
+                              </div>
+                            </>
+                          )}
+
+                          {/* Coupon Message */}
+                          {couponMessage && (
+                            <p className={`mt-2 ${couponMessage === "Coupon Applied" ? "text-green-500" : "text-red-500"}`}>
+                              {couponMessage}
+                            </p>
+                          )}
+
+                          {/* Coupon Input and Apply Button */}
+                          <div className="flex items-center gap-2 mt-4">
+                            <input
+                              type="text"
+                              placeholder="Enter Coupon Code"
+                              value={couponCode}
+                              onChange={(e) => setCouponCode(e.target.value)}
+                              className="border border-gray-300 rounded-lg p-2 w-full"
+                            />
+                            <button
+                              onClick={applyCoupon}
+                              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                            >
+                              Apply
+                            </button>
+                          </div>
                         </div>
 
                         <div className="hr-dashed my-4"></div>

@@ -68,9 +68,7 @@ interface HotelFormData {
   parking: string;
   [key: string]: any;
   banner_images: File[]; // Ensure this is defined as an array of File
-  video_link: string;
   full_address: string;
-  i_frame_link: string;
   seo_title: string;
   seo_description: string,
   meta_title: string,
@@ -104,9 +102,7 @@ const EditHotel = () => {
     zipcode: "",
     parking: "",
     banner_images: [],
-    video_link: "",
     full_address: "",
-    i_frame_link: "",
     seo_title: "",
     seo_description: "",
     meta_title: "",
@@ -136,38 +132,8 @@ const EditHotel = () => {
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
   const [amenities, setAmenities] = useState<Amenity[]>([]);
 
-  const [educationFields, setEducationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [healthFields, setHealthFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
-  const [transportationFields, setTransportationFields] = useState<Field[]>([
-    { name: "", content: "", distance: "" },
-  ]);
 
-  // Handler to add new input row (max 5)
-  const handleAddRow = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    if (fields.length < 5) {
-      setFields([...fields, { name: "", content: "", distance: "" }]);
-    }
-  };
 
-  // Handler to update input fields
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    const { name, value } = e.target;
-    const updatedFields = [...fields];
-    updatedFields[index] = { ...updatedFields[index], [name]: value };
-    setFields(updatedFields);
-  };
 
 
 
@@ -296,6 +262,8 @@ const EditHotel = () => {
               });
             }
           }
+          setAmenities(amenitiesArray); // Ensure amenities state is set
+          setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
           console.log("Transformed Amenities:", amenitiesArray);
 
           const faqsArray = [];
@@ -351,15 +319,13 @@ const EditHotel = () => {
             zipcode: hotelData.data.zipcode,
             parking: hotelData.data.parking,
             banner_images: [], // Assuming the images come as an array
-            video_link: hotelData.data.video_link,
             full_address: hotelData.data.full_address,
-            i_frame_link: hotelData.data.i_frame_link,
             seo_title: hotelData.data.seo_title,
             seo_description: hotelData.data.seo_description,
             meta_title: hotelData.data.meta_title
           });
 
-          setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
+          // setSelectedAmenities(amenitiesArray.map((item) => item.amenity_name));
           setBannerImageUrls(hotelData.data.banner_images); // Storing URLs for display
         }
       } catch (error) {
@@ -412,30 +378,15 @@ const EditHotel = () => {
     // formDataToSend.append("home_or_home_stay", homeOrHomeStay);
     formDataToSend.append("status", status);
 
-    // Append selected amenities
-    selectedAmenities.forEach((amenity, index) => {
-      formDataToSend.append(`amenity_name${index + 1}`, amenity);
-    });
-
-    // Append Education Fields
-    educationFields.forEach((field, index) => {
-      formDataToSend.append(`education_name${index + 1}`, field.name);
-      formDataToSend.append(`education_content${index + 1}`, field.content);
-      formDataToSend.append(`education_distance${index + 1}`, field.distance);
-    });
-
-    // Append Health Fields
-    healthFields.forEach((field, index) => {
-      formDataToSend.append(`health_name${index + 1}`, field.name);
-      formDataToSend.append(`health_content${index + 1}`, field.content);
-      formDataToSend.append(`health_distance${index + 1}`, field.distance);
-    });
-
-    // Append Transportation Fields
-    transportationFields.forEach((field, index) => {
-      formDataToSend.append(`transport_name${index + 1}`, field.name);
-      formDataToSend.append(`transport_content${index + 1}`, field.content);
-      formDataToSend.append(`transport_distance${index + 1}`, field.distance);
+    amenities
+    .filter((amenity) => selectedAmenities.includes(amenity.amenity_name)) // Only selected amenities
+    .forEach((amenity, index) => {
+      formDataToSend.append(`amenity_name${index + 1}`, amenity.amenity_name);
+      if (amenity.amenity_logo instanceof File) {
+        formDataToSend.append(`amenity_logo${index + 1}`, amenity.amenity_logo);
+      } else if (typeof amenity.amenity_logo === "string") {
+        formDataToSend.append(`amenity_logo${index + 1}`, amenity.amenity_logo);
+      }
     });
 
     // Append selected policies
@@ -479,7 +430,7 @@ const EditHotel = () => {
       setLoading(false);
       setTimeout(() => {
         alert("Hotel Details Updated!");
-        // router.push("/hotel/all-hotels");
+        router.push("/hotel/all-hotels");
       }, 100);
 
 
@@ -986,7 +937,7 @@ const EditHotel = () => {
             <Accordion
               buttonContent={(open) => (
                 <div className="rounded-2xl flex items-center justify-between">
-                  <h3 className="h3">Banner Images and Videos </h3>
+                  <h3 className="h3">Banner Images</h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
                       }`}
@@ -1031,27 +982,8 @@ const EditHotel = () => {
                     </div>
                   ))}
                 </div>
-                <p className="mt-6 mb-4 text-xl font-medium">Video Link :<span className="astrick">*</span></p>
-                <input
-                  type="text"
-                  name="video_link"
-                  value={formData.video_link}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="www.yt.com"
-                />
 
-                <p className="mt-6 mb-4 text-xl font-medium">
-                  Map Address (Script) :<span className="astrick">*</span>
-                </p>
-                <input
-                  type="text"
-                  name="i_frame_link"
-                  value={formData.i_frame_link}
-                  onChange={handleChange}
-                  className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                  placeholder="<iframe>..."
-                />
+               
                 <p className="mt-6 mb-4 text-xl font-medium">Full Address :<span className="astrick">*</span></p>
                 <input
                   type="text"
@@ -1087,36 +1019,37 @@ const EditHotel = () => {
             </Accordion>
           </div>
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
-            <Accordion
-              buttonContent={(open) => (
-                <div className="rounded-2xl flex justify-between items-center">
-                  <h3 className="h3">Attributes</h3>
-                  <ChevronDownIcon
-                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
-                  />
-                </div>
-              )}
-              initialOpen={true}
-            >
-              <div className="pt-6">
-                <p className="text-xl font-medium mb-4">Features:</p>
-                {amenities.length === 0 ? (
-                  <p className="text-gray-500">No amenities available</p>
-                ) : (
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {amenities.map((item) => (
-                      <li key={item.amenity_name} className="flex items-center">
-                        <CheckboxCustom
-                          label={item.amenity_name}
-                          onChange={() => handleCheckboxChange(item.amenity_name)}
-                          checked={selectedAmenities.includes(item.amenity_name)}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </Accordion>
+          <Accordion
+  buttonContent={(open) => (
+    <div className="rounded-2xl flex justify-between items-center">
+      <h3 className="h3">Attributes</h3>
+      <ChevronDownIcon
+        className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""}`}
+      />
+    </div>
+  )}
+  initialOpen={true}
+>
+  <div className="pt-6">
+    <p className="text-xl font-medium mb-4">Features:</p>
+    {amenities.length === 0 ? (
+      <p className="text-gray-500">No amenities available</p>
+    ) : (
+      <ul className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {amenities.map((amenity, index) => (
+          <li key={index} className="flex items-center">
+            <CheckboxCustom
+              label={amenity.amenity_name}
+              onChange={() => handleCheckboxChange(amenity.amenity_name)}
+              checked={selectedAmenities.includes(amenity.amenity_name)}
+            />
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</Accordion>
+
           </div>
 
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8 mt-4 lg:mt-6">
@@ -1204,7 +1137,7 @@ const EditHotel = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="URL Title"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">SEO Description :<span className="astrick">*</span></p>
+                <p className="mt-6 mb-4 text-xl font-medium">SEO Description :</p>
                 <input
                   type="text"
                   id="seo_description"
@@ -1214,7 +1147,7 @@ const EditHotel = () => {
                   className="w-full border p-2 focus:outline-none rounded-md text-base"
                   placeholder="SEO Description"
                 />
-                <p className="mt-6 mb-4 text-xl font-medium">Meta Title :<span className="astrick">*</span></p>
+                <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
                 <input
                   type="text"
                   id="meta_title"

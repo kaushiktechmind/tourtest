@@ -116,6 +116,8 @@ export default function Page({
 
   const [couponCode, setCouponCode] = useState('');
   const [coupons, setCoupons] = useState([]);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+
   const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
 
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
@@ -135,19 +137,28 @@ export default function Page({
 
   const applyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Check if selectedPrice is greater than 0
+    if (selectedPrice <= 0) {
+      setCouponMessage("Cannot Apply Coupon.");
+      setDiscountedPrice(0);
+      setDiscountAmount(0);
+      return;
+    }
+
     const validCoupon = coupons.find(
       (coupon: any) =>
         coupon.status === '1' &&
         coupon.model_name === 'Cab' &&
-        coupon.coupon_code.toUpperCase() === couponCode.toUpperCase()
+        coupon.coupon_code === couponCode
     );
 
     if (!validCoupon) {
-      setCouponMessage("Coupon Not Applicable")
+      setCouponMessage("Coupon Not Applicable");
+      setDiscountedPrice(null);
+      setDiscountAmount(0);
       return;
     }
-
-
 
     let discount = 0;
     if (validCoupon.type === '%') {
@@ -157,9 +168,11 @@ export default function Page({
     }
 
     const finalPrice = selectedPrice - discount;
+    setDiscountAmount(discount);
     setDiscountedPrice(finalPrice > 0 ? finalPrice : 0); // Ensure price doesn't go below 0
-    setCouponMessage("Coupon Applied")
+    setCouponMessage("Coupon Applied");
   };
+
 
 
   const handlePaxChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -379,8 +392,12 @@ export default function Page({
     // Store booking details in localStorage
     const storedCabDetails = {
       hotelName: cabDetails?.pickup_point,
+      dropPoint: cabDetails?.drop_point,
+      discountAmount,
+      discountedPrice,
       selectedDate: selectedDate.toISOString().split("T")[0], // Format the date as YYYY-MM-DD
-      totalPrice: discountedPrice !== null ? discountedPrice : selectedPrice,
+      // totalPrice: discountedPrice !== null ? discountedPrice : selectedPrice,
+      totalPrice: selectedPrice,
       selectedPax,
       cargo: cargo,
     };
@@ -850,16 +867,38 @@ export default function Page({
 
                         <div className="hr-dashed my-4"></div>
                         <div className="p-4 bg-white rounded-xl shadow-md">
+                          {/* Original Price (Always Visible) */}
                           <div className="flex items-center justify-between mb-2">
                             <p className="clr-neutral-500">Total Price</p>
-                            <p className="font-medium">₹{discountedPrice !== null ? discountedPrice : selectedPrice}</p>
+                            <p className={`font-medium ${(discountedPrice !== null && discountAmount > 0) ? 'line-through text-gray-500' : ''}`}>
+                              ₹{selectedPrice}
+                            </p>
+
                           </div>
 
-                          {/* Display the coupon message with red color */}
-                          {couponMessage && (
-                            <p className="text-red-500 mt-2">{couponMessage}</p>
+                          {/* Discount and Discounted Price (Visible Only When Coupon is Applied) */}
+                          {discountedPrice !== null && discountAmount > 0 && (
+                            <>
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="clr-neutral-500">Discount</p>
+                                <p className="font-medium text-green-500">- ₹{discountAmount}</p>
+                              </div>
+
+                              <div className="flex items-center justify-between mb-2">
+                                <p className="clr-neutral-500 font-semibold">Discounted Price</p>
+                                <p className="font-bold text-blue-500">₹{discountedPrice}</p>
+                              </div>
+                            </>
                           )}
 
+                          {/* Coupon Message */}
+                          {couponMessage && (
+                            <p className={`mt-2 ${couponMessage === "Coupon Applied" ? "text-green-500" : "text-red-500"}`}>
+                              {couponMessage}
+                            </p>
+                          )}
+
+                          {/* Coupon Input and Apply Button */}
                           <div className="flex items-center gap-2 mt-4">
                             <input
                               type="text"
@@ -876,6 +915,7 @@ export default function Page({
                             </button>
                           </div>
                         </div>
+
 
                       </Tab.Panel>
                       <Tab.Panel>

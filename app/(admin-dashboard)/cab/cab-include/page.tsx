@@ -20,7 +20,7 @@ interface Include {
 }
 
 const Page = () => {
-  const [includes, setIncludes] =  useState<Include[]>([]);
+  const [includes, setIncludes] = useState<Include[]>([]);
   const [includeTitle, setIncludeName] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredIncludes, setFilteredIncludes] = useState<Include[]>([]);
@@ -43,21 +43,21 @@ const Page = () => {
   const fetchIncludes = async () => {
     setLoading(true);
     setError(null);
-  
+
     const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/get_cab_inclusion");
-    
+
     if (!response.ok) {
       // Optionally handle a failed response (e.g., log the error)
       return;
     }
-  
+
     const data = await response.json();
     setIncludes(data);
     setFilteredIncludes(data); // Initialize filteredIncludes
-    
+
     setLoading(false);
   };
-  
+
   const handleSearch = () => {
     const lowercasedSearch = searchTerm.toLowerCase();
     const filtered = includes.filter((include) =>
@@ -73,34 +73,42 @@ const Page = () => {
   const handleAddInclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
-  
+
     const token = localStorage.getItem("access_token");
-  
-    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_inclusion", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_inclusion_title: includeTitle }),
-    });
-  
-    if (!response.ok) {
-      // Optionally handle a failed response, like returning early or logging
-      return;
+
+    try {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_inclusion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cab_inclusion_title: includeTitle }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message || "Failed to add include"}`);
+        return;
+      }
+
+      setIncludeName("");
+      await fetchIncludes();
+      alert("Include Added Successfully");
+
+    } catch (error: any) {
+      console.error("Error:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
     }
-  
-    setIncludeName("");
-    await fetchIncludes();
-    alert("Include Added Successfully");
   };
-  
+
+
 
   const handleDeleteInclude = async () => {
     if (!itemToDelete) return;
-  
+
     const token = localStorage.getItem("access_token");
-  
+
     const response = await fetch(
       `https://yrpitsolutions.com/tourism_api/api/admin/delete_cab_inclusion_by_id/${itemToDelete}`,
       {
@@ -110,19 +118,19 @@ const Page = () => {
         },
       }
     );
-  
+
     if (!response.ok) {
       // Optionally log the failed request (no setError)
       return;
     }
-  
+
     await fetchIncludes();
     alert("Deleted Successfully");
-  
+
     setIsDialogOpen(false); // Close dialog
     setItemToDelete(null); // Reset ID
   };
-  
+
 
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
@@ -141,12 +149,12 @@ const Page = () => {
             <h3 className="border-b h3 pb-6">Add Include</h3>
             <form onSubmit={handleAddInclude}>
               <label htmlFor="name" className="py-4 inline-block text-base font-medium">
-                Include Name:
+                Include :
               </label>
               <input
                 type="text"
                 id="name"
-                placeholder="Include name"
+                placeholder="Include Name"
                 value={includeTitle}
                 onChange={(e) => setIncludeName(e.target.value)}
                 className="w-full border py-3 px-3 rounded-md focus:outline-none"
@@ -182,7 +190,7 @@ const Page = () => {
                 <tbody>
                   {loading ? (
                     <tr>
-                      <td colSpan={2} className="text-center py-3">Loading...</td>
+                      <td colSpan={2} className="text-center py-3">No Inclusion Available</td>
                     </tr>
                   ) : error ? (
                     <tr>

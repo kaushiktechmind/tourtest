@@ -372,8 +372,7 @@ const AddNewCab = () => {
 
     try {
 
-      // const inclusionArray = selectedInclusions.map((inc) => inc.cab_inclusion_title);
-      // Create a FormData object
+    
       const formDataToSend = new FormData();
 
       const plainDescription = description.replace(/<[^>]*>/g, ""); // This removes HTML tags
@@ -468,12 +467,13 @@ const AddNewCab = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Cab saved successfully!");
-        // router.push("/cab/all-cab");
+        router.push("/cab/all-cab");
       } else {
         alert("Failed to save cab.");
       }
     } catch (error) {
       console.error("Error saving cab:", error);
+      alert("Failed to Save, Check all Fields Correctly")
     }
   };
 
@@ -630,7 +630,7 @@ const AddNewCab = () => {
                     value={formData.time}
                     onChange={handleChange}
                     className="w-full border p-2 rounded-md text-base"
-                    placeholder="9,000"
+                    placeholder="5:00 pm"
                   />
                   <p className="mt-6 mb-4 text-xl font-medium">Pickup Point   :</p>
                   <select

@@ -43,28 +43,36 @@ const EditCabInclude = () => {
 
   const handleUpdateInclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
-    
-    const token = localStorage.getItem("access_token");
-    
-    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_inclusion_by_id/${includeId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_inclusion_title: includeTitle }),
-    });
-    
-    if (!response.ok) {
-      alert("Failed to update include");
-      return;
-    }
   
-    setincludeTitle("");
-    alert("Include updated successfully!");
-    router.push('/cab/cab-include');
-    await fetchIncludeById(includeId); // Refresh include data
+    const token = localStorage.getItem("access_token");
+  
+    try {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_inclusion_by_id/${includeId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cab_inclusion_title: includeTitle }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message || "Failed to update include"}`);
+        return;
+      }
+  
+      setincludeTitle("");
+      alert("Include updated successfully!");
+      router.push('/cab/cab-include');
+      await fetchIncludeById(includeId); // Refresh include data
+  
+    } catch (error: any) {
+      console.error("Error:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
+    }
   };
+  
   
   return (
     
@@ -84,12 +92,12 @@ const EditCabInclude = () => {
               <label
                 htmlFor="name"
                 className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium">
-                Include:
+                Include :
               </label>
               <input
                 type="text"
                 id="name"
-                placeholder="Include Title"
+                placeholder="Include"
                 value={includeTitle}
                 onChange={(e) => setincludeTitle(e.target.value)}
                 className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border focus:border-primary outline-1"

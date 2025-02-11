@@ -133,7 +133,7 @@ const EditHotelAttribute = () => {
 
       {/* Edit form */}
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative pb-10 xxl:pb-0">
-        <div className="col-span-12 flex justify-center">
+        <div className="col-span-12 flex justify-center mt-[-10px]">
           <div className="lg:w-6/12 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
             <h3 className="border-b h3 pb-6">Edit Attributes</h3>
             <form onSubmit={handleSubmit}>

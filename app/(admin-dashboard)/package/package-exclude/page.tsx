@@ -137,7 +137,7 @@ const Page = () => {
             <h3 className="border-b h3 pb-6">Add Exclude</h3>
             <form onSubmit={handleAddExclude}>
               <label htmlFor="name" className="py-4 inline-block text-base font-medium">
-                Exclude Name:
+                Exclude
               </label>
               <input
                 type="text"

@@ -13,7 +13,7 @@ import Pagination from "@/components/vendor-dashboard/Pagination";
 import { Dialog, Transition } from "@headlessui/react";
 import { SearchIcon } from "@/public/data/icons";
 
-const ITEMS_PER_PAGE = 10; // Customize the number of items per page
+const ITEMS_PER_PAGE = 20; // Customize the number of items per page
 
 const Page = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -161,10 +161,10 @@ const Page = () => {
                         </Link>
                       </td>
                       <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                        {cabItem.price}
+                      ₹{cabItem.price}
                       </td>
                       <td className="py-3 lg:py-4 px-2 max-w-[200px] overflow-hidden whitespace-normal break-words">
-                        {cabItem.sale_price}
+                      ₹{cabItem.sale_price}
                       </td>
                       <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
                         <a href={`/cab/edit-cab?cabId=${cabItem.id}`} className="text-primary">

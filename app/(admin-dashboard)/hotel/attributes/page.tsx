@@ -156,7 +156,7 @@ const Page = () => {
       }
     } catch (error) {
       console.error("Error saving amenity:", error);
-      alert("An error occurred while saving the attribute.");
+      alert("Failed to Save, Please Check All The Fields.");
     }
   };
 
@@ -309,6 +309,12 @@ const Page = () => {
                       Loading...
                     </td>
                   </tr>
+                ) : currentItems.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-4">
+                      No attributes available
+                    </td>
+                  </tr>
                 ) : (
                   currentItems.map((amenity, index) => (
                     <tr key={amenity.id} className="border-b border-dashed">
@@ -333,12 +339,12 @@ const Page = () => {
                         >
                           <TrashIcon className="w-5 h-5" />
                         </button>
-
                       </td>
                     </tr>
                   ))
                 )}
               </tbody>
+
             </table>
           </div>
           <Pagination

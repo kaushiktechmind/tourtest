@@ -47,7 +47,7 @@ const EditCabPOLICY = () => {
     const accessToken = localStorage.getItem("access_token"); // Get the bearer token from localStorage
 
     if (!accessToken) {
-      console.error("Access token is missing");
+      alert("Access token is missing");
       return;
     }
 
@@ -55,7 +55,8 @@ const EditCabPOLICY = () => {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
-      tempElement.textContent || tempElement.innerText || "";
+        tempElement.textContent || tempElement.innerText || "";
+
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_cab_policy_by_id/${policyId}`,
         {
@@ -74,16 +75,17 @@ const EditCabPOLICY = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("POLICY Updated Successfully:");
-        // Redirect or show success message here
+        alert("Policy Updated Successfully!");
         router.push("/cab/cab-policy");
       } else {
-        console.error("Error updating POLICY:", data.message);
+        alert(`Error: ${data.message || "Failed to update policy"}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error updating POLICY:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
     }
   };
+
 
   return (
 
@@ -97,7 +99,7 @@ const EditCabPOLICY = () => {
 
       {/* Form Section */}
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
-      <div className="col-span-12 flex justify-center">
+        <div className="col-span-12 flex justify-center">
           <div className="lg:w-6/12 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
             <h3 className="border-b h3 pb-6">Edit Policy Details</h3>
             <form onSubmit={handleUpdatePolicy}>

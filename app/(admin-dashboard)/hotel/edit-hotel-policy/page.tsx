@@ -40,30 +40,29 @@ const EditHotelPolicy = () => {
     fetchPolicyData();
   }, [policyId]);
 
-  // Function to handle Policy update
   const handleUpdatePolicy = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const accessToken = localStorage.getItem("access_token"); // Get the bearer token from localStorage
-
+  
+    const accessToken = localStorage.getItem("access_token");
+  
     if (!accessToken) {
-      console.error("Access token is missing");
+      alert("Failed to update policy");
       return;
     }
-
+  
     try {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
         tempElement.textContent || tempElement.innerText || "";
-
+  
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_policy_by_id/${policyId}`,
         {
-          method: "PUT", // Changed from POST to PUT
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`, // Pass the token in Authorization header
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             policy_title: policyTitle,
@@ -71,33 +70,32 @@ const EditHotelPolicy = () => {
           }),
         }
       );
-
-      const data = await response.json();
-
+  
       if (response.ok) {
-        alert("Policy Updated Successfully:");
-        // Redirect or show success message here
+        alert("Policy Updated Successfully");
         router.push("/hotel/hotel-policy");
       } else {
-        console.error("Error updating policy:", data.message);
+        alert("Failed to update policy.");
       }
     } catch (error) {
-      console.error("Error updating policy:", error);
+      alert("Failed to update policy.");
     }
   };
+  
 
   return (
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Policy</h2>
-        <Link href="/hotel/attributes" className="btn-primary">
+        <Link href="/hotel/hotel-policy" className="btn-primary">
           View All Policies
         </Link>
       </div>
 
       {/* Form Section */}
-      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative pb-10 xxl:pb-0">
-        <div className="col-span-12 flex justify-center">
+      <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative pb-10 xxl:pb-0 ">
+        <div className="col-span-12 flex justify-center -mt-3">
+        
           <div className="lg:w-6/12 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
             <h3 className="border-b h3 pb-6">Edit Policy Details</h3>
             <form onSubmit={handleUpdatePolicy}>

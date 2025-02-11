@@ -131,12 +131,12 @@ const Page = () => {
             <h3 className="border-b h3 pb-6">Add Include</h3>
             <form onSubmit={handleAddInclude}>
               <label htmlFor="name" className="py-4 inline-block text-base font-medium">
-                Include Name:
+                Include :
               </label>
               <input
                 type="text"
                 id="name"
-                placeholder="Include name"
+                placeholder="Include Name"
                 value={includeTitle}
                 onChange={(e) => setIncludeName(e.target.value)}
                 className="w-full border py-3 px-3 rounded-md focus:outline-none"

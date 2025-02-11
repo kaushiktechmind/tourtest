@@ -180,15 +180,23 @@ const CabReciept = () => {
 
                 <div className="grid grid-cols-12 gap-4 md:gap-3 mb-8">
 
-                  <div className="col-span-12 md:col-span-6 flex">
+                  <div className="col-span-12 md:col-span-4 flex">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
                       <div className="flex items-center justify-between gap-3 mb-1">
-                        <span className="clr-neutral-400 inline-block text-sm">Hotel Name</span>
+                        <span className="clr-neutral-400 inline-block text-sm">Pickup Point</span>
                       </div>
                       <p className="mb-0 text-lg font-medium">{hotelName}</p>
                     </div>
                   </div>
-                  <div className="col-span-12 md:col-span-6 flex">
+                  <div className="col-span-12 md:col-span-4 flex">
+                    <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
+                      <div className="flex items-center justify-between gap-3 mb-1">
+                        <span className="clr-neutral-400 inline-block text-sm">Drop Point</span>
+                      </div>
+                      <p className="mb-0 text-lg font-medium">{storedCabDetails?.dropPoint}</p>
+                    </div>
+                  </div>
+                  <div className="col-span-12 md:col-span-4 flex">
                     <div className="border border-neutral-40 rounded-2xl bg-[var(--bg-1)] py-4 px-8 w-full flex-1">
                       <div className="flex items-center justify-between gap-3 mb-1">
                         <span className="clr-neutral-400 inline-block text-sm">Total Pax</span>
@@ -329,16 +337,27 @@ const CabReciept = () => {
                   <p className="mb-0">Total Pax</p>
                   <p className="mb-0 font-medium text-right">{selectedPax}</p>
                 </li>
-
                 <li className="grid grid-cols-2 items-center">
-
+                  <p className="mb-0">Total Price</p>
+                  <p className="mb-3 font-medium text-right">₹{totalPrice}</p>
                 </li>
+
+                {storedCabDetails?.discountAmount > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-0">Discount</p>
+                    <p className="mb-0 font-medium text-right text-green-500">₹{storedCabDetails.discountAmount}</p>
+                  </li>
+                )}
+
+                {storedCabDetails?.discountedPrice > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-3">Discounted Price</p>
+                    <p className="mb-0 font-medium text-right text-blue-500">₹{storedCabDetails.discountedPrice}</p>
+                  </li>
+                )}
+
+
               </ul>
-              {/* <div className="border border-dashed my-8"></div> */}
-              <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-bold">Total Price</p>
-                <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
-              </div>
             </div>
           </div>
 

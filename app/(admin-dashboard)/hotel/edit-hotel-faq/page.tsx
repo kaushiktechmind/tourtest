@@ -43,10 +43,10 @@ const EditHotelFAQ = () => {
   const handleUpdateFaq = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const accessToken = localStorage.getItem("access_token"); // Get the bearer token from localStorage
+    const accessToken = localStorage.getItem("access_token");
 
     if (!accessToken) {
-      console.error("Access token is missing");
+      alert("Failed to update FAQ.");
       return;
     }
 
@@ -54,14 +54,15 @@ const EditHotelFAQ = () => {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
-      tempElement.textContent || tempElement.innerText || "";
+        tempElement.textContent || tempElement.innerText || "";
+
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_faq_by_id/${faqId}`,
         {
-          method: "PUT", // Changed from POST to PUT
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`, // Pass the token in Authorization header
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             faq_title: faqTitle,
@@ -70,19 +71,17 @@ const EditHotelFAQ = () => {
         }
       );
 
-      const data = await response.json();
-
       if (response.ok) {
-        alert("FAQ Updated Successfully:");
-        // Redirect or show success message here
+        alert("FAQ updated successfully.");
         router.push("/hotel/hotel-faq");
       } else {
-        console.error("Error updating FAQ:", data.message);
+        alert("Failed to update FAQ.");
       }
     } catch (error) {
-      console.error("Error updating FAQ:", error);
+      alert("Failed to update FAQ.");
     }
   };
+
 
   return (
     <div className="bg-[var(--bg-2)]">
@@ -95,7 +94,7 @@ const EditHotelFAQ = () => {
 
       {/* Form Section */}
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative pb-10 xxl:pb-0">
-        <div className="col-span-12 flex justify-center">
+        <div className="col-span-12 flex justify-center mt-[-10px]">
           <div className="lg:w-6/12 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
             <h3 className="border-b h3 pb-6">Edit FAQ Details</h3>
             <form onSubmit={handleUpdateFaq}>

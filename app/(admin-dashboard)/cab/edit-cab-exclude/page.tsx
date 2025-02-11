@@ -44,29 +44,37 @@ const EditCabExclude = () => {
     setLoading(false);
   };
 
-
   const handleUpdateExclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
-
+  
     const token = localStorage.getItem("access_token");
-
-    const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_exclusion_by_id/${excludeId}`, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
-    });
-
-    if (!response.ok) throw new Error("Failed to save exclude");
-
-    setexcludeTitle("");
-    alert("Exclude updated successfully!");
-    router.push('/cab/cab-exclude');
-    await fetchExcludeById(excludeId); // Refresh exclude data
+  
+    try {
+      const response = await fetch(`https://yrpitsolutions.com/tourism_api/api/admin/update_cab_exclusion_by_id/${excludeId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to update exclude");
+      }
+  
+      setexcludeTitle("");
+      alert("Exclude updated successfully!");
+      router.push('/cab/cab-exclude');
+      await fetchExcludeById(excludeId); // Refresh exclude data
+  
+    } catch (error: any) {
+      console.error("Error:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
+    }
   };
+  
 
 
   return (
@@ -74,7 +82,7 @@ const EditCabExclude = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit Cab Exclude</h2>
-        <Link href="/exclude/all-exclude" className="btn-primary">
+        <Link href="/cab/cab-exclude" className="btn-primary">
           <PencilSquareIcon className="w-5 h-5" /> All Exclude
         </Link>
       </div>
@@ -87,12 +95,12 @@ const EditCabExclude = () => {
               <label
                 htmlFor="name"
                 className="py-4 inline-block text-base sm:text-lg lg:text-xl font-medium">
-                Exclude:
+                Exclude :
               </label>
               <input
                 type="text"
                 id="name"
-                placeholder="Exclude Title"
+                placeholder="Exclude"
                 value={excludeTitle}
                 onChange={(e) => setexcludeTitle(e.target.value)}
                 className="w-full border py-3 px-3 lg:px-6 rounded-md focus:outline-none focus:border focus:border-primary outline-1"

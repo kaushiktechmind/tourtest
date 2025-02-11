@@ -31,21 +31,30 @@ const Page = () => {
   const itemsPerPage = 6;
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentFAQs = filteredFAQs.slice(indexOfFirstItem, indexOfLastItem);
+  const currentFAQs = (Array.isArray(filteredFAQs) ? filteredFAQs : []).slice(indexOfFirstItem, indexOfLastItem);
+
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [faqToDelete, setFaqToDelete] = useState<number | null>(null);
 
 
-  // Fetch FAQs from the API
   useEffect(() => {
     const fetchFAQs = async () => {
       try {
         const response = await fetch(
           "https://yrpitsolutions.com/tourism_api/api/admin/get_faq"
         );
-        const data: Faq[] = await response.json();
-        setFaqs(data);
-        setFilteredFAQs(data); // Initialize filtered FAQs
+        const data = await response.json();
+        console.log("Fetched FAQs:", data); // Check the structure
+
+        if (Array.isArray(data)) {
+          setFaqs(data);
+          setFilteredFAQs(data);
+        } else if (Array.isArray(data.data)) {
+          setFaqs(data.data);
+          setFilteredFAQs(data.data);
+        } else {
+          console.error("Unexpected data structure:", data);
+        }
       } catch (error) {
         console.error("Error fetching FAQs:", error);
       }
@@ -139,13 +148,13 @@ const Page = () => {
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Hotel FAQs</h2>
-        <Link href="/add-property" className="btn-primary">
+        <Link href="/hotel/all-hotels" className="btn-primary">
           <EyeIcon className="w-5 h-5" /> View All Hotel
         </Link>
       </div>
       <section className="grid z-[1] grid-cols-12 gap-4 mb-6 lg:gap-6 px-3 md:px-6 bg-[var(--bg-2)] relative after:absolute after:bg-[var(--dark)] after:w-full after:h-[60px] after:top-0 after:left-0 after:z-[-1] pb-10 xxl:pb-0">
         <div className="col-span-12 lg:col-span-6 p-4 md:p-6 lg:p-10 rounded-2xl bg-white">
-          <h3 className="border-b h3 pb-6">Add FAQs</h3>
+          <h3 className="border-b h3 pb-6">Add FAQ</h3>
           <form onSubmit={handleAddFAQ}>
             <p className="mt-6 mb-4 text-xl font-medium">Name :</p>
             <input
@@ -188,37 +197,46 @@ const Page = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentFAQs.map(({ id, faq_title, created_at }) => (
-                  <tr
-                    key={id}
-                    className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
-                  >
-                    <td className="py-3 lg:py-4 px-2">
-                      {new Date(created_at).toLocaleDateString()}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
-                      {faq_title}
-                    </td>
-                    <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
-                      <Link
-                        href={`/hotel/edit-hotel-faq?faqId=${id}`}
-                        className="text-primary"
-                      >
-                        <PencilSquareIcon className="w-5 h-5" />
-                      </Link>
-                      <button
-                        onClick={() => {
-                          setFaqToDelete(id);
-                          setIsDialogOpen(true);  // Open the confirmation dialog
-                        }}
-                        className="text-[var(--secondary-500)]"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
+                {currentFAQs.length > 0 ? (
+                  currentFAQs.map(({ id, faq_title, created_at }) => (
+                    <tr
+                      key={id}
+                      className="border-b border-dashed hover:bg-[var(--bg-1)] duration-300"
+                    >
+                      <td className="py-3 lg:py-4 px-2">
+                        {new Date(created_at).toLocaleDateString()}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 max-w-[300px] whitespace-normal">
+                        {faq_title}
+                      </td>
+                      <td className="py-3 lg:py-4 px-2 flex gap-2 items-center">
+                        <Link
+                          href={`/hotel/edit-hotel-faq?faqId=${id}`}
+                          className="text-primary"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </Link>
+                        <button
+                          onClick={() => {
+                            setFaqToDelete(id);
+                            setIsDialogOpen(true); // Open the confirmation dialog
+                          }}
+                          className="text-[var(--secondary-500)]"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan={3} className="py-4 text-center text-gray-500">
+                      No FAQ available.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
+
             </table>
             <Pagination
               totalItems={filteredFAQs.length}

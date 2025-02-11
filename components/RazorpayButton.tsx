@@ -354,11 +354,7 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
  <div class="container-wrapper">
 	<div class="container">
 		<div style="display: flex; justify-content: space-between; align-items: center;">
-			<div>
-				<h3 style="font-size: 22px">Andman Mangroves Holidays</h3>
-				<p>Address : 31 Brandy Way, Sutton, SM2 6SE</p>
-				<p>GSTIN : GSAB12 </p>
-			</div>
+			
 
 			<br>
 			<br>
@@ -372,10 +368,13 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
 		  </svg>
 
 
+			</div>
 
-				
-          
 
+      <div>
+				<h3 style="font-size: 22px">Andman Mangroves Holidays</h3>
+				<p>Address : 31 Brandy Way, Sutton, SM2 6SE</p>
+				<p>GSTIN : GSAB12 </p>
 			</div>
 		</div>
 		<br>

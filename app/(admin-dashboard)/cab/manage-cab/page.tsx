@@ -162,13 +162,14 @@ const ManageCab = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault(); // Prevent default form submission behavior
-
+  
     const token = localStorage.getItem("access_token");
     if (!token) {
       console.error("No access token found");
+      alert("Authentication error: No access token found.");
       return;
     }
-
+  
     // Create FormData to send to the API
     const formDataToSend = new FormData();
     if (cabId) {
@@ -179,7 +180,7 @@ const ManageCab = () => {
     formDataToSend.append("car_count", formData.car_count);
     formDataToSend.append("cargo_count", formData.cargo_count);
     formDataToSend.append("price", formData.price);
-
+  
     try {
       const response = await fetch(
         "https://yrpitsolutions.com/tourism_api/api/admin/cab-sub-forms",
@@ -191,19 +192,21 @@ const ManageCab = () => {
           body: formDataToSend,
         }
       );
-
+  
       if (!response.ok) {
         const errorMessage = await response.text();
         throw new Error(`Failed to add cab: ${errorMessage}`);
       }
-
+  
       const data = await response.json();
       alert("Cab added successfully");
       window.location.reload(); // Reload the page after successful submission
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error occurred during Cab addition:", error);
+      alert(`Failed to Save`);
     }
   };
+  
 
 
   <div className="mt-[20px]">

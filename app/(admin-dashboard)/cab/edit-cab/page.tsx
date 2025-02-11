@@ -569,6 +569,7 @@ const EditCab = () => {
       }
     } catch (error) {
       console.error("Error saving cab:", error);
+      alert("Failed to Save, Check all Fields Correctly")
     }
   };
 

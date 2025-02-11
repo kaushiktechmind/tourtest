@@ -43,26 +43,27 @@ const EditCabFAQ = () => {
   // Function to handle FAQ update
   const handleUpdateFaq = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    const accessToken = localStorage.getItem("access_token"); // Get the bearer token from localStorage
-
+  
+    const accessToken = localStorage.getItem("access_token");
+  
     if (!accessToken) {
-      console.error("Access token is missing");
+      alert("Failed to update FAQ.");  // Show failure message if token is missing
       return;
     }
-
+  
     try {
       const tempElement = document.createElement("div");
       tempElement.innerHTML = description;
       const plainTextDescription =
-      tempElement.textContent || tempElement.innerText || "";
+        tempElement.textContent || tempElement.innerText || "";
+  
       const response = await fetch(
         `https://yrpitsolutions.com/tourism_api/api/admin/update_cab_faq_by_id/${faqId}`,
         {
-          method: "PUT", // Changed from POST to PUT
+          method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${accessToken}`, // Pass the token in Authorization header
+            Authorization: `Bearer ${accessToken}`,
           },
           body: JSON.stringify({
             cab_faq_title: faqTitle,
@@ -70,27 +71,27 @@ const EditCabFAQ = () => {
           }),
         }
       );
-
+  
       const data = await response.json();
-
+  
       if (response.ok) {
-        alert("FAQ Updated Successfully:");
-        // Redirect or show success message here
+        alert("FAQ updated successfully!");
         router.push("/cab/cab-faq");
       } else {
-        console.error("Error updating FAQ:", data.message);
+        alert("Failed to update FAQ.");
       }
     } catch (error) {
-      console.error("Error updating FAQ:", error);
+      alert("Failed to update FAQ.");
     }
   };
+  
 
   return (
 
     <div className="bg-[var(--bg-2)]">
       <div className="flex items-center justify-between flex-wrap px-3 py-5 md:p-[30px] gap-5 lg:p-[60px] bg-[var(--dark)]">
         <h2 className="h2 text-white">Edit FAQ</h2>
-        <Link href="/hotel/attributes" className="btn-primary">
+        <Link href="/cab/cab-faq" className="btn-primary">
           View All FAQs
         </Link>
       </div>

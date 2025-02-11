@@ -69,30 +69,42 @@ const Page = () => {
     setCurrentPage(page);
   };
 
-  const handleAddDropPoint = async (e: { preventDefault: () => void; }) => {
+  const handleAddDropPoint = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setSubmitError(null);
-
+  
     const token = localStorage.getItem("access_token");
-
-    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_drop_point_name", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_drop_point_name: droppointTitle }),
-    });
-
-    if (!response.ok) {
-      // You can throw the error here if you don't want to handle it with a try-catch
-      throw new Error("Failed to save droppoint");
+  
+    if (!token) {
+      alert("Failed to add drop point.");
+      return;
     }
-
-    setDropPointName("");
-    await fetchDropPoints();
-    alert("DropPoint Added Successfully");
+  
+    try {
+      const response = await fetch(
+        "https://yrpitsolutions.com/tourism_api/api/admin/save_cab_drop_point_name",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ cab_drop_point_name: droppointTitle }),
+        }
+      );
+  
+      if (response.ok) {
+        setDropPointName("");
+        await fetchDropPoints();
+        alert("Drop Point added successfully!");
+      } else {
+        alert("Failed to add drop point.");
+      }
+    } catch (error) {
+      alert("Failed to add drop point.");
+    }
   };
+  
 
 
   const handleDeleteDropPoint = async () => {
@@ -146,7 +158,7 @@ const Page = () => {
               <input
                 type="text"
                 id="name"
-                placeholder="Drop Point name"
+                placeholder=""
                 value={droppointTitle}
                 onChange={(e) => setDropPointName(e.target.value)}
                 className="w-full border py-3 px-3 rounded-md focus:outline-none"
@@ -172,45 +184,50 @@ const Page = () => {
               </div>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full whitespace-nowrap">
-                <thead>
-                  <tr className="text-left bg-[var(--bg-1)] border-b">
-                    <th className="py-3 px-2">Drop Point</th>
-                    <th className="py-3 px-2">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {loading ? (
-                    <tr>
-                      <td colSpan={2} className="text-center py-3">Loading...</td>
-                    </tr>
-                  ) : error ? (
-                    <tr>
-                      <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
-                    </tr>
-                  ) : (
-                    currentItems.map((droppoint) => (
-                      <tr key={droppoint.id} className="border-b hover:bg-[var(--bg-1)]">
-                        <td className="py-3 px-2">{droppoint.cab_drop_point_name}</td>
-                        <td className="py-3 px-2 flex gap-2">
-                          <Link href={`/cab/edit-drop-point?droppointId=${droppoint.id}`} className="text-primary">
-                            <PencilSquareIcon className="w-5 h-5" />
-                          </Link>
-                          <button
-                            onClick={() => {
-                              setItemToDelete(droppoint.id as number);
-                              setIsDialogOpen(true);
-                            }}
-                            className="text-[var(--secondary-500)]"
-                          >
-                            <TrashIcon className="w-5 h-5" />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+            <table className="w-full whitespace-nowrap">
+  <thead>
+    <tr className="text-left bg-[var(--bg-1)] border-b">
+      <th className="py-3 px-2">Drop Point</th>
+      <th className="py-3 px-2">Action</th>
+    </tr>
+  </thead>
+  <tbody>
+    {loading ? (
+      <tr>
+        <td colSpan={2} className="text-center py-3">Loading...</td>
+      </tr>
+    ) : error ? (
+      <tr>
+        <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
+      </tr>
+    ) : currentItems.length === 0 ? (
+      <tr>
+        <td colSpan={2} className="text-center py-3 text-gray-500">No Drop Point Available</td>
+      </tr>
+    ) : (
+      currentItems.map((droppoint) => (
+        <tr key={droppoint.id} className="border-b hover:bg-[var(--bg-1)]">
+          <td className="py-3 px-2">{droppoint.cab_drop_point_name}</td>
+          <td className="py-3 px-2 flex gap-2">
+            <Link href={`/cab/edit-drop-point?droppointId=${droppoint.id}`} className="text-primary">
+              <PencilSquareIcon className="w-5 h-5" />
+            </Link>
+            <button
+              onClick={() => {
+                setItemToDelete(droppoint.id as number);
+                setIsDialogOpen(true);
+              }}
+              className="text-[var(--secondary-500)]"
+            >
+              <TrashIcon className="w-5 h-5" />
+            </button>
+          </td>
+        </tr>
+      ))
+    )}
+  </tbody>
+</table>
+
               <Pagination
                 totalItems={filteredDropPoints.length}
                 itemsPerPage={itemsPerPage}

@@ -4,8 +4,6 @@ import CardPagination from "@/components/CardPagination";
 import HotelListingList from "@/components/HotelListingList";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Pagination } from "swiper";
-import WhatsAppAndScroll from "@/components/WhatsAppAndScroll";
 
 const Page = () => {
   const router = useRouter();

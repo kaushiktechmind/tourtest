@@ -72,28 +72,33 @@ const Page = () => {
   const handleAddExclude = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setSubmitError(null);
-
+  
     const token = localStorage.getItem("access_token");
-
-    const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_exclusion", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
-    });
-
-    if (!response.ok) {
-      // You can throw the error here if you don't want to handle it with a try-catch
-      throw new Error("Failed to save exclude");
+  
+    try {
+      const response = await fetch("https://yrpitsolutions.com/tourism_api/api/admin/save_cab_exclusion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ cab_exclusion_title: excludeTitle }),
+      });
+  
+      if (!response.ok) {
+        throw new Error("Failed to save exclude");
+      }
+  
+      setExcludeName("");
+      await fetchExcludes();
+      alert("Exclude Added Successfully");
+  
+    } catch (error: any) {
+      console.error("Error:", error);
+      alert(`Error: ${error.message || "An unexpected error occurred"}`);
     }
-
-    setExcludeName("");
-    await fetchExcludes();
-    alert("Exclude Added Successfully");
   };
-
+  
 
   const handleDeleteExclude = async () => {
     if (!itemToDelete) return;
@@ -141,7 +146,7 @@ const Page = () => {
             <h3 className="border-b h3 pb-6">Add Exclude</h3>
             <form onSubmit={handleAddExclude}>
               <label htmlFor="name" className="py-4 inline-block text-base font-medium">
-                Exclude Name:
+                Exclude :
               </label>
               <input
                 type="text"
@@ -188,6 +193,10 @@ const Page = () => {
                     <tr>
                       <td colSpan={2} className="text-center py-3 text-red-500">{error}</td>
                     </tr>
+                  ) : currentItems.length === 0 ? (
+                    <tr>
+                      <td colSpan={2} className="text-center py-3">No Exclude Available</td>
+                    </tr>
                   ) : (
                     currentItems.map((exclude) => (
                       <tr key={exclude.id} className="border-b hover:bg-[var(--bg-1)]">
@@ -211,6 +220,7 @@ const Page = () => {
                   )}
                 </tbody>
               </table>
+
               <Pagination
                 totalItems={filteredExcludes.length}
                 itemsPerPage={itemsPerPage}
