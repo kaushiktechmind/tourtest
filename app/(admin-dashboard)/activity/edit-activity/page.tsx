@@ -28,6 +28,12 @@ interface Field {
   distance: string;
 }
 
+interface Policy {
+  id: number; // Change to the actual type based on your API response
+  policy_title: string;
+  policy_description: string; // Assuming the correct spelling is 'faq_description'
+}
+
 interface Ticket {
   code: string;
   name: string;
@@ -63,8 +69,9 @@ const EditActivity = () => {
     start_time: "",
     tour_max_people: "",
     full_address: "",
-    i_frame_link: "",
     seo_title: "",
+    seo_description: "",
+    meta_title: "",
     ticket: "",
     banner_image_multiple: "",
     location_name: "",
@@ -79,15 +86,8 @@ const EditActivity = () => {
   const [faqs, setFAQs] = useState<FAQ[]>([]);
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
 
-  // const [educationFields, setEducationFields] = useState<Field[]>([
-  //   { name: "", content: "", distance: "" },
-  // ]);
-  // const [healthFields, setHealthFields] = useState<Field[]>([
-  //   { name: "", content: "", distance: "" },
-  // ]);
-  // const [transportationFields, setTransportationFields] = useState<Field[]>([
-  //   { name: "", content: "", distance: "" },
-  // ]);
+    const [policies, setPolicies] = useState<Policy[]>([]);
+    const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
 
 
 
@@ -107,6 +107,24 @@ const EditActivity = () => {
 
     fetchFAQs();
   }, []);
+
+
+   useEffect(() => {
+      const fetchPolicies = async () => {
+        try {
+          const response = await fetch(
+            "https://yrpitsolutions.com/tourism_api/api/get_all_activity_policy"
+          );
+          const data: Policy[] = await response.json();
+          setPolicies(data); // Make sure you have a state called `policies`
+        } catch (error) {
+          console.error("Error fetching policies:", error);
+        }
+      };
+  
+      fetchPolicies();
+    }, []);
+  
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -131,92 +149,6 @@ const EditActivity = () => {
       setBannerImages(Array.from(e.target.files)); // Store multiple files
     }
   };
-
-
-  const handleAddRow = (
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    if (fields.length < 5) {
-      setFields([...fields, { name: "", content: "", distance: "" }]);
-    }
-  };
-
-  // Handler to update input fields
-  const handleFieldChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
-    fields: Field[],
-    setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  ) => {
-    const { name, value } = e.target;
-    const updatedFields = [...fields];
-    updatedFields[index] = { ...updatedFields[index], [name]: value };
-    setFields(updatedFields);
-  };
-
-
-
-
-
-  // const formatDataForApi = () => {
-  //   const formattedData: any = {};
-
-  //   educationFields.forEach((field, index) => {
-  //     formattedData[`education_name${index + 1}`] = field.name;
-  //     formattedData[`education_content${index + 1}`] = field.content;
-  //     formattedData[`education_distance${index + 1}`] = field.distance;
-  //   });
-
-  //   healthFields.forEach((field, index) => {
-  //     formattedData[`health_name${index + 1}`] = field.name;
-  //     formattedData[`health_content${index + 1}`] = field.content;
-  //     formattedData[`health_distance${index + 1}`] = field.distance;
-  //   });
-
-  //   transportationFields.forEach((field, index) => {
-  //     formattedData[`transport_name${index + 1}`] = field.name;
-  //     formattedData[`transport_content${index + 1}`] = field.content;
-  //     formattedData[`transport_distance${index + 1}`] = field.distance;
-  //   });
-
-  //   return formattedData;
-  // };
-
-  // const renderInputRows = (
-  //   fields: Field[],
-  //   setFields: React.Dispatch<React.SetStateAction<Field[]>>
-  // ) => {
-  //   return fields.map((field, index) => (
-  //     <div key={index} className="flex gap-4 mb-4">
-  //       <input
-  //         type="text"
-  //         name="name"
-  //         value={field.name}
-  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-  //         placeholder="Name"
-  //       />
-  //       <input
-  //         type="text"
-  //         name="content"
-  //         value={field.content}
-  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-  //         placeholder="Content"
-  //       />
-  //       <input
-  //         type="text"
-  //         name="distance"
-  //         value={field.distance}
-  //         onChange={(e) => handleFieldChange(e, index, fields, setFields)}
-  //         className="w-1/3 border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-  //         placeholder="Distance"
-  //       />
-  //     </div>
-  //   ));
-  // };
-
 
 
 
@@ -301,20 +233,6 @@ const EditActivity = () => {
         }
 
 
-        // // Filter and set only the tickets with available data
-        // const ticketData = [
-        //   { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
-        //   { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
-        //   { code: data.ticket_code3, name: data.ticket_name3, price: data.ticket_price3, number: data.no_of_available_tickets3 },
-        //   { code: data.ticket_code4, name: data.ticket_name4, price: data.ticket_price4, number: data.no_of_available_tickets4 },
-        //   { code: data.ticket_code5, name: data.ticket_name5, price: data.ticket_price5, number: data.no_of_available_tickets5 },
-        // ];
-
-        // // Filter out tickets with empty fields
-        // const filteredTicketData = ticketData.filter(ticket => ticket.code || ticket.name || ticket.price || ticket.number);
-        // setTickets(filteredTicketData); // Set filtered tickets
-
-        // Filter and set only the tickets with available data
         const ticketData = [
           { code: data.ticket_code1, name: data.ticket_name1, price: data.ticket_price1, number: data.no_of_available_tickets1 },
           { code: data.ticket_code2, name: data.ticket_name2, price: data.ticket_price2, number: data.no_of_available_tickets2 },
@@ -332,6 +250,20 @@ const EditActivity = () => {
         setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
 
 
+          // Prefill Policies
+      const policyData = [];
+      for (let i = 1; i <= 5; i++) {
+        if (data[`policy_title${i}`] && data[`policy_description${i}`]) {
+          policyData.push({
+            id: i,
+            activity_policy_title: data[`policy_title${i}`],
+            activity_policy_description: data[`policy_description${i}`]
+          });
+        }
+      }
+      setSelectedPolicies(policyData);
+
+
         // Prefill formData with the API response
         setFormData((prevState) => ({
           ...prevState,
@@ -343,8 +275,11 @@ const EditActivity = () => {
           location_name: data.location_name || "",
           start_time: data.start_time || "",
           full_address: data.full_address || "",
-          i_frame_link: data.i_frame_link || "",
           seo_title: data.seo_title || "",
+          seo_description: data.seo_description || "",
+          meta_title: data.meta_title || "",
+
+
 
 
           tickets: filteredTicketData.map((ticket) => ({
@@ -355,41 +290,6 @@ const EditActivity = () => {
           })),
           // Add other fields as necessary
         }));
-
-
-        // Prefill the fields for education, health, and transportation
-        const prefilledEducationFields = [];
-        const prefilledHealthFields = [];
-        const prefilledTransportationFields = [];
-
-        for (let i = 1; i <= 5; i++) {
-          if (data[`education_name${i}`]) {
-            prefilledEducationFields.push({
-              name: data[`education_name${i}`] || "",
-              content: data[`education_content${i}`] || "",
-              distance: data[`education_distance${i}`] || "",
-            });
-          }
-          if (data[`health_name${i}`]) {
-            prefilledHealthFields.push({
-              name: data[`health_name${i}`] || "",
-              content: data[`health_content${i}`] || "",
-              distance: data[`health_distance${i}`] || "",
-            });
-          }
-          if (data[`transport_name${i}`]) {
-            prefilledTransportationFields.push({
-              name: data[`transport_name${i}`] || "",
-              content: data[`transport_content${i}`] || "",
-              distance: data[`transport_distance${i}`] || "",
-            });
-          }
-        }
-
-        // Set the fields state with the prefilled data
-        // setEducationFields(prefilledEducationFields);
-        // setHealthFields(prefilledHealthFields);
-        // setTransportationFields(prefilledTransportationFields);
 
 
 
@@ -405,9 +305,6 @@ const EditActivity = () => {
 
     fetchActivityData();
   }, [activityId]);
-
-
-
 
 
 
@@ -436,8 +333,9 @@ const EditActivity = () => {
       formDataToSend.append("duration", formData.duration);
       formDataToSend.append("start_time", formData.start_time);
       formDataToSend.append("full_address", formData.full_address);
-      formDataToSend.append("i_frame_link", formData.i_frame_link);
       formDataToSend.append("seo_title", formData.seo_title);
+      formDataToSend.append("seo_description", formData.seo_description);
+      formDataToSend.append("meta_title", formData.meta_title);
 
       formDataToSend.append("_method", "PUT");
 
@@ -460,32 +358,18 @@ const EditActivity = () => {
         formDataToSend.append("faqs[]", JSON.stringify({ title: faq.faq_title, description: faq.faq_description }));
       });
 
+      selectedPolicies.forEach((policy, index) => {
+        formDataToSend.append(`policy_title${index + 1}`, policy.activity_policy_title);
+        formDataToSend.append(`policy_description${index + 1}`, policy.activity_policy_description);
+      });
+
+
       // If new files are selected, add them; otherwise, send an empty array
       if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
         bannerImages.forEach((file) => {
           formDataToSend.append("banner_image_multiple[]", file);
         });
       }
-
-
-
-      // educationFields.forEach((field, index) => {
-      //   formDataToSend.append(`education_name${index + 1}`, field.name);
-      //   formDataToSend.append(`education_content${index + 1}`, field.content);
-      //   formDataToSend.append(`education_distance${index + 1}`, field.distance);
-      // });
-
-      // healthFields.forEach((field, index) => {
-      //   formDataToSend.append(`health_name${index + 1}`, field.name);
-      //   formDataToSend.append(`health_content${index + 1}`, field.content);
-      //   formDataToSend.append(`health_distance${index + 1}`, field.distance);
-      // });
-
-      // transportationFields.forEach((field, index) => {
-      //   formDataToSend.append(`transport_name${index + 1}`, field.name);
-      //   formDataToSend.append(`transport_content${index + 1}`, field.content);
-      //   formDataToSend.append(`transport_distance${index + 1}`, field.distance);
-      // });
 
 
 
@@ -517,7 +401,7 @@ const EditActivity = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Activity Updated successfully!");
-        router.push("/activity/all-activity");
+        // router.push("/activity/all-activity");
       } else {
         alert("Failed to save activity.");
       }
@@ -676,25 +560,6 @@ const EditActivity = () => {
                 className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 placeholder="0"
               />
-              <p className="mt-6 mb-4 text-xl font-medium">Map Address :</p>
-              <input
-                type="text"
-                name="i_frame_link"
-                value={formData.i_frame_link}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
-
-              <p className="mt-6 mb-4 text-xl font-medium">Seo Title</p>
-              <input
-                type="text"
-                name="seo_title"
-                value={formData.seo_title}
-                onChange={handleChange}
-                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                placeholder="0"
-              />
 
 
             </div>
@@ -781,61 +646,7 @@ const EditActivity = () => {
             </div>
           </Accordion>
 
-          {/* <Accordion
-            buttonContent={(open) => (
-              <div
-                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}
-              >
-                <h3 className="h3">Sorroundings</h3>
-              </div>
-            )}
-            initialOpen={true}
-          >
-            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-              <p className=" mb-4 text-xl font-medium">Education:</p>
-              {renderInputRows(educationFields, setEducationFields)}
-              {educationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(educationFields, setEducationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
 
-              <p className="mt-6 mb-4 text-xl font-medium">Health:</p>
-              {renderInputRows(healthFields, setHealthFields)}
-              {healthFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(healthFields, setHealthFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-
-              <p className="mt-6 mb-4 text-xl font-medium">Transportation:</p>
-              {renderInputRows(transportationFields, setTransportationFields)}
-              {transportationFields.length < 5 && (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleAddRow(transportationFields, setTransportationFields);
-                  }}
-                  className="text-blue-500 hover:underline"
-                >
-                  + Add Item
-                </button>
-              )}
-            </div>
-          </Accordion> */}
         </div>
         <div className="col-span-12 lg:col-span-6">
           <div className="rounded-2xl bg-white border p-4 md:p-6 lg:p-8">
@@ -927,6 +738,94 @@ const EditActivity = () => {
                   className={`${open ? "rounded-t-2xl" : "rounded-2xl"
                     } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
+                  <h3 className="h3">Policy</h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+
+<div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+  {policies.length > 0 ? (
+    <div className="mb-4">
+      <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+        Select a Policy
+      </label>
+      <select
+        id="policyDropdown"
+        className="w-full border p-2 rounded-md"
+        onChange={(e) => {
+          const selectedPolicy = policies.find(
+            (policy) => policy.id === parseInt(e.target.value)
+          );
+          if (selectedPolicy && !selectedPolicies.some((p) => p.id === selectedPolicy.id)) {
+            setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+          }
+        }}
+      >
+        <option value="" disabled selected>
+          Select a Policy...
+        </option>
+        {policies.map((policy) => (
+          <option key={policy.id} value={policy.id}>
+            {policy.activity_policy_title}
+          </option>
+        ))}
+      </select>
+    </div>
+  ) : (
+    <p>No Policies available</p>
+  )}
+
+  {/* Render prefilled input fields for each selected policy */}
+  {selectedPolicies.map((policy) => (
+    <div key={policy.id} className="mb-4 flex gap-4 items-center">
+      <input
+        type="text"
+        className="w-1/2 border p-2 rounded-md"
+        value={policy.activity_policy_title}
+        readOnly
+      />
+      <input
+        type="text"
+        className="w-1/2 border p-2 rounded-md"
+        value={policy.activity_policy_description}
+        onChange={(e) => {
+          const updatedPolicies = selectedPolicies.map((p) =>
+            p.id === policy.id ? { ...p, activity_policy_description: e.target.value } : p
+          );
+          setSelectedPolicies(updatedPolicies);
+        }}
+      />
+      <button
+        onClick={() => {
+          const updatedPolicies = selectedPolicies.filter((p) => p.id !== policy.id);
+          setSelectedPolicies(updatedPolicies);
+        }}
+        className="text-red-500 hover:text-red-700"
+      >
+        <TrashIcon className="w-5 h-5" />
+      </button>
+    </div>
+  ))}
+</div>
+
+
+            </Accordion>
+          </div>
+
+
+          <div className="rounded-2xl bg-white border mt-6 ">
+
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                >
                   <h3 className="h3">FAQ</h3>
                   <ChevronDownIcon
                     className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
@@ -936,13 +835,11 @@ const EditActivity = () => {
               )}
               initialOpen={true}
             >
+
               <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
                 {faqs.length > 0 ? (
                   <div className="mb-4">
-                    <label
-                      htmlFor="faqDropdown"
-                      className="text-lg font-bold mb-2 block"
-                    >
+                    <label htmlFor="faqDropdown" className="text-lg font-bold mb-2 block">
                       Select a FAQ
                     </label>
                     <select
@@ -954,20 +851,31 @@ const EditActivity = () => {
                         );
                         if (
                           selectedFAQ &&
-                          !selectedFAQs.some((f) => f.id === selectedFAQ.id)
+                          !selectedFAQs.some(
+                            (f) => f.id === selectedFAQ.id || f.faq_title === selectedFAQ.faq_title
+                          )
                         ) {
                           setSelectedFAQs((prev) => [...prev, selectedFAQ]);
                         }
+                        // Reset the dropdown to the placeholder
+                        e.target.value = "";
                       }}
                     >
                       <option value="" disabled selected>
                         Select a FAQ...
                       </option>
-                      {faqs.map((faq) => (
-                        <option key={faq.id} value={faq.id}>
-                          {faq.faq_title}
-                        </option>
-                      ))}
+                      {faqs
+                        .filter(
+                          (faq) =>
+                            !selectedFAQs.some(
+                              (f) => f.id === faq.id || f.faq_title === faq.faq_title
+                            )
+                        )
+                        .map((faq) => (
+                          <option key={faq.id} value={faq.id}>
+                            {faq.faq_title}
+                          </option>
+                        ))}
                     </select>
                   </div>
                 ) : (
@@ -976,8 +884,8 @@ const EditActivity = () => {
 
                 {/* Render input fields for each selected FAQ */}
                 {selectedFAQs.map((faq) => (
-                  <div key={faq.id} className="mb-4">
-                    <div className="flex gap-4">
+                  <div key={faq.id} className="mb-4 flex items-center gap-4">
+                    <div className="flex gap-4 w-full">
                       <input
                         type="text"
                         className="w-1/2 border p-2 rounded-md"
@@ -998,9 +906,20 @@ const EditActivity = () => {
                         }}
                       />
                     </div>
+                    <button
+                      onClick={() => {
+                        const updatedFAQs = selectedFAQs.filter((f) => f.id !== faq.id);
+                        setSelectedFAQs(updatedFAQs);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
                   </div>
                 ))}
               </div>
+
+
             </Accordion>
           </div>
 
@@ -1045,6 +964,57 @@ const EditActivity = () => {
               </div>
             </Accordion>
           </div>
+
+
+          <Accordion
+            buttonContent={(open) => (
+              <div
+                className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                  } flex justify-between items-center p-4 md:p-6 lg:p-8 mt-6 duration-500 bg-white`}>
+                <h3 className="h3">SEO </h3>
+                <ChevronDownIcon
+                  className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                    }`}
+                />
+              </div>
+            )}
+            initialOpen={true}>
+            <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+              <p className="mb-4 text-xl font-medium">URL Name :</p>
+              <input
+                type="text"
+                name="seo_title"
+                value={formData.seo_title}
+                onChange={handleChange}
+                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                placeholder=""
+              />
+
+
+              <p className="mt-6 mb-4 text-xl font-medium">SEO Description :</p>
+              <input
+                type="text"
+                name="seo_description"
+                value={formData.seo_description}
+                onChange={handleChange}
+                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                placeholder=""
+              />
+
+              <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
+              <input
+                type="text"
+                name="meta_title"
+                value={formData.meta_title}
+                onChange={handleChange}
+                className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                placeholder=""
+              />
+
+
+
+            </div>
+          </Accordion>
 
         </div>
       </section>

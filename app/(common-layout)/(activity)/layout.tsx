@@ -1,8 +1,6 @@
 "use client";
 
-import { SearchIcon } from "@/public/data/icons";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowPathIcon, ListBulletIcon, Squares2X2Icon } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -10,8 +8,7 @@ import { useEffect, useState } from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const path = usePathname();
-  const router = useRouter();
-  const searchParams = useSearchParams();
+
   const [refreshKey, setRefreshKey] = useState(0);
 
 

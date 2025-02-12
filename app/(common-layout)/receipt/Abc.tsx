@@ -118,6 +118,27 @@ const Reciept = () => {
   }, []);
 
 
+  
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [discountedPrice, setDiscountedPrice] = useState<number>(0);
+
+  useEffect(() => {
+    // Fetch discount values from localStorage when component mounts
+    const storedDiscountAmount = Number(localStorage.getItem("discountAmount")) || 0;
+    const storedDiscountedPrice = Number(localStorage.getItem("discountedPrice")) || 0;
+
+    setDiscountAmount(storedDiscountAmount);
+    setDiscountedPrice(storedDiscountedPrice);
+
+    // Optional: Clear discounts if they are not valid
+    if (!storedDiscountAmount && !storedDiscountedPrice) {
+      localStorage.removeItem("discountAmount");
+      localStorage.removeItem("discountedPrice");
+    }
+  }, []);
+
+
+
 
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(e.target.value);
@@ -275,7 +296,9 @@ const Reciept = () => {
               <ul className="flex flex-col gap-4">
                 <li className="grid grid-cols-2 items-center">
                   <p className="mb-0 pl-8">Room Price</p>
-                  <p className="mb-0 font-medium text-right">₹{totalAdultPrice}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{totalAdultPrice}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -287,7 +310,13 @@ const Reciept = () => {
                     </div>
                     <p className="mb-0">Child Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{Number(totalChildPrice) * noOfNights}</p>
+                  {/* <p className="mb-0 font-medium text-right">₹{totalChildPrice*noOfNights}</p> */}
+                  <p className="mb-0 font-medium text-right">
+                    ₹
+                    {totalChildPrice !== null
+                      ? Number(totalChildPrice) * noOfNights
+                      : 0}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -299,7 +328,9 @@ const Reciept = () => {
                     </div>
                     <p className="mb-0">Extra Bed Price</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{Number(totalExtraBedPrice) * noOfNights}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{Number(totalExtraBedPrice) * noOfNights}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <div className="flex items-center gap-2">
@@ -311,7 +342,9 @@ const Reciept = () => {
                     </div>
                     <p className="mb-0">Sub Total</p>
                   </div>
-                  <p className="mb-0 font-medium text-right">₹{storedTotalPrice}</p>
+                  <p className="mb-0 font-medium text-right">
+                    ₹{storedTotalPrice}
+                  </p>
                 </li>
                 <li className="grid grid-cols-2 items-center">
                   <p className="mb-0 pl-8">Number of Nights</p>
@@ -321,9 +354,25 @@ const Reciept = () => {
 
               <div className="border border-dashed my-8"></div>
               <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-extrabold Grand Total">Grand Total</p>
+                <p className="mb-0 font-extrabold">Grand Total</p>
                 <p className="mb-0 font-medium text-right">₹{grandTotal}</p>
               </div>
+
+
+              {discountAmount > 0 && (
+                <li className="grid grid-cols-2 items-center">
+                  <p className="mb-3">Discount</p>
+                  <p className="mb-0 font-medium text-right text-green-500">₹{discountAmount}</p>
+                </li>
+              )}
+
+              {discountedPrice > 0 && (
+                <li className="grid grid-cols-2 items-center">
+                  <p className="mb-4">Discounted Price</p>
+                  <p className="mb-0 font-medium text-right text-blue-500">₹{discountedPrice}</p>
+                </li>
+              )}
+          
             </div>
           </div>
 

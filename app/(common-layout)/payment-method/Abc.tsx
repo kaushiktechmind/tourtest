@@ -52,6 +52,8 @@ const generateBookingID = () => {
   return `BKNG-${randomNumber.toString().padStart(5, "0")}`; // Format it to have leading zeros if necessary
 };
 
+
+
 const PaymentMethod = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -67,6 +69,26 @@ const PaymentMethod = () => {
     // Generate a unique booking ID when the component mounts
     setBookingID(generateBookingID());
   }, []);
+
+
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [discountedPrice, setDiscountedPrice] = useState<number>(0);
+
+  useEffect(() => {
+    // Fetch discount values from localStorage when component mounts
+    const storedDiscountAmount = Number(localStorage.getItem("discountAmount")) || 0;
+    const storedDiscountedPrice = Number(localStorage.getItem("discountedPrice")) || 0;
+
+    setDiscountAmount(storedDiscountAmount);
+    setDiscountedPrice(storedDiscountedPrice);
+
+    // Optional: Clear discounts if they are not valid
+    if (!storedDiscountAmount && !storedDiscountedPrice) {
+      localStorage.removeItem("discountAmount");
+      localStorage.removeItem("discountedPrice");
+    }
+  }, []);
+
 
   const storedAddress = localStorage.getItem("address");
   const [address, setAddress] = useState(storedAddress || "");
@@ -138,6 +160,12 @@ const PaymentMethod = () => {
     parseFloat(localStorage.getItem("storedTotalPrice") || "0")
   );
   const grandTotal = noOfNights * Number(storedTotalPrice);
+
+
+  const grandSubTotal = discountedPrice > 0 
+  ? discountedPrice 
+  : grandTotal;
+
 
   return (
     <div className="py-[30px] lg:py-[60px] bg-[var(--bg-2)] px-3">
@@ -255,9 +283,8 @@ const PaymentMethod = () => {
                               <tbody>
                                 {rooms.map((room, index) => (
                                   <tr key={index} className="text-center">
-                                    <td className="px-4 py-2 border-b">{`${
-                                      index + 1
-                                    }`}</td>
+                                    <td className="px-4 py-2 border-b">{`${index + 1
+                                      }`}</td>
                                     <td className="px-4 py-2 border-b">
                                       {room.adults}
                                     </td>
@@ -459,8 +486,25 @@ const PaymentMethod = () => {
                 <p className="mb-0 font-extrabold">Grand Total</p>
                 <p className="mb-0 font-medium text-right">₹{grandTotal}</p>
               </div>
+
+
+              {discountAmount > 0 && (
+                <li className="grid grid-cols-2 items-center">
+                  <p className="mb-3">Discount</p>
+                  <p className="mb-0 font-medium text-right text-green-500">₹{discountAmount}</p>
+                </li>
+              )}
+
+              {discountedPrice > 0 && (
+                <li className="grid grid-cols-2 items-center">
+                  <p className="mb-4">Discounted Price</p>
+                  <p className="mb-0 font-medium text-right text-blue-500">₹{discountedPrice}</p>
+                </li>
+              )}
               <RazorpayButton
-                grandTotal={Number(grandTotal) * 100}
+                grandTotal={Number(grandSubTotal) * 100}
+                discountedPrice = {discountedPrice}
+                discountAmount = {discountAmount}
                 currency="INR"
                 name={name}
                 email={email}

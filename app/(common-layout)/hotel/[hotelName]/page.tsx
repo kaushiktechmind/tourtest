@@ -21,34 +21,19 @@ import SubHeadingBtn from "@/components/SubHeadingBtn";;
 import AnimateHeight from "react-animate-height";
 import { MinusIcon, PlusIcon } from "@heroicons/react/24/outline";
 
-import { CheckIcon, StarIcon } from "@heroicons/react/20/solid";
+import { StarIcon } from "@heroicons/react/20/solid";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  ArrowLongLeftIcon,
-  ArrowLongRightIcon,
-  ArrowsRightLeftIcon,
-  CalendarDaysIcon,
-  ChatBubbleLeftEllipsisIcon,
-  ChatBubbleLeftRightIcon,
+
   ChevronLeftIcon,
   ChevronRightIcon,
-  ClockIcon,
-  HandThumbUpIcon,
   MapPinIcon,
-  ShareIcon,
 } from "@heroicons/react/24/outline";
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
-import CheckboxCustom from "@/components/Checkbox";
 import { UrlObject } from "url";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
-interface RoomPrice {
-  room_price: number;
-  extra_bed_price: number;
-  child_price: number;
-  id: number;
-}
 
 interface Room {
   id: number;
@@ -109,7 +94,6 @@ export default function Page({
   };
 
   const handleBookNowClick = (roomId: string) => {
-    setSelectedRoomId([roomId]);
     localStorage.setItem("roomId", roomId);
   };
 
@@ -122,13 +106,10 @@ export default function Page({
 
 
   const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
-
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
 
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-
   const hotelDetailsId = localStorage.getItem("hotelId")
   const type = "Hotel";
 
@@ -177,7 +158,6 @@ export default function Page({
     null,
   ]);
 
-  const [selectedRoomId, setSelectedRoomId] = useState<string[]>([]);
 
   useEffect(() => {
     const storedStartDate = localStorage.getItem("startDate");
@@ -237,7 +217,6 @@ export default function Page({
     localStorage.removeItem("noOfNights");
   };
 
-  const [totalPrice, setTotalPrice] = useState(0);
 
   const [hotelDetails, setHotelDetails] = useState({
     id: 0,
@@ -398,6 +377,7 @@ export default function Page({
     color: "#fff",
     borderRadius: "10px",
   };
+
 
 
 
@@ -771,7 +751,18 @@ export default function Page({
       return; // Exit if no accessToken is found
     }
 
+    if (discountedPrice && discountAmount) {
+      localStorage.setItem("discountedPrice", discountedPrice.toString());
+      localStorage.setItem("discountAmount", discountAmount.toString());
+    } else {
+      // Clear previous discount values if no coupon applied
+      localStorage.removeItem("discountedPrice");
+      localStorage.removeItem("discountAmount");
+    }
+
     localStorage.setItem("grandTotal", grandTotal.toString());
+    // localStorage.setItem("discountedPrice", discountedPrice?.toString() || '');
+    // localStorage.setItem("discountAmount",  discountAmount?.toString() || '');
     router.push(`/payment-method?hotelId=${hotelDetailsId}`);
   };
 
@@ -882,13 +873,11 @@ export default function Page({
                         image: (string | UrlObject) | StaticImport,
                         index: Key | null | undefined
                       ) => {
-                        // Check if the image is a valid string (for string URLs or StaticImport)
                         const imageUrl =
                           typeof image === "string"
                             ? image
                             : (image as UrlObject)?.href;
 
-                        // If the image is invalid (undefined or null), skip rendering the image
                         if (!imageUrl) {
                           return null;
                         }
@@ -900,7 +889,6 @@ export default function Page({
                                 className="relative w-full"
                                 style={{ height: "500px", marginTop: "100px" }}
                               >
-                                {/* Fixed height for all images */}
                                 <Image
                                   layout="fill" // Ensures the image fills the parent container
                                   objectFit="cover" // Maintains aspect ratio while covering the container
@@ -1056,7 +1044,6 @@ export default function Page({
                       className="absolute right-3"
                       onClick={() => setOpen((prev) => !prev)}
                     >
-                      {/* <CalendarDaysIcon className="w-6 h-6 text-gray-600" /> */}
                     </button>
                   </div>
 
@@ -1137,8 +1124,6 @@ export default function Page({
 
                   </div>
                 </section>
-
-
 
 
                 <section className="relative bg-white py-[60px] lg:py-[120px]">
@@ -1325,7 +1310,6 @@ export default function Page({
 
                           </div>
 
-                          {/* Discount and Discounted Price (Visible Only When Coupon is Applied) */}
                           {discountedPrice !== null && discountAmount > 0 && (
                             <>
                               <div className="flex items-center justify-between mb-2">

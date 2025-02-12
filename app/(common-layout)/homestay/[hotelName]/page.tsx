@@ -10,13 +10,12 @@ import { useState, useEffect, Suspense, Key } from "react";
 import { Tab } from "@headlessui/react";
 
 import "react-datepicker/dist/react-datepicker.css";
-import LocationEntry from "@/components/home-3/LocationEntry";
 import AddRoom from "@/components/home-2/AddRoom";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
-import { CheckIcon, StarIcon } from "@heroicons/react/20/solid";
-import { useRouter, useSearchParams } from "next/navigation";
+import { StarIcon } from "@heroicons/react/20/solid";
+import { useRouter} from "next/navigation";
 import {
   ArrowLongLeftIcon,
   ArrowLongRightIcon,
@@ -26,7 +25,6 @@ import {
   ChatBubbleLeftRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  ClockIcon,
   HandThumbUpIcon,
   HeartIcon,
   MapPinIcon,
@@ -34,7 +32,6 @@ import {
 } from "@heroicons/react/24/outline";
 import HotelDetailsFeaturedRoom from "@/components/HotelDetailsFeaturedRoom";
 
-import CheckboxCustom from "@/components/Checkbox";
 import { UrlObject } from "url";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 
@@ -80,8 +77,6 @@ export default function Page({
 
   
 
-  // const [locationName, setLocationName] = useState("");
-
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const handleTabChange = (index: number) => {
@@ -109,11 +104,8 @@ export default function Page({
   };
 
   const [totalSelected, setTotalSelected] = useState(0);
-  const [totalCost, setTotalCost] = useState(0);
-  const [totalChildPrice, setTotalChildPrice] = useState(0);
 
   const router = useRouter();
-  const searchParams = useSearchParams();
   const hotelDetailsId = localStorage.getItem("hotelId")
   const type = "HomeStay";
 
@@ -125,9 +117,7 @@ export default function Page({
     message: "",
   });
 
-  const adults = Number(localStorage.getItem("adults"));
-  const children = searchParams.get("children");
-  const infants = searchParams.get("infants");
+
 
   const startdate = localStorage.getItem("startDate");
   const enddate = localStorage.getItem("endDate");
@@ -1791,9 +1781,3 @@ export default function Page({
     </main>
   );
 }
-
-// const Page = () => (
-//   <Suspense fallback={<div>Loading...</div>}>
-//     <HotelListingDetails />
-//   </Suspense>
-// );

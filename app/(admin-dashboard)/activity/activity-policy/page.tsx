@@ -83,7 +83,7 @@ const Page = () => {
           },
           body: JSON.stringify({
             activity_policy_title: policyTitle,
-            activity_policy_decription: plainTextDescription,
+            activity_policy_description: plainTextDescription,
           }),
         }
       );

@@ -153,8 +153,6 @@ const Page = () => {
                   <th className="py-3 lg:py-4 px-2 md:px-5">Coupon Code</th>
                   <th className="py-3 lg:py-4 px-2">Type</th>
                   <th className="py-3 lg:py-4 px-2">Discount Price</th>
-                  <th className="py-3 lg:py-4 px-2">Start Date</th>
-                  <th className="py-3 lg:py-4 px-2">End Date</th>
                   <th className="py-3 lg:py-4 px-2">Action</th>
                 </tr>
               </thead>
@@ -184,12 +182,6 @@ const Page = () => {
                       </td>
                       <td className="py-3 lg:py-4 px-2">
                         {coup.discount_price}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2">
-                        {coup.start_date}
-                      </td>
-                      <td className="py-3 lg:py-4 px-2">
-                        {coup.end_date}
                       </td>
                       <td className="py-3 lg:py-7 px-2 flex gap-2 items-center">
                         <a

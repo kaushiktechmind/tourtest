@@ -87,6 +87,10 @@ export default function Page({
   const [faqs, setFaqs] = useState<any[]>([]);
   const [amenitiesArray, setAmenitiesArray] = useState<string[]>([]);
 
+  const [policies, setPolicies] = useState([]);
+const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
+
+
 
   const [opened, setOpened] = useState<number | null>(null);
 
@@ -117,7 +121,8 @@ export default function Page({
 
   useEffect(() => {
     const fetchActivityData = async () => {
-      if (!activityName) return; // Add a check to make sure activityName is not null
+      if (!activityName) return;
+  
       try {
         const response = await fetch(
           `https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_seo_title/${activityName}`
@@ -125,30 +130,44 @@ export default function Page({
         if (!response.ok) {
           throw new Error("Failed to fetch activity data");
         }
+  
         const data = await response.json();
-
         setActivityData(data);
-
+  
+        // Handle FAQs
         if (data?.faqs) {
-          const parsedFaqs = data.faqs.map((faq: string) => JSON.parse(faq)); // Parse each FAQ string
+          const parsedFaqs = data.faqs.map((faq: string) => JSON.parse(faq));
           setFaqs(parsedFaqs);
         }
-
+  
+        // Handle Amenities
         if (data?.activity_attribute) {
-          // Directly set activity_attribute as an array
           setAmenitiesArray(data.activity_attribute);
           console.log("Amenities Array:", data.activity_attribute);
         } else {
           console.log("No amenities data available");
         }
+  
+        // Handle Policies
+        const policies = [];
+        for (let i = 1; i <= 5; i++) {
+          const title = data[`policy_title${i}`];
+          const description = data[`policy_description${i}`];
+  
+          if (title && description) {
+            policies.push({ title, description });
+          }
+        }
+        setPolicies(policies); // Assuming you have a state like `const [policies, setPolicies] = useState([]);`
+  
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
     };
-
+  
     fetchActivityData();
   }, [activityName]);
-
+  
 
   // Conditional rendering to ensure activityData is not null before accessing its properties
   if (!activityData) {
@@ -450,22 +469,54 @@ export default function Page({
 
                   </div>
 
-                  <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                    <h4 className="mb-0 text-2xl font-semibold">FAQ</h4>
-                    <div className="hr-dashed my-5"></div>
 
-                    {faqs.length > 0 ? (
-                      faqs.map((faq, index) => (
-                        <div key={index} className="mb-6">
-                          <h6 className="font-semibold mb-2">{faq.title}</h6> {/* Display title */}
-                          <p>{faq.description}</p> {/* Display description */}
-                        </div>
-                      ))
-                    ) : (
-                      <p>Loading FAQ...</p>
-                    )}
-                  </div>
+                  <section className="relative bg-white py-[60px] lg:py-[120px]">
+  <div className="container">
+    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+      <SubHeadingBtn text="Policies" classes="bg-[var(--primary-light)]" />
+      <h2 className="h2 mt-3 leading-snug">Activity Policies</h2>
+      <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+        Here are the policies related to this activity.
+      </p>
+    </div>
 
+    {/* Dynamically Rendered Policies */}
+    <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+      {policies.length > 0 ? (
+        policies.map((policy, index) => (
+          <div
+            key={index}
+            onClick={() => setOpenedPolicy((prev) => (prev === index ? null : index))}
+            className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+          >
+            <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+              {policy.title}
+              <span
+                className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${
+                  openedPolicy === index ? "rotate-180" : ""
+                }`}
+              >
+                {openedPolicy === index ? (
+                  <MinusIcon className="w-6 h-6" />
+                ) : (
+                  <PlusIcon className="w-6 h-6" />
+                )}
+              </span>
+            </button>
+
+            <AnimateHeight duration={300} height={openedPolicy === index ? "auto" : 0}>
+              <p className="border-t border-dash-long pt-4 mt-4">
+                {policy.description}
+              </p>
+            </AnimateHeight>
+          </div>
+        ))
+      ) : (
+        <p className="text-center text-neutral-600">No Policies available.</p>
+      )}
+    </div>
+  </div>
+</section>
 
 
 
