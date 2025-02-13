@@ -29,8 +29,8 @@ const EditPackagePOLICY = () => {
 
           // Set the values for title and description
           setPolicyTitle(data.package_policy_title);
-          setDescription(data.package_policy_decription);
-          console.log("Description from API:", data.package_policy_decription);
+          setDescription(data.package_policy_description);
+          console.log("Description from API:", data.package_policy_description);
         } catch (error) {
           console.error("Error fetching POLICY data:", error);
         }
@@ -66,7 +66,7 @@ const EditPackagePOLICY = () => {
           },
           body: JSON.stringify({
             package_policy_title: policyTitle,
-            package_policy_decription: plainTextDescription,
+            package_policy_description: plainTextDescription,
           }),
         }
       );

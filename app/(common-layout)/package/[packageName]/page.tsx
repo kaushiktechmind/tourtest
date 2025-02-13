@@ -480,51 +480,48 @@ export default function Page({
             <div className="col-span-12 xl:col-span-8">
               <div>
                 <div className="bg-white rounded-2xl p-3 sm:p-4 lg:py-8 lg:px-5">
-                  <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
-                    <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
-                      <h2 className="h2 m-0"> {packageData.package_title}  </h2>
-                    </div>
-                    <ul className="columns-1 md:columns-2 lg:columns-3 pt-4 border-t border-dashed gap-md-0">
-                      <li className="py-2">
-                        <p className="mb-0">
-                          Location:
-                          <span className="text-primary"> {packageData.location_name}</span>
-                        </p>
-                      </li>
-                      <li className="py-2">
-                        <div className="flex items-center gap-1">
-                          <span>
-                            Min People:{" "}
-                            <span className="text-primary"> {packageData.tour_max_people}</span>
-                          </span>
-                        </div>
-                      </li>
-                      <li className="py-2">
-                        <div className="flex items-center gap-1">
-                          <span>
-                            Max People:{" "}
-                            <span className="text-primary"> {packageData.tour_min_people}</span>
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
-                    <ul className="columns-1 md:columns-2 lg:columns-3">
-                      <li className="py-2">
-                        <p className="mb-0">
-                          Duration:
-                          <span className="text-primary"> {packageData.duration}</span>
-                        </p>
-                      </li>
-                      <li className="py-2">
-                        <div className="flex items-center gap-1">
-                          <span>
-                            Pickup Point:{" "}
-                            <span className="text-primary">{packageData.pickup_point}</span>
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
+                <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
+  <div className="flex items-center justify-between flex-wrap gap-3 mb-8">
+    <h2 className="h2 m-0">{packageData.package_title}</h2>
+  </div>
+
+  <ul className="columns-1 md:columns-2 lg:columns-2 pt-4 border-t border-dashed gap-md-0">
+    <li className="py-2">
+      <div className="flex items-center gap-1">
+        <span>
+          Min People:{" "}
+          <span className="text-primary">{packageData.tour_max_people}</span>
+        </span>
+      </div>
+    </li>
+    <li className="py-2">
+      <div className="flex items-center gap-1">
+        <span>
+          Max People:{" "}
+          <span className="text-primary">{packageData.tour_min_people}</span>
+        </span>
+      </div>
+    </li>
+  </ul>
+
+  <ul className="columns-1 md:columns-2 lg:columns-2">
+    <li className="py-2">
+      <p className="mb-0">
+        Duration:
+        <span className="text-primary"> {packageData.duration}</span>
+      </p>
+    </li>
+    <li className="py-2">
+      <div className="flex items-center gap-1">
+        <span>
+          Pickup Point:{" "}
+          <span className="text-primary">{packageData.pickup_point}</span>
+        </span>
+      </div>
+    </li>
+  </ul>
+</div>
+
                   <div className="p-3 sm:p-4 lg:p-6 bg-[var(--bg-1)] rounded-2xl border border-neutral-40 mb-6 lg:mb-10">
                     <h4 className="mb-5 text-2xl font-semibold">Description</h4>
                     <p className="mb-5 clr-neutral-500">
@@ -667,47 +664,47 @@ export default function Page({
 
 
                   <section className="relative bg-white py-[60px] lg:py-[120px]">
-      <Image src={faq1} className="hidden lg:block absolute top-10 right-10" alt="faq el" />
-      <Image src={faq2} className="hidden lg:block absolute bottom-0 left-0" alt="faq el" />
-      <div className="container">
-        <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
-          <SubHeadingBtn text="FAQs" classes="bg-[var(--primary-light)]" />
-          <h2 className="h2 mt-3 leading-snug">If you have any questions, we have the answers</h2>
-          <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
-            Real estate can be bought, sold, leased, or rented, and can be a valuable investment opportunity. The value of real estate can be
-          </p>
-        </div>
-        <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
-          {faqs.length > 0 ? (
-            faqs.map((faq, index) => (
-              <div
-                key={index}
-                onClick={() => setOpened(prev => (prev === index ? null : index))}
-                className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
-              >
-                <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
-                  {faq.question}
-                  <span
-                    className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === index ? "rotate-180" : ""}`}
-                  >
-                    {opened === index ? (
-                      <MinusIcon className="w-6 h-6" />
-                    ) : (
-                      <PlusIcon className="w-6 h-6" />
-                    )}
-                  </span>
-                </button>
-                <AnimateHeight duration={300} height={opened === index ? "auto" : 0}>
-                  <p className="border-t border-dash-long pt-4 mt-4">{faq.answer}</p>
-                </AnimateHeight>
-              </div>
-            ))
-          ) : (
-            <p>No FAQs available</p>
-          )}
-        </div>
-      </div>
-    </section>
+                    <Image src={faq1} className="hidden lg:block absolute top-10 right-10" alt="faq el" />
+                    <Image src={faq2} className="hidden lg:block absolute bottom-0 left-0" alt="faq el" />
+                    <div className="container">
+                      <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                        <SubHeadingBtn text="FAQs" classes="bg-[var(--primary-light)]" />
+                        <h2 className="h2 mt-3 leading-snug">If you have any questions, we have the answers</h2>
+                        <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+                          Real estate can be bought, sold, leased, or rented, and can be a valuable investment opportunity. The value of real estate can be
+                        </p>
+                      </div>
+                      <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+                        {faqs.length > 0 ? (
+                          faqs.map((faq, index) => (
+                            <div
+                              key={index}
+                              onClick={() => setOpened(prev => (prev === index ? null : index))}
+                              className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                            >
+                              <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                                {faq.question}
+                                <span
+                                  className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${opened === index ? "rotate-180" : ""}`}
+                                >
+                                  {opened === index ? (
+                                    <MinusIcon className="w-6 h-6" />
+                                  ) : (
+                                    <PlusIcon className="w-6 h-6" />
+                                  )}
+                                </span>
+                              </button>
+                              <AnimateHeight duration={300} height={opened === index ? "auto" : 0}>
+                                <p className="border-t border-dash-long pt-4 mt-4">{faq.answer}</p>
+                              </AnimateHeight>
+                            </div>
+                          ))
+                        ) : (
+                          <p>No FAQs available</p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
 
 
                 </div>

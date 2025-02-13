@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -14,6 +14,12 @@ interface FAQ {
   id: number; // Change to the actual type based on your API response
   package_faq_title: string;
   package_faq_description: string; // Assuming the correct spelling is 'package_faq_description'
+}
+
+interface Policy {
+  id: number; // Change to the actual type based on your API response
+  package_policy_title: string;
+  package_policy_description: string; // Assuming the correct spelling is 'package_faq_description'
 }
 
 interface Amenity {
@@ -40,9 +46,9 @@ const AddNewPackage = () => {
   const router = useRouter();
   const [itineraries, setItineraries] = useState<Itinerary[]>([
     {
-      day: "", 
-      title: "", 
-      description: "", 
+      day: "",
+      title: "",
+      description: "",
       itinerary_images: []
     }
   ]);
@@ -90,6 +96,9 @@ const AddNewPackage = () => {
     person_type_name6: "",
     itinerary: "",
     banner_image: "",
+    seo_title: "",
+    seo_description: "",
+    meta_title: "",
     location_name: "",
     itinerary_images: [],
   });
@@ -101,10 +110,26 @@ const AddNewPackage = () => {
 
   const [faqs, setFAQs] = useState<FAQ[]>([]); // State for FAQs
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]); // Changed type to Policy[]
+
+
+  const [policies, setPolicies] = useState<Policy[]>([]); // State for FAQs
+  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]); // Changed type to Policy[]
+
+
   const [inclusions, setInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [exclusions, setExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
   const [selectedExclusions, setSelectedExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
+
+
+  const personTypes = [
+    "Adult",
+    "Child",
+    "Child",
+    "Child",
+    "Infant",
+    "Infant",
+  ];
 
 
   useEffect(() => {
@@ -154,6 +179,24 @@ const AddNewPackage = () => {
     fetchFAQs();
   }, []);
 
+
+
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/get_all_package_policy"
+        );
+        const data: Policy[] = await response.json();
+        setPolicies(data);
+      } catch (error) {
+        console.error("Error fetching Policies:", error);
+      }
+    };
+
+    fetchPolicies();
+  }, []);
+
   useEffect(() => {
     const fetchLocations = async () => {
       try {
@@ -191,6 +234,21 @@ const AddNewPackage = () => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+
+
+
+
+
+  const handleRemoveInclusion = (index: number) => {
+    const updatedInclusions = selectedInclusions.filter((_, i) => i !== index);
+    setSelectedInclusions(updatedInclusions);
+  };
+
+  const handleRemoveExclusion = (index: number) => {
+    const updatedExclusions = selectedExclusions.filter((_, i) => i !== index);
+    setSelectedExclusions(updatedExclusions);
   };
 
 
@@ -296,40 +354,44 @@ const AddNewPackage = () => {
       formDataToSend.append("person_type_price1", formData.person_type_price1);
       formDataToSend.append("person_max1", formData.person_max1);
       formDataToSend.append("person_min1", formData.person_min1);
-      formDataToSend.append("person_type_name1", formData.person_type_name1);
+      formDataToSend.append("person_type_name1", "Adult");
 
       formDataToSend.append("person_type_description2", formData.person_type_description2);
       formDataToSend.append("person_type_price2", formData.person_type_price2);
       formDataToSend.append("person_max2", formData.person_max2);
       formDataToSend.append("person_min2", formData.person_min2);
-      formDataToSend.append("person_type_name2", formData.person_type_name2);
+      formDataToSend.append("person_type_name2", "Child");
 
       formDataToSend.append("person_type_description3", formData.person_type_description3);
       formDataToSend.append("person_type_price3", formData.person_type_price3);
       formDataToSend.append("person_max3", formData.person_max3);
       formDataToSend.append("person_min3", formData.person_min3);
-      formDataToSend.append("person_type_name3", formData.person_type_name3);
+      formDataToSend.append("person_type_name3", "Child");
 
       formDataToSend.append("person_type_description4", formData.person_type_description4);
       formDataToSend.append("person_type_price4", formData.person_type_price4);
       formDataToSend.append("person_max4", formData.person_max4);
       formDataToSend.append("person_min4", formData.person_min4);
-      formDataToSend.append("person_type_name4", formData.person_type_name4);
+      formDataToSend.append("person_type_name4", "Child");
 
       formDataToSend.append("person_type_description5", formData.person_type_description5);
       formDataToSend.append("person_type_price5", formData.person_type_price5);
       formDataToSend.append("person_max5", formData.person_max5);
       formDataToSend.append("person_min5", formData.person_min5);
-      formDataToSend.append("person_type_name5", formData.person_type_name5);
+      formDataToSend.append("person_type_name5", "Infant");
 
       formDataToSend.append("person_type_description6", formData.person_type_description6);
       formDataToSend.append("person_type_price6", formData.person_type_price6);
       formDataToSend.append("person_max6", formData.person_max6);
       formDataToSend.append("person_min6", formData.person_min6);
-      formDataToSend.append("person_type_name6", formData.person_type_name6);
+      formDataToSend.append("person_type_name6", "Infant");
 
       formDataToSend.append("location_name", formData.location_name);
       formDataToSend.append("status", formData.status);
+
+      formDataToSend.append("seo_title", formData.seo_title);
+      formDataToSend.append("seo_description", formData.seo_description);
+      formDataToSend.append("meta_title", formData.meta_title);
 
       formDataToSend.append("package_includes", JSON.stringify(selectedInclusions.map((inc) => inc.include_title)));
       formDataToSend.append("package_excludes", JSON.stringify(selectedExclusions.map((exc) => exc.exclude_title)));
@@ -340,6 +402,13 @@ const AddNewPackage = () => {
         answer: faq.package_faq_description,
       }));
       formDataToSend.append("package_faqs", JSON.stringify(faqsData));
+
+
+      selectedPolicies.forEach((policy, index) => {
+        formDataToSend.append(`package_policy_title${index + 1}`, policy.package_policy_title);
+        formDataToSend.append(`package_policy_description${index + 1}`, policy.package_policy_description);
+      });
+
 
       // Check if bannerImages is defined and is an array before using forEach
       if (Array.isArray(bannerImages)) {
@@ -407,15 +476,15 @@ const AddNewPackage = () => {
     (newItineraries[index] as any)[field] = value;
     setItineraries(newItineraries);
   };
-  
- const addNewItinerary = () => {
-  if (itineraries.length < 5) {
-    setItineraries([
-      ...itineraries,
-      { day: "", title: "", description: "", itinerary_images: [] }
-    ]);
-  }
-};
+
+  const addNewItinerary = () => {
+    if (itineraries.length < 5) {
+      setItineraries([
+        ...itineraries,
+        { day: "", title: "", description: "", itinerary_images: [] }
+      ]);
+    }
+  };
 
   // Delete itinerary box
   const deleteItinerary = (index: number) => {
@@ -577,6 +646,7 @@ const AddNewPackage = () => {
               </div>
             )}
             initialOpen={true}>
+
             <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
               <table className="table-auto w-full border-collapse border border-gray-200">
                 <thead>
@@ -589,20 +659,21 @@ const AddNewPackage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[...Array(6)].map((_, index) => (
+                  {personTypes.map((type, index) => (
                     <tr key={index}>
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="text"
-                          name={`person_type_name${index + 1}`}  // person_type_name1, person_type_name2, etc.
-                          onChange={handleChange}
-                          className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
+                          name={`person_type_name${index + 1}`}
+                          value={type} // Prefilled with static value
+                          readOnly // Prevents editing
+                          className="w-full border py-1 px-2 rounded-md text-sm bg-gray-100 focus:outline-none"
                         />
                       </td>
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="text"
-                          name={`person_type_description${index + 1}`}  // person_type_description1, person_type_description2, etc.
+                          name={`person_type_description${index + 1}`}
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -610,7 +681,7 @@ const AddNewPackage = () => {
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="number"
-                          name={`person_min${index + 1}`}  // person_min1, person_min2, etc.
+                          name={`person_min${index + 1}`}
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -618,7 +689,7 @@ const AddNewPackage = () => {
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="number"
-                          name={`person_max${index + 1}`}  // person_max1, person_max2, etc.
+                          name={`person_max${index + 1}`}
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -626,7 +697,7 @@ const AddNewPackage = () => {
                       <td className="border border-gray-200 px-4 py-2">
                         <input
                           type="number"
-                          name={`person_type_price${index + 1}`}  // person_type_price1, person_type_price2, etc.
+                          name={`person_type_price${index + 1}`}
                           onChange={handleChange}
                           className="w-full border py-1 px-2 rounded-md text-sm focus:outline-none"
                         />
@@ -636,6 +707,7 @@ const AddNewPackage = () => {
                 </tbody>
               </table>
             </div>
+
 
 
           </Accordion>
@@ -723,7 +795,7 @@ const AddNewPackage = () => {
                 <select
                   name="include_title"
                   onChange={handleAddInclusion}
-                  value=""  // Add value attribute to ensure no default selection
+                  value=""
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -739,13 +811,21 @@ const AddNewPackage = () => {
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={inclusion.include_title}
-                      onChange={(e) => handleEditInclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="text"
+                        value={inclusion.include_title}
+                        onChange={(e) => handleEditInclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveInclusion(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -770,7 +850,7 @@ const AddNewPackage = () => {
                 <select
                   name="exclude_title"
                   onChange={handleAddExclusion}
-                  value=""  // Add value attribute to prevent default selection
+                  value=""
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
@@ -783,15 +863,24 @@ const AddNewPackage = () => {
                   ))}
                 </select>
 
+                {/* Render selected exclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <input
-                      key={index}
-                      type="text"
-                      value={exclusion.exclude_title}
-                      onChange={(e) => handleEditExclusion(index, e.target.value)}
-                      className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
-                    />
+                    <div key={index} className="flex items-center">
+                      <input
+                        type="text"
+                        value={exclusion.exclude_title}
+                        onChange={(e) => handleEditExclusion(index, e.target.value)}
+                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExclusion(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
@@ -802,6 +891,95 @@ const AddNewPackage = () => {
 
           <div className="rounded-2xl bg-white border mt-6 ">
 
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                >
+                  <h3 className="h3">Policy</h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                {faqs.length > 0 ? (
+                  <div className="mb-4">
+                    <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+                      Select a Policy
+                    </label>
+                    <select
+                      id="policyDropdown"
+                      className="w-full border p-2 rounded-md"
+                      onChange={(e) => {
+                        const selectedPolicy = policies.find(
+                          (policy) => policy.id === parseInt(e.target.value)
+                        );
+                        if (selectedPolicy && !selectedPolicies.some((p) => p.id === selectedPolicy.id)) {
+                          setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                        }
+                      }}
+                    >
+                      <option value="" disabled selected>
+                        Select a Policy...
+                      </option>
+                      {policies.map((policy) => (
+                        <option key={policy.id} value={policy.id}>
+                          {policy.package_policy_title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                ) : (
+                  <p>No FAQs available</p>
+                )}
+
+                {/* Render input fields for each selected FAQ */}
+                {selectedPolicies.map((policy) => (
+                  <div key={policy.id} className="mb-4 flex gap-4 items-center">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.package_policy_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.package_policy_description}
+                      onChange={(e) => {
+                        const updatedPolicies = selectedPolicies.map((p) =>
+                          p.id === policy.id ? { ...p, activity_policy_description: e.target.value } : p
+                        );
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const updatedPolicies = selectedPolicies.filter((p) => p.id !== policy.id);
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+
+              </div>
+
+            </Accordion>
+          </div>
+
+
+
+          <div className="rounded-2xl bg-white border mt-6 ">
             <Accordion
               buttonContent={(open) => (
                 <div
@@ -857,28 +1035,35 @@ const AddNewPackage = () => {
 
                 {/* Render input fields for each selected FAQ */}
                 {selectedFAQs.map((faq) => (
-                  <div key={faq.id} className="mb-4">
-                    <div className="flex gap-4">
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.package_faq_title}
-                        readOnly
-                      />
-                      <input
-                        type="text"
-                        className="w-1/2 border p-2 rounded-md"
-                        value={faq.package_faq_description}
-                        onChange={(e) => {
-                          const updatedFAQs = selectedFAQs.map((f) =>
-                            f.id === faq.id
-                              ? { ...f, package_faq_description: e.target.value }
-                              : f
-                          );
-                          setSelectedFAQs(updatedFAQs);
-                        }}
-                      />
-                    </div>
+                  <div key={faq.id} className="mb-4 flex items-center gap-4">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.package_faq_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={faq.package_faq_description}
+                      onChange={(e) => {
+                        const updatedFAQs = selectedFAQs.map((f) =>
+                          f.id === faq.id
+                            ? { ...f, package_faq_description: e.target.value }
+                            : f
+                        );
+                        setSelectedFAQs(updatedFAQs);
+                      }}
+                    />
+                    {/* Trash Icon for deleting FAQ */}
+                    <button
+                      onClick={() =>
+                        setSelectedFAQs((prev) => prev.filter((f) => f.id !== faq.id))
+                      }
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-6 h-6" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -923,6 +1108,60 @@ const AddNewPackage = () => {
               </div>
             </Accordion>
           </div>
+
+
+          <div className="col-span-12 lg:col-span-6 mt-6">
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}>
+                  <h3 className="h3">SEO </h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}>
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                <div className="border-t pt-4">
+                  <p className="mt-6 mb-4 text-xl font-medium">URL Name   :</p>
+                  <input
+                    type="text"
+                    name="seo_title"
+                    value={formData.seo_title}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="url name"
+                  />
+                  <p className="mt-6 mb-4 text-xl font-medium">SEO Description  :</p>
+                  <input
+                    type="text"
+                    name="seo_description"
+                    value={formData.seo_description}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="seo description"
+                  />
+
+                  <p className="mt-6 mb-4 text-xl font-medium">Meta Title :</p>
+                  <input
+                    type="text"
+                    name="meta_title"
+                    value={formData.meta_title}
+                    onChange={handleChange}
+                    className="w-full border p-2 rounded-md text-base"
+                    placeholder="meta title"
+                  />
+                </div>
+              </div>
+
+
+            </Accordion>
+
+
+          </div>
         </div>
       </section>
 
@@ -937,70 +1176,77 @@ const AddNewPackage = () => {
               />
             </div>
           )}
-          initialOpen={true}>
+          initialOpen={true}
+        >
           <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
             {itineraries.map((itinerary, index) => (
               <div key={index} className="mb-6 p-4 border rounded-md">
-                <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/5 flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Day</label>
-                      <input
-                        type="text"
-                        value={`Day ${index + 1}`}
-                        readOnly
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base bg-gray-100"
-                        placeholder="Day 1"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
+                {/* Day Centered */}
+                <div className="w-full text-center mb-4">
+                  <input
+                    type="text"
+                    value={`Day ${index + 1}`}
+                    readOnly
+                    className="border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base bg-gray-100 text-center"
+                  />
+                </div>
+
+                {/* Title & Image Side by Side */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <label className="block text-sm font-medium mb-2">Title</label>
-                    <textarea
+                    <input
+                      type="text"
                       value={itinerary.title}
                       onChange={(e) => handleInputChange(index, "title", e.target.value)}
                       className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       placeholder="Title"
                     />
                   </div>
-                  <div className="w-full md:w-1/4">
-                    <label className="block text-sm font-medium mb-2">Image</label>
+
+                  <div>
+                    <label className="block text-sm font-medium ">Image</label>
                     <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
-                      <span className="flex flex-col items-center justify-center py-12">
-                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
+                      htmlFor={`dropzone-file-${index}`}
+                      className=""
+                    >
+                      <span className="flex flex-col items-center justify-center py-1">
                       </span>
                       <input
+                        id={`dropzone-file-${index}`}
                         type="file"
                         onChange={(e) => handleImageChange(index, e)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
                     </label>
                   </div>
-                  {itineraries.length > 1 && (
-                    <div className="w-full md:w-1/6 flex items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => deleteItinerary(index)}
-                        className="text-red-500"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                  <div className="w-full flex flex-col">
-                    <div className="mt-4">
-                      <p className="mb-4 text-xl font-medium"> Itinerary Description :</p>
-                      <QuillEditor
-                        onChange={(value) => handleInputChange(index, "description", value)}
-                        value={itinerary.description || ""}
-                      />
-                    </div>
-                  </div>
                 </div>
+
+                {/* Description Section */}
+                <div className="w-full mt-6">
+                  <p className="mb-4 text-xl font-medium">Itinerary Description :</p>
+                  <QuillEditor
+                    onChange={(value) => handleInputChange(index, "description", value)}
+                    value={itinerary.description || ""}
+                  />
+                </div>
+
+                {/* Delete Button */}
+                {itineraries.length > 1 && (
+                  <div className="flex justify-end mt-4">
+                    <button
+                      type="button"
+                      onClick={() => deleteItinerary(index)}
+                      className="text-red-500"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
+
+            {/* Add New Itinerary Button */}
             <button
               type="button"
               onClick={addNewItinerary}
@@ -1010,9 +1256,9 @@ const AddNewPackage = () => {
               Add New
             </button>
           </div>
-
         </Accordion>
       </div>
+
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">
         Save & Preview
       </button>

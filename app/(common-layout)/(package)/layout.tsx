@@ -27,21 +27,10 @@ export default function RootLayout({
               <div className="p-3 sm:p-4 lg:py-6 lg:px-8 bg-white rounded-2xl shadow-lg">
                 <h4 className="mb-0 text-2xl font-semibold"> Filter </h4>
                 <div className="border-t border-dashed my-6"></div>
-                <div className="flex items-center justify-between rounded-full border border-neutral-40 bg-[var(--bg-2)] px-5 py-3">
-                  <input
-                    type="text"
-                    className="w-full bg-transparent border-0 focus:outline-none"
-                    placeholder="Search by package name"
-                  />
-                  <button
-                    type="button"
-                    className="border-0 bg-transparent p-0 lh-1">
-                    <SearchIcon />
-                  </button>
-                </div>
+               
                
                 <p className="mb-4 text-[var(--neutral-700)] text-xl font-medium my-6">
-                  Star Category
+                  Type of Tour
                 </p>
                 <ul className="flex flex-col gap-3">
                   <li className="flex justify-between items-center">

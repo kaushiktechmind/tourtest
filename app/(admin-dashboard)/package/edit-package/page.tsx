@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, Suspense } from "react";
-import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon } from "@heroicons/react/24/outline";
+import { ChevronDownIcon, CloudArrowUpIcon, EyeIcon, TrashIcon } from "@heroicons/react/24/outline";
 import Accordion from "@/components/Accordion";
 import Link from "next/link";
 import dynamic from 'next/dynamic';
@@ -15,6 +15,14 @@ interface FAQ {
   package_faq_title: string;
   package_faq_description: string; // Assuming the correct spelling is 'package_faq_description'
 }
+
+interface Policy {
+  id: number; // Change to the actual type based on your API response
+  package_policy_title: string;
+  package_policy_description: string; // Assuming the correct spelling is 'package_faq_description'
+}
+
+
 interface Location {
   id: number;
   location_name: string;
@@ -95,6 +103,9 @@ const EditPackage = () => {
   const [amenities, setAmenities] = useState<Amenity[]>([]);
   const [bannerImages, setBannerImages] = useState<(File | string)[]>([]);
 
+  const [policies, setPolicies] = useState<Policy[]>([]); // State for FAQs
+  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
+
 
   const [faqs, setFAQs] = useState<FAQ[]>([]);
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
@@ -102,6 +113,16 @@ const EditPackage = () => {
   const [selectedInclusions, setSelectedInclusions] = useState<{ id: number; include_title: string }[]>([]);
   const [exclusions, setExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
   const [selectedExclusions, setSelectedExclusions] = useState<{ id: number; exclude_title: string }[]>([]);
+
+  const personTypes = [
+    "Adult",
+    "Child",
+    "Child",
+    "Child",
+    "Infant",
+    "Infant",
+  ];
+
 
 
   useEffect(() => {
@@ -137,6 +158,24 @@ const EditPackage = () => {
     };
 
     fetchExclusions();
+  }, []);
+
+
+
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/get_all_package_policy"
+        );
+        const data: Policy[] = await response.json();
+        setPolicies(data);
+      } catch (error) {
+        console.error("Error fetching Policies:", error);
+      }
+    };
+
+    fetchPolicies();
   }, []);
 
 
@@ -196,7 +235,7 @@ const EditPackage = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  
+
 
 
   const handleCheckboxChange = (label: string) => {
@@ -267,6 +306,20 @@ const EditPackage = () => {
   };
 
 
+  const handleRemoveInclusion = (index: number) => {
+    const updatedInclusions = selectedInclusions.filter((_, i) => i !== index);
+    setSelectedInclusions(updatedInclusions);
+  };
+
+
+  const handleRemoveExclusion = (index: number) => {
+    const updatedExclusions = selectedExclusions.filter((_, i) => i !== index);
+    setSelectedExclusions(updatedExclusions);
+  };
+
+
+
+
   useEffect(() => {
     const fetchPackageData = async () => {
       try {
@@ -276,12 +329,27 @@ const EditPackage = () => {
         setBannerImages(data.banner_image || []);
 
         if (data.package_faqs) {
-          const parsedFAQs = JSON.parse(data.package_faqs).map((faq: any) => ({
+          const parsedFAQs = JSON.parse(data.package_faqs).map((faq: { id: any; question: any; answer: any; }, index: number) => ({
+            id: faq.id || Date.now() + index, // Ensure a unique ID
             package_faq_title: faq.question,
             package_faq_description: faq.answer,
           }));
           setSelectedFAQs(parsedFAQs);
         }
+
+
+        // Prefill Policies
+        const policyData = [];
+        for (let i = 1; i <= 10; i++) {
+          if (data[`package_policy_title${i}`] && data[`package_policy_description${i}`]) {
+            policyData.push({
+              id: i,
+              package_policy_title: data[`package_policy_title${i}`],
+              package_policy_description: data[`package_policy_description${i}`]
+            });
+          }
+        }
+        setSelectedPolicies(policyData);
 
         const parsedItineraries = JSON.parse(data.itinerary);
         setItineraries(
@@ -342,37 +410,37 @@ const EditPackage = () => {
           pickup_point: data.pickup_point || "",
           location_name: data.location_name || "",
 
-          person_type_name1: data.person_type_name1 || "",
+          person_type_name1:  "Adult",
           person_type_description1: data.person_type_description1 || "",
           person_min1: data.person_min1 || "",
           person_max1: data.person_max1 || "",
           person_type_price1: data.person_type_price1 || "",
 
-          person_type_name2: data.person_type_name2 || "",
+          person_type_name2: "Child",
           person_type_description2: data.person_type_description2 || "",
           person_min2: data.person_min2 || "",
           person_max2: data.person_max2 || "",
           person_type_price2: data.person_type_price2 || "",
 
-          person_type_name3: data.person_type_name3 || "",
+          person_type_name3: "Child",
           person_type_description3: data.person_type_description3 || "",
           person_min3: data.person_min3 || "",
           person_max3: data.person_max3 || "",
           person_type_price3: data.person_type_price3 || "",
 
-          person_type_name4: data.person_type_name4 || "",
+          person_type_name4: "Child",
           person_type_description4: data.person_type_description4 || "",
           person_min4: data.person_min4 || "",
           person_max4: data.person_max4 || "",
           person_type_price4: data.person_type_price4 || "",
 
-          person_type_name5: data.person_type_name5 || "",
+          person_type_name5: "Infant",
           person_type_description5: data.person_type_description5 || "",
           person_min5: data.person_min5 || "",
           person_max5: data.person_max5 || "",
           person_type_price5: data.person_type_price5 || "",
 
-          person_type_name6: data.person_type_name6 || "",
+          person_type_name6: "Infant",
           person_type_description6: data.person_type_description6 || "",
           person_min6: data.person_min6 || "",
           person_max6: data.person_max6 || "",
@@ -386,7 +454,7 @@ const EditPackage = () => {
     };
 
     fetchPackageData();
-  }, [packageId, inclusions, exclusions]);  
+  }, [packageId, inclusions, exclusions]);
 
 
   const handleSubmit = async () => {
@@ -418,37 +486,37 @@ const EditPackage = () => {
       formDataToSend.append("person_type_price1", formData.person_type_price1);
       formDataToSend.append("person_max1", formData.person_max1);
       formDataToSend.append("person_min1", formData.person_min1);
-      formDataToSend.append("person_type_name1", formData.person_type_name1);
+      formDataToSend.append("person_type_name1", "Adult");
 
       formDataToSend.append("person_type_description2", formData.person_type_description2);
       formDataToSend.append("person_type_price2", formData.person_type_price2);
       formDataToSend.append("person_max2", formData.person_max2);
       formDataToSend.append("person_min2", formData.person_min2);
-      formDataToSend.append("person_type_name2", formData.person_type_name2);
+      formDataToSend.append("person_type_name2", "Child");
 
       formDataToSend.append("person_type_description3", formData.person_type_description3);
       formDataToSend.append("person_type_price3", formData.person_type_price3);
       formDataToSend.append("person_max3", formData.person_max3);
       formDataToSend.append("person_min3", formData.person_min3);
-      formDataToSend.append("person_type_name3", formData.person_type_name3);
+      formDataToSend.append("person_type_name3", "Child");
 
       formDataToSend.append("person_type_description4", formData.person_type_description4);
       formDataToSend.append("person_type_price4", formData.person_type_price4);
       formDataToSend.append("person_max4", formData.person_max4);
       formDataToSend.append("person_min4", formData.person_min4);
-      formDataToSend.append("person_type_name4", formData.person_type_name4);
+      formDataToSend.append("person_type_name4", "Child");
 
       formDataToSend.append("person_type_description5", formData.person_type_description5);
       formDataToSend.append("person_type_price5", formData.person_type_price5);
       formDataToSend.append("person_max5", formData.person_max5);
       formDataToSend.append("person_min5", formData.person_min5);
-      formDataToSend.append("person_type_name5", formData.person_type_name5);
+      formDataToSend.append("person_type_name5", "Infant");
 
       formDataToSend.append("person_type_description6", formData.person_type_description6);
       formDataToSend.append("person_type_price6", formData.person_type_price6);
       formDataToSend.append("person_max6", formData.person_max6);
       formDataToSend.append("person_min6", formData.person_min6);
-      formDataToSend.append("person_type_name6", formData.person_type_name6);
+      formDataToSend.append("person_type_name6", "Infant");
 
       formDataToSend.append("location_name", formData.location_name);
       formDataToSend.append("status", formData.status);
@@ -464,6 +532,13 @@ const EditPackage = () => {
         answer: faq.package_faq_description,
       }));
       formDataToSend.append("package_faqs", JSON.stringify(faqsData));
+
+
+      selectedPolicies.forEach((policy, index) => {
+        formDataToSend.append(`package_policy_title${index + 1}`, policy.package_policy_title);
+        formDataToSend.append(`package_policy_description${index + 1}`, policy.package_policy_description);
+      });
+
 
       // If new files are selected, add them; otherwise, send an empty array
       if (bannerImages.length > 0 && bannerImages[0] instanceof File) {
@@ -514,7 +589,7 @@ const EditPackage = () => {
       if (response.ok) {
         const data = await response.json();
         alert("Package Updated successfully!");
-        router.push("/package/all-package");
+        // router.push("/package/all-package");
         console.log(data);
       } else {
         alert("Failed to Update package.");
@@ -857,8 +932,7 @@ const EditPackage = () => {
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Inclusion</h3>
                   <ChevronDownIcon
@@ -872,41 +946,56 @@ const EditPackage = () => {
                 <select
                   name="include_title"
                   onChange={handleAddInclusion}
-                  value="" // Ensures the select shows "Select an Inclusion" by default
+                  value=""
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Inclusion
                   </option>
-                  {inclusions.map((inclusion) => (
-                    <option key={inclusion.id} value={inclusion.include_title}>
-                      {inclusion.include_title}
-                    </option>
-                  ))}
+                  {inclusions
+                    .filter(
+                      (inclusion) =>
+                        !selectedInclusions.some(
+                          (selected) => selected.include_title === inclusion.include_title
+                        )
+                    )
+                    .map((inclusion) => (
+                      <option key={inclusion.id} value={inclusion.include_title}>
+                        {inclusion.include_title}
+                      </option>
+                    ))}
                 </select>
+
+
                 {/* Render selected inclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedInclusions.map((inclusion, index) => (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className="flex items-center">
                       <input
                         type="text"
                         value={inclusion.include_title}
                         onChange={(e) => handleEditInclusion(index, e.target.value)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
-                    
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveInclusion(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
             </Accordion>
+
           </div>
           <div className="rounded-2xl bg-white border mt-6">
             <Accordion
               buttonContent={(open) => (
                 <div
-                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
-                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"} flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
                 >
                   <h3 className="h3">Exclusion</h3>
                   <ChevronDownIcon
@@ -920,40 +1009,161 @@ const EditPackage = () => {
                 <select
                   name="exclude_title"
                   onChange={handleAddExclusion}
-                  value="" // Ensures the select shows "Select an Exclusion" by default
+                  value=""
                   className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                 >
                   <option value="" disabled>
                     Select an Exclusion
                   </option>
-                  {exclusions.map((exclusion) => (
-                    <option key={exclusion.id} value={exclusion.exclude_title}>
-                      {exclusion.exclude_title}
-                    </option>
-                  ))}
+                  {exclusions
+                    .filter(
+                      (exclusion) =>
+                        !selectedExclusions.some(
+                          (selected) => selected.exclude_title === exclusion.exclude_title
+                        )
+                    )
+                    .map((exclusion) => (
+                      <option key={exclusion.id} value={exclusion.exclude_title}>
+                        {exclusion.exclude_title}
+                      </option>
+                    ))}
                 </select>
+
 
                 {/* Render selected exclusions */}
                 <div className="mt-4 space-y-4">
                   {selectedExclusions.map((exclusion, index) => (
-                    <div key={index} className="flex items-center space-x-2">
+                    <div key={index} className="flex items-center">
                       <input
                         type="text"
                         value={exclusion.exclude_title}
                         onChange={(e) => handleEditExclusion(index, e.target.value)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
-                     
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveExclusion(index)}
+                        className="ml-2 text-red-500 hover:text-red-700"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
                     </div>
                   ))}
                 </div>
               </div>
+            </Accordion>
+
+          </div>
+
+
+          <div className="rounded-2xl bg-white border mt-6 ">
+
+            <Accordion
+              buttonContent={(open) => (
+                <div
+                  className={`${open ? "rounded-t-2xl" : "rounded-2xl"
+                    } flex justify-between items-center p-4 md:p-6 lg:p-8 duration-500 bg-white`}
+                >
+                  <h3 className="h3">Policy</h3>
+                  <ChevronDownIcon
+                    className={`w-5 h-5 sm:w-6 sm:h-6 duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </div>
+              )}
+              initialOpen={true}
+            >
+
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                {policies.length > 0 ? (
+                  <div className="mb-4">
+                    <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+                      Select a Policy
+                    </label>
+                    <select
+                      id="policyDropdown"
+                      className="w-full border p-2 rounded-md"
+                      value="" // Ensures the default state
+                      onChange={(e) => {
+                        const selectedPolicy = policies.find(
+                          (policy) => policy.id === parseInt(e.target.value)
+                        );
+                        if (
+                          selectedPolicy &&
+                          !selectedPolicies.some(
+                            (policy) =>
+                              policy.id === selectedPolicy.id ||
+                              policy.package_policy_title === selectedPolicy.package_policy_title
+                          )
+                        ) {
+                          setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                        }
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select a Policy...
+                      </option>
+                      {policies
+                        .filter(
+                          (policy) =>
+                            !selectedPolicies.some(
+                              (p) =>
+                                p.id === policy.id || p.package_policy_title === policy.package_policy_title
+                            )
+                        )
+                        .map((policy) => (
+                          <option key={policy.id} value={policy.id}>
+                            {policy.package_policy_title}
+                          </option>
+                        ))}
+                    </select>
+
+                  </div>
+                ) : (
+                  <p>No Policies available</p>
+                )}
+
+                {/* Render prefilled input fields for each selected policy */}
+                {selectedPolicies.map((policy) => (
+                  <div key={policy.id} className="mb-4 flex gap-4 items-center">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.package_policy_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.package_policy_description}
+                      onChange={(e) => {
+                        const updatedPolicies = selectedPolicies.map((p) =>
+                          p.id === policy.id ? { ...p, package_policy_description: e.target.value } : p
+                        );
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const updatedPolicies = selectedPolicies.filter((p) => p.id !== policy.id);
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+
 
             </Accordion>
           </div>
 
 
+
           <div className="rounded-2xl bg-white border mt-6 ">
+
 
             <Accordion
               buttonContent={(open) => (
@@ -986,23 +1196,40 @@ const EditPackage = () => {
                         const selectedFAQ = faqs.find(
                           (faq) => faq.id === parseInt(e.target.value)
                         );
+
                         if (
                           selectedFAQ &&
-                          !selectedFAQs.some((f) => f.id === selectedFAQ.id)
+                          !selectedFAQs.some(
+                            (f) =>
+                              f.id === selectedFAQ.id ||
+                              f.package_faq_title === selectedFAQ.package_faq_title
+                          )
                         ) {
                           setSelectedFAQs((prev) => [...prev, selectedFAQ]);
                         }
+
+                        // Reset the dropdown selection
+                        e.target.value = "";
                       }}
                     >
                       <option value="" disabled selected>
                         Select a FAQ...
                       </option>
-                      {faqs.map((faq) => (
-                        <option key={faq.id} value={faq.id}>
-                          {faq.package_faq_title}
-                        </option>
-                      ))}
+                      {faqs
+                        .filter(
+                          (faq) =>
+                            !selectedFAQs.some(
+                              (f) => f.id === faq.id || f.package_faq_title === faq.package_faq_title
+                            )
+                        )
+                        .map((faq) => (
+                          <option key={faq.id} value={faq.id}>
+                            {faq.package_faq_title}
+                          </option>
+                        ))}
                     </select>
+
+
                   </div>
                 ) : (
                   <p>No FAQs available</p>
@@ -1031,6 +1258,16 @@ const EditPackage = () => {
                           setSelectedFAQs(updatedFAQs);
                         }}
                       />
+                      {/* Add the trash icon */}
+                      <button
+                        onClick={() => {
+                          const updatedFAQs = selectedFAQs.filter((f) => f.id !== faq.id);
+                          setSelectedFAQs(updatedFAQs);
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
                 ))}
@@ -1090,70 +1327,77 @@ const EditPackage = () => {
               />
             </div>
           )}
-          initialOpen={true}>
+          initialOpen={true}
+        >
           <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
             {itineraries.map((itinerary, index) => (
               <div key={index} className="mb-6 p-4 border rounded-md">
-                <div className="flex flex-wrap gap-4 items-start">
-                  <div className="w-full md:w-1/5 flex flex-col">
-                    <div>
-                      <label className="block text-sm font-medium mb-2">Day</label>
-                      <input
-                        type="text"
-                        value={`Day ${index + 1}`}
-                        readOnly
-                        className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base bg-gray-100"
-                        placeholder="Day 1"
-                      />
-                    </div>
-                  </div>
-                  <div className="w-full md:w-1/3">
+                {/* Day Centered */}
+                <div className="w-full text-center mb-4">
+                  <input
+                    type="text"
+                    value={`Day ${index + 1}`}
+                    readOnly
+                    className="border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base bg-gray-100 text-center"
+                  />
+                </div>
+
+                {/* Title & Image Side by Side */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
                     <label className="block text-sm font-medium mb-2">Title</label>
-                    <textarea
+                    <input
+                      type="text"
                       value={itinerary.title}
                       onChange={(e) => handleInputChange(index, "title", e.target.value)}
                       className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       placeholder="Title"
                     />
                   </div>
-                  <div className="w-full md:w-1/4">
-                    <label className="block text-sm font-medium mb-2">Image</label>
+
+                  <div>
+                    <label className="block text-sm font-medium ">Image</label>
                     <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full cursor-pointer bg-[var(--bg-2)] rounded-2xl border border-dashed">
-                      <span className="flex flex-col items-center justify-center py-12">
-                        <CloudArrowUpIcon className="w-[60px] h-[60px]" />
+                      htmlFor={`dropzone-file-${index}`}
+                      className=""
+                    >
+                      <span className="flex flex-col items-center justify-center py-1">
                       </span>
                       <input
+                        id={`dropzone-file-${index}`}
                         type="file"
                         onChange={(e) => handleImageChange(index, e)}
                         className="w-full border py-2 px-3 lg:px-4 focus:outline-none rounded-md text-base"
                       />
                     </label>
                   </div>
-                  {itineraries.length > 1 && (
-                    <div className="w-full md:w-1/6 flex items-center justify-end">
-                      <button
-                        type="button"
-                        onClick={() => deleteItinerary(index)}
-                        className="text-red-500"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                  <div className="w-full flex flex-col">
-                    <div className="mt-4">
-                      <p className="mb-4 text-xl font-medium"> Itinerary Description :</p>
-                      <QuillEditor
-                        onChange={(value) => handleInputChange(index, "description", value)}
-                        value={itinerary.description || ""}
-                      />
-                    </div>
-                  </div>
                 </div>
+
+                {/* Description Section */}
+                <div className="w-full mt-6">
+                  <p className="mb-4 text-xl font-medium">Itinerary Description :</p>
+                  <QuillEditor
+                    onChange={(value) => handleInputChange(index, "description", value)}
+                    value={itinerary.description || ""}
+                  />
+                </div>
+
+                {/* Delete Button */}
+                {itineraries.length > 1 && (
+                  <div className="flex justify-end mt-4">
+                    <button
+                      type="button"
+                      onClick={() => deleteItinerary(index)}
+                      className="text-red-500"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
+
+            {/* Add New Itinerary Button */}
             <button
               type="button"
               onClick={addNewItinerary}
@@ -1163,7 +1407,6 @@ const EditPackage = () => {
               Add New
             </button>
           </div>
-
         </Accordion>
       </div>
       <button onClick={handleSubmit} className="btn-primary font-semibold m-6">

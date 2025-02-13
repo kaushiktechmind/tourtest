@@ -85,7 +85,8 @@ const Page = () => {
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredAttributes.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = (filteredAttributes || []).slice(indexOfFirstItem, indexOfLastItem);
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -137,7 +138,7 @@ const Page = () => {
       const result = await response.json();
       if (response.ok) {
         alert(result.message);
-        // Safeguard: Ensure prev is an array
+        window.location.reload()
         setAttributes((prev) => [
           ...(Array.isArray(prev) ? prev : []), // Ensure prev is an array
           {
@@ -333,7 +334,7 @@ const Page = () => {
             </table>
           </div>
           <Pagination
-            totalItems={filteredAttributes.length}
+            totalItems={filteredAttributes?.length ?? 0} 
             itemsPerPage={itemsPerPage}
             currentPage={currentPage}
             onPageChange={handlePageChange}

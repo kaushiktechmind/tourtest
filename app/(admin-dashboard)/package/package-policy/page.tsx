@@ -82,7 +82,7 @@ const Page = () => {
           },
           body: JSON.stringify({
             package_policy_title: policyTitle,
-            package_policy_decription: plainTextDescription,
+            package_policy_description: plainTextDescription,
           }),
         }
       );
