@@ -39,6 +39,9 @@ const serviceFee = Number(packageData?.serviceFee);
 
 
 
+
+
+
 const generateBookingID = () => {
   // Generate a random number with a fixed length
   const randomNumber = Math.floor(Math.random() * 100000); // Generates a random number between 0 and 99999
@@ -54,7 +57,10 @@ const PackagePayment = () => {
   const [bookingID, setBookingID] = useState('');
 
   const [totalPrice, setTotalPrice] = useState(0);
-  const [formattedDate2, setFormattedDate2] = useState("");  
+  const [formattedDate2, setFormattedDate2] = useState("");
+
+  const [discountedPrice, setDiscountedPrice] = useState<number>(0);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
 
 
   useEffect(() => {
@@ -64,6 +70,10 @@ const PackagePayment = () => {
     if (packageData) {
       setTotalPrice(Number(packageData?.totalPrice) || 0);
     }
+
+    setDiscountedPrice(Number(packageData?.discountedPrice || 0));
+    setDiscountAmount(Number(packageData?.discountAmount || 0));
+    
     const reservationDate = packageData?.date;
     if (reservationDate) {
       const [year, month, day] = reservationDate.split('-');
@@ -71,6 +81,40 @@ const PackagePayment = () => {
       setFormattedDate2(formatted);  // Update the formatted date in state
     }
   }, []); // This ensures it only runs on the first render
+
+
+
+
+
+// useEffect(() => {
+//   const fetchDiscountValues = () => {
+//     const storedPackageData = JSON.parse(localStorage.getItem("packageData") || "[]");
+//     const packageData = storedPackageData[0] || {};
+
+//     setDiscountedPrice(Number(packageData?.discountedPrice || 0));
+//     setDiscountAmount(Number(packageData?.discountAmount || 0));
+//   };
+
+//   fetchDiscountValues();
+
+//   // Listen for storage changes (in case another component updates localStorage)
+//   const handleStorageChange = () => {
+//     fetchDiscountValues();
+//   };
+
+//   window.addEventListener("storage", handleStorageChange);
+  
+//   return () => {
+//     window.removeEventListener("storage", handleStorageChange);
+//   };
+// }, []);
+
+
+
+  
+
+
+  
 
 
 
@@ -118,6 +162,8 @@ const PackagePayment = () => {
 
 
 
+
+
   const handleCountryChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCountry(e.target.value);
   };
@@ -156,8 +202,7 @@ const PackagePayment = () => {
   }, [packageId]);
 
 
-
-
+  const grandSubTotal = discountedPrice > 0 ? discountedPrice : totalPrice;
 
 
 
@@ -550,13 +595,35 @@ const PackagePayment = () => {
 
 
               <div className="border border-dashed my-8"></div>
-              <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-bold">Total Price</p>
+              <ul className="flex flex-col gap-4">
 
-                <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
-              </div>
+                <li className="grid grid-cols-2 items-center mt-3">
+                  <p className="mb-0 ">Total Price</p>
+                  <p className="mb-3 font-medium text-right">₹{totalPrice}</p>
+                </li>
+
+                {discountAmount > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-0">Discount</p>
+                    <p className="mb-0 font-medium text-right text-green-500">₹{Math.round(discountAmount)}</p>
+                  </li>
+                )}
+
+                {discountedPrice > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-3">Discounted Price</p>
+                    <p className="mb-0 font-medium text-right text-blue-500">₹{Math.round(discountedPrice)}</p>
+                  </li>
+                )}
+
+
+              </ul>
+
+              
               <RazorpayPkgBtn
-                grandTotal={Number(totalPrice) * 100}
+                grandTotal={Number(grandSubTotal) * 100}
+                discountedPrice={discountedPrice}
+                discountAmount={discountAmount}
                 currency="INR"
                 name={name}
                 email={email}

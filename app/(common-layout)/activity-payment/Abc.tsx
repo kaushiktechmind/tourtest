@@ -27,7 +27,6 @@ const generateBookingID = () => {
 };
 
 const ActivityPayment = () => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const activityName = searchParams.get("activityName");
 

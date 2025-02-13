@@ -543,10 +543,29 @@ const PackageReciept = () => {
               </ul>
 
               <div className="border border-dashed my-8"></div>
-              <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-bold">Total Price</p>
-                <p className="mb-0 font-medium text-right">₹{totalPrice}</p>
-              </div>
+              <ul className="flex flex-col gap-4">
+
+                <li className="grid grid-cols-2 items-center mt-3">
+                  <p className="mb-0 ">Total Price</p>
+                  <p className="mb-3 font-medium text-right">₹{totalPrice}</p>
+                </li>
+
+                {packageData?.discountAmount > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-0">Discount</p>
+                    <p className="mb-0 font-medium text-right text-green-500">₹{Math.round(packageData?.discountAmount)}</p>
+                  </li>
+                )}
+
+                {packageData?.discountedPrice > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-3">Discounted Price</p>
+                    <p className="mb-0 font-medium text-right text-blue-500">₹{Math.round(packageData?.discountedPrice)}</p>
+                  </li>
+                )}
+
+
+              </ul>
             </div>
           </div>
 

@@ -49,8 +49,6 @@ interface Coupon {
 }
 
 
-
-
 export default function Page({
   params,
 }: {
@@ -88,7 +86,6 @@ export default function Page({
   const [amenitiesArray, setAmenitiesArray] = useState<string[]>([]);
 
   const [policies, setPolicies] = useState<{ title: string; description: string }[]>([]);
-
   const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
 
 
@@ -208,7 +205,6 @@ export default function Page({
           console.log("No amenities data available");
         }
 
-        // Handle Policies
         const policies = [];
         for (let i = 1; i <= 5; i++) {
           const title = data[`policy_title${i}`];
@@ -218,7 +214,7 @@ export default function Page({
             policies.push({ title, description });
           }
         }
-        setPolicies(policies); // Assuming you have a state like `const [policies, setPolicies] = useState([]);`
+        setPolicies(policies); 
 
       } catch (error) {
         console.error("Error fetching activity data:", error);
