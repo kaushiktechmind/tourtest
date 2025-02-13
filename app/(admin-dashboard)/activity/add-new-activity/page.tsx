@@ -18,8 +18,8 @@ interface FAQ {
 
 interface Policy {
   id: number; // Change to the actual type based on your API response
-  policy_title: string;
-  policy_description: string; // Assuming the correct spelling is 'faq_description'
+  activity_policy_title: string;
+  activity_policy_description: string; // Assuming the correct spelling is 'faq_description'
 }
 
 

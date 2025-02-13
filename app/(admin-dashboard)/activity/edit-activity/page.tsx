@@ -30,8 +30,8 @@ interface Field {
 
 interface Policy {
   id: number; // Change to the actual type based on your API response
-  policy_title: string;
-  policy_description: string; // Assuming the correct spelling is 'faq_description'
+  activity_policy_title: string;
+  activity_policy_description: string; // Assuming the correct spelling is 'faq_description'
 }
 
 interface Ticket {
@@ -86,8 +86,8 @@ const EditActivity = () => {
   const [faqs, setFAQs] = useState<FAQ[]>([]);
   const [selectedFAQs, setSelectedFAQs] = useState<FAQ[]>([]);
 
-    const [policies, setPolicies] = useState<Policy[]>([]);
-    const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
+  const [policies, setPolicies] = useState<Policy[]>([]);
+  const [selectedPolicies, setSelectedPolicies] = useState<Policy[]>([]);
 
 
 
@@ -109,22 +109,22 @@ const EditActivity = () => {
   }, []);
 
 
-   useEffect(() => {
-      const fetchPolicies = async () => {
-        try {
-          const response = await fetch(
-            "https://yrpitsolutions.com/tourism_api/api/get_all_activity_policy"
-          );
-          const data: Policy[] = await response.json();
-          setPolicies(data); // Make sure you have a state called `policies`
-        } catch (error) {
-          console.error("Error fetching policies:", error);
-        }
-      };
-  
-      fetchPolicies();
-    }, []);
-  
+  useEffect(() => {
+    const fetchPolicies = async () => {
+      try {
+        const response = await fetch(
+          "https://yrpitsolutions.com/tourism_api/api/get_all_activity_policy"
+        );
+        const data: Policy[] = await response.json();
+        setPolicies(data); // Make sure you have a state called `policies`
+      } catch (error) {
+        console.error("Error fetching policies:", error);
+      }
+    };
+
+    fetchPolicies();
+  }, []);
+
 
   useEffect(() => {
     const fetchLocations = async () => {
@@ -250,18 +250,18 @@ const EditActivity = () => {
         setTickets(filteredTicketData.slice(0, 5)); // Limit to first 5 valid tickets
 
 
-          // Prefill Policies
-      const policyData = [];
-      for (let i = 1; i <= 5; i++) {
-        if (data[`policy_title${i}`] && data[`policy_description${i}`]) {
-          policyData.push({
-            id: i,
-            activity_policy_title: data[`policy_title${i}`],
-            activity_policy_description: data[`policy_description${i}`]
-          });
+        // Prefill Policies
+        const policyData = [];
+        for (let i = 1; i <= 10; i++) {
+          if (data[`policy_title${i}`] && data[`policy_description${i}`]) {
+            policyData.push({
+              id: i,
+              activity_policy_title: data[`policy_title${i}`],
+              activity_policy_description: data[`policy_description${i}`]
+            });
+          }
         }
-      }
-      setSelectedPolicies(policyData);
+        setSelectedPolicies(policyData);
 
 
         // Prefill formData with the API response
@@ -748,70 +748,87 @@ const EditActivity = () => {
               initialOpen={true}
             >
 
-<div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
-  {policies.length > 0 ? (
-    <div className="mb-4">
-      <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
-        Select a Policy
-      </label>
-      <select
-        id="policyDropdown"
-        className="w-full border p-2 rounded-md"
-        onChange={(e) => {
-          const selectedPolicy = policies.find(
-            (policy) => policy.id === parseInt(e.target.value)
-          );
-          if (selectedPolicy && !selectedPolicies.some((p) => p.id === selectedPolicy.id)) {
-            setSelectedPolicies((prev) => [...prev, selectedPolicy]);
-          }
-        }}
-      >
-        <option value="" disabled selected>
-          Select a Policy...
-        </option>
-        {policies.map((policy) => (
-          <option key={policy.id} value={policy.id}>
-            {policy.activity_policy_title}
-          </option>
-        ))}
-      </select>
-    </div>
-  ) : (
-    <p>No Policies available</p>
-  )}
+              <div className="px-4 md:px-6 lg:px-8 pb-4 md:pb-6 lg:pb-8 bg-white rounded-b-2xl">
+                {policies.length > 0 ? (
+                  <div className="mb-4">
+                    <label htmlFor="policyDropdown" className="text-lg font-bold mb-2 block">
+                      Select a Policy
+                    </label>
+                    <select
+                      id="policyDropdown"
+                      className="w-full border p-2 rounded-md"
+                      value="" // Ensures the default state
+                      onChange={(e) => {
+                        const selectedPolicy = policies.find(
+                          (policy) => policy.id === parseInt(e.target.value)
+                        );
+                        if (
+                          selectedPolicy &&
+                          !selectedPolicies.some(
+                            (policy) =>
+                              policy.id === selectedPolicy.id ||
+                              policy.activity_policy_title === selectedPolicy.activity_policy_title
+                          )
+                        ) {
+                          setSelectedPolicies((prev) => [...prev, selectedPolicy]);
+                        }
+                      }}
+                    >
+                      <option value="" disabled>
+                        Select a Policy...
+                      </option>
+                      {policies
+                        .filter(
+                          (policy) =>
+                            !selectedPolicies.some(
+                              (p) =>
+                                p.id === policy.id || p.activity_policy_title === policy.activity_policy_title
+                            )
+                        )
+                        .map((policy) => (
+                          <option key={policy.id} value={policy.id}>
+                            {policy.activity_policy_title}
+                          </option>
+                        ))}
+                    </select>
 
-  {/* Render prefilled input fields for each selected policy */}
-  {selectedPolicies.map((policy) => (
-    <div key={policy.id} className="mb-4 flex gap-4 items-center">
-      <input
-        type="text"
-        className="w-1/2 border p-2 rounded-md"
-        value={policy.activity_policy_title}
-        readOnly
-      />
-      <input
-        type="text"
-        className="w-1/2 border p-2 rounded-md"
-        value={policy.activity_policy_description}
-        onChange={(e) => {
-          const updatedPolicies = selectedPolicies.map((p) =>
-            p.id === policy.id ? { ...p, activity_policy_description: e.target.value } : p
-          );
-          setSelectedPolicies(updatedPolicies);
-        }}
-      />
-      <button
-        onClick={() => {
-          const updatedPolicies = selectedPolicies.filter((p) => p.id !== policy.id);
-          setSelectedPolicies(updatedPolicies);
-        }}
-        className="text-red-500 hover:text-red-700"
-      >
-        <TrashIcon className="w-5 h-5" />
-      </button>
-    </div>
-  ))}
-</div>
+                  </div>
+                ) : (
+                  <p>No Policies available</p>
+                )}
+
+                {/* Render prefilled input fields for each selected policy */}
+                {selectedPolicies.map((policy) => (
+                  <div key={policy.id} className="mb-4 flex gap-4 items-center">
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.activity_policy_title}
+                      readOnly
+                    />
+                    <input
+                      type="text"
+                      className="w-1/2 border p-2 rounded-md"
+                      value={policy.activity_policy_description}
+                      onChange={(e) => {
+                        const updatedPolicies = selectedPolicies.map((p) =>
+                          p.id === policy.id ? { ...p, activity_policy_description: e.target.value } : p
+                        );
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                    />
+                    <button
+                      onClick={() => {
+                        const updatedPolicies = selectedPolicies.filter((p) => p.id !== policy.id);
+                        setSelectedPolicies(updatedPolicies);
+                      }}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <TrashIcon className="w-5 h-5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
 
 
             </Accordion>

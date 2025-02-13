@@ -201,7 +201,7 @@ const Page = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="8" className="text-center py-5 text-gray-500">
+                    <td colSpan={8} className="text-center py-5 text-gray-500">
                       No coupons available.
                     </td>
                   </tr>

@@ -9,7 +9,7 @@ import "swiper/css/navigation";
 import { Navigation } from "swiper";
 import Link from "next/link";
 import ModalVideo from "react-modal-video";
-import { useState, useEffect, Key, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal } from "react";
+import { useState, useEffect, Key, JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactFragment, ReactPortal, ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Suspense } from "react";
@@ -48,11 +48,11 @@ function classNames(...classes: any[]) {
 }
 
 interface CabDetails {
-  time: ReactNode;
-  drop_point: ReactNode;
-  pickup_point: ReactNode;
+  time: string;
+  drop_point: string;
+  pickup_point: string;
   policies: any;
-  created_at: string;  // Ensure it's a string
+  created_at: string; 
   banner_image_multiple: any;
   location: string;
   cab_name: string;
@@ -74,6 +74,14 @@ interface CabSubForm {
   car_count: number;
   cargo_count: number;
   price: number;
+}
+
+interface Coupon {
+  status: string;
+  model_name: string;
+  coupon_code: string;
+  type: string;
+  discount_price: string;
 }
 
 
@@ -115,11 +123,9 @@ export default function Page({
 
 
   const [couponCode, setCouponCode] = useState('');
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [discountAmount, setDiscountAmount] = useState<number>(0);
-
   const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
-
   const [couponMessage, setCouponMessage] = useState<string | null>(null);
 
   useEffect(() => {

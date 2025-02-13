@@ -17,6 +17,9 @@ const activityData = storedActivityData[0];
 
 
 
+
+
+
 const generateBookingID = () => {
   // Generate a random number with a fixed length
   const randomNumber = Math.floor(Math.random() * 100000); // Generates a random number between 0 and 99999
@@ -65,6 +68,12 @@ const ActivityPayment = () => {
 
   const storedDate = storedActivityData?.date;
   const formattedDate = storedDate?.split('-').reverse().join('-');
+
+
+  const grandSubTotal = storedActivityData?.discountedPrice > 0 
+? storedActivityData.discountedPrice 
+: storedActivityData?.grandTotal;
+
 
 
 
@@ -163,8 +172,8 @@ const ActivityPayment = () => {
                     <div className="relative w-full md:w-2/3">
                       <div className="p-4">
                         <div className="property-card__body">
-                        <div
-                              className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
+                          <div
+                            className="link block text-[var(--neutral-700)] hover:text-primary text-xl font-medium mb-5">
                             {activityItem?.activity_title || "Activity Title"}
                           </div>
                           <div className="flex justify-between gap-3">
@@ -178,19 +187,19 @@ const ActivityPayment = () => {
                           <div className="border border-dashed my-6"></div>
                           <ul className="flex flex-wrap gap-6">
                             <li className="flex gap-2 items-center">
-                            <i className="las text-lg la-bus text-[#22804A]"></i>   
+                              <i className="las text-lg la-bus text-[#22804A]"></i>
                               <span className="block text-sm">
                                 {activityItem?.start_time || "Pickup Point"}
                               </span>
                             </li>
                             <li className="flex gap-2 items-center">
-                            <i className="las text-lg la-clock text-[#22804A]"></i> 
+                              <i className="las text-lg la-clock text-[#22804A]"></i>
                               <span className="block text-sm">
                                 {activityItem?.duration || "Duration"}
                               </span>
                             </li>
-                           
-                            
+
+
                           </ul>
                         </div>
                       </div>
@@ -281,27 +290,43 @@ const ActivityPayment = () => {
                     <p className="mb-0 font-medium text-right">₹{ticket.totalPrice}</p>
                   </li>
                 ))}
-                {/* <li className="grid grid-cols-2 items-center">
-        <div className="flex items-center gap-2">
-          <p className="mb-0">Sub Total</p>
-        </div>
-        <p className="mb-0 font-medium text-right">₹{tickets.reduce((total, ticket) => total + ticket.totalPrice, 0)}</p>
-      </li> */}
+
               </ul>
 
-              <div className="border border-dashed my-8"></div>
-              <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-bold">Grand Total</p>
-                <p className="mb-0 font-medium text-right">₹{grandTotal}</p>
-              </div>
+
+              <ul className="flex flex-col gap-4">
+
+                <li className="grid grid-cols-2 items-center mt-3">
+                  <p className="mb-0 ">Total Price</p>
+                  <p className="mb-3 font-medium text-right">₹{grandTotal}</p>
+                </li>
+
+                {storedActivityData?.discountAmount > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-0">Discount</p>
+                    <p className="mb-0 font-medium text-right text-green-500">₹{storedActivityData.discountAmount}</p>
+                  </li>
+                )}
+
+                {storedActivityData?.discountedPrice > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-3">Discounted Price</p>
+                    <p className="mb-0 font-medium text-right text-blue-500">₹{storedActivityData.discountedPrice}</p>
+                  </li>
+                )}
+
+
+              </ul>
 
               <RazorpayActBtn
-                grandTotal={Number(grandTotal) * 100}
+                grandTotal={Number(grandSubTotal) * 100}
+                discountedPrice = {storedActivityData?.discountedPrice}
+                discountAmount = {storedActivityData?.discountAmount}
                 currency="INR"
                 name={name}
                 email={email}
                 todayDate={todayDate}
-                formattedDate = {formattedDate}
+                formattedDate={formattedDate}
                 mobile_number={mobile_number}
                 address={address}
                 bookingID={bookingID}

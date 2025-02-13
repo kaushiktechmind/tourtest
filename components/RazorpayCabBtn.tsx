@@ -185,10 +185,7 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, pickupPoint
          th {
          background-color: #f4f4f4;
          }
-         .print-button {
-         text-align: center;
-         margin-top: 20px;
-         }
+
          .container-wrapper {
          border: 1px solid black; /* Border around the whole document */
          margin: 10px; /* Space around the border */
@@ -196,7 +193,6 @@ const RazorpayCabBtn: React.FC<RazorpayCabBtnProps> = ({ grandTotal, pickupPoint
          }
          .container {
          padding: 20px;
-         background-color: #f9f9f9;
          border-radius: 8px;
          /* No border here, as the wrapper div handles it */
          }

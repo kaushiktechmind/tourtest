@@ -53,6 +53,15 @@ interface Room {
   amenity_logo4: string;
 }
 
+
+interface Coupon {
+  status: string;
+  model_name: string;
+  coupon_code: string;
+  type: string;
+  discount_price: string;
+}
+
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
@@ -100,7 +109,7 @@ export default function Page({
   const [totalSelected, setTotalSelected] = useState(0);
 
   const [couponCode, setCouponCode] = useState('');
-  const [coupons, setCoupons] = useState([]);
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [discountAmount, setDiscountAmount] = useState<number>(0);
 
 

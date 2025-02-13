@@ -2,22 +2,13 @@
 import { Tab } from "@headlessui/react";
 import "react-datepicker/dist/react-datepicker.css";
 import {
-  ArrowLongLeftIcon,
-  ArrowLongRightIcon,
   ArrowRightIcon,
-  ArrowsRightLeftIcon,
-  ChatBubbleLeftRightIcon,
-  HandThumbUpIcon,
-  HeartIcon,
-  PhotoIcon,
 } from "@heroicons/react/24/outline";
 import Image from "next/image";
 import Link from "next/link";
-import { Tooltip } from "react-tooltip";
 import DatePicker from "react-datepicker";
-import { Suspense, useEffect, useState, useRef } from "react";
-import CheckboxCustom from "@/components/Checkbox";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 
 
 import faq1 from "@/public/img/faq-el-1.png";
@@ -48,6 +39,15 @@ interface ActivityData {
   activity_faqs: string;
   [key: string]: string | number | undefined; // This will allow dynamic keys like ticket_name1, ticket_price1, etc.
 }
+
+interface Coupon {
+  status: string;
+  model_name: string;
+  coupon_code: string;
+  type: string;
+  discount_price: string;
+}
+
 
 
 
@@ -87,8 +87,9 @@ export default function Page({
   const [faqs, setFaqs] = useState<any[]>([]);
   const [amenitiesArray, setAmenitiesArray] = useState<string[]>([]);
 
-  const [policies, setPolicies] = useState([]);
-const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
+  const [policies, setPolicies] = useState<{ title: string; description: string }[]>([]);
+
+  const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
 
 
 
@@ -118,11 +119,70 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
   };
 
 
+  const [couponCode, setCouponCode] = useState('');
+  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  const [discountAmount, setDiscountAmount] = useState<number>(0);
+  const [discountedPrice, setDiscountedPrice] = useState<number | null>(null);
+  const [couponMessage, setCouponMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      try {
+        const response = await fetch('https://yrpitsolutions.com/tourism_api/api/get_all_coupon');
+        const data = await response.json();
+        setCoupons(data);
+      } catch (err) {
+        console.error('Error fetching coupons:', err);
+      }
+    };
+    fetchCoupons();
+  }, []);
+
+  const applyCoupon = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if selectedPrice is greater than 0
+    if (calculateTotalPrice() <= 0) {
+      setCouponMessage("Cannot Apply Coupon.");
+      setDiscountedPrice(0);
+      setDiscountAmount(0);
+      return;
+    }
+
+    const validCoupon = coupons.find(
+      (coupon: any) =>
+        coupon.status === '1' &&
+        coupon.model_name === 'Activity' &&
+        coupon.coupon_code === couponCode
+    );
+
+    if (!validCoupon) {
+      setCouponMessage("Coupon Not Applicable");
+      setDiscountedPrice(null);
+      setDiscountAmount(0);
+      return;
+    }
+
+    let discount = 0;
+    if (validCoupon.type === '%') {
+      discount = (parseFloat(validCoupon.discount_price) / 100) * calculateTotalPrice();
+    } else {
+      discount = parseFloat(validCoupon.discount_price);
+    }
+
+    const finalPrice = calculateTotalPrice() - discount;
+    setDiscountAmount(discount);
+    setDiscountedPrice(finalPrice > 0 ? finalPrice : 0); // Ensure price doesn't go below 0
+    setCouponMessage("Coupon Applied");
+  };
+
+
+
 
   useEffect(() => {
     const fetchActivityData = async () => {
       if (!activityName) return;
-  
+
       try {
         const response = await fetch(
           `https://yrpitsolutions.com/tourism_api/api/admin/get_activity_by_seo_title/${activityName}`
@@ -130,16 +190,16 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
         if (!response.ok) {
           throw new Error("Failed to fetch activity data");
         }
-  
+
         const data = await response.json();
         setActivityData(data);
-  
+
         // Handle FAQs
         if (data?.faqs) {
           const parsedFaqs = data.faqs.map((faq: string) => JSON.parse(faq));
           setFaqs(parsedFaqs);
         }
-  
+
         // Handle Amenities
         if (data?.activity_attribute) {
           setAmenitiesArray(data.activity_attribute);
@@ -147,27 +207,27 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
         } else {
           console.log("No amenities data available");
         }
-  
+
         // Handle Policies
         const policies = [];
         for (let i = 1; i <= 5; i++) {
           const title = data[`policy_title${i}`];
           const description = data[`policy_description${i}`];
-  
+
           if (title && description) {
             policies.push({ title, description });
           }
         }
         setPolicies(policies); // Assuming you have a state like `const [policies, setPolicies] = useState([]);`
-  
+
       } catch (error) {
         console.error("Error fetching activity data:", error);
       }
     };
-  
+
     fetchActivityData();
   }, [activityName]);
-  
+
 
   // Conditional rendering to ensure activityData is not null before accessing its properties
   if (!activityData) {
@@ -237,6 +297,8 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
     const newActivityData = {
       date: formattedDate,
       tickets: ticketDetails, // Detailed ticket breakdown
+      discountAmount,
+      discountedPrice,
       grandTotal: totalPrice, // Total calculated price
     };
 
@@ -448,7 +510,7 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
                     <h4 className="mb-5 text-2xl font-semibold">Activity Type</h4>
                     <div className="grid grid-cols-12 gap-4">
                       {amenitiesArray.length > 0 ? (
-                        amenitiesArray.slice(0, 5).map((amenity, index) => (  // Show first 5 items
+                        amenitiesArray.map((amenity, index) => (  // Show all items
                           <div className="col-span-12 md:col-span-4 lg:col-span-3" key={index}>
                             <ul className="flex flex-col gap-4">
                               <li>
@@ -466,57 +528,56 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
                         <p>Not Available</p>
                       )}
                     </div>
-
                   </div>
 
 
+
                   <section className="relative bg-white py-[60px] lg:py-[120px]">
-  <div className="container">
-    <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
-      <SubHeadingBtn text="Policies" classes="bg-[var(--primary-light)]" />
-      <h2 className="h2 mt-3 leading-snug">Activity Policies</h2>
-      <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
-        Here are the policies related to this activity.
-      </p>
-    </div>
+                    <div className="container">
+                      <div className="max-w-[570px] mx-auto flex flex-col items-center text-center px-3">
+                        <SubHeadingBtn text="Policies" classes="bg-[var(--primary-light)]" />
+                        <h2 className="h2 mt-3 leading-snug">Activity Policies</h2>
+                        <p className="text-neutral-600 pt-5 pb-8 lg:pb-14">
+                          Here are the policies related to this activity.
+                        </p>
+                      </div>
 
-    {/* Dynamically Rendered Policies */}
-    <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
-      {policies.length > 0 ? (
-        policies.map((policy, index) => (
-          <div
-            key={index}
-            onClick={() => setOpenedPolicy((prev) => (prev === index ? null : index))}
-            className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
-          >
-            <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
-              {policy.title}
-              <span
-                className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${
-                  openedPolicy === index ? "rotate-180" : ""
-                }`}
-              >
-                {openedPolicy === index ? (
-                  <MinusIcon className="w-6 h-6" />
-                ) : (
-                  <PlusIcon className="w-6 h-6" />
-                )}
-              </span>
-            </button>
+                      {/* Dynamically Rendered Policies */}
+                      <div className="max-w-[856px] flex flex-col gap-4 lg:gap-6 mx-auto px-3 xl:px-0">
+                        {policies.length > 0 ? (
+                          policies.map((policy, index) => (
+                            <div
+                              key={index}
+                              onClick={() => setOpenedPolicy((prev) => (prev === index ? null : index))}
+                              className="bg-[var(--secondary-light)] rounded-xl md:rounded-2xl lg:rounded-[30px] p-3 sm:p-5 md:p-6 lg:px-10 cursor-pointer"
+                            >
+                              <button className="text-lg select-none md:text-xl w-full font-medium flex items-center text-left justify-between">
+                                {policy.title}
+                                <span
+                                  className={`p-1 bg-[#22814B] duration-300 text-white rounded-full ${openedPolicy === index ? "rotate-180" : ""
+                                    }`}
+                                >
+                                  {openedPolicy === index ? (
+                                    <MinusIcon className="w-6 h-6" />
+                                  ) : (
+                                    <PlusIcon className="w-6 h-6" />
+                                  )}
+                                </span>
+                              </button>
 
-            <AnimateHeight duration={300} height={openedPolicy === index ? "auto" : 0}>
-              <p className="border-t border-dash-long pt-4 mt-4">
-                {policy.description}
-              </p>
-            </AnimateHeight>
-          </div>
-        ))
-      ) : (
-        <p className="text-center text-neutral-600">No Policies available.</p>
-      )}
-    </div>
-  </div>
-</section>
+                              <AnimateHeight duration={300} height={openedPolicy === index ? "auto" : 0}>
+                                <p className="border-t border-dash-long pt-4 mt-4">
+                                  {policy.description}
+                                </p>
+                              </AnimateHeight>
+                            </div>
+                          ))
+                        ) : (
+                          <p className="text-center text-neutral-600">No Policies available.</p>
+                        )}
+                      </div>
+                    </div>
+                  </section>
 
 
 
@@ -700,14 +761,60 @@ const [openedPolicy, setOpenedPolicy] = useState<number | null>(null);
                             </div>
                           </div>
 
-
-
-
-
                           {/* Total Price */}
-                          <div className="flex items-center justify-between">
+                          {/* <div className="flex items-center justify-between">
                             <p className="mb-0 clr-neutral-500"> Total </p>
                             <p className="mb-0 font-medium">₹{calculateTotalPrice()}</p>
+                          </div> */}
+
+                          <div className="p-4 bg-white rounded-xl shadow-md">
+                            {/* Original Price (Always Visible) */}
+                            <div className="flex items-center justify-between mb-2">
+                              <p className="clr-neutral-500">Total Price</p>
+                              <p className={`font-medium ${(discountedPrice !== null && discountAmount > 0) ? 'line-through text-gray-500' : ''}`}>
+                                ₹{calculateTotalPrice()}
+                              </p>
+
+                            </div>
+
+                            {/* Discount and Discounted Price (Visible Only When Coupon is Applied) */}
+                            {discountedPrice !== null && discountAmount > 0 && (
+                              <>
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="clr-neutral-500">Discount</p>
+                                  <p className="font-medium text-green-500">- ₹{discountAmount}</p>
+                                </div>
+
+                                <div className="flex items-center justify-between mb-2">
+                                  <p className="clr-neutral-500 font-semibold">Discounted Price</p>
+                                  <p className="font-bold text-blue-500">₹{discountedPrice}</p>
+                                </div>
+                              </>
+                            )}
+
+                            {/* Coupon Message */}
+                            {couponMessage && (
+                              <p className={`mt-2 ${couponMessage === "Coupon Applied" ? "text-green-500" : "text-red-500"}`}>
+                                {couponMessage}
+                              </p>
+                            )}
+
+                            {/* Coupon Input and Apply Button */}
+                            <div className="flex items-center gap-2 mt-4">
+                              <input
+                                type="text"
+                                placeholder="Enter Coupon Code"
+                                value={couponCode}
+                                onChange={(e) => setCouponCode(e.target.value)}
+                                className="border border-gray-300 rounded-lg p-2 w-full"
+                              />
+                              <button
+                                onClick={applyCoupon}
+                                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
+                              >
+                                Apply
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </Tab.Panel>

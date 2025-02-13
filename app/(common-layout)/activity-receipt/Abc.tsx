@@ -291,33 +291,32 @@ const ActivityReciept = () => {
                     <p className="mb-0 font-medium text-right">₹{ticket.totalPrice}</p>
                   </li>
                 ))}
-                {/* <li className="grid grid-cols-2 items-center">
-        <div className="flex items-center gap-2">
-          <p className="mb-0">Sub Total</p>
-        </div>
-        <p className="mb-0 font-medium text-right">₹{tickets.reduce((total, ticket) => total + ticket.totalPrice, 0)}</p>
-      </li> */}
+               
               </ul>
 
-              <div className="border border-dashed my-8"></div>
-              <div className="grid grid-cols-2 items-center mb-6">
-                <p className="mb-0 font-bold">Grand Total</p>
-                <p className="mb-0 font-medium text-right">₹{grandTotal}</p>
-              </div>
+              <ul className="flex flex-col gap-4">
 
-              {/* <RazorpayActBtn
-                grandTotal={Number(grandTotal) * 100}
-                currency="INR"
-                name={name}
-                email={email}
-                mobile_number={mobile_number}
-                address={address}
-                bookingID={bookingID}
-                activityId={activityId}
-                passport={passport}
-                country={selectedCountry}
-              >
-              </RazorpayActBtn> */}
+                <li className="grid grid-cols-2 items-center mt-3">
+                  <p className="mb-0 ">Total Price</p>
+                  <p className="mb-3 font-medium text-right">₹{grandTotal}</p>
+                </li>
+
+                {storedActivityData?.discountAmount > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-0">Discount</p>
+                    <p className="mb-0 font-medium text-right text-green-500">₹{storedActivityData.discountAmount}</p>
+                  </li>
+                )}
+
+                {storedActivityData?.discountedPrice > 0 && (
+                  <li className="grid grid-cols-2 items-center">
+                    <p className="mb-3">Discounted Price</p>
+                    <p className="mb-0 font-medium text-right text-blue-500">₹{storedActivityData.discountedPrice}</p>
+                  </li>
+                )}
+
+
+              </ul>
             </div>
           </div>
 
