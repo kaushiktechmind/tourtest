@@ -240,7 +240,6 @@ const RazorpayButton: React.FC<RazorpayButtonProps> = ({
 
 .container {
     padding: 20px;
-    background-color: #f9f9f9;
     border-radius: 8px;
     /* No border here, as the wrapper div handles it */
 }

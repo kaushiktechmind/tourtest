@@ -1,13 +1,5 @@
 "use client";
 
-import {
-  MapPinIcon,
-  ShareIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ArrowUpIcon,
-  ChatBubbleOvalLeftEllipsisIcon,
-} from "@heroicons/react/24/solid";
 import Footer from "@/components/Footer";
 import MobileMenu from "@/components/MobileMenu";
 import Category from "@/components/home-1/Category";
@@ -19,7 +11,6 @@ import HowItWork from "@/components/home-2/HowItWork";
 import Property from "@/components/home-2/Property";
 import Testimonial from "@/components/home-2/Testimonial";
 import Featured from "@/components/home-2/Featured";
-import { useEffect, useState } from "react";
 import WhatsAppAndScroll from "@/components/WhatsAppAndScroll";
 
 const Page = () => {

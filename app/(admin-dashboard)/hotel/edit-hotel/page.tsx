@@ -20,7 +20,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 interface Amenity {
   id: number;
   amenity_name: string; // Ensure this matches your API response
-  amenity_logo: string; // Add this if the API returns a logo
+  amenity_logo: string | File; // Add this if the API returns a logo
 }
 
 interface Policy {
@@ -35,15 +35,6 @@ interface FAQ {
   faq_description: string; // Assuming the correct spelling is 'faq_description'
 }
 
-interface Location {
-  location_name: string;
-}
-
-interface Field {
-  name: string;
-  content: string;
-  distance: string;
-}
 
 interface HotelFormData {
   property_id: string;
@@ -118,11 +109,9 @@ const EditHotel = () => {
       name: string;
     }[]
   >([]);
-  const [maxAdults, setMaxAdults] = useState("");
-  const [maxChildren, setMaxChildren] = useState("");
-  const [maxInfants, setMaxInfants] = useState("");
+
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-  const [selectedBedroom, setSelectedBedroom] = useState<string | null>(null);
+
   const [loading, setLoading] = useState(false);
 
   const [policies, setPolicies] = useState<Policy[]>([]);
@@ -257,9 +246,11 @@ const EditHotel = () => {
             const amenityLogo = hotelData.data[`amenity_logo${i}`];
             if (amenityName) {
               amenitiesArray.push({
+                id: i, // Ensure each amenity has a unique id
                 amenity_name: amenityName,
                 amenity_logo: amenityLogo,
               });
+              
             }
           }
           setAmenities(amenitiesArray); // Ensure amenities state is set
