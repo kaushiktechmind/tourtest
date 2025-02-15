@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: '/private/', // Ensure this doesn't block important pages
     },
-    sitemap: 'https://andman-latest.vercel.app/sitemap.xml',
+    sitemap: 'https://andman-updated.vercel.app/sitemap.xml',
   };
 }
