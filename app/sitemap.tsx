@@ -30,14 +30,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Static routes
     const staticRoutes = [
-      { url: 'https://andman-updated.vercel.app', lastModified: new Date().toISOString() },
-      { url: 'https://andman-updated.vercel.app/ferry-list/single_trip', lastModified: new Date().toISOString() },
+      { url: 'https://andman-newww.vercel.app', lastModified: new Date().toISOString() },
+      { url: 'https://andman-newww.vercel.app/ferry-list/single_trip', lastModified: new Date().toISOString() },
     ];
 
     // Dynamic routes
     const createRoutes = (data: { seo_title: string }[], path: string) =>
       data.map(({ seo_title }) => ({
-        url: `https://andman-updated.vercel.app/${path}/${seo_title}`,
+        url: `https://andman-newww.vercel.app/${path}/${seo_title}`,
         lastModified: new Date().toISOString(),
       }));
 
