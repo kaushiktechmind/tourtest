@@ -1,12 +1,12 @@
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from 'next';
  
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/private/',
+      disallow: '/private/', // Ensure this doesn't block important pages
     },
-    sitemap: 'https://tourism-bay-ten.vercel.app/sitemap.tsx',
-  }
+    sitemap: 'https://andman-latest.vercel.app/sitemap.xml',
+  };
 }
