@@ -25,19 +25,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Ensure data arrays are valid
     const hotels = Array.isArray(hotelData?.data) ? hotelData.data : [];
     const cabs = Array.isArray(cabData) ? cabData : [];
-    const packages = Array.isArray(packageData) ? packageData : []; 
+    const packages = Array.isArray(packageData) ? packageData : [];
     const activities = Array.isArray(activityData) ? activityData : [];
 
     // Static routes
     const staticRoutes = [
-      { url: 'https://andman-newww.vercel.app', lastModified: new Date().toISOString() },
-      { url: 'https://andman-newww.vercel.app/ferry-list/single_trip', lastModified: new Date().toISOString() },
+      { url: 'https://andman-1.vercel.app', lastModified: new Date().toISOString() },
+      { url: 'https://andman-1.vercel.app/contact', lastModified: new Date().toISOString() },
+      { url: 'https://andman-1.vercel.app/ferry-list/single_trip', lastModified: new Date().toISOString() },
+      { url: 'https://andman-1.vercel.app/ferry-list/return_trip', lastModified: new Date().toISOString() },
     ];
 
     // Dynamic routes
     const createRoutes = (data: { seo_title: string }[], path: string) =>
       data.map(({ seo_title }) => ({
-        url: `https://andman-newww.vercel.app/${path}/${seo_title}`,
+        url: `https://andman-1.vercel.app/${path}/${seo_title}`,
         lastModified: new Date().toISOString(),
       }));
 
